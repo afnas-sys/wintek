@@ -1,7 +1,7 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:winket/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:winket/features/game/aviator/widget/balance_container.dart';
+import 'package:winket/features/game/aviator/widget/bet_container_.dart';
 import 'package:winket/features/game/aviator/widget/graph_container.dart';
 import 'package:winket/utils/theme.dart';
 
@@ -36,7 +36,12 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                   Text('Round ID: 436963', style: Theme.of(context).textTheme.bodySmallPrimary,),
                 ],),
                 SizedBox(height: 1),
-                GraphContainer()
+                GraphContainer(),
+                SizedBox(height: 16),
+                BetContainer(),
+                SizedBox(height: 16),
+                BetContainer(),
+
 
 
 

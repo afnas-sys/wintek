@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:winket/features/auth/widgets/custom_appbar.dart';
+import 'package:winket/utils/theme.dart';
 import 'package:winket/utils/widgets/custom_elevated_button.dart';
 import 'package:winket/features/auth/widgets/custom_snackbar.dart';
 import 'package:winket/features/auth/widgets/custom_text_form_field.dart';
@@ -48,8 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 14),
                   Text(
                     'Phone Number',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
 
@@ -94,7 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text(
                     'Set Password',
                     //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
 
@@ -125,8 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Confirm Password',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
                   //field for Confirm Password
@@ -156,8 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Invite code',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
                   CustomTextFormField(
@@ -190,8 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(width: 10),
                       Text(
                         "I have Read and Agree[Privacy Agreement]",
-                        //!BODY MEDIUM
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMediumSecondary,
                       ),
                     ],
                   ),

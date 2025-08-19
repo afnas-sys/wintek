@@ -12,6 +12,8 @@ class AppColors {
   //! icon
   //icon color
   static const Color iconPrimaryColor = Colors.white;
+  static const Color iconSecondaryColor = Colors.black;
+  static  Color iconTertiaryColor = Colors.white.withOpacity(20/100);
 
   //! text
   //text color
@@ -29,6 +31,12 @@ class AppColors {
   static const Color buttonSixthColor = Color(0xFF6205BB);
   static const Color buttonSeventhColor = Color(0xFF76036F);
   static const Color buttonEighthColor = Color(0xFF25323F);
+  static  Color buttonNinethColor = Color(0xFFFFFFFF).withOpacity(50/100);
+  static const Color buttonTenthColor = Color(0xFF191B1D);
+  static const Color buttonEleventhColor = Color(0xFF28A809);
+  static const Color buttonTwelvethColor = Color(0xFF3DAEFF);
+
+
 
   //button text color
   static const Color buttonPrimaryTextColor = Color(0xFF000000);
@@ -38,6 +46,10 @@ class AppColors {
   // button border color
   static const Color buttonborderPrimaryColor = Color(0xFFFFA82E);
   static const Color buttonborderSecondaryColor = Color(0xFF707a82);
+  static  Color buttonborderTertiaryColor = Color(0xFFFFFFFF).withOpacity(20/100);
+  static const Color buttonborderFourthColor = Color(0xFF3DAEFF);
+
+
 
   //!textformfield
   //textformfield color
@@ -79,5 +91,37 @@ class AppColors {
   //! Graph container
   //graph container color
   static const Color graphContainerHeaderColor = Color(0xFFC4841C);
-  static const Color graphContainerBodyColor = Color(0xFF000000);
+  static const Color graphContainerBodyColor = Color.fromARGB(255, 24, 24, 24);
+
+  //graph bar
+  static const Color graphBarColor = Color(0XFFE30538);
+
+  //Graph bar area
+  static const Color graphBarAreaColor = Color(0XFFE30538);
+  static  Color graphBarAreaColor2 = Color(0XFFE30538).withAlpha(153);
+
+  //text
+  static const Color graphTextXaxisColor = Color(0xFFFFFFFF);
+  static const Color graphTextYaxisColor = Color(0xFF2A94C7);
+
+  //! Bet container
+  //bet container color
+  static const Color betContainerPrimaryColor = Color(0xFF191B1D);
+  static const Color betContainerSecondaryColor = Color(0xFF000000);
+
+
+  //border
+  static  Color betContainerBorderColor = Color(0xFFFFFFFF).withOpacity(20/100);
+
+  //!switch
+  //switch color
+  static const Color switchBgColor = Color(0xFF191B1D);
+
+  // switch thumb color
+  static  Color switchThumbColor = Color(0xFFFFFFFF).withOpacity(20/100);
+
+  //switch  border
+  static  Color switchBorderColor = Color(0xFFFFFFFF).withOpacity(20/100);
+  
+
 }

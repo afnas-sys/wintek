@@ -17,11 +17,12 @@ class CustomElevatedButton extends StatelessWidget {
   final Color textColor;
   final double fontSize;
   final FontWeight fontWeight;
+  final double? elevation; 
 
   const CustomElevatedButton({
     super.key,
-    this.text, // now optional
-    this.child, // optional custom widget
+    this.text,
+    this.child,
     required this.onPressed,
     this.borderRadius = 12.0,
     this.backgroundColor,
@@ -34,10 +35,11 @@ class CustomElevatedButton extends StatelessWidget {
     this.textColor = AppColors.textPrimaryColor,
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
+    this.elevation, 
   }) : assert(
-         text != null || child != null,
-         'Either text or child must be provided',
-       );
+          text != null || child != null,
+          'Either text or child must be provided',
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +64,10 @@ class CustomElevatedButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             side: hasBorder
                 ? BorderSide(color: borderColor) 
-                : BorderSide.none, 
+                : BorderSide.none,
           ),
           padding: padding,
-          elevation: 4,
+          elevation: elevation ?? 0, // 🔹 if null, default = flat button
         ),
         onPressed: onPressed,
         child: icon == null
@@ -79,3 +81,4 @@ class CustomElevatedButton extends StatelessWidget {
     );
   }
 }
+

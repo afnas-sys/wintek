@@ -69,12 +69,21 @@ extension CustomTextStyle  on TextTheme{
   );
 
   //! Body
-
-  TextStyle get bodyTitle3Primary => GoogleFonts.roboto(
+//large
+  TextStyle get bodyLargeTitle3Primary => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
     fontSize: 28,
     fontWeight: FontWeight.w500,
   );
+
+//medium
+  TextStyle get bodyMediumTitle3Primary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+  );
+//small
+
 
 
 
@@ -99,5 +108,11 @@ extension CustomTextStyle  on TextTheme{
   TextStyle get bodySmallPrimary => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
     fontSize: 12,
+  );
+
+  TextStyle get bodySmallPrimaryBold => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
   );
 }

@@ -4,7 +4,7 @@ import 'package:winket/features/auth/screens/forgot_password_screen.dart';
 import 'package:winket/features/auth/screens/login_email_screen.dart';
 import 'package:winket/features/auth/screens/login_phone_screen.dart';
 import 'package:winket/features/auth/screens/register_screen.dart';
-import 'package:winket/features/game/aviator/aviator_game_screen.dart';
+import 'package:winket/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:winket/utils/router/routes_names.dart';
 
 class AppRouter {
