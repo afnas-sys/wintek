@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:winket/utils/app_colors.dart';
+import 'package:wintek/utils/app_colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String hintText;

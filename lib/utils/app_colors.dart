@@ -15,33 +15,34 @@ class AppColors {
   //icon color
   static const Color iconPrimaryColor = Colors.white;
   static const Color iconSecondaryColor = Colors.black;
-  static  Color iconTertiaryColor = Colors.white.withOpacity(20/100);
+  static Color iconTertiaryColor = Colors.white.withOpacity(20 / 100);
+  static Color iconFourthColor = Colors.white.withOpacity(50 / 100);
+  static const Color iconSixthColor = Color(0XFF219206);
 
   //! text
   //text color
   static const Color textPrimaryColor = Colors.white;
   static const Color textSecondaryColor = Color(0xFF5D7593);
   static const Color textTertiaryColor = Color(0xFFFFA82E);
-  static  Color textFourthColor = Color(0xFFFFFFFF).withOpacity(60/100);
-  static  Color textFifthColor = Color(0xFFFFFFFF).withOpacity(50/100);
+  static Color textFourthColor = Color(0xFFFFFFFF).withOpacity(60 / 100);
+  static Color textFifthColor = Color(0xFFFFFFFF).withOpacity(50 / 100);
+  static const Color textSixthColor = Color(0xFF33B4FF);
 
   //! button
   //button color
-//  static const Color buttonPrimaryColor = Color(0xFFFFA82E);
+  //  static const Color buttonPrimaryColor = Color(0xFFFFA82E);
   //static const Color buttonSecondaryColor = Color(0xFF0D1B2A);
- // static const Color buttonThirdColor = Color(0xFF5D7593);
-//  static const Color buttonFourthColor = Color(0xFF6DA7F4);
-//  static const Color buttonFivethColor = Color(0xFF005F91);
-//  static const Color buttonSixthColor = Color(0xFF6205BB);
+  // static const Color buttonThirdColor = Color(0xFF5D7593);
+  //  static const Color buttonFourthColor = Color(0xFF6DA7F4);
+  //  static const Color buttonFivethColor = Color(0xFF005F91);
+  //  static const Color buttonSixthColor = Color(0xFF6205BB);
   //static const Color buttonSeventhColor = Color(0xFF76036F);
-//  static const Color buttonEighthColor = Color(0xFF25323F);
+  //  static const Color buttonEighthColor = Color(0xFF25323F);
   //static  Color buttonNinethColor = Color(0xFFFFFFFF).withOpacity(50/100);
- // static const Color buttonTenthColor = Color(0xFF191B1D);
+  // static const Color buttonTenthColor = Color(0xFF191B1D);
   //static const Color buttonEleventhColor = Color(0xFF28A809);
-// static const Color buttonTwelvethColor = Color(0xFF3DAEFF);
+  // static const Color buttonTwelvethColor = Color(0xFF3DAEFF);
   //static const Color buttonThirteenthColor = Color(0xFF000000);
-
-
 
   //button text color
   static const Color buttonPrimaryTextColor = Color(0xFF000000);
@@ -50,13 +51,10 @@ class AppColors {
 
   // button border color
   //static const Color buttonborderPrimaryColo = Color(0xFFFFA82E);
- // static const Color buttonborderSecondaryColor = Color(0xFF707a82);
+  // static const Color buttonborderSecondaryColor = Color(0xFF707a82);
   //static  Color buttonborderTertiaryColor = Color(0xFFFFFFFF).withOpacity(20/100);
   //static const Color buttonborderFourthColor = Color(0xFF3DAEFF);
   //static  Color buttonborderFifthColor = Color(0xFFFFFFFF).withOpacity(30/100);
-
-
-
 
   //!textformfield
   //textformfield color
@@ -91,14 +89,13 @@ class AppColors {
   //! AVIATOR GAME
   //!Balance container
   //balance container color
- // static const Color balanceContainerBgColor = Color(0xFF415A77);
+  // static const Color balanceContainerBgColor = Color(0xFF415A77);
   //text
-//  static const Color balanceContainerTextColor = Color(0xFF5D7593);
-
+  //  static const Color balanceContainerTextColor = Color(0xFF5D7593);
 
   //! Graph container
   //graph container color
- //static const Color graphContainerHeaderColor = Color(0xFFC4841C);
+  //static const Color graphContainerHeaderColor = Color(0xFFC4841C);
   //static const Color graphContainerBodyColor = Color.fromARGB(255, 24, 24, 24);
 
   //graph bar
@@ -106,7 +103,7 @@ class AppColors {
 
   //Graph bar area
   static const Color graphBarAreaColor = Color(0XFFE30538);
-  static  Color graphBarAreaColor2 = Color(0XFFE30538).withAlpha(153);
+  static Color graphBarAreaColor2 = Color(0XFFE30538).withAlpha(153);
 
   //text
   static const Color graphTextXaxisColor = Color(0xFFFFFFFF);
@@ -114,9 +111,8 @@ class AppColors {
 
   //! Bet container
   //bet container color
-// static const Color betContainerPrimaryColor = Color(0xFF191B1D);
- // static const Color betContainerSecondaryColor = Color(0xFF000000);
-
+  // static const Color betContainerPrimaryColor = Color(0xFF191B1D);
+  // static const Color betContainerSecondaryColor = Color(0xFF000000);
 
   //border
   //static  Color betContainerBorderColor = Color(0xFFFFFFFF).withOpacity(20/100);
@@ -127,25 +123,24 @@ class AppColors {
   //static const Color switchBgSecondaryColor = Color(0XFF191B1D);
 
   // switch thumb color
-  static  Color switchThumbColor = Color(0xFFFFFFFF).withOpacity(20/100);
-  static  Color switchThumbActiveColor = Color(0xFFFFFFFF);
-  static  Color switchThumbInactiveColor = Color(0xFFFFFFFF);
+  static Color switchThumbColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
+  static Color switchThumbActiveColor = Color(0xFFFFFFFF);
+  static Color switchThumbInactiveColor = Color(0xFFFFFFFF);
 
   //switch active color
-  static  Color switchActiveColor = Color(0xFF28A809);
+  static Color switchActiveColor = Color(0xFF28A809);
 
   //switch  border
   //static  Color switchBorderColor = Color(0xFFFFFFFF).withOpacity(20/100);
-
 
   //!Border
   //border color
   static const Color borderPrimaryColor = Color(0xFFFFA82E);
   static const Color borderSecondaryColor = Color(0xFF707a82);
-  static  Color borderThirdColor = Color(0xFFFFFFFF).withOpacity(20/100);
-  static  const Color borderFourthColor = Color(0xFF3DAEFF);
-  static Color borderFifthColor = Color(0xFFFFFFFF).withOpacity(30/100);
-  static Color borderSixthColor = Color(0xFF28A809).withOpacity(60/100);
+  static Color borderThirdColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
+  static const Color borderFourthColor = Color(0xFF3DAEFF);
+  static Color borderFifthColor = Color(0xFFFFFFFF).withOpacity(30 / 100);
+  static Color borderSixthColor = Color(0xFF28A809).withOpacity(60 / 100);
 
   //! Background color
   //bg color
@@ -157,7 +152,7 @@ class AppColors {
   static const Color bgSixthColor = Color(0xFF6205BB);
   static const Color bgSeventhColor = Color(0xFF76036F);
   static const Color bgEighthColor = Color(0xFF25323F);
-  static  Color bgNinethColor = Color(0xFFFFFFFF).withOpacity(50/100);
+  static Color bgNinethColor = Color(0xFFFFFFFF).withOpacity(50 / 100);
   static const Color bgTenthColor = Color(0xFF191B1D);
   static const Color bgEleventhColor = Color(0xFF28A809);
   static const Color bgTwelfthColor = Color(0xFF3DAEFF);
@@ -166,24 +161,15 @@ class AppColors {
   static const Color bgFifteenthColor = Color(0xFF415A77);
   static const Color bgSixteenthColor = Color.fromARGB(255, 24, 24, 24);
   static const Color bgSeventeenthColor = Colors.transparent;
-  static  Color bgEighteenthColor = Color(0xFFFFFFFF).withOpacity(20/100);
-  static  Color bgNineteenthColor = Color(0xFF28A809).withOpacity(30/100);
+  static Color bgEighteenthColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
+  static Color bgNineteenthColor = Color(0xFF28A809).withOpacity(30 / 100);
   static const Color bgTwentythColor = Color(0xFF5D08B8);
-  static  Color bgTwentyFirstColor = Color(0xFFFFFFFF).withOpacity(10/100);
-
-
-
-
-
+  static Color bgTwentyFirstColor = Color(0xFFFFFFFF).withOpacity(10 / 100);
+  static const Color bgTwentySecondColor = Color(0xFFD9D9D9);
+  static const Color bgTwentyThirdColor = Color(0xFF091A02);
 
   //! Tab-bar
   //selected color
-  static Color tabBarSelectedColor = Color(0XFFFFFFFF).withOpacity(20/100);
+  static Color tabBarSelectedColor = Color(0XFFFFFFFF).withOpacity(20 / 100);
   static const Color tabBarUnselectedColor = Color(0xFF707a82);
-  
-
-
-  
-  
-
 }

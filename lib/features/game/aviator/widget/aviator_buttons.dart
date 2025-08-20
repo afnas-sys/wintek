@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:winket/utils/app_colors.dart';
-import 'package:winket/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class AviatorButtons extends StatelessWidget {
   const AviatorButtons({super.key});

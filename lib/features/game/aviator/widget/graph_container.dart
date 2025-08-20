@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:winket/utils/app_colors.dart';
-import 'package:winket/utils/app_images.dart';
-import 'package:winket/utils/theme.dart';
+import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/app_images.dart';
+import 'package:wintek/utils/theme.dart';
 
 class GraphContainer extends StatefulWidget {
   const GraphContainer({super.key});

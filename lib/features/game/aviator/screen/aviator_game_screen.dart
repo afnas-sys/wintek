@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:winket/features/game/aviator/widget/all_bets.dart';
-import 'package:winket/features/game/aviator/widget/aviator_buttons.dart';
-import 'package:winket/features/game/aviator/widget/balance_container.dart';
-import 'package:winket/features/game/aviator/widget/bet_container_.dart';
-import 'package:winket/features/game/aviator/widget/custom_tab_bar.dart';
-import 'package:winket/features/game/aviator/widget/graph_container.dart';
-import 'package:winket/utils/app_colors.dart';
-import 'package:winket/utils/theme.dart';
+import 'package:wintek/features/game/aviator/widget/all_bets.dart';
+import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
+import 'package:wintek/features/game/aviator/widget/balance_container.dart';
+import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
+import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
+import 'package:wintek/features/game/aviator/widget/graph_container.dart';
+import 'package:wintek/features/game/aviator/widget/my_bets.dart';
+import 'package:wintek/features/game/aviator/widget/top.dart';
+import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/theme.dart';
 
 class AviatorGameScreen extends StatefulWidget {
   const AviatorGameScreen({super.key});
@@ -20,8 +22,7 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: 
-        SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -58,12 +59,7 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                   borderColor: AppColors.borderThirdColor,
                   selectedTabColor: AppColors.tabBarSelectedColor,
                   unselectedTextColor: AppColors.textPrimaryColor,
-                  tabViews: [
-                    AllBets(),
-                    Text('dataaaaa'),
-                    Text('dataaaaaaaaaa'),
-
-                  ],
+                  tabViews: [AllBets(), MyBets(), Top()],
                 ),
               ],
             ),

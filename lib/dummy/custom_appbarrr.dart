@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:winket/utils/app_colors.dart';
-// import 'package:winket/utils/app_images.dart';
+// import 'package:wintek/utils/app_colors.dart';
+// import 'package:wintek/utils/app_images.dart';
 
 // class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 //   const CustomAppbar({super.key});

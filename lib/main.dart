@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:winket/utils/router/app_roouter.dart';
-import 'package:winket/utils/router/routes_names.dart';
-import 'package:winket/utils/theme.dart';
+import 'package:wintek/utils/router/app_roouter.dart';
+import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/theme.dart';
 
 void main() {
   runApp(const MyApp());

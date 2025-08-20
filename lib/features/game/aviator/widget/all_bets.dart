@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:winket/utils/app_colors.dart';
-import 'package:winket/utils/theme.dart';
-import 'package:winket/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class AllBets extends StatefulWidget {
   const AllBets({super.key});
@@ -13,12 +13,12 @@ class AllBets extends StatefulWidget {
 
 class _AllBetsState extends State<AllBets> {
   final List<Map<String, String>> data = [
-    {"user": "Alice", "bet": "50", "mult": "2x", "cashout": "\$100"},
-    {"user": "Bob", "bet": "30", "mult": "1.5x", "cashout": "\$45"},
-    {"user": "Charlie", "bet": "70", "mult": "3x", "cashout": "\$210"},
-    {"user": "Diana", "bet": "20", "mult": "1.2x", "cashout": "\$24"},
-    {"user": "Eve", "bet": "100", "mult": "2.5x", "cashout": "\$250"},
-    {"user": "Frank", "bet": "10", "mult": "1.1x", "cashout": "\$11"},
+    {"user": "Alice", "bet": "₹50", "mult": "2x", "cashout": "\$100"},
+    {"user": "Bob", "bet": "₹30", "mult": "1.5x", "cashout": "\$45"},
+    {"user": "Charlie", "bet": "₹70", "mult": "3x", "cashout": "\$210"},
+    {"user": "Diana", "bet": "₹20", "mult": "1.2x", "cashout": "\$24"},
+    {"user": "Eve", "bet": "₹100", "mult": "2.5x", "cashout": "\$250"},
+    {"user": "Frank", "bet": "₹10", "mult": "1.1x", "cashout": "\$11"},
   ];
 
   @override
@@ -116,28 +116,21 @@ class _AllBetsState extends State<AllBets> {
 
           ListView.separated(
             shrinkWrap: true,
-            physics:
-                NeverScrollableScrollPhysics(), // 👈 avoid scroll inside column
+            physics: NeverScrollableScrollPhysics(),
             itemCount: data.length,
             separatorBuilder: (context, index) => SizedBox(height: 6),
             itemBuilder: (context, index) {
               final item = data[index];
-              Color? bgColor;
-              if (index == 0) {
-                bgColor = AppColors.bgNineteenthColor; // first item background
-              } else if (index == 1) {
-                bgColor = AppColors.bgNineteenthColor; // second item background
-              } else {
-                bgColor = AppColors.bgTwentyFirstColor; // default (transparent)
-              }
+              bool isHighlighted = index == 0 || index == 1;
+              Color? bgColor = isHighlighted
+                  ? AppColors.bgNineteenthColor
+                  : AppColors.bgTwentyFirstColor;
+
               return Container(
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: bgColor,
-                    width: 1,
-                  ),
+                  border: Border.all(color: bgColor, width: 1),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -147,9 +140,13 @@ class _AllBetsState extends State<AllBets> {
                   child: Row(
                     children: [
                       // 👤 Avatar
-                      CircleAvatar(
-                        radius: 18,
-                        child: Icon(FontAwesomeIcons.user, size: 14),
+                      Container(
+                        height: 36,
+                        width: 36,
+                        decoration: BoxDecoration(
+                          color: AppColors.bgTwentySecondColor,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
                       ),
                       SizedBox(width: 12),
 
@@ -176,37 +173,42 @@ class _AllBetsState extends State<AllBets> {
                       // 📌 Mult
                       Expanded(
                         flex: 1,
-                        child: Container(
-                          height: 32,
-                          width: 50,
-                          padding: const EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                            top: 6,
-                            bottom: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.bgTwentythColor,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text(
-                            item['mult'] ?? '',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMediumPrimary,
-                          ),
-                        ),
+                        child: isHighlighted
+                            ? Container(
+                                height: 32,
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.bgTwentythColor,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Text(
+                                  item['mult'] ?? '',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMediumPrimary,
+                                ),
+                              )
+                            : const SizedBox(),
                       ),
 
                       // 📌 Cashout
                       Expanded(
                         flex: 1,
-                        child: Text(
-                          item['cashout'] ?? '',
-                          textAlign: TextAlign.end,
-                          style: Theme.of(context).textTheme.bodyMediumPrimary,
-                        ),
+                        child: isHighlighted
+                            ? Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  item['cashout'] ?? '',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMediumPrimary,
+                                ),
+                              )
+                            : const SizedBox(),
                       ),
                     ],
                   ),
