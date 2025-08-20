@@ -26,9 +26,9 @@ class _BetContainerState extends State<BetContainer> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.betContainerPrimaryColor,
+        color: AppColors.bgTenthColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.betContainerBorderColor, width: 1),
+        border: Border.all(color: AppColors.borderThirdColor, width: 1),
       ),
       child: Column(
         children: [
@@ -53,10 +53,10 @@ class _BetContainerState extends State<BetContainer> {
                     ),
                   },
                   decoration: BoxDecoration(
-                    color: AppColors.switchBgColor,
+                    color: AppColors.bgTenthColor,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
-                      color: AppColors.switchBorderColor,
+                      color: AppColors.borderThirdColor,
                       width: 1,
                     ),
                   ),
@@ -77,8 +77,8 @@ class _BetContainerState extends State<BetContainer> {
               //! TOP RIGHT SIDED BUTTON '-'
               CustomElevatedButton(
                 hasBorder: true,
-                borderColor: AppColors.buttonborderTertiaryColor,
-                backgroundColor: AppColors.buttonTenthColor,
+                borderColor: AppColors.borderThirdColor,
+                backgroundColor: AppColors.bgTenthColor,
                 padding: EdgeInsetsGeometry.all(2),
                 height: 22,
                 width: 22,
@@ -111,10 +111,10 @@ class _BetContainerState extends State<BetContainer> {
                                 bottom: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.betContainerSecondaryColor,
+                                color: AppColors.bgThirteenthColor,
                                 borderRadius: BorderRadius.circular(30),
                                 border: Border.all(
-                                  color: AppColors.switchBorderColor,
+                                  color: AppColors.borderThirdColor,
                                   width: 1,
                                 ),
                               ),
@@ -133,7 +133,7 @@ class _BetContainerState extends State<BetContainer> {
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.buttonNinethColor,
+                                            AppColors.bgNinethColor,
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
@@ -148,7 +148,7 @@ class _BetContainerState extends State<BetContainer> {
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.buttonNinethColor,
+                                            AppColors.bgNinethColor,
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
@@ -178,9 +178,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -199,9 +198,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -223,9 +221,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -244,9 +241,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -265,7 +261,7 @@ class _BetContainerState extends State<BetContainer> {
                           fontWeight: FontWeight.w500,
                           height: 108,
                           width: 171,
-                          backgroundColor: AppColors.buttonEleventhColor,
+                          backgroundColor: AppColors.bgEleventhColor,
                           borderRadius: 20,
                         ),
                       ],
@@ -286,10 +282,10 @@ class _BetContainerState extends State<BetContainer> {
                                 bottom: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.betContainerSecondaryColor,
+                                color: AppColors.bgThirteenthColor,
                                 borderRadius: BorderRadius.circular(30),
                                 border: Border.all(
-                                  color: AppColors.switchBorderColor,
+                                  color: AppColors.borderThirdColor,
                                   width: 1,
                                 ),
                               ),
@@ -308,7 +304,7 @@ class _BetContainerState extends State<BetContainer> {
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.buttonNinethColor,
+                                            AppColors.bgNinethColor,
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
@@ -323,7 +319,7 @@ class _BetContainerState extends State<BetContainer> {
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.buttonNinethColor,
+                                            AppColors.bgNinethColor,
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
@@ -353,9 +349,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -374,9 +369,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -399,9 +393,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -420,9 +413,8 @@ class _BetContainerState extends State<BetContainer> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor:
-                                      AppColors.buttonborderTertiaryColor,
-                                  backgroundColor: AppColors.buttonTenthColor,
+                                  borderColor: AppColors.borderThirdColor,
+                                  backgroundColor: AppColors.bgTenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
@@ -441,7 +433,7 @@ class _BetContainerState extends State<BetContainer> {
                           fontWeight: FontWeight.w500,
                           height: 108,
                           width: 171,
-                          backgroundColor: AppColors.buttonEleventhColor,
+                          backgroundColor: AppColors.bgEleventhColor,
                           borderRadius: 20,
                         ),
                       ],
@@ -450,7 +442,7 @@ class _BetContainerState extends State<BetContainer> {
           ),
 
           SizedBox(height: 16),
-          //
+          //! AUTOPLAY Button
           if (_selectedValue == 1)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -458,39 +450,76 @@ class _BetContainerState extends State<BetContainer> {
                 CustomElevatedButton(
                   onPressed: () {},
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  backgroundColor: AppColors.buttonTwelvethColor,
+                  borderRadius: 52,
+                  backgroundColor: AppColors.bgTwelfthColor,
                   text: 'AUTOPLAY',
                   fontWeight: FontWeight.w400,
                   textColor: AppColors.buttonTertiaryTextColor,
                   fontSize: 14,
                   width: 98,
                   height: 28,
-                  borderColor: AppColors.buttonborderFourthColor,
+                  borderColor: AppColors.borderFourthColor,
                 ),
                 Row(
                   children: [
+                    //! Auto cash oout Text
                     Text(
                       'Auto Cash Out',
                       style: Theme.of(context).textTheme.bodySmallPrimaryBold,
                     ),
-                      SizedBox(width: 8),
-                Transform.scale(
-                  scale: 0.56,
-                  child: Switch(
-                    value: _isSwitched,
-                    activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
-                    inactiveTrackColor: Colors.grey[400],
-                    onChanged: (value) {
-                      setState(() {
-                        _isSwitched = value;
-                      });
-                    },
-                  ),
-                ),
+                    //! Switch
+                    SizedBox(width: 2),
+                    Transform.scale(
+                      scale: 0.70,
+                      child: Switch(
+                        value: _isSwitched,
+                        activeColor: AppColors.switchThumbActiveColor,
+                        inactiveThumbColor: AppColors.switchThumbInactiveColor,
+                        activeTrackColor: AppColors.switchActiveColor,
+                        inactiveTrackColor: AppColors.bgTenthColor,
+                        onChanged: (value) {
+                          setState(() {
+                            _isSwitched = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 2),
+                    //! Button for 1.5 X
+                    CustomElevatedButton(
+                      height: 28,
+                      width: 74,
+                      padding: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 6,
+                        bottom: 6,
+                      ),
+                      backgroundColor: AppColors.bgThirteenthColor,
+                      borderRadius: 52,
+                      elevation: 0,
+                      borderColor: AppColors.borderFifthColor,
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '1.5',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmallSecondaryBold,
+                          ),
+                          Text(
+                            'X',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodySmallSecondaryBold,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              
 
                 //ToggleButtons(children: [], isSelected: isSelected)
               ],

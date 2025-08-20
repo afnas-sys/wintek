@@ -54,8 +54,9 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                               (route) => false,
                             );
                           },
-                          backgroundColor: AppColors.buttonSecondaryColor,
+                          backgroundColor: AppColors.bgSecondaryColor,
                           borderRadius: 30,
+                          borderColor: AppColors.borderPrimaryColor,
                           padding: const EdgeInsets.only(
                             left: 20,
                             right: 20,
@@ -70,8 +71,9 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         child: CustomElevatedButton(
                           text: 'Email Login',
                           onPressed: () {},
-                          backgroundColor: AppColors.buttonPrimaryColor,
+                          backgroundColor: AppColors.bgPrimaryColor,
                           borderRadius: 30,
+                          borderColor: AppColors.borderPrimaryColor,
                           padding: const EdgeInsets.only(
                             left: 30,
                             right: 30,
@@ -170,7 +172,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         log('Logged in');
                       }
                     },
-                    backgroundColor: AppColors.buttonPrimaryColor,
+                    backgroundColor: AppColors.bgPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -188,7 +190,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, RoutesNames.register);
                     },
-                    backgroundColor: AppColors.buttonSecondaryColor,
+                    backgroundColor: AppColors.bgSecondaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,

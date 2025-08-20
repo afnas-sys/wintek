@@ -29,7 +29,7 @@ class _GraphContainerState extends State<GraphContainer> {
       width: double.infinity,
       height: 294,
       decoration: BoxDecoration(
-        color: AppColors.graphContainerBodyColor,
+        color: AppColors.bgSixteenthColor,
         borderRadius: BorderRadius.circular(20),
         image: DecorationImage(
           image: AssetImage(AppImages.graphContainerBgImage),
@@ -43,7 +43,7 @@ class _GraphContainerState extends State<GraphContainer> {
             height: 50,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: AppColors.graphContainerHeaderColor,
+              color: AppColors.bgFifteenthColor,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),

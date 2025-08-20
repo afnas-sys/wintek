@@ -172,7 +172,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                       textColor: AppColors.buttonPrimaryTextColor,
                       onPressed: () {},
                       text: 'Send',
-                      backgroundColor: AppColors.buttonPrimaryColor,
+                      backgroundColor: AppColors.bgPrimaryColor,
                     ),
                     validator: Validators.validateVericationCode,
                     autoValidate: true,
@@ -225,7 +225,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         );
                       }
                     },
-                    backgroundColor: AppColors.buttonPrimaryColor,
+                    backgroundColor: AppColors.bgPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,

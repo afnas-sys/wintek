@@ -213,7 +213,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
                       }
                     },
-                    backgroundColor: AppColors.buttonPrimaryColor,
+                    backgroundColor: AppColors.bgPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -236,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         (_) => false,
                       );
                     },
-                    backgroundColor: AppColors.buttonSecondaryColor,
+                    backgroundColor: AppColors.bgSecondaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -250,7 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextSpan(
                         text: 'I have an Account ',
                         style: GoogleFonts.roboto(
-                          color: AppColors.buttonThirdColor,
+                          color: AppColors.bgThirdColor,
                           fontSize: 16,
                         ),
                         children: [

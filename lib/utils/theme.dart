@@ -93,6 +93,12 @@ extension CustomTextStyle  on TextTheme{
     fontWeight: FontWeight.w400,
   );
 
+    TextStyle get bodyMediumPrimaryBold => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
     TextStyle get bodyMediumSecondary => GoogleFonts.roboto(
     color: AppColors.textSecondaryColor,
     fontSize: 16,
@@ -114,5 +120,19 @@ extension CustomTextStyle  on TextTheme{
     color: AppColors.textPrimaryColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
+  );
+
+
+  TextStyle get bodySmallSecondary => GoogleFonts.roboto(
+    color: AppColors.textFifthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+
+  TextStyle get bodySmallSecondaryBold => GoogleFonts.roboto(
+    color: AppColors.textFourthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
   );
 }

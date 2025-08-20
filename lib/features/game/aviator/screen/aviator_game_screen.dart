@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:winket/features/game/aviator/widget/all_bets.dart';
 import 'package:winket/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:winket/features/game/aviator/widget/balance_container.dart';
 import 'package:winket/features/game/aviator/widget/bet_container_.dart';
+import 'package:winket/features/game/aviator/widget/custom_tab_bar.dart';
 import 'package:winket/features/game/aviator/widget/graph_container.dart';
+import 'package:winket/utils/app_colors.dart';
 import 'package:winket/utils/theme.dart';
 
 class AviatorGameScreen extends StatefulWidget {
@@ -13,14 +16,12 @@ class AviatorGameScreen extends StatefulWidget {
 }
 
 class _AviatorGameScreenState extends State<AviatorGameScreen> {
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: 
+        SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -32,19 +33,38 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                  Text('Round ID: 436963', style: Theme.of(context).textTheme.bodySmallPrimary,),
-                  Text('Round ID: 436963', style: Theme.of(context).textTheme.bodySmallPrimary,),
-                ],),
+                    Text(
+                      'Round ID: 436963',
+                      style: Theme.of(context).textTheme.bodySmallPrimary,
+                    ),
+                    Text(
+                      'Round ID: 436963',
+                      style: Theme.of(context).textTheme.bodySmallPrimary,
+                    ),
+                  ],
+                ),
                 SizedBox(height: 1),
                 GraphContainer(),
                 SizedBox(height: 16),
                 BetContainer(),
                 SizedBox(height: 16),
                 BetContainer(),
+                SizedBox(height: 20),
+                CustomTabBar(
+                  tabs: ['All Bets', 'My Bets', 'Top'],
+                  backgroundColor: AppColors.bgSeventeenthColor,
+                  borderRadius: 52,
+                  borderWidth: 1,
+                  borderColor: AppColors.borderThirdColor,
+                  selectedTabColor: AppColors.tabBarSelectedColor,
+                  unselectedTextColor: AppColors.textPrimaryColor,
+                  tabViews: [
+                    AllBets(),
+                    Text('dataaaaa'),
+                    Text('dataaaaaaaaaa'),
 
-
-
-
+                  ],
+                ),
               ],
             ),
           ),

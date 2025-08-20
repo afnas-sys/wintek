@@ -15,7 +15,7 @@ class BalanceContainer extends StatelessWidget {
       width: 396,
       height: 134,
       decoration: BoxDecoration(
-        color: AppColors.balanceContainerBgColor,
+        color: AppColors.bgFourteenthColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -41,7 +41,7 @@ class BalanceContainer extends StatelessWidget {
                 textColor: AppColors.buttonPrimaryTextColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                backgroundColor: AppColors.buttonFourthColor,
+                backgroundColor: AppColors.bgFourthColor,
                 borderRadius: 30,
                 padding: EdgeInsets.only(
                   left: 23,
@@ -61,7 +61,7 @@ class BalanceContainer extends StatelessWidget {
                 textColor: AppColors.buttonPrimaryTextColor,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
-                backgroundColor: AppColors.buttonPrimaryColor,
+                backgroundColor: AppColors.bgPrimaryColor,
                 borderRadius: 30,
                 padding: EdgeInsets.only(
                   left: 23,

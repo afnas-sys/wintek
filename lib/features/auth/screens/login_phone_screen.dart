@@ -64,8 +64,9 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         child: CustomElevatedButton(
                           text: 'Log in with Phone',
                           onPressed: () {},
-                          backgroundColor: AppColors.buttonPrimaryColor,
+                          backgroundColor: AppColors.bgPrimaryColor,
                           borderRadius: 30,
+                          borderColor: AppColors.borderPrimaryColor,
                           padding: const EdgeInsets.only(
                             left: 20,
                             right: 20,
@@ -85,8 +86,9 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                               RoutesNames.loginWithEmail,
                             );
                           },
-                          backgroundColor: AppColors.buttonSecondaryColor,
+                          backgroundColor: AppColors.bgSecondaryColor,
                           borderRadius: 30,
+                          borderColor: AppColors.borderPrimaryColor,
                           padding: const EdgeInsets.only(
                             left: 30,
                             right: 30,
@@ -227,7 +229,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         );
                       }
                     },
-                    backgroundColor: AppColors.buttonPrimaryColor,
+                    backgroundColor: AppColors.bgPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -246,7 +248,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     onPressed: () {
                       Navigator.pushNamed(context, RoutesNames.register);
                     },
-                    backgroundColor: AppColors.buttonSecondaryColor,
+                    backgroundColor: AppColors.bgSecondaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,

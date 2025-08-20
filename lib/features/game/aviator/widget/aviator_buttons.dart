@@ -28,7 +28,7 @@ class AviatorButtons extends StatelessWidget {
           ),
           height: 32,
           width: 59.33,
-          backgroundColor: AppColors.buttonFivethColor,
+          backgroundColor: AppColors.bgFifthColor,
         ),
 
         // #2
@@ -48,7 +48,7 @@ class AviatorButtons extends StatelessWidget {
           ),
           height: 32,
           width: 59.33,
-          backgroundColor: AppColors.buttonSixthColor,
+          backgroundColor: AppColors.bgSixthColor,
         ),
 
         // #3
@@ -68,7 +68,7 @@ class AviatorButtons extends StatelessWidget {
           ),
           height: 32,
           width: 59.33,
-          backgroundColor: AppColors.buttonSixthColor,
+          backgroundColor: AppColors.bgSixthColor,
         ),
 
         // #4
@@ -88,7 +88,7 @@ class AviatorButtons extends StatelessWidget {
           ),
           height: 32,
           width: 59.33,
-          backgroundColor: AppColors.buttonSeventhColor,
+          backgroundColor: AppColors.bgSeventhColor,
         ),
 
         // #5
@@ -108,18 +108,18 @@ class AviatorButtons extends StatelessWidget {
           ),
           height: 32,
           width: 59.33,
-          backgroundColor: AppColors.buttonFivethColor,
+          backgroundColor: AppColors.bgFifthColor,
         ),
 
         // #6
         ElevatedButton(
           onPressed: () {},
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.buttonEighthColor,
+            backgroundColor: AppColors.bgEighthColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(30)),
-              side: const BorderSide(
-                color: AppColors.buttonborderSecondaryColor,
+              side:  BorderSide(
+                color: AppColors.borderSecondaryColor,
               ),
             ),
             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
