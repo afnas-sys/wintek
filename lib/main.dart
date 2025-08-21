@@ -15,11 +15,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: RoutesNames.loginWithPhone,
+      initialRoute: RoutesNames.aviatorGame,
       onGenerateRoute: AppRouter.generateRoute,
       title: 'Winket',
       theme: theme,
-     // home: dummy(),
+      // home: dummy(),
     );
   }
 }

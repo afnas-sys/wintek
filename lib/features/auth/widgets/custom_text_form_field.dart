@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/utils/app_colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -8,8 +9,8 @@ class CustomTextFormField extends StatelessWidget {
   final Widget? prefix;
   final Widget? suffix;
   final TextEditingController? controller;
-  final String? Function(String?)? validator; 
-  final bool autoValidate; 
+  final String? Function(String?)? validator;
+  final bool autoValidate;
 
   const CustomTextFormField({
     super.key,
@@ -30,9 +31,10 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
-      autovalidateMode:
-          autoValidate ? AutovalidateMode.onUserInteraction : AutovalidateMode.disabled,
-      style: const TextStyle(
+      autovalidateMode: autoValidate
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
+      style: GoogleFonts.roboto(
         color: AppColors.textformfieldSecondaryTextColor,
         fontSize: 16,
         fontWeight: FontWeight.w500,
@@ -53,18 +55,22 @@ class CustomTextFormField extends StatelessWidget {
           borderRadius: BorderRadius.circular(40),
         ),
         errorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: AppColors.textformfieldErrorBorderColor, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.textformfieldErrorBorderColor,
+            width: 1.5,
+          ),
           borderRadius: BorderRadius.circular(40),
         ),
-        focusedErrorBorder: OutlineInputBorder( 
-          borderSide: const BorderSide(color: AppColors.textformfieldErrorBorderColor, width: 2),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: AppColors.textformfieldErrorBorderColor,
+            width: 2,
+          ),
           borderRadius: BorderRadius.circular(40),
         ),
         filled: true,
         fillColor: AppColors.textformfieldPrimaryColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(40),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(40)),
         contentPadding: const EdgeInsets.all(20),
         prefixIcon: prefix,
         suffixIcon: suffix,

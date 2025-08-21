@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
+import 'package:wintek/features/game/aviator/widget/day_widget.dart';
+import 'package:wintek/features/game/aviator/widget/month_widget.dart';
+import 'package:wintek/features/game/aviator/widget/year_widget.dart';
 import 'package:wintek/utils/app_colors.dart';
 
 class Top extends StatefulWidget {
@@ -28,7 +31,7 @@ class _TopState extends State<Top> {
             borderColor: AppColors.borderThirdColor,
             selectedTabColor: AppColors.tabBarSelectedColor,
             unselectedTextColor: AppColors.textPrimaryColor,
-            tabViews: [Text(' data'), Text('222'), Text('333')],
+            tabViews: [DayWidget(), MonthWidget(), YearWidget()],
           ),
         ],
       ),

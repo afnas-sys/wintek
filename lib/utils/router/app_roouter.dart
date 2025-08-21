@@ -30,10 +30,11 @@ class AppRouter {
         );
       case RoutesNames.forgot:
         return _buildPageTransition(
-          const ForgotPasswordScreen(), 
-          settings, 
-          PageTransitionType.fade,);
-        case RoutesNames.aviatorGame:
+          const ForgotPasswordScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.aviatorGame:
         return _buildPageTransition(
           const AviatorGameScreen(),
           settings,

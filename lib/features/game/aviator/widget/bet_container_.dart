@@ -14,6 +14,27 @@ class BetContainer extends StatefulWidget {
 class _BetContainerState extends State<BetContainer> {
   int _selectedValue = 0;
   bool _isSwitched = false;
+  bool _isPressed = false;
+
+  final _amountController = TextEditingController();
+
+  void _setAmount(String value) {
+    setState(() {
+      _amountController.text = value;
+    });
+  }
+
+  void _increment() {
+    int value = int.tryParse(_amountController.text) ?? 0;
+    _amountController.text = (value + 1).toString();
+  }
+
+  void _decrement() {
+    int value = int.tryParse(_amountController.text) ?? 0;
+    if (value > 0) {
+      _amountController.text = (value - 1).toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,11 +143,21 @@ class _BetContainerState extends State<BetContainer> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    '1:00',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMediumTitle3Primary,
+                                  SizedBox(
+                                    width: 50,
+
+                                    //! Text form field
+                                    child: TextFormField(
+                                      controller: _amountController,
+                                      keyboardType: TextInputType.number,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMediumTitle3Primary,
+                                      decoration: const InputDecoration(
+                                        isDense: true,
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
                                   ),
                                   Row(
                                     children: [
@@ -164,12 +195,13 @@ class _BetContainerState extends State<BetContainer> {
                                 ],
                               ),
                             ),
+
                             SizedBox(height: 10),
                             //! BUTTON FOR ₹10 & ₹20
                             Row(
                               children: [
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('10'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -189,7 +221,7 @@ class _BetContainerState extends State<BetContainer> {
                                 SizedBox(width: 6),
 
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('20'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -212,7 +244,7 @@ class _BetContainerState extends State<BetContainer> {
                             Row(
                               children: [
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('50'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -232,7 +264,7 @@ class _BetContainerState extends State<BetContainer> {
                                 SizedBox(width: 6),
 
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('100'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -254,24 +286,60 @@ class _BetContainerState extends State<BetContainer> {
                         ),
                         SizedBox(width: 20),
                         //! BUTTON FOR BET
-                        CustomElevatedButton(
-                          onPressed: () {},
-                          text: 'BET',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          height: 108,
-                          width: 171,
-                          backgroundColor: AppColors.bgEleventhColor,
-                          borderRadius: 20,
-                        ),
+                        _isPressed
+                            ? CustomElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isPressed = !_isPressed;
+                                  });
+                                },
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                                height: 108,
+                                width: 171,
+                                backgroundColor: AppColors.bgTwentyFourthColor,
+                                borderRadius: 20,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'CASHOUT',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium18Title3Primary,
+                                    ),
+                                    Text(
+                                      '249.00',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMediumTitle4Primary,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : CustomElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isPressed = !_isPressed;
+                                  });
+                                },
+                                text: 'BET',
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                                height: 108,
+                                width: 171,
+                                backgroundColor: AppColors.bgEleventhColor,
+                                borderRadius: 20,
+                              ),
                       ],
                     )
+                  //!   AUTO-------
                   : Row(
                       children: [
                         SizedBox(height: 16),
                         Column(
                           children: [
-                            //! container for Amount, + & - button
+                            //! ---------------CONTAINER FOR AMOUNT, + & - button---------------
                             Container(
                               width: 154,
                               height: 40,
@@ -293,11 +361,21 @@ class _BetContainerState extends State<BetContainer> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    '1:00',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMediumTitle3Primary,
+                                  SizedBox(
+                                    width: 50,
+
+                                    //! Text form field
+                                    child: TextFormField(
+                                      controller: _amountController,
+                                      keyboardType: TextInputType.number,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMediumTitle3Primary,
+                                      decoration: const InputDecoration(
+                                        isDense: true,
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
                                   ),
                                   Row(
                                     children: [
@@ -308,7 +386,7 @@ class _BetContainerState extends State<BetContainer> {
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
-                                        onPressed: () {},
+                                        onPressed: _decrement,
                                         child: Icon(
                                           Icons.remove,
                                           size: 18.33,
@@ -323,7 +401,7 @@ class _BetContainerState extends State<BetContainer> {
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
-                                        onPressed: () {},
+                                        onPressed: _increment,
                                         child: Icon(
                                           Icons.add,
                                           size: 18.33,
@@ -340,7 +418,7 @@ class _BetContainerState extends State<BetContainer> {
                             Row(
                               children: [
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('10'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -360,7 +438,7 @@ class _BetContainerState extends State<BetContainer> {
                                 SizedBox(width: 6),
 
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('20'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -384,7 +462,7 @@ class _BetContainerState extends State<BetContainer> {
                             Row(
                               children: [
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('50'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,
@@ -404,7 +482,7 @@ class _BetContainerState extends State<BetContainer> {
                                 SizedBox(width: 6),
 
                                 CustomElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () => _setAmount('100'),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 6,

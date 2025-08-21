@@ -167,6 +167,8 @@ class AppColors {
   static Color bgTwentyFirstColor = Color(0xFFFFFFFF).withOpacity(10 / 100);
   static const Color bgTwentySecondColor = Color(0xFFD9D9D9);
   static const Color bgTwentyThirdColor = Color(0xFF091A02);
+  static const Color bgTwentyFourthColor = Color(0xFFCF7004);
+  static const Color bgTwentyFifthColor = Color(0xFFC4841C);
 
   //! Tab-bar
   //selected color

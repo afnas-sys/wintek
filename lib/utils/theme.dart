@@ -56,12 +56,6 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.bold,
   );
 
-  TextStyle get appBarSubTitle => GoogleFonts.roboto(
-    color: AppColors.textSecondaryColor,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-  );
-
   //! Body
   //large
   TextStyle get bodyLargeTitle3Primary => GoogleFonts.roboto(
@@ -76,7 +70,25 @@ extension CustomTextStyle on TextTheme {
     fontSize: 24,
     fontWeight: FontWeight.w600,
   );
+
+  TextStyle get bodyMediumTitle4Primary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 24,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get bodyMedium18Title3Primary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
   //small
+
+  TextStyle get appBarSubTitle => GoogleFonts.roboto(
+    color: AppColors.textSecondaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+  );
 
   TextStyle get bodyMediumPrimary => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
@@ -102,9 +114,6 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
-  TextStyle get bodySmallPrimary =>
-      GoogleFonts.roboto(color: AppColors.textPrimaryColor, fontSize: 12);
-
   TextStyle get bodySmallPrimaryBold => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
     fontSize: 14,
@@ -121,6 +130,12 @@ extension CustomTextStyle on TextTheme {
     color: AppColors.textFourthColor,
     fontSize: 14,
     fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get bodySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
   );
 
   TextStyle get bodySmallTertiary => GoogleFonts.roboto(
