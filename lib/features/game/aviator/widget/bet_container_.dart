@@ -168,7 +168,7 @@ class _BetContainerState extends State<BetContainer> {
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
-                                        onPressed: () {},
+                                        onPressed: _decrement,
                                         child: Icon(
                                           Icons.remove,
                                           size: 18.33,
@@ -183,7 +183,7 @@ class _BetContainerState extends State<BetContainer> {
                                         padding: EdgeInsetsGeometry.all(2),
                                         height: 22,
                                         width: 22,
-                                        onPressed: () {},
+                                        onPressed: _increment,
                                         child: Icon(
                                           Icons.add,
                                           size: 18.33,
@@ -339,7 +339,7 @@ class _BetContainerState extends State<BetContainer> {
                         SizedBox(height: 16),
                         Column(
                           children: [
-                            //! ---------------CONTAINER FOR AMOUNT, + & - button---------------
+                            //! CONTAINER FOR AMOUNT, + & - button
                             Container(
                               width: 154,
                               height: 40,
@@ -503,7 +503,7 @@ class _BetContainerState extends State<BetContainer> {
                           ],
                         ),
                         SizedBox(width: 20),
-                        //! BUTTON FOR BET
+                        //! BUTTON FOR BET---------------------------------------------------
                         CustomElevatedButton(
                           onPressed: () {},
                           text: 'BET',

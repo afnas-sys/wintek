@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/utils/app_colors.dart';
 
 class CustomElevatedButton extends StatelessWidget {
-  final String? text; // Optional text
-  final Widget? child; // Optional custom widget
+  final String? text;
+  final Widget? child;
   final VoidCallback onPressed;
   final double borderRadius;
   final Color? backgroundColor;
@@ -13,11 +13,11 @@ class CustomElevatedButton extends StatelessWidget {
   final double? width;
   final double? height;
   final Color borderColor;
-  final bool hasBorder; 
+  final bool hasBorder;
   final Color textColor;
   final double fontSize;
   final FontWeight fontWeight;
-  final double? elevation; 
+  final double? elevation;
 
   const CustomElevatedButton({
     super.key,
@@ -35,11 +35,11 @@ class CustomElevatedButton extends StatelessWidget {
     this.textColor = AppColors.textPrimaryColor,
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
-    this.elevation, 
+    this.elevation,
   }) : assert(
-          text != null || child != null,
-          'Either text or child must be provided',
-        );
+         text != null || child != null,
+         'Either text or child must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +62,10 @@ class CustomElevatedButton extends StatelessWidget {
           backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
-            side: hasBorder
-                ? BorderSide(color: borderColor) 
-                : BorderSide.none,
+            side: hasBorder ? BorderSide(color: borderColor) : BorderSide.none,
           ),
           padding: padding,
-          elevation: elevation ?? 0, // 🔹 if null, default = flat button
+          elevation: elevation ?? 0,
         ),
         onPressed: onPressed,
         child: icon == null
@@ -81,4 +79,3 @@ class CustomElevatedButton extends StatelessWidget {
     );
   }
 }
-
