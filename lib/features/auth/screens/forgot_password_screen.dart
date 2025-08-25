@@ -4,7 +4,7 @@ import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
-import 'package:wintek/features/auth/widgets/custom_text_form_field.dart';
+import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/validators.dart';

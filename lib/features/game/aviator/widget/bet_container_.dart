@@ -12,15 +12,21 @@ class BetContainer extends StatefulWidget {
 }
 
 class _BetContainerState extends State<BetContainer> {
+  final _switchController = TextEditingController();
   int _selectedValue = 0;
   bool _isSwitched = false;
   bool _isPressed = false;
 
   final _amountController = TextEditingController();
+  final _autoAmountController = TextEditingController();
 
   void _setAmount(String value) {
     setState(() {
-      _amountController.text = value;
+      if (_selectedValue == 0) {
+        _amountController.text = value;
+      } else {
+        _autoAmountController.text = value;
+      }
     });
   }
 
@@ -38,11 +44,10 @@ class _BetContainerState extends State<BetContainer> {
 
   @override
   Widget build(BuildContext context) {
-    //!-----!BET CONTAINER------
+    //!------BET CONTAINER------
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
-      //  curve: Curves.easeInOut,
       height: _selectedValue == 0 ? 210 : 258,
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -85,9 +90,7 @@ class _BetContainerState extends State<BetContainer> {
                     color: AppColors.switchThumbColor,
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  //  padding: 18,
-                  // height: 36, // controls minHeight
-                  // fixedWidth: 90,
+
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut,
                   onValueChanged: (v) {
@@ -122,50 +125,57 @@ class _BetContainerState extends State<BetContainer> {
                         Column(
                           children: [
                             //! container for Amount, + & - button
-                            Container(
+                            SizedBox(
                               width: 154,
-                              height: 40,
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 8,
-                                top: 2,
-                                bottom: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.bgThirteenthColor,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: AppColors.borderThirdColor,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: 50,
+                              height: 36,
+                              child: TextField(
+                                cursorColor: AppColors.textFifthColor,
+                                controller: _amountController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                textAlign: TextAlign.center,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMediumTitle3Primary,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                    horizontal: 8,
+                                  ),
+                                  hintText: "1.00",
+                                  hintStyle: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMediumTitle3Primary,
+                                  filled: true,
+                                  fillColor: AppColors.bgThirteenthColor,
 
-                                    //! Text form field
-                                    child: TextFormField(
-                                      controller: _amountController,
-                                      keyboardType: TextInputType.number,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMediumTitle3Primary,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        border: InputBorder.none,
-                                      ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(52),
+                                    borderSide: BorderSide(
+                                      color: AppColors.borderFifthColor,
                                     ),
                                   ),
-                                  Row(
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(52),
+                                    borderSide: BorderSide(
+                                      color: AppColors.borderThirdColor,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(52),
+                                    borderSide: BorderSide(),
+                                  ),
+
+                                  suffixIcon: Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
                                             AppColors.bgNinethColor,
-                                        padding: EdgeInsetsGeometry.all(2),
+                                        padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
                                         onPressed: _decrement,
@@ -175,12 +185,12 @@ class _BetContainerState extends State<BetContainer> {
                                           color: AppColors.iconSecondaryColor,
                                         ),
                                       ),
-                                      SizedBox(width: 4),
+                                      const SizedBox(width: 4),
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
                                             AppColors.bgNinethColor,
-                                        padding: EdgeInsetsGeometry.all(2),
+                                        padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
                                         onPressed: _increment,
@@ -190,9 +200,10 @@ class _BetContainerState extends State<BetContainer> {
                                           color: AppColors.iconSecondaryColor,
                                         ),
                                       ),
+                                      const SizedBox(width: 4),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
 
@@ -339,51 +350,58 @@ class _BetContainerState extends State<BetContainer> {
                         SizedBox(height: 16),
                         Column(
                           children: [
-                            //! CONTAINER FOR AMOUNT, + & - button
-                            Container(
+                            //! CONTAINER FOR AMOUNT, + & - button in AUTo
+                            SizedBox(
                               width: 154,
-                              height: 40,
-                              padding: EdgeInsets.only(
-                                left: 30,
-                                right: 8,
-                                top: 2,
-                                bottom: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.bgThirteenthColor,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: AppColors.borderThirdColor,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: 50,
+                              height: 36,
+                              child: TextField(
+                                cursorColor: AppColors.textFifthColor,
+                                controller: _autoAmountController,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                textAlign: TextAlign.center,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyMediumTitle3Primary,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                    horizontal: 8,
+                                  ),
+                                  hintText: "1.00",
+                                  hintStyle: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMediumTitle3Primary,
+                                  filled: true,
+                                  fillColor: AppColors.bgThirteenthColor,
 
-                                    //! Text form field
-                                    child: TextFormField(
-                                      controller: _amountController,
-                                      keyboardType: TextInputType.number,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMediumTitle3Primary,
-                                      decoration: const InputDecoration(
-                                        isDense: true,
-                                        border: InputBorder.none,
-                                      ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(52),
+                                    borderSide: BorderSide(
+                                      color: AppColors.borderFifthColor,
                                     ),
                                   ),
-                                  Row(
+                                  disabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(52),
+                                    borderSide: BorderSide(
+                                      color: AppColors.borderThirdColor,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(52),
+                                    borderSide: BorderSide(),
+                                  ),
+
+                                  suffixIcon: Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
                                             AppColors.bgNinethColor,
-                                        padding: EdgeInsetsGeometry.all(2),
+                                        padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
                                         onPressed: _decrement,
@@ -393,12 +411,12 @@ class _BetContainerState extends State<BetContainer> {
                                           color: AppColors.iconSecondaryColor,
                                         ),
                                       ),
-                                      SizedBox(width: 4),
+                                      const SizedBox(width: 4),
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
                                             AppColors.bgNinethColor,
-                                        padding: EdgeInsetsGeometry.all(2),
+                                        padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
                                         onPressed: _increment,
@@ -408,9 +426,10 @@ class _BetContainerState extends State<BetContainer> {
                                           color: AppColors.iconSecondaryColor,
                                         ),
                                       ),
+                                      const SizedBox(width: 4),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                             SizedBox(height: 10),
@@ -564,42 +583,54 @@ class _BetContainerState extends State<BetContainer> {
                     ),
                     SizedBox(width: 2),
                     //! Button for 1.5 X
-                    CustomElevatedButton(
-                      height: 28,
-                      width: 74,
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 6,
-                        bottom: 6,
-                      ),
-                      backgroundColor: AppColors.bgThirteenthColor,
-                      borderRadius: 52,
-                      elevation: 0,
-                      borderColor: AppColors.borderFifthColor,
-                      onPressed: () {},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '1.5',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmallSecondaryBold,
-                          ),
-                          Text(
+                    SizedBox(
+                      width: 76,
+                      height: 29,
+                      child: TextField(
+                        cursorColor: AppColors.textFifthColor,
+                        enabled: _isSwitched,
+                        controller: _switchController,
+                        keyboardType: TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmallSecondary,
+                        decoration: InputDecoration(
+                          suffix: Text(
                             'X',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmallSecondaryBold,
+                            style: TextStyle(color: AppColors.textFifthColor),
                           ),
-                        ],
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 6,
+                            horizontal: 8,
+                          ),
+                          hintText: "1.5x",
+                          hintStyle: Theme.of(
+                            context,
+                          ).textTheme.bodySmallSecondary,
+                          filled: true,
+                          fillColor: AppColors.bgThirteenthColor,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(52),
+                            borderSide: BorderSide(
+                              color: AppColors.borderFifthColor,
+                            ),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(52),
+                            borderSide: BorderSide(
+                              color: AppColors.borderThirdColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(52),
+                            borderSide: BorderSide(),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-
-                //ToggleButtons(children: [], isSelected: isSelected)
               ],
             ),
         ],

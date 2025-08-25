@@ -11,6 +11,9 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final bool autoValidate;
+  final bool enabled;
+  final TextAlign textAlign;
+  final EdgeInsetsGeometry? contentPadding;
 
   const CustomTextFormField({
     super.key,
@@ -22,6 +25,9 @@ class CustomTextFormField extends StatelessWidget {
     this.controller,
     this.validator,
     this.autoValidate = false,
+    this.enabled = true,
+    this.textAlign = TextAlign.start,
+    this.contentPadding,
   });
 
   @override
@@ -31,54 +37,61 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
+      enabled: enabled,
       autovalidateMode: autoValidate
           ? AutovalidateMode.onUserInteraction
           : AutovalidateMode.disabled,
+      textAlign: textAlign,
+      cursorColor: AppColors.textTertiaryColor,
       style: GoogleFonts.roboto(
         color: AppColors.textformfieldSecondaryTextColor,
         fontSize: 16,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
+        suffixIcon: suffix,
+        prefixIcon: prefix,
+        hintText: hintText,
+        hintStyle: GoogleFonts.roboto(
+          color: AppColors.textFourthColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+        ),
+
+        // Default fill
+        filled: true,
+        fillColor: AppColors.bgThirteenthColor,
+
+        // Borders
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppColors.textformfieldActiveBorderColor,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(52),
+          borderSide: BorderSide(color: AppColors.borderFifthColor, width: 1),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(52),
+          borderSide: BorderSide(color: AppColors.borderThirdColor, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: AppColors.textformfieldFocuseBorderColor,
-            width: 2,
-          ),
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(52),
+          borderSide: BorderSide(color: AppColors.switchActiveColor, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
+          borderRadius: BorderRadius.circular(52),
+          borderSide: BorderSide(
             color: AppColors.textformfieldErrorBorderColor,
             width: 1.5,
           ),
-          borderRadius: BorderRadius.circular(40),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
+          borderRadius: BorderRadius.circular(52),
+          borderSide: BorderSide(
             color: AppColors.textformfieldErrorBorderColor,
             width: 2,
           ),
-          borderRadius: BorderRadius.circular(40),
         ),
-        filled: true,
-        fillColor: AppColors.textformfieldPrimaryColor,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(40)),
-        contentPadding: const EdgeInsets.all(20),
-        prefixIcon: prefix,
-        suffixIcon: suffix,
-        hintText: hintText,
-        hintStyle: const TextStyle(
-          color: AppColors.textformfieldPrimaryTextColor,
-          fontSize: 16,
-        ),
+        contentPadding:
+            contentPadding ??
+            const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       ),
     );
   }

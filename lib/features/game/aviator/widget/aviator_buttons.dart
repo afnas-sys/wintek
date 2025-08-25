@@ -20,34 +20,13 @@ class _AviatorButtonsState extends State<AviatorButtons> {
     "8.12x",
     "1.50x",
     "4.87x",
-    "16.00x",
+    "15.00x",
     "6.20x",
     "9.99x",
     "12.45x",
     "1.02x",
     "8.12x",
     "1.50x",
-    "4.87x",
-    "16.00x",
-    "6.20x",
-    "9.99x",
-    "12.45x",
-    "1.02x",
-    "8.12x",
-    "1.50x",
-    "4.87x",
-    "16.00x",
-    "6.20x",
-    "9.99x",
-    "12.45x",
-    "1.02x",
-    "8.12x",
-    "1.50x",
-    "4.87x",
-    "16.00x",
-    "6.20x",
-    "9.99x",
-    "12.45x",
   ];
 
   bool showBalance = false;
@@ -63,13 +42,12 @@ class _AviatorButtonsState extends State<AviatorButtons> {
     }
   }
 
-  // ontainer for showing the multiplied amount
+  // container for showing the multiplied amount
   Widget _chip(String text, BuildContext context) {
     final color = _getColor(text);
     return Container(
       height: 32,
       width: 55,
-      //padding: const ,
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(
         color: color,

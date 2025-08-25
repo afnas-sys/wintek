@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/utils/app_colors.dart';
 
 ThemeData theme = ThemeData(
+  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.textFifthColor),
   //! scaffold
   scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
 

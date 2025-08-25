@@ -7,7 +7,7 @@ import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
-import 'package:wintek/features/auth/widgets/custom_text_form_field.dart';
+import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/validators.dart';
@@ -125,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Confirm Password',
-                        style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
                   //field for Confirm Password
@@ -155,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Invite code',
-                        style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
                   CustomTextFormField(

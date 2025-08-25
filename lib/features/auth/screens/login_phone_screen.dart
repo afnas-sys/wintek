@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/auth/widgets/custom_text_form_field.dart';
+import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/validators.dart';
@@ -18,7 +18,7 @@ class LoginPhoneScreen extends StatefulWidget {
 }
 
 class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
-  final _phoneController= TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   bool isChecked = false;
@@ -31,7 +31,6 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
   //   });
   //   super.initState();
   // }
-
   void dispose() {
     _phoneController.dispose();
     super.dispose();
@@ -45,7 +44,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
         title: 'Log in',
         subtitle:
             'Please log in with your phone number or email\nIf you forget your password, contact support',
-            height: 224,
+        height: 224,
       ),
 
       body: SafeArea(
@@ -107,7 +106,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     style: Theme.of(context).textTheme.bodyMediumPrimary,
                   ),
                   SizedBox(height: 10),
-              
+
                   //field for Phone number
                   CustomTextFormField(
                     controller: _phoneController,
@@ -143,15 +142,16 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     ),
                     validator: Validators.validatePhone,
                     autoValidate: true,
-
                   ),
                   SizedBox(height: 20),
                   //!BODY SMALL
-                  Text('Password', 
-                  style: Theme.of(context).textTheme.bodyMediumPrimary),
-               //   style: Theme.of(context).textTheme.bodySmall),
+                  Text(
+                    'Password',
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                  ),
+                  //   style: Theme.of(context).textTheme.bodySmall),
                   SizedBox(height: 10),
-              
+
                   //field for Password
                   CustomTextFormField(
                     controller: _passwordController,
@@ -165,7 +165,9 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         });
                       },
                       icon: Icon(
-                        _isObscure ? Icons.remove_red_eye : Icons.visibility_off,
+                        _isObscure
+                            ? Icons.remove_red_eye
+                            : Icons.visibility_off,
                         color: AppColors.textformfieldPrimaryIconColor,
                         size: 20,
                       ),
@@ -174,7 +176,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     autoValidate: true,
                   ),
                   SizedBox(height: 20),
-              
+
                   //Remember pass and Forget pass
                   Row(
                     children: [
@@ -189,9 +191,10 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                               isChecked = value!;
                             });
                           },
-                          activeColor:
-                              AppColors.checkboxActiveColor, // color when checked
-                          checkColor: AppColors.checkboxColor, // checkmark color
+                          activeColor: AppColors
+                              .checkboxActiveColor, // color when checked
+                          checkColor:
+                              AppColors.checkboxColor, // checkmark color
                         ),
                       ),
                       SizedBox(width: 4),
@@ -201,7 +204,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         style: Theme.of(context).textTheme.bodyMediumSecondary,
                       ),
                       Spacer(),
-              
+
                       //Forget password button
                       TextButton(
                         onPressed: () {
@@ -215,12 +218,12 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     ],
                   ),
                   SizedBox(height: 30),
-              
+
                   //Login Button
                   CustomElevatedButton(
                     text: 'Log in',
                     onPressed: () {
-                      if(_formkey.currentState!.validate()){
+                      if (_formkey.currentState!.validate()) {
                         log('Login successful');
                         Navigator.pushNamedAndRemoveUntil(
                           context,
@@ -241,7 +244,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     width: double.infinity,
                   ),
                   SizedBox(height: 20),
-              
+
                   //Register
                   CustomElevatedButton(
                     text: 'Register',

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/auth/widgets/custom_text_form_field.dart';
+import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/validators.dart';
@@ -29,7 +29,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
         title: 'Log in',
         subtitle:
             'Please log in with your phone number or email\nIf you forget your password, contact support',
-            height: 224,
+        height: 224,
       ),
 
       body: SafeArea(
@@ -86,9 +86,12 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     ],
                   ),
                   SizedBox(height: 30),
-                  Text('Email', style: Theme.of(context).textTheme.bodyMediumPrimary),
+                  Text(
+                    'Email',
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                  ),
                   SizedBox(height: 10),
-              
+
                   //field for Email
                   CustomTextFormField(
                     controller: _emailController,
@@ -98,9 +101,12 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     autoValidate: true,
                   ),
                   SizedBox(height: 20),
-                  Text('Password', style: Theme.of(context).textTheme.bodyMediumPrimary),
+                  Text(
+                    'Password',
+                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                  ),
                   SizedBox(height: 10),
-              
+
                   //field for Password
                   CustomTextFormField(
                     controller: _passwordController,
@@ -114,7 +120,9 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         });
                       },
                       icon: Icon(
-                        _isObscure ? Icons.remove_red_eye : Icons.visibility_off,
+                        _isObscure
+                            ? Icons.remove_red_eye
+                            : Icons.visibility_off,
                         color: AppColors.textformfieldPrimaryIconColor,
                         size: 20,
                       ),
@@ -123,7 +131,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     autoValidate: true,
                   ),
                   SizedBox(height: 20),
-              
+
                   //Remember pass and Forget pass
                   Row(
                     children: [
@@ -138,9 +146,10 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                               isChecked = value!;
                             });
                           },
-                          activeColor:
-                              AppColors.checkboxActiveColor, // color when checked
-                          checkColor: AppColors.checkboxColor, // checkmark color
+                          activeColor: AppColors
+                              .checkboxActiveColor, // color when checked
+                          checkColor:
+                              AppColors.checkboxColor, // checkmark color
                         ),
                       ),
                       SizedBox(width: 4),
@@ -149,7 +158,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         style: Theme.of(context).textTheme.bodyMediumSecondary,
                       ),
                       Spacer(),
-              
+
                       //Forget password button
                       TextButton(
                         onPressed: () {
@@ -163,12 +172,12 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     ],
                   ),
                   SizedBox(height: 30),
-              
+
                   //Login Button
                   CustomElevatedButton(
                     text: 'Log in',
                     onPressed: () {
-                      if (_formKey.currentState!.validate()){
+                      if (_formKey.currentState!.validate()) {
                         log('Logged in');
                       }
                     },
