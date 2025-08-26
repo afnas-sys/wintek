@@ -8,4 +8,8 @@ class RoutesNames {
   static const String home = '/home';
   //bottombar
   static const String bottombar = '/bottombar';
+  //splash
+  static const String splash = '/splash';
+  //welcome
+  static const String welcome = '/welcome';
 }

@@ -15,7 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: RoutesNames.bottombar,
+      //initialRoute: RoutesNames.bottombar,
+      initialRoute: RoutesNames.splash,
+      // initialRoute: RoutesNames.loginWithPhone,
       onGenerateRoute: AppRouter.generateRoute,
       title: 'Winket',
       theme: theme,

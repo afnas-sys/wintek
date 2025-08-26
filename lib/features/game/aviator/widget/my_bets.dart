@@ -73,7 +73,7 @@ class _MyBetsState extends State<MyBets> {
 
           SizedBox(height: 10),
 
-          Container(
+          SizedBox(
             width: double.infinity,
             height: 36,
             child: Padding(

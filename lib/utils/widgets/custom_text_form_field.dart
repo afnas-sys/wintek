@@ -53,27 +53,33 @@ class CustomTextFormField extends StatelessWidget {
         prefixIcon: prefix,
         hintText: hintText,
         hintStyle: GoogleFonts.roboto(
-          color: AppColors.textFourthColor,
+          color: AppColors.textformfieldPrimaryTextColor,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
 
         // Default fill
         filled: true,
-        fillColor: AppColors.bgThirteenthColor,
+        fillColor: AppColors.textformfieldPrimaryColor,
 
         // Borders
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(52),
-          borderSide: BorderSide(color: AppColors.borderFifthColor, width: 1),
+          borderSide: BorderSide(
+            color: AppColors.textformfieldActiveBorderColor,
+            width: 1,
+          ),
         ),
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(52),
-          borderSide: BorderSide(color: AppColors.borderThirdColor, width: 1),
+          borderSide: BorderSide(color: AppColors.borderThirdColor, width: 0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(52),
-          borderSide: BorderSide(color: AppColors.switchActiveColor, width: 2),
+          borderSide: BorderSide(
+            color: AppColors.textformfieldActiveBorderColor,
+            width: 2,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(52),

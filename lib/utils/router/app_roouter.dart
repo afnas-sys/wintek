@@ -6,6 +6,8 @@ import 'package:wintek/features/auth/screens/login_phone_screen.dart';
 import 'package:wintek/features/auth/screens/register_screen.dart';
 import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
+import 'package:wintek/features/screens/splash_screen.dart';
+import 'package:wintek/features/screens/welcome_screen.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_bottom_bar.dart';
 
@@ -51,6 +53,18 @@ class AppRouter {
       case RoutesNames.bottombar:
         return _buildPageTransition(
           const CustomBottomBar(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.splash:
+        return _buildPageTransition(
+          const SplashScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.welcome:
+        return _buildPageTransition(
+          const WelcomeScreen(),
           settings,
           PageTransitionType.fade,
         );
