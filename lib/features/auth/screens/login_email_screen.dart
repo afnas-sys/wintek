@@ -46,7 +46,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     children: [
                       Expanded(
                         child: CustomElevatedButton(
-                          text: 'Log in with Phone',
+                          //text: 'Log in with Phone',
                           onPressed: () {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
@@ -54,33 +54,47 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                               (route) => false,
                             );
                           },
-                          backgroundColor: AppColors.bgSecondaryColor,
+                          backgroundColor: AppColors.authPrimaryColor,
                           borderRadius: 30,
-                          borderColor: AppColors.borderPrimaryColor,
+                          borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
                             left: 20,
                             right: 20,
                             top: 14,
                             bottom: 14,
                           ),
-                          textColor: AppColors.buttonSecondaryTextColor,
+                          // textColor: AppColors.authTertiaryColor,
+                          //text: 'Log in with Phone',
+                          child: Text(
+                            'Log in with Phone',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeFourth,
+                          ),
                         ),
                       ),
                       SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
-                          text: 'Email Login',
+                          //text: 'Email Login',
                           onPressed: () {},
-                          backgroundColor: AppColors.bgPrimaryColor,
+                          backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,
-                          borderColor: AppColors.borderPrimaryColor,
+                          borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
                             left: 30,
                             right: 30,
                             top: 14,
                             bottom: 14,
                           ),
-                          textColor: AppColors.buttonPrimaryTextColor,
+                          // textColor: AppColors.authButtonSecondaryColor,
+                          //text: 'Email Login',
+                          child: Text(
+                            'Email Login',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeTertiary,
+                          ),
                         ),
                       ),
                     ],
@@ -88,7 +102,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                   SizedBox(height: 30),
                   Text(
                     'Email',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -103,7 +117,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Password',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -123,7 +137,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: AppColors.textformfieldPrimaryIconColor,
+                        color: AppColors.authFourthColor,
                         size: 20,
                       ),
                     ),
@@ -146,16 +160,18 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                               isChecked = value!;
                             });
                           },
-                          activeColor: AppColors
-                              .checkboxActiveColor, // color when checked
+                          activeColor:
+                              AppColors.authTertiaryColor, // color when checked
                           checkColor:
-                              AppColors.checkboxColor, // checkmark color
+                              AppColors.authSixthColor, // checkmark color
                         ),
                       ),
                       SizedBox(width: 4),
                       Text(
                         "Remember Password",
-                        style: Theme.of(context).textTheme.bodyMediumSecondary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyMediumPrimary,
                       ),
                       Spacer(),
 
@@ -166,7 +182,9 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         },
                         child: Text(
                           "Forget Password",
-                          style: Theme.of(context).textTheme.bodyMediumTertiary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.authBodyMediumSecondary,
                         ),
                       ),
                     ],
@@ -175,13 +193,13 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
 
                   //Login Button
                   CustomElevatedButton(
-                    text: 'Log in',
+                    //  text: 'Log in',
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         log('Logged in');
                       }
                     },
-                    backgroundColor: AppColors.bgPrimaryColor,
+                    backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -189,17 +207,23 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                       top: 14,
                       bottom: 14,
                     ),
-                    textColor: AppColors.buttonPrimaryTextColor,
+                    // textColor: AppColors.authButtonSecondaryColor,
                     width: double.infinity,
+                    //  text: 'Log in',
+                    child: Text(
+                      'Log in',
+                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
+                    ),
                   ),
                   SizedBox(height: 20),
                   //Register
                   CustomElevatedButton(
-                    text: 'Register',
+                    hasBorder: true,
+                    borderColor: AppColors.authTertiaryColor,
                     onPressed: () {
                       Navigator.pushNamed(context, RoutesNames.register);
                     },
-                    backgroundColor: AppColors.bgSecondaryColor,
+                    backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -207,8 +231,12 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                       top: 14,
                       bottom: 14,
                     ),
-                    textColor: AppColors.buttonSecondaryTextColor,
+                    textColor: AppColors.authTertiaryColor,
                     width: double.infinity,
+                    child: Text(
+                      'Register',
+                      style: Theme.of(context).textTheme.authBodyLargeFourth,
+                    ),
                   ),
                 ],
               ),

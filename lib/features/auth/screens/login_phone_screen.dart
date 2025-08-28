@@ -25,12 +25,6 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
   bool _isObscure = true;
 
   @override
-  // void initState() {
-  //   _phoneController.addListener(() {
-  //     _formkey.currentState!.validate();
-  //   });
-  //   super.initState();
-  // }
   void dispose() {
     _phoneController.dispose();
     super.dispose();
@@ -40,7 +34,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-        //showBackButton: false,
+        showBackButton: false,
         title: 'Log in',
         subtitle:
             'Please log in with your phone number or email\nIf you forget your password, contact support',
@@ -61,40 +55,48 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     children: [
                       Expanded(
                         child: CustomElevatedButton(
-                          text: 'Log in with Phone',
                           onPressed: () {},
-                          backgroundColor: AppColors.bgPrimaryColor,
+                          backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,
-                          borderColor: AppColors.borderPrimaryColor,
+                          borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
                             left: 20,
                             right: 20,
                             top: 14,
                             bottom: 14,
                           ),
-                          textColor: AppColors.buttonPrimaryTextColor,
+                          child: Text(
+                            'Log in with Phone',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeTertiary,
+                          ),
                         ),
                       ),
                       SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
-                          text: 'Email Login',
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
                               RoutesNames.loginWithEmail,
                             );
                           },
-                          backgroundColor: AppColors.bgSecondaryColor,
+                          backgroundColor: AppColors.authPrimaryColor,
                           borderRadius: 30,
-                          borderColor: AppColors.borderPrimaryColor,
+                          borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
                             left: 30,
                             right: 30,
                             top: 14,
                             bottom: 14,
                           ),
-                          textColor: AppColors.buttonSecondaryTextColor,
+                          child: Text(
+                            'Email Login',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeFourth,
+                          ),
                         ),
                       ),
                     ],
@@ -102,8 +104,8 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                   SizedBox(height: 30),
                   Text(
                     'Phone Number',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -126,7 +128,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         const SizedBox(width: 4),
                         Icon(
                           FontAwesomeIcons.angleDown,
-                          color: AppColors.textformfieldPrimaryIconColor,
+                          color: AppColors.authFourthColor,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
@@ -144,10 +146,10 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     autoValidate: true,
                   ),
                   SizedBox(height: 20),
-                  //!BODY SMALL
+
                   Text(
                     'Password',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   //   style: Theme.of(context).textTheme.bodySmall),
                   SizedBox(height: 10),
@@ -168,7 +170,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: AppColors.textformfieldPrimaryIconColor,
+                        color: AppColors.authFourthColor,
                         size: 20,
                       ),
                     ),
@@ -191,17 +193,19 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                               isChecked = value!;
                             });
                           },
-                          activeColor: AppColors
-                              .checkboxActiveColor, // color when checked
+                          activeColor:
+                              AppColors.authTertiaryColor, // color when checked
                           checkColor:
-                              AppColors.checkboxColor, // checkmark color
+                              AppColors.authSixthColor, // checkmark color
                         ),
                       ),
                       SizedBox(width: 4),
                       Text(
                         "Remember Password",
-                        //!BODY MEDIUM
-                        style: Theme.of(context).textTheme.bodyMediumSecondary,
+
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyMediumPrimary,
                       ),
                       Spacer(),
 
@@ -212,7 +216,9 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         },
                         child: Text(
                           "Forget Password",
-                          style: Theme.of(context).textTheme.bodyMediumTertiary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.authBodyMediumSecondary,
                         ),
                       ),
                     ],
@@ -221,7 +227,6 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
 
                   //Login Button
                   CustomElevatedButton(
-                    text: 'Log in',
                     onPressed: () {
                       if (_formkey.currentState!.validate()) {
                         log('Login successful');
@@ -232,7 +237,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         );
                       }
                     },
-                    backgroundColor: AppColors.bgPrimaryColor,
+                    backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -240,18 +245,20 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                       top: 14,
                       bottom: 14,
                     ),
-                    textColor: AppColors.buttonPrimaryTextColor,
                     width: double.infinity,
+                    child: Text(
+                      'Log in',
+                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
+                    ),
                   ),
                   SizedBox(height: 20),
 
                   //Register
                   CustomElevatedButton(
-                    text: 'Register',
                     onPressed: () {
                       Navigator.pushNamed(context, RoutesNames.register);
                     },
-                    backgroundColor: AppColors.bgSecondaryColor,
+                    backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -259,8 +266,12 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                       top: 14,
                       bottom: 14,
                     ),
-                    textColor: AppColors.buttonSecondaryTextColor,
+                    borderColor: AppColors.authTertiaryColor,
                     width: double.infinity,
+                    child: Text(
+                      'Register',
+                      style: Theme.of(context).textTheme.authBodyLargeFourth,
+                    ),
                   ),
                 ],
               ),

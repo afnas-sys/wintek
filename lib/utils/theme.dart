@@ -5,12 +5,12 @@ import 'package:wintek/utils/app_colors.dart';
 ThemeData theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: AppColors.textFifthColor),
   //! scaffold
-  scaffoldBackgroundColor: AppColors.scaffoldBackgroundColor,
+  scaffoldBackgroundColor: AppColors.authPrimaryColor,
 
   //!appbar
   appBarTheme: AppBarTheme(
-    backgroundColor: AppColors.appBarColor,
-    iconTheme: IconThemeData(color: AppColors.iconPrimaryColor),
+    backgroundColor: AppColors.authSecondaryColor,
+    iconTheme: IconThemeData(color: AppColors.authFifthColor),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(30),
@@ -20,42 +20,88 @@ ThemeData theme = ThemeData(
   ),
 
   //! icon
-  iconTheme: IconThemeData(color: AppColors.iconPrimaryColor),
+  iconTheme: IconThemeData(color: AppColors.authPrimaryColor),
   iconButtonTheme: IconButtonThemeData(
     style: ButtonStyle(
-      foregroundColor: WidgetStateProperty.all(AppColors.iconPrimaryColor),
+      foregroundColor: WidgetStateProperty.all(AppColors.authFifthColor),
     ),
   ),
-
-  //!text
-  // textTheme: GoogleFonts.robotoTextTheme().copyWith(
-  //   bodyLarge: TextStyle(
-  //     color: AppColors.textPrimaryColor,
-  //     fontSize: 28,
-  //     fontWeight: FontWeight.bold,
-  //   ),
-  // bodyMedium: TextStyle(
-  //   color: AppColors.textSecondaryColor,
-  //   fontSize: 16,
-  //   fontWeight: FontWeight.w400,
-  // ),
-  // bodySmall: TextStyle(
-  //   color: AppColors.textPrimaryColor,
-  //   fontSize: 16,
-  //   fontWeight: FontWeight.w400,
-  // ),
-
-  //),
 );
 
 //!text
 extension CustomTextStyle on TextTheme {
-  //!AppBar
-  TextStyle get appBartitle => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
+  /*
+  !Use it for reference for Naming
+   static const displayLarge = TextStyle(fontSize: 57, fontWeight: FontWeight.bold);
+  static const displayMedium = TextStyle(fontSize: 45, fontWeight: FontWeight.w600);
+  static const displaySmall = TextStyle(fontSize: 36, fontWeight: FontWeight.w600);
+
+  static const headlineLarge = TextStyle(fontSize: 32, fontWeight: FontWeight.w600);
+  static const headlineMedium = TextStyle(fontSize: 28, fontWeight: FontWeight.w500);
+  static const headlineSmall = TextStyle(fontSize: 24, fontWeight: FontWeight.w500);
+
+   // Titles
+  static const titleLarge = TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+  static const titleMedium = TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+  static const titleSmall = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+
+  // Body
+  static const bodyLarge = TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
+  static const bodyMedium = TextStyle(fontSize: 14, fontWeight: FontWeight.normal);
+  static const bodySmall = TextStyle(fontSize: 12, fontWeight: FontWeight.normal);
+
+  // Special
+  static const button = TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+  static const caption = TextStyle(fontSize: 12, fontWeight: FontWeight.w400);
+  */
+
+  //!-------Authentication--------
+
+  TextStyle get authHeadlineMedium => GoogleFonts.roboto(
+    color: AppColors.authFifthColor,
     fontSize: 28,
-    fontWeight: FontWeight.bold,
+    fontWeight: FontWeight.w600,
   );
+
+  TextStyle get authBodyLargePrimary => GoogleFonts.roboto(
+    color: AppColors.authFourthColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get authBodyLargeSecondary => GoogleFonts.roboto(
+    color: AppColors.authFifthColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get authBodyLargeTertiary => GoogleFonts.roboto(
+    color: AppColors.authSixthColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get authBodyLargeFourth => GoogleFonts.roboto(
+    color: AppColors.authTertiaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get authBodyMediumPrimary => GoogleFonts.roboto(
+    color: AppColors.authFourthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get authBodyMediumSecondary => GoogleFonts.roboto(
+    color: AppColors.authTertiaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  //!-----------------------------------------------------------------------------------------------------------
+
+  //!AppBar
 
   //! Body
   //large
@@ -85,12 +131,6 @@ extension CustomTextStyle on TextTheme {
   );
   //small
 
-  TextStyle get appBarSubTitle => GoogleFonts.roboto(
-    color: AppColors.textSecondaryColor,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-  );
-
   TextStyle get bodyMediumPrimary => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
     fontSize: 16,
@@ -103,17 +143,17 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w500,
   );
 
-  TextStyle get bodyMediumSecondary => GoogleFonts.roboto(
-    color: AppColors.textSecondaryColor,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-  );
+  // TextStyle get bodyMediumSecondary => GoogleFonts.roboto(
+  //   color: AppColors.textSecondaryColor,
+  //   fontSize: 16,
+  //   fontWeight: FontWeight.w400,
+  // );
 
-  TextStyle get bodyMediumTertiary => GoogleFonts.roboto(
-    color: AppColors.textTertiaryColor,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-  );
+  // TextStyle get bodyMediumTertiary => GoogleFonts.roboto(
+  //   color: AppColors.textTertiaryColor,
+  //   fontSize: 16,
+  //   fontWeight: FontWeight.w400,
+  // );
 
   TextStyle get bodySmallPrimaryBold => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,

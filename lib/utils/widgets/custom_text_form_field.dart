@@ -60,7 +60,7 @@ class CustomTextFormField extends StatelessWidget {
 
         // Default fill
         filled: true,
-        fillColor: AppColors.textformfieldPrimaryColor,
+        fillColor: AppColors.authSecondaryColor,
 
         // Borders
         enabledBorder: OutlineInputBorder(

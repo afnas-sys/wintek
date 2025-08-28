@@ -25,7 +25,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.appBarColor,
+        color: AppColors.authSecondaryColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -37,7 +37,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           width: double.infinity,
           height: height,
           decoration: BoxDecoration(
-            color: AppColors.appBarColor,
+            color: AppColors.authSecondaryColor,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),
@@ -61,7 +61,6 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                       )
                     else
                       const SizedBox(width: 48), // keeps layout balance
-
                     // Center: Logo
                     Expanded(
                       child: Center(
@@ -82,22 +81,25 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
 
               // Title + Subtitle
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title,
                       //!BODY LARGE
-                     // style: Theme.of(context).textTheme.bodyLarge,
-                      style: Theme.of(context).textTheme.appBartitle,
+                      // style: Theme.of(context).textTheme.bodyLarge,
+                      style: Theme.of(context).textTheme.authHeadlineMedium,
                     ),
                     const SizedBox(height: 10),
                     //!BODY MEDIUM
                     Text(
                       subtitle,
-                      style: Theme.of(context).textTheme.appBarSubTitle,
-                     // style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.authBodyLargePrimary,
+                      // style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),

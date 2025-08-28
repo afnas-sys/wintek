@@ -47,8 +47,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                   SizedBox(height: 14),
                   Text(
                     'Phone Number',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -71,7 +70,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         const SizedBox(width: 4),
                         Icon(
                           FontAwesomeIcons.angleDown,
-                          color: AppColors.textformfieldPrimaryIconColor,
+                          color: AppColors.authFourthColor,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
@@ -92,8 +91,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                   SizedBox(height: 20),
                   Text(
                     'A New Password',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -113,7 +111,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: AppColors.textformfieldPrimaryIconColor,
+                        color: AppColors.authFourthColor,
                         size: 20,
                       ),
                     ),
@@ -124,8 +122,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Confirm New Password',
-                    //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
                   //field for Confirm Password
@@ -144,7 +141,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: AppColors.textformfieldPrimaryIconColor,
+                        color: AppColors.authFourthColor,
                         size: 20,
                       ),
                     ),
@@ -155,7 +152,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Verification Code',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
                   CustomTextFormField(
@@ -169,10 +166,14 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         top: 10,
                         bottom: 10,
                       ),
-                      textColor: AppColors.buttonPrimaryTextColor,
                       onPressed: () {},
-                      text: 'Send',
-                      backgroundColor: AppColors.bgPrimaryColor,
+                      backgroundColor: AppColors.authTertiaryColor,
+                      child: Text(
+                        'Send',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyLargeTertiary,
+                      ),
                     ),
                     validator: Validators.validateVericationCode,
                     autoValidate: true,
@@ -191,23 +192,24 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                               _isChecked = value!;
                             });
                           },
-                          activeColor: AppColors
-                              .checkboxActiveColor, // color when checked
+                          activeColor:
+                              AppColors.authTertiaryColor, // color when checked
                           checkColor:
-                              AppColors.checkboxColor, // checkmark color
+                              AppColors.authSixthColor, // checkmark color
                         ),
                       ),
                       SizedBox(width: 10),
                       Text(
                         "I have Read and Agree[Privacy Agreement]",
-                        style: Theme.of(context).textTheme.bodyMediumSecondary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyMediumPrimary,
                       ),
                     ],
                   ),
                   SizedBox(height: 30),
                   //Button for Register
                   CustomElevatedButton(
-                    text: 'Register',
                     onPressed: () {
                       if (!_isChecked) {
                         CustomSnackbar.show(
@@ -225,7 +227,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         );
                       }
                     },
-                    backgroundColor: AppColors.bgPrimaryColor,
+                    backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -234,7 +236,10 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    textColor: AppColors.buttonPrimaryTextColor,
+                    child: Text(
+                      'Register',
+                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
+                    ),
                   ),
                 ],
               ),

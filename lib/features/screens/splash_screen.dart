@@ -1,5 +1,6 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/router/app_roouter.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 
 class SplashScreen extends StatefulWidget {

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
@@ -49,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 14),
                   Text(
                     'Phone Number',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -72,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(width: 4),
                         Icon(
                           FontAwesomeIcons.angleDown,
-                          color: AppColors.textformfieldPrimaryIconColor,
+                          color: AppColors.authFourthColor,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
@@ -94,7 +93,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Text(
                     'Set Password',
                     //!BODY SMALL
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
@@ -114,7 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: AppColors.textformfieldPrimaryIconColor,
+                        color: AppColors.authFourthColor,
                         size: 20,
                       ),
                     ),
@@ -125,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Confirm Password',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
                   //field for Confirm Password
@@ -144,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: AppColors.textformfieldPrimaryIconColor,
+                        color: AppColors.authFourthColor,
                         size: 20,
                       ),
                     ),
@@ -155,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Invite code',
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
                   CustomTextFormField(
@@ -179,16 +178,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _isChecked = value!;
                             });
                           },
-                          activeColor: AppColors
-                              .checkboxActiveColor, // color when checked
+                          activeColor:
+                              AppColors.authTertiaryColor, // color when checked
                           checkColor:
-                              AppColors.checkboxColor, // checkmark color
+                              AppColors.authSixthColor, // checkmark color
                         ),
                       ),
                       SizedBox(width: 10),
                       Text(
                         "I have Read and Agree[Privacy Agreement]",
-                        style: Theme.of(context).textTheme.bodyMediumSecondary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyMediumPrimary,
                       ),
                     ],
                   ),
@@ -196,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 30),
                   //Button for Register
                   CustomElevatedButton(
-                    text: 'Register',
+                    //text: 'Register',
                     onPressed: () {
                       if (!_isChecked) {
                         CustomSnackbar.show(
@@ -213,7 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
                       }
                     },
-                    backgroundColor: AppColors.bgPrimaryColor,
+                    backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -222,7 +223,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    textColor: AppColors.buttonPrimaryTextColor,
+                    child: Text(
+                      'Register',
+                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
+                    ),
                   ),
 
                   SizedBox(height: 20),
@@ -236,7 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         (_) => false,
                       );
                     },
-                    backgroundColor: AppColors.bgSecondaryColor,
+                    backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
                       left: 20,
@@ -245,22 +249,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    textColor: AppColors.buttonSecondaryTextColor,
+                    borderColor: AppColors.authTertiaryColor,
                     child: Text.rich(
                       TextSpan(
                         text: 'I have an Account ',
-                        style: GoogleFonts.roboto(
-                          color: AppColors.bgThirdColor,
-                          fontSize: 16,
-                        ),
+                        style: Theme.of(context).textTheme.authBodyLargePrimary,
                         children: [
                           TextSpan(
                             text: 'Log in',
-                            style: GoogleFonts.roboto(
-                              color: AppColors.buttonSecondaryTextColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeFourth,
                           ),
                         ],
                       ),

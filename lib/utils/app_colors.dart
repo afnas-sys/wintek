@@ -3,13 +3,23 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  //!scaffold
-  //scaffold color
-  static const Color scaffoldBackgroundColor = Color(0xFF0D1B2A);
+  //! ----------------------Authentication-------------------------------
 
-  // !#AppBar
-  //appbar color
-  static const Color appBarColor = Color(0xFF1B263B);
+  static const Color authPrimaryColor = Color(0xFF0D1B2A);
+  static const Color authSecondaryColor = Color(0xFF1B263B);
+  static const Color authTertiaryColor = Color(0xFFFFA82E);
+  static const Color authFourthColor = Color(0xFF5D7593);
+  static const Color authFifthColor = Color(0xFFFFFFFF);
+  static const Color authSixthColor = Color(0xFF000000);
+
+  //!--------------------------------------------------------------------------------------------------------------
+  // //scaffold
+  // //scaffold color
+  // static const Color scaffoldBackgroundColo = Color(0xFF0D1B2A);
+
+  // // !#AppBar
+  // //appbar color
+  // static const Color appB = Color(0xFF1B263B);
 
   //! icon
   //icon color
@@ -31,19 +41,19 @@ class AppColors {
   //! button
   //button text color
   static const Color buttonPrimaryTextColor = Color(0xFF000000);
-  static const Color buttonSecondaryTextColor = Color(0xFFFFA82E);
+  // static const Color buttonSecondaryTextColo = Color(0xFFFFA82E);
   static const Color buttonTertiaryTextColor = Color(0xFFFFFFFF);
 
   //!textformfield
   //textformfield color
-  static const Color textformfieldPrimaryColor = Color(0xFF1B263B);
+  //static const Color textformfieldPrimaryColo = Color(0xFF1B263B);
 
   //textformfield text color
   static const Color textformfieldPrimaryTextColor = Color(0xFF5D7593);
   static const Color textformfieldSecondaryTextColor = Color(0xFFFFFFFF);
 
   //textformfield icon color
-  static const Color textformfieldPrimaryIconColor = Color(0xFF5D7593);
+  //  static const Color textformfieldPrimaryIconColo = Color(0xFF5D7593);
 
   //textformfield border color
   static const Color textformfieldFocuseBorderColor = Color(0xFF5D7593);
@@ -54,8 +64,8 @@ class AppColors {
 
   //!checkbox
   //checkbox color
-  static const Color checkboxActiveColor = Color(0xFFFFA82E);
-  static const Color checkboxColor = Color(0xFF000000);
+  //static const Color checkboxActiveColo = Color(0xFFFFA82E);
+  static const Color checkboxColo = Color(0xFF000000);
 
   //!Snackbar
   //snackbar bg color
@@ -87,7 +97,7 @@ class AppColors {
 
   //!Border
   //border color
-  static const Color borderPrimaryColor = Color(0xFFFFA82E);
+  static const Color borderPrimaryColo = Color(0xFFFFA82E);
   static const Color borderSecondaryColor = Color(0xFF707a82);
   static Color borderThirdColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
   static const Color borderFourthColor = Color(0xFF3DAEFF);
@@ -98,7 +108,7 @@ class AppColors {
   //! Background color
   //bg color
   static const Color bgPrimaryColor = Color(0xFFFFA82E);
-  static const Color bgSecondaryColor = Color(0xFF0D1B2A);
+  //static const Color bgSecondaryColo = Color(0xFF0D1B2A);
   static const Color bgThirdColor = Color(0xFF5D7593);
   static const Color bgFourthColor = Color(0xFF6DA7F4);
   static const Color bgFifthColor = Color(0xFF005F91);
