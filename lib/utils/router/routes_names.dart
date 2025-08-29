@@ -1,7 +1,9 @@
 class RoutesNames {
   static const String loginWithPhone = '/loginwithPhone';
   static const String loginWithEmail = '/loginwithEmail';
-  static const String register = '/register';
+  static const String registerphone = '/registerphone';
+  static const String registeremail = '/registeremail';
+  static const String otp = '/otp';
   static const String forgot = '/forgot';
   static const String aviatorGame = '/aviatorGame';
   //hom

@@ -1,43 +1,48 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/validators.dart';
 
-class LoginEmailScreen extends StatefulWidget {
-  const LoginEmailScreen({super.key});
+class RegisterEmailScreen extends StatefulWidget {
+  const RegisterEmailScreen({super.key});
 
   @override
-  State<LoginEmailScreen> createState() => _LoginLoginEmailScreenScreenState();
+  State<RegisterEmailScreen> createState() => _RegisterEmailScreenState();
 }
 
-class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
-  final _formKey = GlobalKey<FormState>();
+class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
+  final _formkey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool isChecked = false;
+
+  final _nameController = TextEditingController();
+  final _setPassController = TextEditingController();
+  final _confirmPassController = TextEditingController();
+  final _inviteCodeController = TextEditingController();
+
   bool _isObscure = true;
+  bool _isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-        title: 'Log in',
-        subtitle:
-            'Please log in with your phone number or email\nIf you forget your password, contact support',
-        height: 224,
+        title: 'Register',
+        subtitle: 'Please register by phone number or email',
+        height: 200,
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
-              key: _formKey,
+              key: _formkey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -49,7 +54,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                           onPressed: () {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
-                              RoutesNames.loginWithPhone,
+                              RoutesNames.registerphone,
                               (route) => false,
                             );
                           },
@@ -96,7 +101,22 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Email',
+                    'Full Name',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+
+                  //field for Fll name
+                  CustomTextFormField(
+                    controller: _nameController,
+                    hintText: "Enter full name",
+                    keyboardType: TextInputType.name,
+                    validator: Validators.validateFullName,
+                    autoValidate: true,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Email ID',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
@@ -109,17 +129,18 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     validator: Validators.validateEmail,
                     autoValidate: true,
                   ),
+
                   SizedBox(height: 20),
                   Text(
-                    'Password',
+                    'Set Password',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
-                  //field for Password
+                  //field for setting password
                   CustomTextFormField(
-                    controller: _passwordController,
-                    hintText: "Enter Password",
+                    controller: _setPassController,
+                    hintText: "Set Password",
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscure,
                     suffix: IconButton(
@@ -139,9 +160,51 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     validator: Validators.validatePassword,
                     autoValidate: true,
                   ),
-                  SizedBox(height: 20),
 
-                  //Remember pass and Forget pass
+                  SizedBox(height: 20),
+                  Text(
+                    'Confirm Password',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+                  //field for Confirm Password
+                  CustomTextFormField(
+                    controller: _confirmPassController,
+                    hintText: "Confirm Password",
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: _isObscure,
+                    suffix: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                      icon: Icon(
+                        _isObscure
+                            ? Icons.remove_red_eye
+                            : Icons.visibility_off,
+                        color: AppColors.authFourthColor,
+                        size: 20,
+                      ),
+                    ),
+                    validator: Validators.validatePassword,
+                    autoValidate: true,
+                  ),
+
+                  SizedBox(height: 20),
+                  Text(
+                    'Invite code',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+                  CustomTextFormField(
+                    controller: _inviteCodeController,
+                    hintText: 'Invite code',
+                    validator: Validators.validateVericationCode,
+                    autoValidate: true,
+                  ),
+
+                  SizedBox(height: 20),
                   Row(
                     children: [
                       SizedBox(
@@ -149,10 +212,10 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                         width: 24,
                         child: Checkbox(
                           shape: CircleBorder(),
-                          value: isChecked,
+                          value: _isChecked,
                           onChanged: (bool? value) {
                             setState(() {
-                              isChecked = value!;
+                              _isChecked = value!;
                             });
                           },
                           activeColor:
@@ -161,37 +224,33 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                               AppColors.authSixthColor, // checkmark color
                         ),
                       ),
-                      SizedBox(width: 4),
+                      SizedBox(width: 10),
                       Text(
-                        "Remember Password",
+                        "I have Read and Agree[Privacy Agreement]",
                         style: Theme.of(
                           context,
                         ).textTheme.authBodyMediumPrimary,
                       ),
-                      Spacer(),
-
-                      //Forget password button
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, RoutesNames.forgot);
-                        },
-                        child: Text(
-                          "Forget Password",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.authBodyMediumSecondary,
-                        ),
-                      ),
                     ],
                   ),
-                  SizedBox(height: 30),
 
-                  //Login Button
+                  SizedBox(height: 30),
+                  //Button for Register
                   CustomElevatedButton(
-                    //  text: 'Log in',
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        log('Logged in');
+                      if (!_isChecked) {
+                        CustomSnackbar.show(
+                          context,
+                          message: 'Please accept terms and conditions',
+                        );
+                      }
+                      if (_formkey.currentState!.validate()) {
+                        log('message');
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          RoutesNames.loginWithPhone,
+                          (_) => false,
+                        );
                       }
                     },
                     backgroundColor: AppColors.authTertiaryColor,
@@ -204,17 +263,21 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     ),
                     width: double.infinity,
                     child: Text(
-                      'Log in',
+                      'Register',
                       style: Theme.of(context).textTheme.authBodyLargeTertiary,
                     ),
                   ),
+
                   SizedBox(height: 20),
-                  //Register
+
+                  //Button for Login
                   CustomElevatedButton(
-                    hasBorder: true,
-                    borderColor: AppColors.authTertiaryColor,
                     onPressed: () {
-                      Navigator.pushNamed(context, RoutesNames.registerphone);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        RoutesNames.loginWithPhone,
+                        (_) => false,
+                      );
                     },
                     backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
@@ -225,9 +288,20 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    child: Text(
-                      'Register',
-                      style: Theme.of(context).textTheme.authBodyLargeFourth,
+                    borderColor: AppColors.authTertiaryColor,
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'I have an Account ',
+                        style: Theme.of(context).textTheme.authBodyLargePrimary,
+                        children: [
+                          TextSpan(
+                            text: 'Log in',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeFourth,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

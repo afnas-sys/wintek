@@ -11,16 +11,16 @@ import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/validators.dart';
 
-class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+class RegisterPhoneScreen extends StatefulWidget {
+  const RegisterPhoneScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterPhoneScreen> createState() => _RegisterPhoneScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
   final _formkey = GlobalKey<FormState>();
-
+  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _setPassController = TextEditingController();
   final _confirmPassController = TextEditingController();
@@ -45,7 +45,73 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 14),
+                  SizedBox(height: 30),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomElevatedButton(
+                          onPressed: () {},
+                          backgroundColor: AppColors.authTertiaryColor,
+                          borderRadius: 30,
+                          borderColor: AppColors.authTertiaryColor,
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            top: 14,
+                            bottom: 14,
+                          ),
+                          child: Text(
+                            'Log in with Phone',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeTertiary,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: CustomElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              RoutesNames.registeremail,
+                            );
+                          },
+                          backgroundColor: AppColors.authPrimaryColor,
+                          borderRadius: 30,
+                          borderColor: AppColors.authTertiaryColor,
+                          padding: const EdgeInsets.only(
+                            left: 30,
+                            right: 30,
+                            top: 14,
+                            bottom: 14,
+                          ),
+                          child: Text(
+                            'Email Login',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeFourth,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30),
+                  Text(
+                    'Full Name',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+
+                  //field for Fll name
+                  CustomTextFormField(
+                    controller: _nameController,
+                    hintText: "Enter full name",
+                    keyboardType: TextInputType.name,
+                    validator: Validators.validateFullName,
+                    autoValidate: true,
+                  ),
+                  SizedBox(height: 20),
                   Text(
                     'Phone Number',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
@@ -92,7 +158,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   Text(
                     'Set Password',
-                    //!BODY SMALL
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
@@ -197,7 +262,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 30),
                   //Button for Register
                   CustomElevatedButton(
-                    //text: 'Register',
                     onPressed: () {
                       if (!_isChecked) {
                         CustomSnackbar.show(
@@ -213,6 +277,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           (_) => false,
                         );
                       }
+                      Navigator.pushNamed(context, RoutesNames.otp);
                     },
                     backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,

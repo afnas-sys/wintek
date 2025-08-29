@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/utils/app_colors.dart';
 
@@ -14,6 +15,11 @@ class CustomTextFormField extends StatelessWidget {
   final bool enabled;
   final TextAlign textAlign;
   final EdgeInsetsGeometry? contentPadding;
+  final List<TextInputFormatter>? inputFormatters;
+
+  /// ✅ New
+  final void Function(String)? onChanged;
+  final FocusNode? focusNode;
 
   const CustomTextFormField({
     super.key,
@@ -28,12 +34,17 @@ class CustomTextFormField extends StatelessWidget {
     this.enabled = true,
     this.textAlign = TextAlign.start,
     this.contentPadding,
+    this.inputFormatters,
+    this.onChanged, // ✅
+    this.focusNode, // ✅
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode, // ✅
+      onChanged: onChanged, // ✅
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
@@ -42,6 +53,7 @@ class CustomTextFormField extends StatelessWidget {
           ? AutovalidateMode.onUserInteraction
           : AutovalidateMode.disabled,
       textAlign: textAlign,
+      inputFormatters: inputFormatters,
       cursorColor: AppColors.textTertiaryColor,
       style: GoogleFonts.roboto(
         color: AppColors.textformfieldSecondaryTextColor,
@@ -57,12 +69,8 @@ class CustomTextFormField extends StatelessWidget {
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
-
-        // Default fill
         filled: true,
         fillColor: AppColors.authSecondaryColor,
-
-        // Borders
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(52),
           borderSide: BorderSide(

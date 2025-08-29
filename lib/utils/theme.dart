@@ -62,6 +62,11 @@ extension CustomTextStyle on TextTheme {
     fontSize: 28,
     fontWeight: FontWeight.w600,
   );
+  TextStyle get authTitleLarge => GoogleFonts.roboto(
+    color: AppColors.authFifthColor,
+    fontSize: 22,
+    fontWeight: FontWeight.w500,
+  );
 
   TextStyle get authBodyLargePrimary => GoogleFonts.roboto(
     color: AppColors.authFourthColor,

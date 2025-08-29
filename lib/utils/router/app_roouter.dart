@@ -3,7 +3,9 @@ import 'package:page_transition/page_transition.dart';
 import 'package:wintek/features/auth/screens/forgot_password_screen.dart';
 import 'package:wintek/features/auth/screens/login_email_screen.dart';
 import 'package:wintek/features/auth/screens/login_phone_screen.dart';
-import 'package:wintek/features/auth/screens/register_screen.dart';
+import 'package:wintek/features/auth/screens/otp_varification_code_screen.dart';
+import 'package:wintek/features/auth/screens/register_email_screen.dart';
+import 'package:wintek/features/auth/screens/register_phone_screen.dart';
 import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/screens/splash_screen.dart';
@@ -26,9 +28,21 @@ class AppRouter {
           settings,
           PageTransitionType.fade,
         );
-      case RoutesNames.register:
+      case RoutesNames.registerphone:
         return _buildPageTransition(
-          const RegisterScreen(),
+          const RegisterPhoneScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.registeremail:
+        return _buildPageTransition(
+          const RegisterEmailScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.otp:
+        return _buildPageTransition(
+          const OtpVarificationCodeScreen(),
           settings,
           PageTransitionType.fade,
         );

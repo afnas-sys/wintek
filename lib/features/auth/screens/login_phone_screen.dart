@@ -157,6 +157,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                   //field for Password
                   CustomTextFormField(
                     controller: _passwordController,
+
                     hintText: "Enter Password",
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscure,
@@ -256,7 +257,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                   //Register
                   CustomElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RoutesNames.register);
+                      Navigator.pushNamed(context, RoutesNames.registerphone);
                     },
                     backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
