@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
-          color: AppColors.bgHomePimaryColor,
+          color: AppColors.homePimaryColor,
           image: DecorationImage(
             image: AssetImage(AppImages.homeBgImage),
             fit: BoxFit.cover,

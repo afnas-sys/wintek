@@ -34,7 +34,7 @@ class _YearWidgetState extends State<YearWidget> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           decoration: BoxDecoration(
-            color: AppColors.bgThirteenthColor,
+            color: AppColors.aviatorSixthColor,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
@@ -47,7 +47,7 @@ class _YearWidgetState extends State<YearWidget> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.bgTwentySecondColor,
+                      color: AppColors.aviatorTertiaryColor,
                       borderRadius: BorderRadius.circular(100),
                     ),
                   ),
@@ -55,7 +55,7 @@ class _YearWidgetState extends State<YearWidget> {
                   //User name
                   Text(
                     item['user']!,
-                    style: Theme.of(context).textTheme.bodyMediumPrimary,
+                    style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
                   ),
                 ],
               ),
@@ -66,7 +66,9 @@ class _YearWidgetState extends State<YearWidget> {
                     children: [
                       Text(
                         'Cash out:  ',
-                        style: Theme.of(context).textTheme.bodySmallSecondary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.aviatorBodyMediumSecondary,
                       ),
                       //! container for cash out- 100000
                       Container(
@@ -79,12 +81,14 @@ class _YearWidgetState extends State<YearWidget> {
                           right: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.bgTwentythColor,
+                          color: AppColors.aviatorTwentyFifthColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
                           item['cashout']!,
-                          style: Theme.of(context).textTheme.bodySmallPrimary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorbodySmallPrimary,
                         ),
                       ),
                     ],
@@ -95,7 +99,9 @@ class _YearWidgetState extends State<YearWidget> {
                     children: [
                       Text(
                         '         Win:  ',
-                        style: Theme.of(context).textTheme.bodySmallSecondary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.aviatorBodyMediumSecondary,
                       ),
                       //! container for win- 100000
                       Container(
@@ -108,12 +114,14 @@ class _YearWidgetState extends State<YearWidget> {
                           right: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.bgTwentythColor,
+                          color: AppColors.aviatorTwentyFifthColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
                           item['win']!,
-                          style: Theme.of(context).textTheme.bodySmallPrimary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorbodySmallPrimary,
                         ),
                       ),
                     ],

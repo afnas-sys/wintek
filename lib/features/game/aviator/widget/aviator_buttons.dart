@@ -34,11 +34,11 @@ class _AviatorButtonsState extends State<AviatorButtons> {
   Color _getColor(String text) {
     final value = double.tryParse(text.replaceAll("x", "")) ?? 0;
     if (value < 2) {
-      return AppColors.bgFifthColor;
+      return AppColors.aviatorSeventhColor;
     } else if (value < 10) {
-      return AppColors.bgSixthColor;
+      return AppColors.aviatorEighthColor;
     } else {
-      return AppColors.bgSeventhColor;
+      return AppColors.aviatorNinthColor;
     }
   }
 
@@ -54,7 +54,10 @@ class _AviatorButtonsState extends State<AviatorButtons> {
         borderRadius: BorderRadius.circular(30),
       ),
       alignment: Alignment.center,
-      child: Text(text, style: Theme.of(context).textTheme.bodySmallPrimary),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+      ),
     );
   }
 
@@ -73,10 +76,10 @@ class _AviatorButtonsState extends State<AviatorButtons> {
             ElevatedButton(
               onPressed: () => setState(() => showBalance = !showBalance),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.bgEighthColor,
+                backgroundColor: AppColors.aviatorTenthColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
-                  side: BorderSide(color: AppColors.borderSecondaryColor),
+                  side: BorderSide(color: AppColors.aviatorEleventhColor),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 minimumSize: const Size(55, 30),
@@ -88,7 +91,7 @@ class _AviatorButtonsState extends State<AviatorButtons> {
                   const Icon(
                     FontAwesomeIcons.clock,
                     size: 16,
-                    color: AppColors.iconPrimaryColor,
+                    color: AppColors.aviatorTertiaryColor,
                   ),
                   const SizedBox(width: 4),
                   Icon(
@@ -96,7 +99,7 @@ class _AviatorButtonsState extends State<AviatorButtons> {
                         ? FontAwesomeIcons.angleUp
                         : FontAwesomeIcons.angleDown,
                     size: 16,
-                    color: AppColors.iconPrimaryColor,
+                    color: AppColors.aviatorTertiaryColor,
                   ),
                 ],
               ),

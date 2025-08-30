@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
 import 'package:wintek/utils/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
@@ -78,7 +77,6 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                       SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
-                          //text: 'Email Login',
                           onPressed: () {},
                           backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,

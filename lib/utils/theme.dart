@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/utils/app_colors.dart';
 
 ThemeData theme = ThemeData(
-  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.textFifthColor),
+  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.aviatorSixteenthColor),
   //! scaffold
   scaffoldBackgroundColor: AppColors.authPrimaryColor,
 
@@ -104,96 +104,71 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
+  //!-------Aviator--------
+
+  TextStyle get aviatorDisplayLarge => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 70,
+    fontWeight: FontWeight.w600,
+  );
+
+  TextStyle get aviatorHeadlineSmall => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+  );
+
+  TextStyle get aviatorBodyTitleMdeium => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get aviatorBodyLargePrimary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get aviatorBodyLargeSecondary => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get aviatorBodyMediumPrimary => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get aviatorBodyMediumSecondary => GoogleFonts.roboto(
+    color: AppColors.aviatorSixteenthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get aviatorbodySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get aviatorbodySmallSecondary => GoogleFonts.roboto(
+    color: AppColors.aviatorTwentyFourthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
   //!-----------------------------------------------------------------------------------------------------------
 
   //!AppBar
 
   //! Body
-  //large
-  TextStyle get bodyLargeTitle3Primary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 28,
-    fontWeight: FontWeight.w500,
-  );
-
-  //medium
-  TextStyle get bodyMediumTitle3Primary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 24,
-    fontWeight: FontWeight.w600,
-  );
-
-  TextStyle get bodyMediumTitle4Primary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 24,
-    fontWeight: FontWeight.w500,
-  );
-
-  TextStyle get bodyMedium18Title3Primary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-  );
-  //small
-
-  TextStyle get bodyMediumPrimary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-  );
-
-  TextStyle get bodyMediumPrimaryBold => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-  );
-
-  // TextStyle get bodyMediumSecondary => GoogleFonts.roboto(
-  //   color: AppColors.textSecondaryColor,
-  //   fontSize: 16,
-  //   fontWeight: FontWeight.w400,
-  // );
-
-  // TextStyle get bodyMediumTertiary => GoogleFonts.roboto(
-  //   color: AppColors.textTertiaryColor,
-  //   fontSize: 16,
-  //   fontWeight: FontWeight.w400,
-  // );
 
   TextStyle get bodySmallPrimaryBold => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
     fontSize: 14,
-    fontWeight: FontWeight.w400,
-  );
-
-  TextStyle get bodySmallSecondary => GoogleFonts.roboto(
-    color: AppColors.textFifthColor,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-  );
-
-  TextStyle get bodySmallSecondaryBold => GoogleFonts.roboto(
-    color: AppColors.textFourthColor,
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-  );
-
-  TextStyle get bodySmallPrimary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-  );
-
-  TextStyle get bodySmallTertiary => GoogleFonts.roboto(
-    color: AppColors.textSixthColor,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-  );
-
-  //Nav bar Label
-  TextStyle get navBarSelectedLabel => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
-    fontSize: 12,
     fontWeight: FontWeight.w400,
   );
 }

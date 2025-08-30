@@ -36,11 +36,15 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                   children: [
                     Text(
                       'Round ID: 436963',
-                      style: Theme.of(context).textTheme.bodySmallPrimary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorbodySmallPrimary,
                     ),
                     Text(
                       'Round ID: 436963',
-                      style: Theme.of(context).textTheme.bodySmallPrimary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorbodySmallPrimary,
                     ),
                   ],
                 ),
@@ -53,12 +57,12 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                 SizedBox(height: 20),
                 CustomTabBar(
                   tabs: ['All Bets', 'My Bets', 'Top'],
-                  backgroundColor: AppColors.bgSeventeenthColor,
+                  backgroundColor: AppColors.aviatorTwentiethColor,
                   borderRadius: 52,
                   borderWidth: 1,
-                  borderColor: AppColors.borderThirdColor,
-                  selectedTabColor: AppColors.tabBarSelectedColor,
-                  unselectedTextColor: AppColors.textPrimaryColor,
+                  borderColor: AppColors.aviatorFifteenthColor,
+                  selectedTabColor: AppColors.aviatorFifteenthColor,
+                  unselectedTextColor: AppColors.aviatorTertiaryColor,
                   tabViews: [AllBets(), MyBets(), Top()],
                 ),
               ],

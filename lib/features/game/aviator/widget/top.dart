@@ -18,19 +18,19 @@ class _TopState extends State<Top> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.bgTenthColor,
+        color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
           CustomTabBar(
             tabs: ['Day', 'Month', 'Year'],
-            backgroundColor: AppColors.bgSeventeenthColor,
+            backgroundColor: AppColors.aviatorTwentiethColor,
             borderRadius: 52,
             borderWidth: 1,
-            borderColor: AppColors.borderThirdColor,
-            selectedTabColor: AppColors.tabBarSelectedColor,
-            unselectedTextColor: AppColors.textPrimaryColor,
+            borderColor: AppColors.aviatorFifteenthColor,
+            selectedTabColor: AppColors.aviatorFifteenthColor,
+            unselectedTextColor: AppColors.aviatorTertiaryColor,
             tabViews: [DayWidget(), MonthWidget(), YearWidget()],
           ),
         ],
