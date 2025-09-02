@@ -14,4 +14,8 @@ class RoutesNames {
   static const String splash = '/splash';
   //welcome
   static const String welcome = '/welcome';
+
+  //card jackpot game
+
+  static const String cardJackpot = '/cardJackpot';
 }

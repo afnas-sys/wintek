@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
+import 'package:wintek/features/game/card_jackpot/presentation/widgets/button.dart';
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/theme.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class BetContainer extends StatefulWidget {
   const BetContainer({super.key});

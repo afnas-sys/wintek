@@ -19,4 +19,12 @@ class AppImages {
 
   //home appbar image
   static const String homeAppbarImage = 'assets/images/user.png';
+  //
+
+  // Card Jackpot Game Images
+
+  static const String wallet = 'assets/images/wallet.png';
+  static const String cardImage = 'assets/images/card.png';
+  static const String kingImage = 'assets/images/king.png';
+  static const String rupeeImage = 'assets/images/rupee.png';
 }

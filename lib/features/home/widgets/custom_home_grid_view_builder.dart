@@ -18,7 +18,7 @@ class _CustomHomeGridViewBuilderState extends State<CustomHomeGridViewBuilder> {
     {'image': AppImages.homeSpinToWinImage, 'screen': RoutesNames.aviatorGame},
     {
       'image': AppImages.homecardJackPotImage,
-      'screen': RoutesNames.aviatorGame,
+      'screen': RoutesNames.cardJackpot,
     },
   ];
 

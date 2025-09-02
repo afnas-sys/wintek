@@ -7,6 +7,8 @@ import 'package:wintek/features/auth/screens/otp_varification_code_screen.dart';
 import 'package:wintek/features/auth/screens/register_email_screen.dart';
 import 'package:wintek/features/auth/screens/register_phone_screen.dart';
 import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
+import 'package:wintek/features/game/card_jackpot/presentation/screens/card_jackpot_screen.dart';
+
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/screens/splash_screen.dart';
 import 'package:wintek/features/screens/welcome_screen.dart';
@@ -82,6 +84,15 @@ class AppRouter {
           settings,
           PageTransitionType.fade,
         );
+      // card jackpot navigation
+
+      case RoutesNames.cardJackpot:
+        return _buildPageTransition(
+          const CardJackpotScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+
       default:
         return _buildPageTransition(
           const LoginPhoneScreen(),

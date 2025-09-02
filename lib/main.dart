@@ -1,27 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/router/app_roouter.dart';
-import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/app.dart';
 
 void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      //initialRoute: RoutesNames.bottombar,
-      initialRoute: RoutesNames.loginWithPhone,
-      // initialRoute: RoutesNames.loginWithPhone,
-      onGenerateRoute: AppRouter.generateRoute,
-      title: 'Winket',
-      theme: theme,
-      // home: dummy(),
-    );
-  }
+  runApp(ProviderScope(child: const MyApp()));
 }
