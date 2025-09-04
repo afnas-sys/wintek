@@ -4,18 +4,19 @@ import 'package:wintek/features/game/card_jackpot/domain/game_round/round_model.
 final betProvider = StateNotifierProvider<BetNotifier, List<BetModel>>(
   (ref) => BetNotifier(ref),
 );
-// final currentRoundIdProvider = StateProvider<String>((ref) => '');
 final currentBetProvider = StateProvider<BetModel?>((ref) => null);
+
+final currentBetIdProvider = StateProvider<String>((ref) => '');
 
 class BetNotifier extends StateNotifier<List<BetModel>> {
   final Ref ref;
   BetNotifier(this.ref) : super([]);
 
   void createNewRound() {
-    final newId = DateTime.now().millisecondsSinceEpoch.toString();
-    final currentRoundId = newId.substring(newId.length - 7);
-    final betRound = BetModel(id: currentRoundId);
-    // ref.read(currentRoundIdProvider.notifier).state = currentRoundId;
+    final millisecond = DateTime.now().millisecondsSinceEpoch.toString();
+    final newBetId = millisecond.substring(millisecond.length - 7);
+    ref.read(currentBetIdProvider.notifier).state = newBetId;
+    final betRound = BetModel(id: newBetId);
     ref.read(currentBetProvider.notifier).state = betRound;
   }
 
@@ -33,7 +34,6 @@ class BetNotifier extends StateNotifier<List<BetModel>> {
     state = [...state, confirmed];
   }
 
-  /// change status when the time ends to sucess or failed
   void updateStatus() {
     final current = ref.read(currentBetProvider);
     final id = current?.id;
@@ -41,7 +41,7 @@ class BetNotifier extends StateNotifier<List<BetModel>> {
 
     state = [
       for (final round in state)
-        if (round.id == id) round.copyWith(status: 'success') else round,
+        if (round.id == id) round.copyWith(status: 'failed') else round,
     ];
   }
 }

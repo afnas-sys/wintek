@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //initialRoute: RoutesNames.bottombar,
-      initialRoute: RoutesNames.home,
+      initialRoute: RoutesNames.bottombar,
       // initialRoute: RoutesNames.loginWithPhone,
       onGenerateRoute: AppRouter.generateRoute,
       title: 'Winket',

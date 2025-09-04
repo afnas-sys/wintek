@@ -44,6 +44,7 @@ class MyHistoryTile extends ConsumerWidget {
       ),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           AppText(
             fontSize: 12,

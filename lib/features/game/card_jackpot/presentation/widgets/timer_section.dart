@@ -11,8 +11,7 @@ class TimerSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timer = ref.watch(timerProvider);
-    final currentBetRound = ref.watch(currentBetProvider);
-    // final idProvider = ref.watch(currentRoundIdProvider);
+    final currentBetId = ref.watch(currentBetIdProvider);
 
     final minute = timer.inMinutes.remainder(60).toString().padLeft(2, '0');
     final second = timer.inSeconds.remainder(60).toString().padLeft(2, '0');
@@ -39,7 +38,7 @@ class TimerSection extends ConsumerWidget {
               AppText(text: 'How to play', fontSize: 12),
               SizedBox(height: 5),
               AppText(
-                text: currentBetRound?.id ?? 'NO ID',
+                text: currentBetId,
                 fontSize: 20,
                 fontWeight: FontWeight.w500,
               ),

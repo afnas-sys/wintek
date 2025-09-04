@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/button.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider/wallet_provider.dart';
 
 import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/app_images.dart';
 
-class WalletContainer extends StatelessWidget {
+class WalletContainer extends ConsumerWidget {
   const WalletContainer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final num walletBalance = ref.watch(walletBalanceAmountProvider);
     return Container(
       width: MediaQuery.of(context).size.width,
-      // height: 126,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColors.cardSecondPrimaryColor,
@@ -54,15 +56,15 @@ class WalletContainer extends StatelessWidget {
                   ],
                 ),
                 Row(
+                  spacing: 10,
                   children: [
                     AppText(
-                      text: '₹5000',
+                      text: '₹ $walletBalance',
                       fontSize: 22,
                       fontWeight: FontWeight.w500,
                     ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(
+                    InkWell(
+                      child: Icon(
                         Icons.autorenew,
                         color: AppColors.cardUnfocusedColor,
                       ),
