@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class BalanceContainer extends StatelessWidget {
   const BalanceContainer({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 ThemeData theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: AppColors.aviatorSixteenthColor),
@@ -55,7 +55,7 @@ extension CustomTextStyle on TextTheme {
   static const caption = TextStyle(fontSize: 12, fontWeight: FontWeight.w400);
   */
 
-  //!-------Authentication--------
+  //!_________________________________________Authentication______________________________________
 
   TextStyle get authHeadlineMedium => GoogleFonts.roboto(
     color: AppColors.authFifthColor,
@@ -104,7 +104,7 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
-  //!-------Aviator--------
+  //!________________________________Aviator_____________________________________
 
   TextStyle get aviatorDisplayLarge => GoogleFonts.roboto(
     color: AppColors.aviatorTertiaryColor,
@@ -160,15 +160,79 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
-  //!-----------------------------------------------------------------------------------------------------------
+  //!________________________________Home_____________________________________
 
-  //!AppBar
-
-  //! Body
-
-  TextStyle get bodySmallPrimaryBold => GoogleFonts.roboto(
+  TextStyle get homeSmallPrimary => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
+
+  //!________________________________Wallet_____________________________________
+
+  TextStyle get walletDisplaySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.walletEighthColor,
+    fontSize: 34,
+    fontWeight: FontWeight.w500,
+  );
+  TextStyle get walletTitleMediumPrimary => GoogleFonts.roboto(
+    color: AppColors.walletEighthColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
+  TextStyle get walletBodyMediumPrimary => GoogleFonts.roboto(
+    color: AppColors.walletEighthColor,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get walletBodyMediumSecondary => GoogleFonts.roboto(
+    color: AppColors.walletSeventeenthColor,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get walletSmallPrimary => GoogleFonts.roboto(
+    color: AppColors.walletEighthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get walletSmallSecondary => GoogleFonts.roboto(
+    color: AppColors.walletSeventhColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get walletBodySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.walletTwelfthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get walletBodySmallSecondary => GoogleFonts.roboto(
+    color: AppColors.walletEighteenthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
+  /*
+  !Use it for reference for Naming
+   static const displayLarge = TextStyle(fontSize: 57, fontWeight: FontWeight.bold);
+  static const displayMedium = TextStyle(fontSize: 45, fontWeight: FontWeight.w600);
+  static const displaySmall = TextStyle(fontSize: 36, fontWeight: FontWeight.w600);
+
+  static const headlineLarge = TextStyle(fontSize: 32, fontWeight: FontWeight.w600);
+  static const headlineMedium = TextStyle(fontSize: 28, fontWeight: FontWeight.w500);
+  static const headlineSmall = TextStyle(fontSize: 24, fontWeight: FontWeight.w500);
+
+   // Titles
+  static const titleLarge = TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+  static const titleMedium = TextStyle(fontSize: 18, fontWeight: FontWeight.w600);
+  static const titleSmall = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+
+  // Body
+  static const bodyLarge = TextStyle(fontSize: 16, fontWeight: FontWeight.normal);
+  static const bodyMedium = TextStyle(fontSize: 14, fontWeight: FontWeight.normal);
+  static const bodySmall = TextStyle(fontSize: 12, fontWeight: FontWeight.normal);
+
+  // Special
+  static const button = TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
+  static const caption = TextStyle(fontSize: 12, fontWeight: FontWeight.w400);
+  */
 }

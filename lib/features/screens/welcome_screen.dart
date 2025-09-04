@@ -138,7 +138,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   TextButton(
                     onPressed: () {
                       // Handle skip action (e.g., navigate to main screen)
-                      Navigator.pushReplacementNamed(context, RoutesNames.home);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        RoutesNames.bottombar,
+                      );
                     },
                     child: const Text(
                       'Skip',
@@ -158,7 +161,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           onPressed: () {
                             Navigator.pushReplacementNamed(
                               context,
-                              RoutesNames.home,
+                              RoutesNames.bottombar,
                             );
                           },
                           child: Row(
@@ -181,26 +184,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             ],
                           ),
                         )
-                      // ElevatedButton(
-                      //     onPressed: () {
-                      //       // Handle next action on last screen (e.g., navigate to main screen)
-                      //       Navigator.pushReplacementNamed(context, '/home');
-                      //     },
-                      //     style: ElevatedButton.styleFrom(
-                      //       backgroundColor: Color(0xFF6041FF),
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(8),
-                      //       ),
-                      //     ),
-                      //     child: Text(
-                      //       'Get Started',
-                      //       style: GoogleFonts.roboto(
-                      //         fontSize: 16,
-                      //         fontWeight: FontWeight.w500,
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   )
                       : Container(
                           height: 52,
                           width: 52,

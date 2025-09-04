@@ -19,4 +19,10 @@ class AppImages {
 
   //home appbar image
   static const String homeAppbarImage = 'assets/images/user.png';
+
+  static const String depositIcon = 'assets/images/deposit_icon.png';
+  static const String withdrawIcon = 'assets/images/withdraw_icon.png';
+  static const String linearSetting = 'assets/images/linear_setting.png';
+  static const String send = 'assets/images/send.png';
+  static const String welcomeBonus = 'assets/images/welcome_bonus.png';
 }

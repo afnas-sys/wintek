@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
 
 class DayWidget extends StatefulWidget {
   const DayWidget({super.key});

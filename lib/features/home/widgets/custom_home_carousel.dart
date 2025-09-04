@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class CustomHomeCarousel extends StatefulWidget {
   const CustomHomeCarousel({super.key});
@@ -68,8 +69,8 @@ class _CustomHomeCarouselState extends State<CustomHomeCarousel> {
                   width: isActive ? 20 : 8,
                   decoration: BoxDecoration(
                     color: isActive
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.4),
+                        ? AppColors.homeSeventhColor
+                        : AppColors.homeEighthColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 );

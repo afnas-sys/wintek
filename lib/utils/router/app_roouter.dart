@@ -10,6 +10,7 @@ import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/screens/splash_screen.dart';
 import 'package:wintek/features/screens/welcome_screen.dart';
+import 'package:wintek/features/wallet/view/wallet_screen.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_bottom_bar.dart';
 
@@ -82,6 +83,13 @@ class AppRouter {
           settings,
           PageTransitionType.fade,
         );
+      case RoutesNames.wallet:
+        return _buildPageTransition(
+          const WalletScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+
       default:
         return _buildPageTransition(
           const LoginPhoneScreen(),

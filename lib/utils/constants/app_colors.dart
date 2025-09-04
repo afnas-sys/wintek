@@ -62,6 +62,51 @@ class AppColors {
   ).withOpacity(14 / 100);
   static Color homeThirdColor = Color(0xFF6041FF).withOpacity(20 / 100);
   static Color homeFourththColor = Color(0xFF6041FF).withOpacity(40 / 100);
+  static const Color homeFivethColor = Color(0xFF7EBF05);
+  static const Color homeSxithColor = Color(0xFF29BF05);
+  static const Color homeSeventhColor = Color(0xFFFFFFFF);
+  static final Color homeEighthColor = Color(0xFFFFFFFF).withOpacity(40 / 100);
+
+  //!_____________________________________Wallet_______________________________________
+  static const Color walletPrimaryColor = Color(0xFF140A2D);
+  static const Color walletSecondaryColor = Color(0xFF6647ED);
+  static final Color walletThirdColor = Color(0xFF6647ED).withOpacity(0.5);
+  static const Color walletFourthColor = Color(0xFF271777);
+  static const Color walletFifthColor = Color(0xFFFFA500);
+  static const Color walletSixthColor = Colors.transparent;
+  static const Color walletSeventhColor = Color(0XFF000000);
+  static const Color walletEighthColor = Color(0XFFFFFFFF);
+  static final Color walletNinthColor = Color(0XFFFFFFFF).withOpacity(40 / 100);
+  static final Color walletTenthColor = Color(0xFF6647ED).withOpacity(20 / 100);
+  static final Color walletEleventhColor = Color(
+    0xFF6647ED,
+  ).withOpacity(30 / 100);
+  static final Color walletTwelfthColor = Color(
+    0XFFFFFFFF,
+  ).withOpacity(50 / 100);
+  static final Color walletThirteenthColor = Color(
+    0XFF6041FF,
+  ).withOpacity(10 / 100);
+  static final Color walletFourteenthColor = Color(
+    0XFFFFFFFF,
+  ).withOpacity(20 / 100);
+  static final Color walletFifteenthColor = Color(
+    0XFFE5E5E5,
+  ).withOpacity(10 / 100);
+  static final Color walletSixteenthColor = Color(
+    0XFFFD0700,
+  ).withOpacity(20 / 100);
+  static const Color walletSeventeenthColor = Color(0XFFFD0700);
+  static const Color walletEighteenthColor = Color(0XFFF98500);
+
+  //!_____________________________________Offers_______________________________________
+
+  static const Color offersPrimaryColor = Color(0XFF140A2D);
+
+  //!_____________________________________Profile_______________________________________
+
+  static const Color profilePrimaryColor = Color(0XFF140A2D);
+  static const Color profileSecondaryColor = Color(0XFF271777);
 
   //! -----------------------------------------------------------------------------------------------------------------------------
 
@@ -76,7 +121,7 @@ class AppColors {
   static const Color textformfieldSecondaryTextColor = Color(0xFFFFFFFF);
 
   //textformfield border color
-  static const Color textformfieldFocuseBorderColor = Color(0xFF5D7593);
+  //  static const Color textformfieldFocuseBorderColor = Color(0xFF5D7593);
   static const Color textformfieldActiveBorderColor = Color(0xFF0D1B2A);
 
   //textformfield error border color
@@ -94,18 +139,6 @@ class AppColors {
   static const Color borderSecondaryColor = Color(0xFF707a82);
   static Color borderThirdColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
   //static Color borderSeventhColor = Color(0xFF6041FF).withOpacity(40 / 100);
-
-  //! Background color
-  // Home
-  //static const Color bgHomePimaryColor = Color(0xFF140A2D);
-  // static final Color bgHomeSecondaryColor = Color(
-  //   0xff6041FF,
-  // ).withOpacity(14 / 100);
-  //  static Color bgHomeThirdColor = Color(0xFF6041FF).withOpacity(20 / 100);
-
-  //Home switch gradient color
-  static const Color homeSwitchGradientPrimaryColor = Color(0xFF7EBF05);
-  static const Color homeSwitchGradientSecondaryColor = Color(0xFF29BF05);
 
   //! Bottom Bar
 

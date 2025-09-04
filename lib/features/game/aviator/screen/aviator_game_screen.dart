@@ -7,8 +7,8 @@ import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
 import 'package:wintek/features/game/aviator/widget/graph_container.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
 
 class AviatorGameScreen extends StatefulWidget {
   const AviatorGameScreen({super.key});
