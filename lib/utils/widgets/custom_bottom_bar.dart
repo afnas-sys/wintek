@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
-import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/features/offers/view/offers_screen.dart';
+import 'package:wintek/features/profile/view/profile_screen.dart';
+import 'package:wintek/features/wallet/view/wallet_screen.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class CustomBottomBar extends StatefulWidget {
   const CustomBottomBar({super.key});
@@ -12,7 +15,12 @@ class CustomBottomBar extends StatefulWidget {
 
 class _CustomBottomBarState extends State<CustomBottomBar> {
   int _currentIndex = 0;
-  List<Widget> bodys = [HomeScreen(), HomeScreen(), HomeScreen(), HomeScreen()];
+  List<Widget> bodys = [
+    HomeScreen(),
+    WalletScreen(),
+    OffersScreen(),
+    ProfileScreen(),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

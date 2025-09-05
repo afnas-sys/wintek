@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/card_jackpot/presentation/widgets/button.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/features/game/card_jackpot/providers/wallet_provider/wallet_provider.dart';
 
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/app_images.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class WalletContainer extends ConsumerWidget {
   const WalletContainer({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
-import 'package:wintek/features/game/card_jackpot/presentation/widgets/button.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class OtpVarificationCodeScreen extends StatefulWidget {
   const OtpVarificationCodeScreen({super.key});

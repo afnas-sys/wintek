@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/app_images.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/utils/constants/theme.dart';
 
 class GraphContainer extends StatefulWidget {
   const GraphContainer({super.key});
@@ -86,7 +86,7 @@ class _GraphContainerState extends State<GraphContainer>
           width: double.infinity,
           height: 294,
           decoration: BoxDecoration(
-            color: AppColors.bgSixteenthColor,
+            color: AppColors.aviatorTwelfthColor,
             borderRadius: BorderRadius.circular(20),
             image: DecorationImage(
               image: AssetImage(AppImages.graphContainerBgImage),
@@ -100,7 +100,7 @@ class _GraphContainerState extends State<GraphContainer>
                 height: 50,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: AppColors.bgTwentyFifthColor,
+                  color: AppColors.aviatorThirteenthColor,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
@@ -109,9 +109,7 @@ class _GraphContainerState extends State<GraphContainer>
                 child: Center(
                   child: Text(
                     'FUN MODE',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium18Title3Primary,
+                    style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
                   ),
                 ),
               ),
@@ -141,7 +139,7 @@ class _GraphContainerState extends State<GraphContainer>
                                   return Text(
                                     '•',
                                     style: const TextStyle(
-                                      color: AppColors.graphTextYaxisColor,
+                                      color: AppColors.aviatorGraphYaxisColor,
                                       fontSize: 20,
                                     ),
                                   );
@@ -156,7 +154,7 @@ class _GraphContainerState extends State<GraphContainer>
                                   return Text(
                                     '•',
                                     style: const TextStyle(
-                                      color: AppColors.graphTextXaxisColor,
+                                      color: AppColors.aviatorGraphXaxisColor,
                                       fontSize: 20,
                                     ),
                                   );
@@ -173,14 +171,14 @@ class _GraphContainerState extends State<GraphContainer>
                           borderData: FlBorderData(
                             show: true,
                             border: Border.all(
-                              color: AppColors.borderThirdColor,
+                              color: AppColors.aviatorGraphBorderColor,
                             ),
                           ),
                           lineBarsData: [
                             LineChartBarData(
                               spots: visibleSpots,
                               isCurved: true,
-                              color: AppColors.graphBarColor,
+                              color: AppColors.aviatorGraphBarColor,
                               barWidth: 5,
                               isStrokeCapRound: true,
                               dotData: FlDotData(show: false),
@@ -188,8 +186,8 @@ class _GraphContainerState extends State<GraphContainer>
                                 show: true,
                                 gradient: LinearGradient(
                                   colors: [
-                                    AppColors.graphBarAreaColor,
-                                    AppColors.graphBarAreaColor2,
+                                    AppColors.aviatorGraphBarAreaColor1,
+                                    AppColors.aviatorGraphBarAreaColor2,
                                   ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
@@ -204,12 +202,9 @@ class _GraphContainerState extends State<GraphContainer>
                       Center(
                         child: Text(
                           "1.16X",
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                fontSize: 70,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorDisplayLarge,
                         ),
                       ),
 

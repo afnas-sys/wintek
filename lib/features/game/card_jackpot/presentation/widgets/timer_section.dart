@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/features/game/card_jackpot/providers/game_round/game_round_provider.dart';
 import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
-import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class TimerSection extends ConsumerWidget {
   const TimerSection({super.key});

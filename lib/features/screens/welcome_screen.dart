@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wintek/features/game/card_jackpot/presentation/widgets/button.dart';
 import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -138,7 +138,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   TextButton(
                     onPressed: () {
                       // Handle skip action (e.g., navigate to main screen)
-                      Navigator.pushReplacementNamed(context, RoutesNames.home);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        RoutesNames.bottombar,
+                      );
                     },
                     child: const Text(
                       'Skip',
@@ -158,7 +161,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           onPressed: () {
                             Navigator.pushReplacementNamed(
                               context,
-                              RoutesNames.home,
+                              RoutesNames.bottombar,
                             );
                           },
                           child: Row(
@@ -181,26 +184,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             ],
                           ),
                         )
-                      // ElevatedButton(
-                      //     onPressed: () {
-                      //       // Handle next action on last screen (e.g., navigate to main screen)
-                      //       Navigator.pushReplacementNamed(context, '/home');
-                      //     },
-                      //     style: ElevatedButton.styleFrom(
-                      //       backgroundColor: Color(0xFF6041FF),
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(8),
-                      //       ),
-                      //     ),
-                      //     child: Text(
-                      //       'Get Started',
-                      //       style: GoogleFonts.roboto(
-                      //         fontSize: 16,
-                      //         fontWeight: FontWeight.w500,
-                      //         color: Colors.white,
-                      //       ),
-                      //     ),
-                      //   )
                       : Container(
                           height: 52,
                           width: 52,

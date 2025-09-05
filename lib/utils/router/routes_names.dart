@@ -18,4 +18,6 @@ class RoutesNames {
   //card jackpot game
 
   static const String cardJackpot = '/cardJackpot';
+  //wallet
+  static const String wallet = '/walletDeposit';
 }

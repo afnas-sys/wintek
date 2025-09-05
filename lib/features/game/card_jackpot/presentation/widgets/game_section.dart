@@ -4,9 +4,9 @@ import 'package:wintek/features/game/card_jackpot/presentation/widgets/bottum_hi
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/cards_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/timer_section.dart';
 import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
-import 'package:wintek/utils/app_colors.dart';
 import 'package:wintek/utils/app_icons.dart';
 import 'package:wintek/utils/app_strings.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class GameTabs extends ConsumerStatefulWidget {
   const GameTabs({super.key});

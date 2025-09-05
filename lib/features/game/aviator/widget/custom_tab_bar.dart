@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class CustomTabBar extends StatefulWidget {
   final List<String> tabs;
@@ -16,7 +16,7 @@ class CustomTabBar extends StatefulWidget {
     super.key,
     required this.tabs,
     required this.tabViews,
-    this.backgroundColor = AppColors.bgSeventeenthColor,
+    this.backgroundColor = AppColors.aviatorTwentiethColor,
     this.borderRadius = 16,
     this.borderWidth = 1,
     this.borderColor = AppColors.borderSecondaryColor,
@@ -65,7 +65,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? widget.selectedTabColor
-                          : Colors.transparent,
+                          : AppColors.aviatorTwentiethColor,
                       borderRadius: BorderRadius.circular(widget.borderRadius),
                     ),
                     alignment: Alignment.center,

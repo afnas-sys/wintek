@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:wintek/features/game/card_jackpot/domain/game_round/round_model.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/app_images.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/app_images.dart';
 
 class MyHistoryTile extends ConsumerWidget {
   final BetModel bet;
