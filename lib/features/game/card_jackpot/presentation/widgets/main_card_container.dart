@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/bottum_sheet.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/utils/app_strings.dart';
+import 'package:wintek/utils/constants/app_strings.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/app_images.dart';
 
