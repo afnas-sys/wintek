@@ -210,6 +210,7 @@ extension CustomTextStyle on TextTheme {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+  //!________________________________Offers_____________________________________
 
   /*
   !Use it for reference for Naming
