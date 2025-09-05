@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class BetContainer extends StatefulWidget {
@@ -52,9 +52,9 @@ class _BetContainerState extends State<BetContainer> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.bgTenthColor,
+        color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.borderThirdColor, width: 1),
+        border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
       child: Column(
         children: [
@@ -71,23 +71,27 @@ class _BetContainerState extends State<BetContainer> {
                   children: {
                     0: Text(
                       'Bet',
-                      style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumPrimary,
                     ),
                     1: Text(
                       'Auto',
-                      style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumPrimary,
                     ),
                   },
                   decoration: BoxDecoration(
-                    color: AppColors.bgTenthColor,
+                    color: AppColors.aviatorFourteenthColor,
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
-                      color: AppColors.borderThirdColor,
+                      color: AppColors.aviatorFifteenthColor,
                       width: 1,
                     ),
                   ),
                   thumbDecoration: BoxDecoration(
-                    color: AppColors.switchThumbColor,
+                    color: AppColors.aviatorFifteenthColor,
                     borderRadius: BorderRadius.circular(30),
                   ),
 
@@ -101,8 +105,8 @@ class _BetContainerState extends State<BetContainer> {
               //! TOP RIGHT SIDED BUTTON '-'
               CustomElevatedButton(
                 hasBorder: true,
-                borderColor: AppColors.borderThirdColor,
-                backgroundColor: AppColors.bgTenthColor,
+                borderColor: AppColors.aviatorFifteenthColor,
+                backgroundColor: AppColors.aviatorFourteenthColor,
                 padding: EdgeInsetsGeometry.all(2),
                 height: 22,
                 width: 22,
@@ -110,7 +114,7 @@ class _BetContainerState extends State<BetContainer> {
                 child: Icon(
                   Icons.remove,
                   size: 18.33,
-                  color: AppColors.iconTertiaryColor,
+                  color: AppColors.aviatorFifteenthColor,
                 ),
               ),
             ],
@@ -129,7 +133,8 @@ class _BetContainerState extends State<BetContainer> {
                               width: 154,
                               height: 36,
                               child: TextField(
-                                cursorColor: AppColors.textFifthColor,
+                                cursorColor: AppColors.aviatorSixteenthColor,
+                                cursorHeight: 20,
                                 controller: _amountController,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
@@ -138,7 +143,7 @@ class _BetContainerState extends State<BetContainer> {
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
-                                ).textTheme.bodyMediumTitle3Primary,
+                                ).textTheme.aviatorHeadlineSmall,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.symmetric(
                                     vertical: 6,
@@ -147,20 +152,20 @@ class _BetContainerState extends State<BetContainer> {
                                   hintText: "1.00",
                                   hintStyle: Theme.of(
                                     context,
-                                  ).textTheme.bodyMediumTitle3Primary,
+                                  ).textTheme.aviatorHeadlineSmall,
                                   filled: true,
-                                  fillColor: AppColors.bgThirteenthColor,
+                                  fillColor: AppColors.aviatorSixthColor,
 
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(52),
                                     borderSide: BorderSide(
-                                      color: AppColors.borderFifthColor,
+                                      color: AppColors.aviatorFifteenthColor,
                                     ),
                                   ),
                                   disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(52),
                                     borderSide: BorderSide(
-                                      color: AppColors.borderThirdColor,
+                                      color: AppColors.aviatorFifteenthColor,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -174,7 +179,7 @@ class _BetContainerState extends State<BetContainer> {
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.bgNinethColor,
+                                            AppColors.aviatorSixteenthColor,
                                         padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
@@ -182,14 +187,14 @@ class _BetContainerState extends State<BetContainer> {
                                         child: Icon(
                                           Icons.remove,
                                           size: 18.33,
-                                          color: AppColors.iconSecondaryColor,
+                                          color: AppColors.aviatorSixthColor,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.bgNinethColor,
+                                            AppColors.aviatorSixteenthColor,
                                         padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
@@ -197,7 +202,7 @@ class _BetContainerState extends State<BetContainer> {
                                         child: Icon(
                                           Icons.add,
                                           size: 18.33,
-                                          color: AppColors.iconSecondaryColor,
+                                          color: AppColors.aviatorSixthColor,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -217,16 +222,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹10',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹10',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
 
                                 SizedBox(width: 6),
@@ -237,16 +245,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹20',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹20',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -260,16 +271,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹50',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹50',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
 
                                 SizedBox(width: 6),
@@ -280,16 +294,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹100',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹100',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -308,7 +325,8 @@ class _BetContainerState extends State<BetContainer> {
                                 fontWeight: FontWeight.w500,
                                 height: 108,
                                 width: 171,
-                                backgroundColor: AppColors.bgTwentyFourthColor,
+                                backgroundColor:
+                                    AppColors.aviatorSeventeenthColor,
                                 borderRadius: 20,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -317,13 +335,13 @@ class _BetContainerState extends State<BetContainer> {
                                       'CASHOUT',
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.bodyMedium18Title3Primary,
+                                      ).textTheme.aviatorBodyTitleMdeium,
                                     ),
                                     Text(
                                       '249.00',
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.bodyMediumTitle4Primary,
+                                      ).textTheme.aviatorHeadlineSmall,
                                     ),
                                   ],
                                 ),
@@ -334,13 +352,18 @@ class _BetContainerState extends State<BetContainer> {
                                     _isPressed = !_isPressed;
                                   });
                                 },
-                                text: 'BET',
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
+
                                 height: 108,
                                 width: 171,
-                                backgroundColor: AppColors.bgEleventhColor,
+                                backgroundColor:
+                                    AppColors.aviatorEighteenthColor,
                                 borderRadius: 20,
+                                child: Text(
+                                  'BET',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.aviatorHeadlineSmall,
+                                ),
                               ),
                       ],
                     )
@@ -355,7 +378,7 @@ class _BetContainerState extends State<BetContainer> {
                               width: 154,
                               height: 36,
                               child: TextField(
-                                cursorColor: AppColors.textFifthColor,
+                                cursorColor: AppColors.aviatorSixteenthColor,
                                 controller: _autoAmountController,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
@@ -364,7 +387,7 @@ class _BetContainerState extends State<BetContainer> {
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
-                                ).textTheme.bodyMediumTitle3Primary,
+                                ).textTheme.aviatorHeadlineSmall,
                                 decoration: InputDecoration(
                                   contentPadding: const EdgeInsets.symmetric(
                                     vertical: 6,
@@ -373,20 +396,20 @@ class _BetContainerState extends State<BetContainer> {
                                   hintText: "1.00",
                                   hintStyle: Theme.of(
                                     context,
-                                  ).textTheme.bodyMediumTitle3Primary,
+                                  ).textTheme.aviatorHeadlineSmall,
                                   filled: true,
-                                  fillColor: AppColors.bgThirteenthColor,
+                                  fillColor: AppColors.aviatorSixthColor,
 
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(52),
                                     borderSide: BorderSide(
-                                      color: AppColors.borderFifthColor,
+                                      color: AppColors.aviatorFifteenthColor,
                                     ),
                                   ),
                                   disabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(52),
                                     borderSide: BorderSide(
-                                      color: AppColors.borderThirdColor,
+                                      color: AppColors.aviatorFifteenthColor,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -400,7 +423,7 @@ class _BetContainerState extends State<BetContainer> {
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.bgNinethColor,
+                                            AppColors.aviatorSixteenthColor,
                                         padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
@@ -408,14 +431,14 @@ class _BetContainerState extends State<BetContainer> {
                                         child: Icon(
                                           Icons.remove,
                                           size: 18.33,
-                                          color: AppColors.iconSecondaryColor,
+                                          color: AppColors.aviatorSixthColor,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
                                       CustomElevatedButton(
                                         hasBorder: false,
                                         backgroundColor:
-                                            AppColors.bgNinethColor,
+                                            AppColors.aviatorSixteenthColor,
                                         padding: const EdgeInsets.all(2),
                                         height: 22,
                                         width: 22,
@@ -423,7 +446,7 @@ class _BetContainerState extends State<BetContainer> {
                                         child: Icon(
                                           Icons.add,
                                           size: 18.33,
-                                          color: AppColors.iconSecondaryColor,
+                                          color: AppColors.aviatorSixthColor,
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -433,7 +456,7 @@ class _BetContainerState extends State<BetContainer> {
                               ),
                             ),
                             SizedBox(height: 10),
-                            //! BUTTON FOR AMOUNT
+                            //! BUTTON FOR AMOUNT 10 & 20
                             Row(
                               children: [
                                 CustomElevatedButton(
@@ -442,16 +465,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹10',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹10',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
 
                                 SizedBox(width: 6),
@@ -462,22 +488,25 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹20',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹20',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
                               ],
                             ),
                             SizedBox(height: 6),
 
-                            //! BUTTON FOR AMOUNT
+                            //! BUTTON FOR AMOUNT 50 &100
                             Row(
                               children: [
                                 CustomElevatedButton(
@@ -486,16 +515,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹50',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹50',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
 
                                 SizedBox(width: 6),
@@ -506,16 +538,19 @@ class _BetContainerState extends State<BetContainer> {
                                     horizontal: 12,
                                     vertical: 6,
                                   ),
-                                  text: '₹100',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  textColor: AppColors.buttonTertiaryTextColor,
-                                  borderColor: AppColors.borderThirdColor,
-                                  backgroundColor: AppColors.bgTenthColor,
+                                  borderColor: AppColors.aviatorFifteenthColor,
+                                  backgroundColor:
+                                      AppColors.aviatorFourteenthColor,
                                   borderRadius: 30,
                                   height: 28,
                                   width: 74,
                                   elevation: 0,
+                                  child: Text(
+                                    '₹100',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.aviatorBodyMediumPrimary,
+                                  ),
                                 ),
                               ],
                             ),
@@ -523,16 +558,54 @@ class _BetContainerState extends State<BetContainer> {
                         ),
                         SizedBox(width: 20),
                         //! BUTTON FOR BET---------------------------------------------------
-                        CustomElevatedButton(
-                          onPressed: () {},
-                          text: 'BET',
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          height: 108,
-                          width: 171,
-                          backgroundColor: AppColors.bgEleventhColor,
-                          borderRadius: 20,
-                        ),
+                        _isPressed
+                            ? CustomElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isPressed = !_isPressed;
+                                  });
+                                },
+                                fontSize: 24,
+                                fontWeight: FontWeight.w500,
+                                height: 108,
+                                width: 171,
+                                backgroundColor:
+                                    AppColors.aviatorSeventeenthColor,
+                                borderRadius: 20,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'CASHOUT',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.aviatorBodyTitleMdeium,
+                                    ),
+                                    Text(
+                                      '249.00',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.aviatorHeadlineSmall,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : CustomElevatedButton(
+                                onPressed: () {
+                                  _isPressed = !_isPressed;
+                                },
+                                height: 108,
+                                width: 171,
+                                backgroundColor:
+                                    AppColors.aviatorEighteenthColor,
+                                borderRadius: 20,
+                                child: Text(
+                                  'BET',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.aviatorHeadlineSmall,
+                                ),
+                              ),
                       ],
                     ),
             ),
@@ -548,21 +621,23 @@ class _BetContainerState extends State<BetContainer> {
                   onPressed: () {},
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   borderRadius: 52,
-                  backgroundColor: AppColors.bgTwelfthColor,
-                  text: 'AUTOPLAY',
-                  fontWeight: FontWeight.w400,
-                  textColor: AppColors.buttonTertiaryTextColor,
-                  fontSize: 14,
+                  backgroundColor: AppColors.aviatorNineteenthColor,
                   width: 98,
                   height: 28,
-                  borderColor: AppColors.borderFourthColor,
+                  borderColor: AppColors.aviatorNineteenthColor,
+                  child: Text(
+                    'AUTOPLAY',
+                    style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+                  ),
                 ),
                 Row(
                   children: [
                     //! Auto cash oout Text
                     Text(
                       'Auto Cash Out',
-                      style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumPrimary,
                     ),
                     //! Switch
                     SizedBox(width: 2),
@@ -570,10 +645,10 @@ class _BetContainerState extends State<BetContainer> {
                       scale: 0.70,
                       child: Switch(
                         value: _isSwitched,
-                        activeColor: AppColors.switchThumbActiveColor,
-                        inactiveThumbColor: AppColors.switchThumbInactiveColor,
-                        activeTrackColor: AppColors.switchActiveColor,
-                        inactiveTrackColor: AppColors.bgTenthColor,
+                        activeColor: AppColors.aviatorTertiaryColor,
+                        inactiveThumbColor: AppColors.aviatorTertiaryColor,
+                        activeTrackColor: AppColors.aviatorEighteenthColor,
+                        inactiveTrackColor: AppColors.aviatorFourteenthColor,
                         onChanged: (value) {
                           setState(() {
                             _isSwitched = value;
@@ -587,39 +662,43 @@ class _BetContainerState extends State<BetContainer> {
                       width: 76,
                       height: 29,
                       child: TextField(
-                        cursorColor: AppColors.textFifthColor,
+                        cursorColor: AppColors.aviatorSixteenthColor,
                         enabled: _isSwitched,
                         controller: _switchController,
                         keyboardType: TextInputType.numberWithOptions(
                           decimal: true,
                         ),
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmallSecondary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.aviatorBodyMediumSecondary,
                         decoration: InputDecoration(
                           suffix: Text(
                             'X',
-                            style: TextStyle(color: AppColors.textFifthColor),
+                            style: TextStyle(
+                              color: AppColors.aviatorSixteenthColor,
+                            ),
                           ),
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 6,
                             horizontal: 8,
                           ),
-                          hintText: "1.5x",
+                          hintText: "1.5",
                           hintStyle: Theme.of(
                             context,
-                          ).textTheme.bodySmallSecondary,
+                          ).textTheme.aviatorBodyMediumSecondary,
                           filled: true,
-                          fillColor: AppColors.bgThirteenthColor,
+                          fillColor: AppColors.aviatorSixthColor,
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(52),
                             borderSide: BorderSide(
-                              color: AppColors.borderFifthColor,
+                              color: AppColors.aviatorFifteenthColor,
                             ),
                           ),
                           disabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(52),
                             borderSide: BorderSide(
-                              color: AppColors.borderThirdColor,
+                              color: AppColors.aviatorFifteenthColor,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/app_colors.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 
 class CustomTabBar extends StatefulWidget {
   final List<String> tabs;
-  final List<Widget> tabViews; 
+  final List<Widget> tabViews;
   final Color backgroundColor;
   final double borderRadius;
   final double borderWidth;
@@ -16,14 +16,17 @@ class CustomTabBar extends StatefulWidget {
     super.key,
     required this.tabs,
     required this.tabViews,
-    this.backgroundColor = AppColors.bgSeventeenthColor,
+    this.backgroundColor = AppColors.aviatorTwentiethColor,
     this.borderRadius = 16,
     this.borderWidth = 1,
     this.borderColor = AppColors.borderSecondaryColor,
     this.selectedTextColor = Colors.white,
     this.unselectedTextColor = Colors.black,
     this.selectedTabColor = Colors.blue,
-  }) : assert(tabs.length == tabViews.length, "tabs and tabViews must have same length");
+  }) : assert(
+         tabs.length == tabViews.length,
+         "tabs and tabViews must have same length",
+       );
 
   @override
   State<CustomTabBar> createState() => _CustomTabBarState();
@@ -60,7 +63,9 @@ class _CustomTabBarState extends State<CustomTabBar> {
                     duration: const Duration(milliseconds: 250),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: isSelected ? widget.selectedTabColor : Colors.transparent,
+                      color: isSelected
+                          ? widget.selectedTabColor
+                          : AppColors.aviatorTwentiethColor,
                       borderRadius: BorderRadius.circular(widget.borderRadius),
                     ),
                     alignment: Alignment.center,

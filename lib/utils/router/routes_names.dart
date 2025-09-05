@@ -14,4 +14,7 @@ class RoutesNames {
   static const String splash = '/splash';
   //welcome
   static const String welcome = '/welcome';
+
+  //wallet
+  static const String wallet = '/walletDeposit';
 }

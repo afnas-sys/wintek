@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class MyBets extends StatefulWidget {
@@ -28,7 +28,7 @@ class _MyBetsState extends State<MyBets> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.bgTenthColor,
+        color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -38,7 +38,7 @@ class _MyBetsState extends State<MyBets> {
             children: [
               Text(
                 'TOTAL BETS: 517',
-                style: Theme.of(context).textTheme.bodyMediumPrimaryBold,
+                style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
               //! Switch for PREVIOUS HAND
               CustomElevatedButton(
@@ -51,7 +51,7 @@ class _MyBetsState extends State<MyBets> {
                   bottom: 6,
                 ),
                 borderRadius: 30,
-                backgroundColor: AppColors.bgEighteenthColor,
+                backgroundColor: AppColors.aviatorFifteenthColor,
                 onPressed: () {},
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -59,11 +59,13 @@ class _MyBetsState extends State<MyBets> {
                     Icon(
                       FontAwesomeIcons.clockRotateLeft,
                       size: 16,
-                      color: AppColors.iconPrimaryColor,
+                      color: AppColors.aviatorTertiaryColor,
                     ),
                     Text(
                       'Previous hand',
-                      style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumPrimary,
                     ),
                   ],
                 ),
@@ -84,14 +86,18 @@ class _MyBetsState extends State<MyBets> {
                     flex: 1,
                     child: Text(
                       'Date',
-                      style: Theme.of(context).textTheme.bodySmallSecondary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumSecondary,
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: Text(
                       'Bet, INR',
-                      style: Theme.of(context).textTheme.bodySmallSecondary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumSecondary,
                     ),
                   ),
                   SizedBox(width: 25),
@@ -99,21 +105,27 @@ class _MyBetsState extends State<MyBets> {
                     flex: 1,
                     child: Text(
                       'X',
-                      style: Theme.of(context).textTheme.bodySmallSecondary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumSecondary,
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Text(
                       'Cash out, INR',
-                      style: Theme.of(context).textTheme.bodySmallSecondary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumSecondary,
                     ),
                   ),
                   Expanded(
                     flex: 1,
                     child: Text(
                       '',
-                      style: Theme.of(context).textTheme.bodySmallSecondary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumSecondary,
                     ),
                   ),
                 ],
@@ -132,8 +144,8 @@ class _MyBetsState extends State<MyBets> {
               final item = data[index];
               bool isHighlighted = index == 0;
               Color? bgColor = isHighlighted
-                  ? AppColors.bgTwentyFirstColor
-                  : AppColors.bgNineteenthColor;
+                  ? AppColors.aviatorTwentySecondColor
+                  : AppColors.aviatorTwentyFirstColor;
 
               return Container(
                 width: double.infinity,
@@ -155,7 +167,9 @@ class _MyBetsState extends State<MyBets> {
                         flex: 1,
                         child: Text(
                           item['date'] ?? '',
-                          style: Theme.of(context).textTheme.bodyMediumPrimary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorBodyLargePrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -166,7 +180,9 @@ class _MyBetsState extends State<MyBets> {
                         child: Text(
                           item['bet'] ?? '',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMediumPrimary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorBodyLargePrimary,
                         ),
                       ),
 
@@ -176,7 +192,7 @@ class _MyBetsState extends State<MyBets> {
                         width: 50,
 
                         decoration: BoxDecoration(
-                          color: AppColors.bgTwentyThirdColor,
+                          color: AppColors.aviatorTwentyThirdColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Center(
@@ -184,7 +200,7 @@ class _MyBetsState extends State<MyBets> {
                             item['X'] ?? '',
                             style: Theme.of(
                               context,
-                            ).textTheme.bodySmallTertiary,
+                            ).textTheme.aviatorbodySmallSecondary,
                           ),
                         ),
                       ),
@@ -198,7 +214,7 @@ class _MyBetsState extends State<MyBets> {
                             item['cashout'] ?? '',
                             style: Theme.of(
                               context,
-                            ).textTheme.bodyMediumPrimary,
+                            ).textTheme.aviatorBodyLargePrimary,
                           ),
                         ),
                       ),
@@ -216,7 +232,7 @@ class _MyBetsState extends State<MyBets> {
                             Icon(
                               FontAwesomeIcons.comment,
                               size: 20,
-                              color: AppColors.iconFourthColor,
+                              color: AppColors.aviatorSixteenthColor,
                             ),
                           ],
                         ),

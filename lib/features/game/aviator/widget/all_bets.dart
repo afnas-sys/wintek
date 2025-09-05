@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class AllBets extends StatefulWidget {
@@ -28,7 +28,7 @@ class _AllBetsState extends State<AllBets> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.bgTenthColor,
+        color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -38,7 +38,7 @@ class _AllBetsState extends State<AllBets> {
             children: [
               Text(
                 'TOTAL BETS: 517',
-                style: Theme.of(context).textTheme.bodyMediumPrimaryBold,
+                style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
               //! Switch for PREVIOUS HAND
               CustomElevatedButton(
@@ -51,7 +51,7 @@ class _AllBetsState extends State<AllBets> {
                   bottom: 6,
                 ),
                 borderRadius: 30,
-                backgroundColor: AppColors.bgEighteenthColor,
+                backgroundColor: AppColors.aviatorFifteenthColor,
                 onPressed: () {},
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -59,11 +59,13 @@ class _AllBetsState extends State<AllBets> {
                     Icon(
                       FontAwesomeIcons.clockRotateLeft,
                       size: 16,
-                      color: AppColors.iconPrimaryColor,
+                      color: AppColors.aviatorTertiaryColor,
                     ),
                     Text(
                       'Previous hand',
-                      style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorBodyMediumPrimary,
                     ),
                   ],
                 ),
@@ -80,7 +82,9 @@ class _AllBetsState extends State<AllBets> {
                   flex: 2,
                   child: Text(
                     'User',
-                    style: Theme.of(context).textTheme.bodySmallSecondary,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.aviatorBodyMediumSecondary,
                   ),
                 ),
                 SizedBox(width: 35),
@@ -89,7 +93,9 @@ class _AllBetsState extends State<AllBets> {
                   child: Text(
                     'Bet',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmallSecondary,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.aviatorBodyMediumSecondary,
                   ),
                 ),
                 Expanded(
@@ -97,7 +103,9 @@ class _AllBetsState extends State<AllBets> {
                   child: Text(
                     'Mult.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmallSecondary,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.aviatorBodyMediumSecondary,
                   ),
                 ),
                 Expanded(
@@ -105,7 +113,9 @@ class _AllBetsState extends State<AllBets> {
                   child: Text(
                     'Cash out',
                     textAlign: TextAlign.end,
-                    style: Theme.of(context).textTheme.bodySmallSecondary,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.aviatorBodyMediumSecondary,
                   ),
                 ),
               ],
@@ -123,8 +133,8 @@ class _AllBetsState extends State<AllBets> {
               final item = data[index];
               bool isHighlighted = index == 0 || index == 1;
               Color? bgColor = isHighlighted
-                  ? AppColors.bgNineteenthColor
-                  : AppColors.bgTwentyFirstColor;
+                  ? AppColors.aviatorTwentyFirstColor
+                  : AppColors.aviatorTwentySecondColor;
 
               return Container(
                 decoration: BoxDecoration(
@@ -144,7 +154,7 @@ class _AllBetsState extends State<AllBets> {
                         height: 36,
                         width: 36,
                         decoration: BoxDecoration(
-                          color: AppColors.bgTwentySecondColor,
+                          color: AppColors.aviatorTertiaryColor,
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
@@ -155,7 +165,9 @@ class _AllBetsState extends State<AllBets> {
                         flex: 2,
                         child: Text(
                           item['user'] ?? '',
-                          style: Theme.of(context).textTheme.bodyMediumPrimary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorBodyLargePrimary,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -166,7 +178,9 @@ class _AllBetsState extends State<AllBets> {
                         child: Text(
                           item['bet'] ?? '',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMediumPrimary,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorBodyLargePrimary,
                         ),
                       ),
 
@@ -182,14 +196,14 @@ class _AllBetsState extends State<AllBets> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.bgTwentythColor,
+                                  color: AppColors.aviatorTwentyFifthColor,
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Text(
                                   item['mult'] ?? '',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.bodyMediumPrimary,
+                                  ).textTheme.aviatorBodyLargePrimary,
                                 ),
                               )
                             : const SizedBox(),
@@ -205,7 +219,7 @@ class _AllBetsState extends State<AllBets> {
                                   item['cashout'] ?? '',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.bodyMediumPrimary,
+                                  ).textTheme.aviatorBodyLargePrimary,
                                 ),
                               )
                             : const SizedBox(),

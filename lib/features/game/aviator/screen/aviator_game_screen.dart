@@ -7,8 +7,8 @@ import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
 import 'package:wintek/features/game/aviator/widget/graph_container.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/theme.dart';
 
 class AviatorGameScreen extends StatefulWidget {
   const AviatorGameScreen({super.key});
@@ -36,11 +36,15 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                   children: [
                     Text(
                       'Round ID: 436963',
-                      style: Theme.of(context).textTheme.bodySmallPrimary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorbodySmallPrimary,
                     ),
                     Text(
                       'Round ID: 436963',
-                      style: Theme.of(context).textTheme.bodySmallPrimary,
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorbodySmallPrimary,
                     ),
                   ],
                 ),
@@ -53,12 +57,12 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                 SizedBox(height: 20),
                 CustomTabBar(
                   tabs: ['All Bets', 'My Bets', 'Top'],
-                  backgroundColor: AppColors.bgSeventeenthColor,
+                  backgroundColor: AppColors.aviatorTwentiethColor,
                   borderRadius: 52,
                   borderWidth: 1,
-                  borderColor: AppColors.borderThirdColor,
-                  selectedTabColor: AppColors.tabBarSelectedColor,
-                  unselectedTextColor: AppColors.textPrimaryColor,
+                  borderColor: AppColors.aviatorFifteenthColor,
+                  selectedTabColor: AppColors.aviatorFifteenthColor,
+                  unselectedTextColor: AppColors.aviatorTertiaryColor,
                   tabViews: [AllBets(), MyBets(), Top()],
                 ),
               ],

@@ -1,8 +1,8 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/app_colors.dart';
-import 'package:wintek/utils/app_images.dart';
-import 'package:wintek/utils/theme.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/utils/constants/theme.dart';
 
 class CustomHomeAppbar extends StatefulWidget {
   const CustomHomeAppbar({super.key});
@@ -21,7 +21,7 @@ class _CustomHomeAppbarState extends State<CustomHomeAppbar> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: AppColors.bgHomeSecondaryColor,
+        color: AppColors.homeSecondaryColor,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,26 +43,26 @@ class _CustomHomeAppbarState extends State<CustomHomeAppbar> {
                 children: {
                   0: Text(
                     '₹ 5000',
-                    style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                    style: Theme.of(context).textTheme.homeSmallPrimary,
                   ),
                   1: Text(
                     'Deposit',
-                    style: Theme.of(context).textTheme.bodySmallPrimaryBold,
+                    style: Theme.of(context).textTheme.homeSmallPrimary,
                   ),
                 },
                 decoration: BoxDecoration(
-                  color: AppColors.bgHomeThirdColor,
+                  color: AppColors.homeThirdColor,
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
-                    color: AppColors.borderSeventhColor,
+                    color: AppColors.homeFourththColor,
                     width: 1,
                   ),
                 ),
                 thumbDecoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.homeSwitchGradientPrimaryColor,
-                      AppColors.homeSwitchGradientSecondaryColor,
+                      AppColors.homeFivethColor,
+                      AppColors.homeSxithColor,
                     ],
                   ),
                   borderRadius: BorderRadius.circular(30),
@@ -79,7 +79,7 @@ class _CustomHomeAppbarState extends State<CustomHomeAppbar> {
                 height: 36,
                 width: 36,
                 decoration: BoxDecoration(
-                  color: AppColors.bgHomeSecondaryColor,
+                  color: AppColors.homeSecondaryColor,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 alignment: Alignment.center,
