@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/router/app_roouter.dart';
 import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/constants/theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

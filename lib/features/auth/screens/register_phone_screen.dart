@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/widgets/custom_appbar.dart';
+import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
+import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
-import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/constants/validators.dart';
 
 class RegisterPhoneScreen extends StatefulWidget {

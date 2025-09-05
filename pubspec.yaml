@@ -44,6 +44,9 @@ dependencies:
   carousel_slider: ^5.1.1
   introduction_screen: ^3.1.17
   dotted_line: ^3.2.3
+  flutter_riverpod: ^2.6.1
+  material_design_icons_flutter: ^7.0.7296
+  intl: ^0.20.2
   
 
 dev_dependencies:
@@ -84,10 +87,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets\fonts\Poppins-Medium.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

@@ -156,4 +156,59 @@ class AppColors {
   static final bottomGradientSecondaryColor = Color(
     0xFF6041FF,
   ).withOpacity(10 / 100);
+
+  // vasil
+  // Card Jackpot Game App Colors
+
+  // The main primary color of the app
+  static const Color cardPrimaryColor = Color(0xFFFFB518);
+  // Secondary color of the app .
+  static const Color cardSecondPrimaryColor = Colors.white;
+  // The unfocused color in the app
+  // used in subtitle, non selected tabs text icons
+  static const Color cardUnfocusedColor = Color(0xFF9E9E9E);
+
+  // On the timer section has small container for each numbers
+  // this is the color used for add to that color
+  static const Color timerContainerColor = Color(0x33000000);
+  // On the my history section - there has sucess status and price
+  //this is the color used for add to that status text and amount
+  static const Color successTextColor = Colors.green;
+  // On the my history section - there has failed status and price
+  //this is the color used for add to that status text and amount
+  static const Color failedTextColor = Colors.red;
+  // on the histry section  - initially will be show pending status
+  // this is the color using for pending status
+
+  static const Color pendingStatusColor = Colors.orange;
+  // On the wallet card section there has two buttons
+  // first button color
+  static const Color withdrowalButtonColor = Colors.red;
+  // second button color
+  static const Color depositButtonColor = Colors.green;
+
+  // Game tab bar each tabs focused container border color
+  static const Color gameTabContainerBorderColor = Colors.yellow;
+
+  // In this application there has 4 main cards .
+  // This is the colors gradiant for that cards
+  static const List<List<Color>> mainCardGradient = [
+    [Color(0xff4F6E8C), Color(0xFF304B7A)],
+    [Color(0xffBB5CC9), Color(0xFF77479C)],
+    [Color(0xffFFC600), Color(0xFFD67E24)],
+    [Color(0xff9BCDC8), Color(0xFF53938D)],
+  ];
+
+  // Balanced 9 cards numbers color gradiant
+  static const List<List<Color>> numberCardGradient = [
+    [Color(0xffD47FAF), Color(0xFFC91188)],
+    [Color(0xff9BCDC8), Color(0xFF53938D)],
+    [Color(0xffFFC600), Color(0xFFD67E24)],
+    [Color(0xffE0A0B3), Color(0xFFCF3D3D)],
+    [Color(0xff4F6E8C), Color(0xFF304B7A)],
+    [Color(0xffBB5CC9), Color(0xFF77479C)],
+    [Color(0xffC9DBDA), Color(0xFF879896)],
+    [Color(0xffD47FAF), Color(0xFFC91188)],
+    [Color(0xff9BCDC8), Color(0xFF53938D)],
+  ];
 }
