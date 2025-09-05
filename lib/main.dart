@@ -15,10 +15,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //initialRoute: RoutesNames.bottombar,
-      initialRoute: RoutesNames.bottombar,
+      initialRoute: RoutesNames.home,
       // initialRoute: RoutesNames.loginWithPhone,
       onGenerateRoute: AppRouter.generateRoute,
-      title: 'Wintek',
+      title: 'Winket',
       theme: theme,
       // home: dummy(),
     );

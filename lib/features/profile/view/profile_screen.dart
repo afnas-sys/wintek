@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -20,6 +22,20 @@ class ProfileScreen extends StatelessWidget {
                     color: AppColors.profileSecondaryColor,
                   ),
                   child: Text('data'),
+                ),
+                CustomElevatedButton(
+                  width: double.infinity,
+                  borderRadius: 30,
+                  backgroundColor: Color(0XFFEB644C),
+                  onPressed: () {},
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppImages.logout, height: 24, width: 24),
+                      SizedBox(width: 10),
+                      Text('Logout'),
+                    ],
+                  ),
                 ),
               ],
             ),
