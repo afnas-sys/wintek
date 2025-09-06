@@ -1,47 +1,60 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:wintek/features/auth/widgets/custom_appbar.dart';
-import 'package:wintek/utils/constants/theme.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
-import 'package:wintek/utils/widgets/custom_text_form_field.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/constants/validators.dart';
+import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/utils/widgets/custom_text_form_field.dart';
+// <<<<<<< HEAD
+// import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
-class RegisterEmailScreen extends StatefulWidget {
-  const RegisterEmailScreen({super.key});
+// import 'package:wintek/utils/constants/app_colors.dart';
+
+// import 'package:wintek/utils/router/routes_names.dart';
+// import 'package:wintek/utils/theme.dart';
+// import 'package:wintek/utils/validators.dart';
+// import 'package:wintek/utils/widgets/custom_text_form_field.dart';
+// =======
+// import 'package:wintek/utils/constants/theme.dart';
+// import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+// import 'package:wintek/utils/widgets/custom_text_form_field.dart';
+// import 'package:wintek/utils/constants/app_colors.dart';
+// import 'package:wintek/utils/router/routes_names.dart';
+// import 'package:wintek/utils/constants/validators.dart';
+// >>>>>>> main
+
+class LoginEmailScreen extends StatefulWidget {
+  const LoginEmailScreen({super.key});
 
   @override
-  State<RegisterEmailScreen> createState() => _RegisterEmailScreenState();
+  State<LoginEmailScreen> createState() => _LoginLoginEmailScreenScreenState();
 }
 
-class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
-  final _formkey = GlobalKey<FormState>();
+class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-
-  final _nameController = TextEditingController();
-  final _setPassController = TextEditingController();
-  final _confirmPassController = TextEditingController();
-  final _inviteCodeController = TextEditingController();
-
+  final _passwordController = TextEditingController();
+  bool isChecked = false;
   bool _isObscure = true;
-  bool _isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-        title: 'Register',
-        subtitle: 'Please register by phone number or email',
-        height: 200,
+        title: 'Log in',
+        subtitle:
+            'Please log in with your phone number or email\nIf you forget your password, contact support',
+        height: 224,
       ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
-              key: _formkey,
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -53,7 +66,7 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                           onPressed: () {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
-                              RoutesNames.registerphone,
+                              RoutesNames.loginWithPhone,
                               (route) => false,
                             );
                           },
@@ -77,6 +90,7 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                       SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
+                          //text: 'Email Login',
                           onPressed: () {},
                           backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,
@@ -99,22 +113,7 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Full Name',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
-                  ),
-                  SizedBox(height: 10),
-
-                  //field for Fll name
-                  CustomTextFormField(
-                    controller: _nameController,
-                    hintText: "Enter full name",
-                    keyboardType: TextInputType.name,
-                    validator: Validators.validateFullName,
-                    autoValidate: true,
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    'Email ID',
+                    'Email',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
@@ -127,18 +126,17 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                     validator: Validators.validateEmail,
                     autoValidate: true,
                   ),
-
                   SizedBox(height: 20),
                   Text(
-                    'Set Password',
+                    'Password',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
-                  //field for setting password
+                  //field for Password
                   CustomTextFormField(
-                    controller: _setPassController,
-                    hintText: "Set Password",
+                    controller: _passwordController,
+                    hintText: "Enter Password",
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscure,
                     suffix: IconButton(
@@ -158,51 +156,9 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                     validator: Validators.validatePassword,
                     autoValidate: true,
                   ),
-
                   SizedBox(height: 20),
-                  Text(
-                    'Confirm Password',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
-                  ),
-                  SizedBox(height: 10),
-                  //field for Confirm Password
-                  CustomTextFormField(
-                    controller: _confirmPassController,
-                    hintText: "Confirm Password",
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: _isObscure,
-                    suffix: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
-                      },
-                      icon: Icon(
-                        _isObscure
-                            ? Icons.remove_red_eye
-                            : Icons.visibility_off,
-                        color: AppColors.authFourthColor,
-                        size: 20,
-                      ),
-                    ),
-                    validator: Validators.validatePassword,
-                    autoValidate: true,
-                  ),
 
-                  SizedBox(height: 20),
-                  Text(
-                    'Invite code',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
-                  ),
-                  SizedBox(height: 10),
-                  CustomTextFormField(
-                    controller: _inviteCodeController,
-                    hintText: 'Invite code',
-                    validator: Validators.validateVericationCode,
-                    autoValidate: true,
-                  ),
-
-                  SizedBox(height: 20),
+                  //Remember pass and Forget pass
                   Row(
                     children: [
                       SizedBox(
@@ -210,10 +166,10 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                         width: 24,
                         child: Checkbox(
                           shape: CircleBorder(),
-                          value: _isChecked,
+                          value: isChecked,
                           onChanged: (bool? value) {
                             setState(() {
-                              _isChecked = value!;
+                              isChecked = value!;
                             });
                           },
                           activeColor:
@@ -222,33 +178,37 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                               AppColors.authSixthColor, // checkmark color
                         ),
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 4),
                       Text(
-                        "I have Read and Agree[Privacy Agreement]",
+                        "Remember Password",
                         style: Theme.of(
                           context,
                         ).textTheme.authBodyMediumPrimary,
                       ),
+                      Spacer(),
+
+                      //Forget password button
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, RoutesNames.forgot);
+                        },
+                        child: Text(
+                          "Forget Password",
+                          style: Theme.of(
+                            context,
+                          ).textTheme.authBodyMediumSecondary,
+                        ),
+                      ),
                     ],
                   ),
-
                   SizedBox(height: 30),
-                  //Button for Register
+
+                  //Login Button
                   CustomElevatedButton(
+                    //  text: 'Log in',
                     onPressed: () {
-                      if (!_isChecked) {
-                        CustomSnackbar.show(
-                          context,
-                          message: 'Please accept terms and conditions',
-                        );
-                      }
-                      if (_formkey.currentState!.validate()) {
-                        log('message');
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          RoutesNames.loginWithPhone,
-                          (_) => false,
-                        );
+                      if (_formKey.currentState!.validate()) {
+                        log('Logged in');
                       }
                     },
                     backgroundColor: AppColors.authTertiaryColor,
@@ -261,21 +221,17 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                     ),
                     width: double.infinity,
                     child: Text(
-                      'Register',
+                      'Log in',
                       style: Theme.of(context).textTheme.authBodyLargeTertiary,
                     ),
                   ),
-
                   SizedBox(height: 20),
-
-                  //Button for Login
+                  //Register
                   CustomElevatedButton(
+                    hasBorder: true,
+                    borderColor: AppColors.authTertiaryColor,
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        RoutesNames.loginWithPhone,
-                        (_) => false,
-                      );
+                      Navigator.pushNamed(context, RoutesNames.registerphone);
                     },
                     backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
@@ -286,20 +242,9 @@ class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    borderColor: AppColors.authTertiaryColor,
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'I have an Account ',
-                        style: Theme.of(context).textTheme.authBodyLargePrimary,
-                        children: [
-                          TextSpan(
-                            text: 'Log in',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.authBodyLargeFourth,
-                          ),
-                        ],
-                      ),
+                    child: Text(
+                      'Register',
+                      style: Theme.of(context).textTheme.authBodyLargeFourth,
                     ),
                   ),
                 ],
