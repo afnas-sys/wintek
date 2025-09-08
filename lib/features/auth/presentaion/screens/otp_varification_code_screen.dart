@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wintek/features/auth/widgets/custom_appbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/theme.dart';
+import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
-class OtpVarificationCodeScreen extends StatefulWidget {
+// <-- make sure this path matches your project structure
+import 'package:wintek/features/auth/services/auth_notifier.dart';
+
+class OtpVarificationCodeScreen extends ConsumerStatefulWidget {
   const OtpVarificationCodeScreen({super.key});
 
   @override
-  State<OtpVarificationCodeScreen> createState() =>
+  ConsumerState<OtpVarificationCodeScreen> createState() =>
       _OtpVarificationCodeScreenState();
 }
 
-class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
+class _OtpVarificationCodeScreenState
+    extends ConsumerState<OtpVarificationCodeScreen> {
   final List<TextEditingController> _controllers = List.generate(
-    5,
+    6,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> _focusNodes = List.generate(5, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+
   @override
   void dispose() {
     for (var controller in _controllers) {
@@ -30,12 +38,12 @@ class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
     super.dispose();
   }
 
-  String getOtp() {
-    return _controllers.map((c) => c.text).join();
-  }
+  String getOtp() => _controllers.map((c) => c.text).join();
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
       appBar: CustomAppbar(
         title: 'OTP Verification',
@@ -50,20 +58,23 @@ class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 Text(
                   'Full Name',
                   style: Theme.of(context).textTheme.authBodyLargeSecondary,
                 ),
-                SizedBox(height: 10),
-                //! OTP Field
+                const SizedBox(height: 10),
+
+                //! OTP Field (unchanged UI)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: List.generate(5, (index) {
+                  children: List.generate(6, (index) {
                     return SizedBox(
-                      width: 71.2,
-                      height: 66,
+                      width: 60,
+                      //   height: 66,
                       child: TextFormField(
+                        controller:
+                            _controllers[index], // 👈 also bind controllers
                         cursorColor: AppColors.textTertiaryColor,
                         decoration: InputDecoration(
                           filled: true,
@@ -89,8 +100,7 @@ class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
                               ).requestFocus(_focusNodes[index + 1]);
                             } else {
                               _focusNodes[index].unfocus();
-                              // ✅ All digits entered
-                              debugPrint("OTP: ${getOtp()}");
+                              debugPrint("OTP (complete): ${getOtp()}");
                             }
                           } else {
                             if (index > 0) {
@@ -105,9 +115,38 @@ class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
                   }),
                 ),
 
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
+
+                //! Verify Button (logic only; UI unchanged)
                 CustomElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    if (authState.isLoading) {
+                      // don’t let user spam while loading
+                      debugPrint('⏳ Verification already in progress…');
+                      return;
+                    }
+
+                    final otp = getOtp();
+                    debugPrint("Entered OTP: $otp");
+
+                    if (otp.length != 6) {
+                      debugPrint("❌ OTP incomplete (need 6 digits)");
+                      return;
+                    }
+
+                    // Call the refactored method (OTP → then signup)
+                    await ref
+                        .read(authNotifierProvider.notifier)
+                        .verifyOtpAndSignup(otp: otp);
+
+                    final result = ref.read(authNotifierProvider).message;
+                    debugPrint("✅ Verify response: $result");
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      RoutesNames.home,
+                      (route) => false,
+                    );
+                  },
                   backgroundColor: AppColors.authTertiaryColor,
                   borderRadius: 30,
                   padding: const EdgeInsets.only(
@@ -123,7 +162,7 @@ class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
                   ),
                 ),
 
-                SizedBox(height: 38),
+                const SizedBox(height: 38),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -135,10 +174,13 @@ class _OtpVarificationCodeScreenState extends State<OtpVarificationCodeScreen> {
                     TextButton(
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
-                        minimumSize: Size(0, 0),
+                        minimumSize: Size.zero,
                       ),
                       onPressed: () {
-                        // TODO
+                        debugPrint("🔄 Resend tapped");
+                        ref
+                            .read(authNotifierProvider.notifier)
+                            .sendOtp(ref.read(userDraftProvider)!['mobile']);
                       },
                       child: Text(
                         'Resend',

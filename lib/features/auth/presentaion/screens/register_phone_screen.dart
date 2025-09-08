@@ -1,9 +1,11 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/features/auth/widgets/custom_appbar.dart';
-import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
+
+import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
+import 'package:wintek/features/auth/providers/mobile_provider.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/constants/theme.dart';
@@ -11,14 +13,18 @@ import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/validators.dart';
 
-class RegisterPhoneScreen extends StatefulWidget {
+// Import your Auth Notifier
+import 'package:wintek/features/auth/services/auth_notifier.dart';
+
+class RegisterPhoneScreen extends ConsumerStatefulWidget {
   const RegisterPhoneScreen({super.key});
 
   @override
-  State<RegisterPhoneScreen> createState() => _RegisterPhoneScreenState();
+  ConsumerState<RegisterPhoneScreen> createState() =>
+      _RegisterPhoneScreenState();
 }
 
-class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
+class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
   final _formkey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -28,8 +34,11 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
 
   bool _isObscure = true;
   bool _isChecked = false;
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
       appBar: CustomAppbar(
         title: 'Register',
@@ -45,7 +54,9 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
+
+                  /// Top buttons
                   Row(
                     children: [
                       Expanded(
@@ -54,11 +65,9 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                           backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,
                           borderColor: AppColors.authTertiaryColor,
-                          padding: const EdgeInsets.only(
-                            left: 20,
-                            right: 20,
-                            top: 14,
-                            bottom: 14,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 14,
                           ),
                           child: Text(
                             'Log in with Phone',
@@ -68,7 +77,7 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 16),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
                           onPressed: () {
@@ -80,11 +89,9 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                           backgroundColor: AppColors.authPrimaryColor,
                           borderRadius: 30,
                           borderColor: AppColors.authTertiaryColor,
-                          padding: const EdgeInsets.only(
-                            left: 30,
-                            right: 30,
-                            top: 14,
-                            bottom: 14,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 14,
                           ),
                           child: Text(
                             'Email Login',
@@ -96,14 +103,15 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 30),
+
+                  const SizedBox(height: 30),
+
+                  /// Full Name
                   Text(
                     'Full Name',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
-                  SizedBox(height: 10),
-
-                  //field for Fll name
+                  const SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _nameController,
                     hintText: "Enter full name",
@@ -111,14 +119,15 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     validator: Validators.validateFullName,
                     autoValidate: true,
                   ),
-                  SizedBox(height: 20),
+
+                  const SizedBox(height: 20),
+
+                  /// Phone Number
                   Text(
                     'Phone Number',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
-                  SizedBox(height: 10),
-
-                  //field for Phone number
+                  const SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _phoneController,
                     hintText: "Enter mobile number",
@@ -127,25 +136,25 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(width: 12),
-                        Text(
+                        const Text(
                           "+91",
                           style: TextStyle(
-                            color: AppColors.textformfieldPrimaryTextColor,
                             fontSize: 16,
+                            color: AppColors.textformfieldPrimaryTextColor,
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Icon(
+                        const Icon(
                           FontAwesomeIcons.angleDown,
-                          color: AppColors.authFourthColor,
                           size: 16,
+                          color: AppColors.authFourthColor,
                         ),
                         const SizedBox(width: 4),
-                        Text(
+                        const Text(
                           "|",
                           style: TextStyle(
-                            color: AppColors.textformfieldPrimaryTextColor,
                             fontSize: 16,
+                            color: AppColors.textformfieldPrimaryTextColor,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -155,14 +164,14 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     autoValidate: true,
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
+                  /// Set Password
                   Text(
                     'Set Password',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
-                  SizedBox(height: 10),
-
-                  //field for setting password
+                  const SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _setPassController,
                     hintText: "Set Password",
@@ -170,9 +179,7 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     obscureText: _isObscure,
                     suffix: IconButton(
                       onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
+                        setState(() => _isObscure = !_isObscure);
                       },
                       icon: Icon(
                         _isObscure
@@ -186,13 +193,14 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     autoValidate: true,
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
+                  /// Confirm Password
                   Text(
                     'Confirm Password',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
-                  SizedBox(height: 10),
-                  //field for Confirm Password
+                  const SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _confirmPassController,
                     hintText: "Confirm Password",
@@ -200,9 +208,7 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     obscureText: _isObscure,
                     suffix: IconButton(
                       onPressed: () {
-                        setState(() {
-                          _isObscure = !_isObscure;
-                        });
+                        setState(() => _isObscure = !_isObscure);
                       },
                       icon: Icon(
                         _isObscure
@@ -216,40 +222,36 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     autoValidate: true,
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
+                  /// Invite Code
                   Text(
                     'Invite code',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _inviteCodeController,
                     hintText: 'Invite code',
-                    validator: Validators.validateVericationCode,
-                    autoValidate: true,
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+
+                  /// Checkbox
                   Row(
                     children: [
                       SizedBox(
                         height: 24,
                         width: 24,
                         child: Checkbox(
-                          shape: CircleBorder(),
+                          shape: const CircleBorder(),
                           value: _isChecked,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              _isChecked = value!;
-                            });
-                          },
-                          activeColor:
-                              AppColors.authTertiaryColor, // color when checked
-                          checkColor:
-                              AppColors.authSixthColor, // checkmark color
+                          onChanged: (val) => setState(() => _isChecked = val!),
+                          activeColor: AppColors.authTertiaryColor,
+                          checkColor: AppColors.authSixthColor,
                         ),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Text(
                         "I have Read and Agree[Privacy Agreement]",
                         style: Theme.of(
@@ -259,44 +261,70 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     ],
                   ),
 
-                  SizedBox(height: 30),
-                  //Button for Register
+                  const SizedBox(height: 30),
+
+                  /// Register button
                   CustomElevatedButton(
-                    onPressed: () {
-                      if (!_isChecked) {
-                        CustomSnackbar.show(
-                          context,
-                          message: 'Please accept terms and conditions',
-                        );
-                      }
-                      if (_formkey.currentState!.validate()) {
-                        log('message');
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          RoutesNames.loginWithPhone,
-                          (_) => false,
-                        );
-                      }
-                      Navigator.pushNamed(context, RoutesNames.otp);
-                    },
+                    onPressed: authState.isLoading
+                        ? null
+                        : () async {
+                            if (!_isChecked) {
+                              CustomSnackbar.show(
+                                context,
+                                message: 'Please accept terms and conditions',
+                              );
+                              return;
+                            }
+                            if (_formkey.currentState!.validate()) {
+                              log('Register API call');
+
+                              await ref
+                                  .read(authNotifierProvider.notifier)
+                                  .registerWithMobile(
+                                    name: _nameController.text,
+                                    mobile: _phoneController.text,
+                                    password: _setPassController.text,
+                                    referralCode: _inviteCodeController.text,
+                                  );
+
+                              // Save mobile in provider for OTP screen
+                              ref.read(mobileNumberProvider.notifier).state =
+                                  _phoneController.text;
+
+                              // Navigate to OTP screen
+                              Navigator.pushNamed(context, RoutesNames.otp);
+
+                              final updatedState = ref.read(
+                                authNotifierProvider,
+                              );
+                              if (updatedState.message != null) {
+                                CustomSnackbar.show(
+                                  context,
+                                  message: updatedState.message!,
+                                );
+                              }
+                            }
+                          },
                     backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      top: 14,
-                      bottom: 14,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
                     ),
                     width: double.infinity,
-                    child: Text(
-                      'Register',
-                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
-                    ),
+                    child: authState.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            'Register',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeTertiary,
+                          ),
                   ),
 
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-                  //Button for Login
+                  /// Login button
                   CustomElevatedButton(
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
@@ -307,11 +335,9 @@ class _RegisterPhoneScreenState extends State<RegisterPhoneScreen> {
                     },
                     backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      top: 14,
-                      bottom: 14,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 14,
                     ),
                     width: double.infinity,
                     borderColor: AppColors.authTertiaryColor,

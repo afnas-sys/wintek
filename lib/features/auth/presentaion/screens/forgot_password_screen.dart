@@ -1,22 +1,26 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/features/auth/widgets/custom_appbar.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
+import 'package:wintek/features/auth/services/auth_notifier.dart';
 import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/auth/widgets/custom_snackbar.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/constants/validators.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreen();
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreen();
 }
 
-class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _phoneController = TextEditingController();
@@ -28,6 +32,8 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
   bool _isChecked = false;
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
       appBar: CustomAppbar(
         height: 224,
@@ -145,7 +151,10 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         size: 20,
                       ),
                     ),
-                    validator: Validators.validatePassword,
+                    validator: (value) => Validators.validateConfirmPassword(
+                      value,
+                      _setPassController.text,
+                    ),
                     autoValidate: true,
                   ),
 
@@ -166,7 +175,11 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                         top: 10,
                         bottom: 10,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        ref
+                            .read(authNotifierProvider.notifier)
+                            .sendOtp(_phoneController.text);
+                      },
                       backgroundColor: AppColors.authTertiaryColor,
                       child: Text(
                         'Send',
@@ -210,7 +223,7 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                   SizedBox(height: 30),
                   //Button for Register
                   CustomElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (!_isChecked) {
                         CustomSnackbar.show(
                           context,
@@ -220,11 +233,36 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                       }
 
                       if (_formKey.currentState!.validate()) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          RoutesNames.loginWithPhone,
-                          (route) => false,
+                        final authNotifier = ref.read(
+                          authNotifierProvider.notifier,
                         );
+
+                        await authNotifier.forgottenPassword(
+                          mobile: _phoneController.text,
+                          password: _setPassController.text,
+                          otp: _verificationCodeController.text,
+                        );
+
+                        final authState = ref.read(authNotifierProvider);
+
+                        if (mounted && authState.message != null) {
+                          CustomSnackbar.show(
+                            context,
+                            message: authState.message!,
+                          );
+                        }
+
+                        if (mounted &&
+                            authState.message?.toLowerCase().contains(
+                                  "success",
+                                ) ==
+                                true) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            RoutesNames.loginWithPhone,
+                            (route) => false,
+                          );
+                        }
                       }
                     },
                     backgroundColor: AppColors.authTertiaryColor,
@@ -236,10 +274,18 @@ class _ForgotPasswordScreen extends State<ForgotPasswordScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    child: Text(
-                      'Register',
-                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
-                    ),
+                    child: authState.isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(
+                            'Reset',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeTertiary,
+                          ),
                   ),
                 ],
               ),

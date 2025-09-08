@@ -5,7 +5,7 @@ import 'package:wintek/utils/constants/app_colors.dart';
 class CustomElevatedButton extends StatelessWidget {
   final String? text;
   final Widget? child;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed; // ✅ make it nullable
   final double borderRadius;
   final Color? backgroundColor;
   final EdgeInsetsGeometry padding;
@@ -23,7 +23,7 @@ class CustomElevatedButton extends StatelessWidget {
     super.key,
     this.text,
     this.child,
-    required this.onPressed,
+    required this.onPressed, // ✅ nullable
     this.borderRadius = 12.0,
     this.backgroundColor,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -67,7 +67,7 @@ class CustomElevatedButton extends StatelessWidget {
           padding: padding,
           elevation: elevation ?? 0,
         ),
-        onPressed: onPressed,
+        onPressed: onPressed, // ✅ fixed
         child: icon == null
             ? content
             : Row(
