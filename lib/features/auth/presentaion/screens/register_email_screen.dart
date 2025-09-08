@@ -1,46 +1,41 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/features/auth/widgets/custom_appbar.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/utils/constants/theme.dart';
-import 'package:wintek/utils/constants/validators.dart';
-import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/utils/constants/validators.dart';
 
-class LoginPhoneScreen extends StatefulWidget {
-  const LoginPhoneScreen({super.key});
+class RegisterEmailScreen extends StatefulWidget {
+  const RegisterEmailScreen({super.key});
 
   @override
-  State<LoginPhoneScreen> createState() => _LoginPhoneScreenState();
+  State<RegisterEmailScreen> createState() => _RegisterEmailScreenState();
 }
 
-class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _RegisterEmailScreenState extends State<RegisterEmailScreen> {
   final _formkey = GlobalKey<FormState>();
-  bool isChecked = false;
+  final _emailController = TextEditingController();
+
+  final _nameController = TextEditingController();
+  final _setPassController = TextEditingController();
+  final _confirmPassController = TextEditingController();
+  final _inviteCodeController = TextEditingController();
+
   bool _isObscure = true;
-
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    super.dispose();
-  }
-
+  bool _isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-        showBackButton: false,
-        title: 'Log in',
-        subtitle:
-            'Please log in with your phone number or email\nIf you forget your password, contact support',
-        height: 224,
+        title: 'Register',
+        subtitle: 'Please register by phone number or email',
+        height: 200,
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -55,8 +50,14 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     children: [
                       Expanded(
                         child: CustomElevatedButton(
-                          onPressed: () {},
-                          backgroundColor: AppColors.authTertiaryColor,
+                          onPressed: () {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              RoutesNames.registerphone,
+                              (route) => false,
+                            );
+                          },
+                          backgroundColor: AppColors.authPrimaryColor,
                           borderRadius: 30,
                           borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
@@ -69,20 +70,15 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                             'Log in with Phone',
                             style: Theme.of(
                               context,
-                            ).textTheme.authBodyLargeTertiary,
+                            ).textTheme.authBodyLargeFourth,
                           ),
                         ),
                       ),
                       SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              RoutesNames.loginWithEmail,
-                            );
-                          },
-                          backgroundColor: AppColors.authPrimaryColor,
+                          onPressed: () {},
+                          backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,
                           borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
@@ -95,7 +91,7 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                             'Email Login',
                             style: Theme.of(
                               context,
-                            ).textTheme.authBodyLargeFourth,
+                            ).textTheme.authBodyLargeTertiary,
                           ),
                         ),
                       ),
@@ -103,62 +99,46 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Phone Number',
-
+                    'Full Name',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
-                  //field for Phone number
+                  //field for Fll name
                   CustomTextFormField(
-                    controller: _phoneController,
-                    hintText: "Enter mobile number",
-                    keyboardType: TextInputType.number,
-                    prefix: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(width: 12),
-                        Text(
-                          "+91",
-                          style: TextStyle(
-                            color: AppColors.textformfieldPrimaryTextColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          FontAwesomeIcons.angleDown,
-                          color: AppColors.authFourthColor,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "|",
-                          style: TextStyle(
-                            color: AppColors.textformfieldPrimaryTextColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-                    validator: Validators.validatePhone,
+                    controller: _nameController,
+                    hintText: "Enter full name",
+                    keyboardType: TextInputType.name,
+                    validator: Validators.validateFullName,
                     autoValidate: true,
                   ),
                   SizedBox(height: 20),
-
                   Text(
-                    'Password',
+                    'Email ID',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
-                  //   style: Theme.of(context).textTheme.bodySmall),
                   SizedBox(height: 10),
 
-                  //field for Password
+                  //field for Email
                   CustomTextFormField(
-                    controller: _passwordController,
+                    controller: _emailController,
+                    hintText: "Enter email",
+                    keyboardType: TextInputType.emailAddress,
+                    validator: Validators.validateEmail,
+                    autoValidate: true,
+                  ),
 
-                    hintText: "Enter Password",
+                  SizedBox(height: 20),
+                  Text(
+                    'Set Password',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+
+                  //field for setting password
+                  CustomTextFormField(
+                    controller: _setPassController,
+                    hintText: "Set Password",
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscure,
                     suffix: IconButton(
@@ -178,9 +158,51 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     validator: Validators.validatePassword,
                     autoValidate: true,
                   ),
-                  SizedBox(height: 20),
 
-                  //Remember pass and Forget pass
+                  SizedBox(height: 20),
+                  Text(
+                    'Confirm Password',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+                  //field for Confirm Password
+                  CustomTextFormField(
+                    controller: _confirmPassController,
+                    hintText: "Confirm Password",
+                    keyboardType: TextInputType.visiblePassword,
+                    obscureText: _isObscure,
+                    suffix: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isObscure = !_isObscure;
+                        });
+                      },
+                      icon: Icon(
+                        _isObscure
+                            ? Icons.remove_red_eye
+                            : Icons.visibility_off,
+                        color: AppColors.authFourthColor,
+                        size: 20,
+                      ),
+                    ),
+                    validator: Validators.validatePassword,
+                    autoValidate: true,
+                  ),
+
+                  SizedBox(height: 20),
+                  Text(
+                    'Invite code',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  SizedBox(height: 10),
+                  CustomTextFormField(
+                    controller: _inviteCodeController,
+                    hintText: 'Invite code',
+                    validator: Validators.validateVericationCode,
+                    autoValidate: true,
+                  ),
+
+                  SizedBox(height: 20),
                   Row(
                     children: [
                       SizedBox(
@@ -188,10 +210,10 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                         width: 24,
                         child: Checkbox(
                           shape: CircleBorder(),
-                          value: isChecked,
+                          value: _isChecked,
                           onChanged: (bool? value) {
                             setState(() {
-                              isChecked = value!;
+                              _isChecked = value!;
                             });
                           },
                           activeColor:
@@ -200,41 +222,32 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                               AppColors.authSixthColor, // checkmark color
                         ),
                       ),
-                      SizedBox(width: 4),
+                      SizedBox(width: 10),
                       Text(
-                        "Remember Password",
-
+                        "I have Read and Agree[Privacy Agreement]",
                         style: Theme.of(
                           context,
                         ).textTheme.authBodyMediumPrimary,
                       ),
-                      Spacer(),
-
-                      //Forget password button
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, RoutesNames.forgot);
-                        },
-                        child: Text(
-                          "Forget Password",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.authBodyMediumSecondary,
-                        ),
-                      ),
                     ],
                   ),
-                  SizedBox(height: 30),
 
-                  //Login Button
+                  SizedBox(height: 30),
+                  //Button for Register
                   CustomElevatedButton(
                     onPressed: () {
+                      if (!_isChecked) {
+                        CustomSnackbar.show(
+                          context,
+                          message: 'Please accept terms and conditions',
+                        );
+                      }
                       if (_formkey.currentState!.validate()) {
-                        log('Login successful');
+                        log('message');
                         Navigator.pushNamedAndRemoveUntil(
                           context,
-                          RoutesNames.home,
-                          (route) => false,
+                          RoutesNames.loginWithPhone,
+                          (_) => false,
                         );
                       }
                     },
@@ -248,16 +261,21 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                     ),
                     width: double.infinity,
                     child: Text(
-                      'Log in',
+                      'Register',
                       style: Theme.of(context).textTheme.authBodyLargeTertiary,
                     ),
                   ),
+
                   SizedBox(height: 20),
 
-                  //Register
+                  //Button for Login
                   CustomElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RoutesNames.registerphone);
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        RoutesNames.loginWithPhone,
+                        (_) => false,
+                      );
                     },
                     backgroundColor: AppColors.authPrimaryColor,
                     borderRadius: 30,
@@ -267,11 +285,21 @@ class _LoginPhoneScreenState extends State<LoginPhoneScreen> {
                       top: 14,
                       bottom: 14,
                     ),
-                    borderColor: AppColors.authTertiaryColor,
                     width: double.infinity,
-                    child: Text(
-                      'Register',
-                      style: Theme.of(context).textTheme.authBodyLargeFourth,
+                    borderColor: AppColors.authTertiaryColor,
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'I have an Account ',
+                        style: Theme.of(context).textTheme.authBodyLargePrimary,
+                        children: [
+                          TextSpan(
+                            text: 'Log in',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeFourth,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

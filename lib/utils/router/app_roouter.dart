@@ -1,11 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:wintek/features/auth/screens/forgot_password_screen.dart';
-import 'package:wintek/features/auth/screens/login_email_screen.dart';
-import 'package:wintek/features/auth/screens/login_phone_screen.dart';
-import 'package:wintek/features/auth/screens/otp_varification_code_screen.dart';
-import 'package:wintek/features/auth/screens/register_email_screen.dart';
-import 'package:wintek/features/auth/screens/register_phone_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/forgot_password_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/login_email_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/login_phone_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/otp_varification_code_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/register_email_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/register_phone_screen.dart';
 import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/screens/card_jackpot_screen.dart';
 
@@ -33,7 +33,7 @@ class AppRouter {
         );
       case RoutesNames.registerphone:
         return _buildPageTransition(
-          const RegisterPhoneScreen(),
+          RegisterPhoneScreen(),
           settings,
           PageTransitionType.fade,
         );

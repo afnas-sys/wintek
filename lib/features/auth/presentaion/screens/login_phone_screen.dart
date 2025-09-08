@@ -1,48 +1,45 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:wintek/features/auth/widgets/custom_appbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
+import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/constants/validators.dart';
 import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
-// <<<<<<< HEAD
-// import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
-// import 'package:wintek/utils/constants/app_colors.dart';
-
-// import 'package:wintek/utils/router/routes_names.dart';
-// import 'package:wintek/utils/theme.dart';
-// import 'package:wintek/utils/validators.dart';
-// import 'package:wintek/utils/widgets/custom_text_form_field.dart';
-// =======
-// import 'package:wintek/utils/constants/theme.dart';
-// import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-// import 'package:wintek/utils/widgets/custom_text_form_field.dart';
-// import 'package:wintek/utils/constants/app_colors.dart';
-// import 'package:wintek/utils/router/routes_names.dart';
-// import 'package:wintek/utils/constants/validators.dart';
-// >>>>>>> main
-
-class LoginEmailScreen extends StatefulWidget {
-  const LoginEmailScreen({super.key});
+class LoginPhoneScreen extends ConsumerStatefulWidget {
+  const LoginPhoneScreen({super.key});
 
   @override
-  State<LoginEmailScreen> createState() => _LoginLoginEmailScreenScreenState();
+  ConsumerState<LoginPhoneScreen> createState() => _LoginPhoneScreenState();
 }
 
-class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+class _LoginPhoneScreenState extends ConsumerState<LoginPhoneScreen> {
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
   bool isChecked = false;
   bool _isObscure = true;
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
       appBar: CustomAppbar(
+        showBackButton: false,
         title: 'Log in',
         subtitle:
             'Please log in with your phone number or email\nIf you forget your password, contact support',
@@ -54,7 +51,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
-              key: _formKey,
+              key: _formkey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -63,14 +60,8 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                     children: [
                       Expanded(
                         child: CustomElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              RoutesNames.loginWithPhone,
-                              (route) => false,
-                            );
-                          },
-                          backgroundColor: AppColors.authPrimaryColor,
+                          onPressed: () {},
+                          backgroundColor: AppColors.authTertiaryColor,
                           borderRadius: 30,
                           borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
@@ -83,16 +74,20 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                             'Log in with Phone',
                             style: Theme.of(
                               context,
-                            ).textTheme.authBodyLargeFourth,
+                            ).textTheme.authBodyLargeTertiary,
                           ),
                         ),
                       ),
                       SizedBox(width: 16),
                       Expanded(
                         child: CustomElevatedButton(
-                          //text: 'Email Login',
-                          onPressed: () {},
-                          backgroundColor: AppColors.authTertiaryColor,
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              RoutesNames.loginWithEmail,
+                            );
+                          },
+                          backgroundColor: AppColors.authPrimaryColor,
                           borderRadius: 30,
                           borderColor: AppColors.authTertiaryColor,
                           padding: const EdgeInsets.only(
@@ -105,7 +100,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                             'Email Login',
                             style: Theme.of(
                               context,
-                            ).textTheme.authBodyLargeTertiary,
+                            ).textTheme.authBodyLargeFourth,
                           ),
                         ),
                       ),
@@ -113,29 +108,61 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                   ),
                   SizedBox(height: 30),
                   Text(
-                    'Email',
+                    'Phone Number',
+
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
                   SizedBox(height: 10),
 
-                  //field for Email
+                  //field for Phone number
                   CustomTextFormField(
-                    controller: _emailController,
-                    hintText: "Enter email",
-                    keyboardType: TextInputType.emailAddress,
-                    validator: Validators.validateEmail,
+                    controller: _phoneController,
+                    hintText: "Enter mobile number",
+                    keyboardType: TextInputType.number,
+                    prefix: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(width: 12),
+                        Text(
+                          "+91",
+                          style: TextStyle(
+                            color: AppColors.textformfieldPrimaryTextColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          FontAwesomeIcons.angleDown,
+                          color: AppColors.authFourthColor,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          "|",
+                          style: TextStyle(
+                            color: AppColors.textformfieldPrimaryTextColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+                    validator: Validators.validatePhone,
                     autoValidate: true,
                   ),
                   SizedBox(height: 20),
+
                   Text(
                     'Password',
                     style: Theme.of(context).textTheme.authBodyLargeSecondary,
                   ),
+                  //   style: Theme.of(context).textTheme.bodySmall),
                   SizedBox(height: 10),
 
                   //field for Password
                   CustomTextFormField(
                     controller: _passwordController,
+
                     hintText: "Enter Password",
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: _isObscure,
@@ -181,6 +208,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                       SizedBox(width: 4),
                       Text(
                         "Remember Password",
+
                         style: Theme.of(
                           context,
                         ).textTheme.authBodyMediumPrimary,
@@ -205,10 +233,37 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
 
                   //Login Button
                   CustomElevatedButton(
-                    //  text: 'Log in',
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        log('Logged in');
+                    onPressed: () async {
+                      if (_formkey.currentState!.validate()) {
+                        final authNotifier = ref.read(
+                          authNotifierProvider.notifier,
+                        );
+
+                        await authNotifier.login(
+                          mobile: _phoneController.text.trim(),
+                          password: _passwordController.text.trim(),
+                        );
+
+                        final authState = ref.read(authNotifierProvider);
+
+                        if (mounted && authState.message != null) {
+                          CustomSnackbar.show(
+                            context,
+                            message: authState.message!,
+                          );
+                        }
+
+                        if (mounted &&
+                            authState.message?.toLowerCase().contains(
+                                  "success",
+                                ) ==
+                                true) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            RoutesNames.bottombar,
+                            (route) => false,
+                          );
+                        }
                       }
                     },
                     backgroundColor: AppColors.authTertiaryColor,
@@ -220,16 +275,24 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    child: Text(
-                      'Log in',
-                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
-                    ),
+                    child: ref.watch(authNotifierProvider).isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(
+                            'Log in',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.authBodyLargeTertiary,
+                          ),
                   ),
+
                   SizedBox(height: 20),
+
                   //Register
                   CustomElevatedButton(
-                    hasBorder: true,
-                    borderColor: AppColors.authTertiaryColor,
                     onPressed: () {
                       Navigator.pushNamed(context, RoutesNames.registerphone);
                     },
@@ -241,6 +304,7 @@ class _LoginLoginEmailScreenScreenState extends State<LoginEmailScreen> {
                       top: 14,
                       bottom: 14,
                     ),
+                    borderColor: AppColors.authTertiaryColor,
                     width: double.infinity,
                     child: Text(
                       'Register',
