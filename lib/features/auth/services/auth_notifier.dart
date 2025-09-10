@@ -43,8 +43,40 @@ class AuthNotifier extends StateNotifier<AuthState> {
   /*
 
   */
+
+  Future<bool> registerUser(RegisterRequestModel signupData) async {
+    ref.read(userDraftProvider.notifier).state = signupData.toJson();
+    if (ref.read(userDraftProvider.notifier).state == null) {
+      state = AuthState(message: "No registration draft found");
+      return false;
+    }
+    try {
+      final res = await apiService.signup(signupData);
+      log('Responce is ${res['message']}');
+      if (res['message'] == 'signup') {
+        await ref
+            .read(authNotifierProvider.notifier)
+            .sendOtp(signupData.mobile);
+        state = AuthState(message: res['message']);
+        return true;
+      } else if (res['status'] == 'failure') {
+        log(' ALREADY USER EXIST ${res['message']}');
+        state = AuthState(message: res['message']);
+        log('STATE MESSAGE IS ${state.message}');
+        return false;
+      }
+
+      return false;
+    } catch (e) {
+      log('Sign up is error ${e.toString()}');
+
+      Exception(e.toString());
+      return false;
+    }
+  }
+
   ///! Step 2 → Verify OTP, then signup
-  Future<bool> verifyOtpAndSignup({required String otp}) async {
+  Future<bool> verifyOtp({required String otp}) async {
     final draft = ref.read(userDraftProvider);
     if (draft == null) {
       state = AuthState(message: "No registration draft found");
@@ -60,27 +92,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = AuthState(message: verifyResponce.message);
 
       if (verifyResponce.status == "success") {
-        log('otp verificatio for registration is success');
-        log('user data is in verify otp $draft');
-        final signupResponce = await apiService.signup(
-          RegisterRequestModel.fromJson(draft),
-        );
-        log('signup responce is outside checking $signupResponce');
-        if (signupResponce['status'] == "failure") {
-          log('sign up  is success');
-          log('sign up responce is ${signupResponce['message']}');
+        // final signupResponce = await apiService.signup(
+        //   RegisterRequestModel.fromJson(draft),
+        // );
 
-          await _storage.saveCredentials(
-            SecureStorageModel(
-              token: verifyResponce.tokenData.token,
-              cookie: verifyResponce.cookie,
-              expiry: verifyResponce.tokenData.expiresIn,
-            ),
-          );
-          return true;
-        } else {
-          state = AuthState(message: 'User Signup error');
-        }
+        await _storage.saveCredentials(
+          SecureStorageModel(
+            token: verifyResponce.tokenData.token,
+            cookie: verifyResponce.cookie,
+            expiry: verifyResponce.tokenData.expiresIn,
+          ),
+        );
+        return true;
       }
       return false;
     } catch (e) {

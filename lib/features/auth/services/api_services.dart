@@ -16,17 +16,32 @@ class ApiServices {
 
   //!SignUp
   Future<Map<String, dynamic>> signup(RegisterRequestModel signupData) async {
-    log('user data is  ${signupData.name}     ${signupData.mobile}');
+    log('user data is ${signupData.name} ${signupData.mobile}');
     log(signupData.toJson().toString());
+
     try {
       final response = await dio.post(
         ApiConstants.signupAPI,
         data: signupData.toJson(),
+        // Optionally: treat only network errors as exceptions
+        options: Options(validateStatus: (status) => status! < 500),
       );
-      log('responce in api sevices is ${response.data}');
-      return response.data;
-    } on DioException catch (e) {
-      throw e.response?.data ?? {'status': 'failure', 'message': e.message};
+
+      // Now even 409 will come here instead of exception
+      log('after signup api call ${response.data}');
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e, st) {
+      // If it's still an exception (like no internet)
+      if (e.response != null && e.response?.data != null) {
+        log('Dio error with response: ${e.response?.data}', stackTrace: st);
+        return (e.response?.data as Map).cast<String, dynamic>();
+      } else {
+        log('Network error: ${e.message}', stackTrace: st);
+        return {'status': 'failure', 'message': e.message ?? "Network error"};
+      }
+    } catch (e, st) {
+      log('Unexpected signup error: $e', stackTrace: st);
+      return {'status': 'failure', 'message': 'Unexpected error occurred'};
     }
   }
 

@@ -11,6 +11,8 @@ class AppColors {
   static const Color authFourthColor = Color(0xFF5D7593);
   static const Color authFifthColor = Color(0xFFFFFFFF);
   static const Color authSixthColor = Color(0xFF000000);
+  static const Color authSeventhColor = Color(0xFFA395EE);
+  static const Color authEighthColor = Colors.transparent;
 
   static const Color bgScaffoldAuthScreen = Color(0xFF140A2D);
   static const Color bgAppbarAuthScreen = Color(0xFF271777);
@@ -135,6 +137,7 @@ class AppColors {
   //!Snackbar
   //snackbar bg color
   static const Color snackbarValidateColor = Colors.red;
+  static const Color snackbarSuccessValidateColor = Colors.green;
 
   //snackbar text color
   static const Color snackbarValidateTextColor = Colors.white;

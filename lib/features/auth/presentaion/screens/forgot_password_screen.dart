@@ -224,7 +224,7 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                     ],
                   ),
                   SizedBox(height: 30),
-                  //Button for Register
+                  //! Button for Reset
                   CustomElevatedButton(
                     onPressed: () async {
                       if (!_isChecked) {
@@ -244,21 +244,33 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                           ),
                         );
 
+                        final latestState = ref.read(authNotifierProvider);
+
                         if (mounted && result == true) {
+                          CustomSnackbar.show(
+                            backgroundColor:
+                                AppColors.snackbarSuccessValidateColor,
+                            context,
+                            message:
+                                latestState.message ??
+                                "Password changed successfully",
+                          );
+
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             RoutesNames.loginWithPhone,
                             (route) => false,
                           );
+                        } else if (mounted && latestState.message != null) {
+                          CustomSnackbar.show(
+                            backgroundColor: AppColors.snackbarValidateColor,
+                            context,
+                            message: latestState.message!,
+                          );
                         }
                       }
-                      if (mounted && authState.message != null) {
-                        CustomSnackbar.show(
-                          context,
-                          message: authState.message!,
-                        );
-                      }
                     },
+
                     backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(

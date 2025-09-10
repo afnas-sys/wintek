@@ -43,7 +43,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
         showBackButton: false,
         title: 'Log in',
         subtitle:
-            'Please log in with your phone number or email\nIf you forget your password, contact costomer service',
+            'Please log in with your phone number\nIf you forget your password, contact costomer service',
         height: 224,
       ),
 
@@ -56,57 +56,6 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // SizedBox(height: 30),
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: CustomElevatedButton(
-                  //         onPressed: () {},
-                  //         backgroundColor: AppColors.authTertiaryColor,
-                  //         borderRadius: 30,
-                  //         borderColor: AppColors.authTertiaryColor,
-                  //         padding: const EdgeInsets.only(
-                  //           left: 20,
-                  //           right: 20,
-                  //           top: 14,
-                  //           bottom: 14,
-                  //         ),
-                  //         child: Text(
-                  //           'Log in with Phone',
-                  //           style: Theme.of(
-                  //             context,
-                  //           ).textTheme.authBodyLargeTertiary,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     SizedBox(width: 16),
-                  //     Expanded(
-                  //       child: CustomElevatedButton(
-                  //         onPressed: () {
-                  //           Navigator.pushNamed(
-                  //             context,
-                  //             RoutesNames.loginWithEmail,
-                  //           );
-                  //         },
-                  //         backgroundColor: AppColors.authPrimaryColor,
-                  //         borderRadius: 30,
-                  //         borderColor: AppColors.authTertiaryColor,
-                  //         padding: const EdgeInsets.only(
-                  //           left: 30,
-                  //           right: 30,
-                  //           top: 14,
-                  //           bottom: 14,
-                  //         ),
-                  //         child: Text(
-                  //           'Email Login',
-                  //           style: Theme.of(
-                  //             context,
-                  //           ).textTheme.authBodyLargeFourth,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                   SizedBox(height: 30),
                   Text(
                     'Phone number',
@@ -115,7 +64,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                   ),
                   SizedBox(height: 10),
 
-                  //field for Phone number
+                  //! field for Phone number
                   CustomTextFormField(
                     controller: _phoneController,
                     hintText: "Enter mobile number",
@@ -126,19 +75,16 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                         const SizedBox(width: 12),
                         Text(
                           "+91",
-                          style: TextStyle(
-                            color:
-                                // vasil changed color
-                                Colors.white,
-                            fontSize: 14,
-                          ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.authBodyMediumThird,
                         ),
                         const SizedBox(width: 4),
                         Icon(
                           FontAwesomeIcons.angleDown,
                           color:
                               // vasil changed color
-                              Colors.white,
+                              AppColors.authFifthColor,
                           size: 16,
                         ),
                         const SizedBox(width: 4),
@@ -182,7 +128,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                         _isObscure
                             ? Icons.remove_red_eye
                             : Icons.visibility_off,
-                        color: Colors.white,
+                        color: AppColors.authFifthColor,
                         size: 20,
                       ),
                     ),
@@ -323,17 +269,10 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         'or login with',
-                        style: TextStyle(color: Colors.white),
+                        style: Theme.of(context).textTheme.authBodyMediumThird,
                       ),
 
-                      /*
-
-
-
-
-
-
-                      */
+                      //! Google field
                       CustomElevatedButton(
                         onPressed: () {},
                         borderColor: AppColors.borderAuthTextField,
@@ -347,7 +286,9 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                             Image.asset(AppImages.googleIcon),
                             Text(
                               'Login with Google',
-                              style: TextStyle(color: Colors.white),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.authBodyLargeSecondary,
                             ),
                           ],
                         ),

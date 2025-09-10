@@ -232,25 +232,22 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                                 password: _setPassController.text,
                                 referralCode: _inviteCodeController.text,
                               );
-                              draftProvider.state = data.toJson();
-
-                              log('user details1   ${draftProvider.state}');
-                              log(
-                                '  user details2 : ${_nameController.text + _phoneController.text + _setPassController.text + _inviteCodeController.text}',
+                              final bool res = await authNotifier.registerUser(
+                                data,
                               );
-                              await authNotifier.sendOtp(_phoneController.text);
-                              // Save mobile in provider for OTP screen
-                              ref.read(mobileNumberProvider.notifier).state =
-                                  _phoneController.text;
 
-                              // Navigate to OTP screen
-                              Navigator.pushNamed(context, RoutesNames.otp);
+                              // After registerUser finishes, get the latest state
+                              final latestState = ref.read(
+                                authNotifierProvider,
+                              );
 
-                              if (authProvider.message != null) {
+                              if (res) {
+                                Navigator.pushNamed(context, RoutesNames.otp);
+                              } else if (latestState.message != null) {
                                 CustomSnackbar.show(
                                   context,
-                                  message: authProvider.message!,
-                                  backgroundColor: Colors.green,
+                                  message: latestState.message!,
+                                  backgroundColor: Colors.red,
                                 );
                               }
                             }
@@ -283,7 +280,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                         (_) => false,
                       );
                     },
-                    backgroundColor: AppColors.authPrimaryColor,
+                    backgroundColor: AppColors.authEighthColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -294,7 +291,9 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                     child: Text.rich(
                       TextSpan(
                         text: 'I have an Account ',
-                        style: Theme.of(context).textTheme.authBodyLargePrimary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyLargeSecondary,
                         children: [
                           TextSpan(
                             text: 'Log in',
