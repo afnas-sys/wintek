@@ -65,16 +65,20 @@ class CustomTextFormField extends StatelessWidget {
         prefixIcon: prefix,
         hintText: hintText,
         hintStyle: GoogleFonts.roboto(
-          color: AppColors.textformfieldPrimaryTextColor,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
+          // vasil changed color
+          color: AppColors.authInputTextColor,
+          fontSize: 14,
+          // fontWeight: FontWeight.w500,
         ),
         filled: true,
-        fillColor: AppColors.authSecondaryColor,
+        // vasil changed color
+        fillColor: Colors.transparent,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(52),
           borderSide: BorderSide(
-            color: AppColors.textformfieldActiveBorderColor,
+            color:
+                // vasil changed color
+                AppColors.borderAuthTextField,
             width: 1,
           ),
         ),

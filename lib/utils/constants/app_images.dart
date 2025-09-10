@@ -34,4 +34,5 @@ class AppImages {
   static const String send = 'assets/images/send.png';
   static const String welcomeBonus = 'assets/images/welcome_bonus.png';
   static const String logout = 'assets/images/logout.png';
+  static const String googleIcon = 'assets/images/google.png';
 }

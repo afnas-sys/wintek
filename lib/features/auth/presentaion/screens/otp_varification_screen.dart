@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/router/routes_names.dart';
@@ -11,16 +12,16 @@ import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 // <-- make sure this path matches your project structure
 import 'package:wintek/features/auth/services/auth_notifier.dart';
 
-class OtpVarificationCodeScreen extends ConsumerStatefulWidget {
-  const OtpVarificationCodeScreen({super.key});
+class OtpVarificationScreen extends ConsumerStatefulWidget {
+  const OtpVarificationScreen({super.key});
 
   @override
-  ConsumerState<OtpVarificationCodeScreen> createState() =>
+  ConsumerState<OtpVarificationScreen> createState() =>
       _OtpVarificationCodeScreenState();
 }
 
 class _OtpVarificationCodeScreenState
-    extends ConsumerState<OtpVarificationCodeScreen> {
+    extends ConsumerState<OtpVarificationScreen> {
   final List<TextEditingController> _controllers = List.generate(
     6,
     (_) => TextEditingController(),
@@ -43,12 +44,13 @@ class _OtpVarificationCodeScreenState
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
+    final newUserData = ref.watch(userDraftProvider);
 
     return Scaffold(
       appBar: CustomAppbar(
         title: 'OTP Verification',
         subtitle:
-            'Enter the verification cide we just sent on your mobile number. (+91 0987654321)',
+            'Enter the verification cide we just sent on your mobile number. (+91 ${newUserData?['mobile'] ?? ''})',
         height: 220,
       ),
       body: SafeArea(
@@ -60,7 +62,7 @@ class _OtpVarificationCodeScreenState
               children: [
                 const SizedBox(height: 30),
                 Text(
-                  'Full Name',
+                  'Verify OTP',
                   style: Theme.of(context).textTheme.authBodyLargeSecondary,
                 ),
                 const SizedBox(height: 10),
@@ -78,10 +80,18 @@ class _OtpVarificationCodeScreenState
                         cursorColor: AppColors.textTertiaryColor,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: AppColors.authSecondaryColor,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide: BorderSide(
+                              color: AppColors.borderAuthTextField,
+                            ),
+                          ),
+                          fillColor: Colors.transparent,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(100),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                              color: AppColors.borderAuthTextField,
+                            ),
                           ),
                         ),
                         focusNode: _focusNodes[index],
@@ -122,7 +132,6 @@ class _OtpVarificationCodeScreenState
                   onPressed: () async {
                     if (authState.isLoading) {
                       // don’t let user spam while loading
-                      debugPrint('⏳ Verification already in progress…');
                       return;
                     }
 
@@ -134,18 +143,22 @@ class _OtpVarificationCodeScreenState
                       return;
                     }
 
-                    // Call the refactored method (OTP → then signup)
-                    await ref
+                    final bool result = await ref
                         .read(authNotifierProvider.notifier)
                         .verifyOtpAndSignup(otp: otp);
 
-                    final result = ref.read(authNotifierProvider).message;
-                    debugPrint("✅ Verify response: $result");
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      RoutesNames.home,
-                      (route) => false,
-                    );
+                    final res = ref.read(authNotifierProvider).message;
+                    debugPrint("✅ Verify response: $res");
+                    if (result) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        RoutesNames.home,
+                        (route) => false,
+                      );
+                    }
+                    if (authState.message != null) {
+                      CustomSnackbar.show(context, message: authState.message!);
+                    }
                   },
                   backgroundColor: AppColors.authTertiaryColor,
                   borderRadius: 30,
@@ -165,11 +178,12 @@ class _OtpVarificationCodeScreenState
                 const SizedBox(height: 38),
 
                 Row(
+                  spacing: 5,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Didn\'t receive the code?',
-                      style: Theme.of(context).textTheme.authBodyLargePrimary,
+                      style: Theme.of(context).textTheme.authBodyMediumThird,
                     ),
                     TextButton(
                       style: TextButton.styleFrom(

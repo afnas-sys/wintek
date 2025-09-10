@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wintek/features/auth/domain/model/register_model.dart';
 
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
@@ -16,15 +17,14 @@ import 'package:wintek/utils/constants/validators.dart';
 // Import your Auth Notifier
 import 'package:wintek/features/auth/services/auth_notifier.dart';
 
-class RegisterPhoneScreen extends ConsumerStatefulWidget {
-  const RegisterPhoneScreen({super.key});
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  ConsumerState<RegisterPhoneScreen> createState() =>
-      _RegisterPhoneScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterPhoneScreenState();
 }
 
-class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
+class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
   final _formkey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -37,12 +37,14 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authNotifierProvider);
+    final authProvider = ref.watch(authNotifierProvider);
+    final authNotifier = ref.watch(authNotifierProvider.notifier);
+    final draftProvider = ref.watch(userDraftProvider.notifier);
 
     return Scaffold(
       appBar: CustomAppbar(
         title: 'Register',
-        subtitle: 'Please register by phone number or email',
+        subtitle: 'Please register by phone number',
         height: 200,
       ),
       body: SafeArea(
@@ -54,62 +56,12 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 30),
-
-                  /// Top buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomElevatedButton(
-                          onPressed: () {},
-                          backgroundColor: AppColors.authTertiaryColor,
-                          borderRadius: 30,
-                          borderColor: AppColors.authTertiaryColor,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 14,
-                          ),
-                          child: Text(
-                            'Log in with Phone',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.authBodyLargeTertiary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: CustomElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              RoutesNames.registeremail,
-                            );
-                          },
-                          backgroundColor: AppColors.authPrimaryColor,
-                          borderRadius: 30,
-                          borderColor: AppColors.authTertiaryColor,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 14,
-                          ),
-                          child: Text(
-                            'Email Login',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.authBodyLargeFourth,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
 
                   /// Full Name
                   Text(
                     'Full Name',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                    style: Theme.of(context).textTheme.authBodyMediumPrimary,
                   ),
                   const SizedBox(height: 10),
                   CustomTextFormField(
@@ -125,7 +77,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                   /// Phone Number
                   Text(
                     'Phone Number',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                    style: Theme.of(context).textTheme.authBodyMediumPrimary,
                   ),
                   const SizedBox(height: 10),
                   CustomTextFormField(
@@ -138,10 +90,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                         const SizedBox(width: 12),
                         const Text(
                           "+91",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: AppColors.textformfieldPrimaryTextColor,
-                          ),
+                          style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                         const SizedBox(width: 4),
                         const Icon(
@@ -152,10 +101,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                         const SizedBox(width: 4),
                         const Text(
                           "|",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: AppColors.textformfieldPrimaryTextColor,
-                          ),
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                         const SizedBox(width: 8),
                       ],
@@ -169,7 +115,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                   /// Set Password
                   Text(
                     'Set Password',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                    style: Theme.of(context).textTheme.authBodyMediumPrimary,
                   ),
                   const SizedBox(height: 10),
                   CustomTextFormField(
@@ -198,8 +144,9 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                   /// Confirm Password
                   Text(
                     'Confirm Password',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                    style: Theme.of(context).textTheme.authBodyMediumPrimary,
                   ),
+
                   const SizedBox(height: 10),
                   CustomTextFormField(
                     controller: _confirmPassController,
@@ -218,7 +165,10 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                         size: 20,
                       ),
                     ),
-                    validator: Validators.validatePassword,
+                    validator: (va) => Validators.validateConfirmPassword(
+                      _setPassController.text,
+                      _confirmPassController.text,
+                    ),
                     autoValidate: true,
                   ),
 
@@ -227,7 +177,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                   /// Invite Code
                   Text(
                     'Invite code',
-                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                    style: Theme.of(context).textTheme.authBodyMediumPrimary,
                   ),
                   const SizedBox(height: 10),
                   CustomTextFormField(
@@ -254,9 +204,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                       const SizedBox(width: 10),
                       Text(
                         "I have Read and Agree[Privacy Agreement]",
-                        style: Theme.of(
-                          context,
-                        ).textTheme.authBodyMediumPrimary,
+                        style: Theme.of(context).textTheme.authBodyMediumThird,
                       ),
                     ],
                   ),
@@ -265,7 +213,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
 
                   /// Register button
                   CustomElevatedButton(
-                    onPressed: authState.isLoading
+                    onPressed: authProvider.isLoading
                         ? null
                         : () async {
                             if (!_isChecked) {
@@ -278,15 +226,19 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                             if (_formkey.currentState!.validate()) {
                               log('Register API call');
 
-                              await ref
-                                  .read(authNotifierProvider.notifier)
-                                  .registerWithMobile(
-                                    name: _nameController.text,
-                                    mobile: _phoneController.text,
-                                    password: _setPassController.text,
-                                    referralCode: _inviteCodeController.text,
-                                  );
+                              final data = RegisterRequestModel(
+                                name: _nameController.text,
+                                mobile: _phoneController.text,
+                                password: _setPassController.text,
+                                referralCode: _inviteCodeController.text,
+                              );
+                              draftProvider.state = data.toJson();
 
+                              log('user details1   ${draftProvider.state}');
+                              log(
+                                '  user details2 : ${_nameController.text + _phoneController.text + _setPassController.text + _inviteCodeController.text}',
+                              );
+                              await authNotifier.sendOtp(_phoneController.text);
                               // Save mobile in provider for OTP screen
                               ref.read(mobileNumberProvider.notifier).state =
                                   _phoneController.text;
@@ -294,13 +246,11 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                               // Navigate to OTP screen
                               Navigator.pushNamed(context, RoutesNames.otp);
 
-                              final updatedState = ref.read(
-                                authNotifierProvider,
-                              );
-                              if (updatedState.message != null) {
+                              if (authProvider.message != null) {
                                 CustomSnackbar.show(
                                   context,
-                                  message: updatedState.message!,
+                                  message: authProvider.message!,
+                                  backgroundColor: Colors.green,
                                 );
                               }
                             }
@@ -312,7 +262,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterPhoneScreen> {
                       vertical: 14,
                     ),
                     width: double.infinity,
-                    child: authState.isLoading
+                    child: authProvider.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             'Register',

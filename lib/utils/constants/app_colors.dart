@@ -12,6 +12,11 @@ class AppColors {
   static const Color authFifthColor = Color(0xFFFFFFFF);
   static const Color authSixthColor = Color(0xFF000000);
 
+  static const Color bgScaffoldAuthScreen = Color(0xFF140A2D);
+  static const Color bgAppbarAuthScreen = Color(0xFF271777);
+  static const Color borderAuthTextField = Color(0xFF3E3267);
+  static const Color authInputTextColor = Color(0x80FFFFFF);
+
   //! ___________________________Aviator_________________________________________
 
   static const Color aviatorPrimaryColor = Color(0xFF0D1B2A);

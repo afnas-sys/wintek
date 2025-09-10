@@ -25,7 +25,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.authSecondaryColor,
+        color: AppColors.bgAppbarAuthScreen,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -37,7 +37,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           width: double.infinity,
           height: height,
           decoration: BoxDecoration(
-            color: AppColors.authSecondaryColor,
+            color: AppColors.bgAppbarAuthScreen,
             borderRadius: const BorderRadius.only(
               bottomLeft: Radius.circular(30),
               bottomRight: Radius.circular(30),

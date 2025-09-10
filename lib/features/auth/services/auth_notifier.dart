@@ -1,6 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/features/auth/domain/model/forgot_password_model.dart';
+import 'package:wintek/features/auth/domain/model/login_model.dart';
+import 'package:wintek/features/auth/domain/model/secure_storage_model.dart';
+import 'package:wintek/features/auth/domain/model/register_model.dart';
+import 'package:wintek/features/auth/domain/model/verify_otp_model.dart';
 import 'package:wintek/features/auth/services/api_services.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 
@@ -11,10 +16,8 @@ class AuthState {
   AuthState({this.isLoading = false, this.message});
 }
 
-/// User draft provider (to temporarily store details until OTP is verified)
 final userDraftProvider = StateProvider<Map<String, dynamic>?>((ref) => null);
 
-/// Auth Notifier
 class AuthNotifier extends StateNotifier<AuthState> {
   final _storage = SecureStorageService();
   final Ref ref;
@@ -22,127 +25,123 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this.ref, this.apiService) : super(AuthState());
 
-  /// Register step 1 → Send OTP and save draft
-  Future<void> registerWithMobile({
-    required String name,
-    required String mobile,
-    required String password,
-    // String? email,
-    String? referralCode,
-  }) async {
-    state = AuthState(isLoading: true);
-    try {
-      await sendOtp(mobile);
-
-      // Save user draft temporarily
-      ref.read(userDraftProvider.notifier).state = {
-        'name': name,
-        'mobile': mobile,
-        'password': password,
-        //'email': email,
-        'referralCode': referralCode,
-      };
-
-      state = AuthState(message: "OTP sent successfully");
-    } catch (e) {
-      state = AuthState(message: e.toString());
-    }
-  }
-
   /// Send OTP only
-  Future<void> sendOtp(String mobile) async {
+  Future<bool> sendOtp(String mobile) async {
     state = AuthState(isLoading: true);
     try {
       final res = await apiService.sendOtp(mobile);
       state = AuthState(message: res['message']);
+      state = AuthState(isLoading: false);
+
+      return res['status'] == 'success';
     } catch (e) {
       state = AuthState(message: e.toString());
+      return false;
     }
   }
 
-  ///! Step 2 → Verify OTP, then signup
-  Future<void> verifyOtpAndSignup({required String otp}) async {
-    final draft = ref.read(userDraftProvider);
+  /*
 
+  */
+  ///! Step 2 → Verify OTP, then signup
+  Future<bool> verifyOtpAndSignup({required String otp}) async {
+    final draft = ref.read(userDraftProvider);
     if (draft == null) {
       state = AuthState(message: "No registration draft found");
-      return;
+      return false;
     }
 
     state = AuthState(isLoading: true);
     try {
-      // First verify OTP
-      final verifyRes = await apiService.verifyOtp(
-        mobile: draft['mobile'],
-        otp: otp,
+      final verifyResponce = await apiService.verifyOtp(
+        VerifyOtpRequestModel(mobile: draft['mobile'], otp: otp),
       );
 
-      // Save credentials
-      await _storage.saveCredentials(
-        token: verifyRes['tokenData']['token'],
-        cookie: verifyRes['cookie'].toString(),
-        expiry: verifyRes['tokenData']['expiresIn'].toString(),
-      );
-      final token = verifyRes['tokenData']['token'];
-      final cookie = verifyRes['cookie'];
-      final expiry = verifyRes['tokenData']['expiresIn'];
-      log('SECURE STORAGE TOKEN: $token');
-      log('SECURE STORAGE COOKIE: $cookie');
-      log('SECURE STORAGE EXPIRY: $expiry');
+      state = AuthState(message: verifyResponce.message);
 
-      // After OTP success → do signup
-      final res = await apiService.signup(
-        name: draft['name'],
-        mobile: draft['mobile'],
-        password: draft['password'],
-        referralCode: draft['referralCode'],
-      );
+      if (verifyResponce.status == "success") {
+        log('otp verificatio for registration is success');
+        log('user data is in verify otp $draft');
+        final signupResponce = await apiService.signup(
+          RegisterRequestModel.fromJson(draft),
+        );
+        log('signup responce is outside checking $signupResponce');
+        if (signupResponce['status'] == "failure") {
+          log('sign up  is success');
+          log('sign up responce is ${signupResponce['message']}');
 
-      state = AuthState(message: res['message']);
+          await _storage.saveCredentials(
+            SecureStorageModel(
+              token: verifyResponce.tokenData.token,
+              cookie: verifyResponce.cookie,
+              expiry: verifyResponce.tokenData.expiresIn,
+            ),
+          );
+          return true;
+        } else {
+          state = AuthState(message: 'User Signup error');
+        }
+      }
+      return false;
     } catch (e) {
       state = AuthState(message: e.toString());
+      return false;
     }
   }
 
+  /*
+
+  */
   //! login
-  Future<void> login({required String mobile, required String password}) async {
+  Future<void> login(LoginRequestModel userLoginData) async {
     state = AuthState(isLoading: true);
     try {
-      final res = await apiService.login(mobile: mobile, password: password);
+      final res = await apiService.login(userLoginData);
 
-      //SAVE Credentials
-      _storage.saveCredentials(
-        token: res['tokenData']['token'],
-        cookie: res['cookie'],
-        expiry: res['tokenData']['expiresIn'],
-      );
+      if (res.status == 'success') {
+        //SAVE Credentials
 
-      state = AuthState(message: res['message']);
+        _storage.saveCredentials(
+          SecureStorageModel(
+            token: res.tokenData.token,
+            cookie: res.cookie,
+            expiry: res.tokenData.expiresIn,
+          ),
+        );
+      }
+
+      state = AuthState(message: res.message);
     } catch (e) {
       state = AuthState(message: e.toString());
     }
   }
 
+  /*
+
+  */
   //! forgotten password
-  Future<void> forgottenPassword({
-    required String mobile,
-    required String password,
-    required String otp,
-  }) async {
+  Future<bool> forgottenPassword(ForgotPasswordRequestModel forgotData) async {
     state = AuthState(isLoading: true);
     try {
-      final res = await apiService.forgottenPass(
-        mobile: mobile,
-        password: password,
-        otp: otp,
-      );
+      final res = await apiService.forgottenPass(forgotData);
+
+      if (res['status'] == 'success') {
+        state = AuthState(message: 'Password Changed Success');
+        return true;
+      }
+
       state = AuthState(message: res['message']);
+      return false;
     } catch (e) {
       state = AuthState(message: e.toString());
+      return false;
     }
   }
 }
 
+/*
+
+*/
 /// Provider
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((
   ref,
