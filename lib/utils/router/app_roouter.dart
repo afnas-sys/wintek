@@ -1,11 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:wintek/features/auth/presentaion/screens/forgot_password_screen.dart';
-import 'package:wintek/features/auth/presentaion/screens/login_email_screen.dart';
-import 'package:wintek/features/auth/presentaion/screens/login_phone_screen.dart';
-import 'package:wintek/features/auth/presentaion/screens/otp_varification_code_screen.dart';
-import 'package:wintek/features/auth/presentaion/screens/register_email_screen.dart';
-import 'package:wintek/features/auth/presentaion/screens/register_phone_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/login_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/otp_varification_screen.dart';
+import 'package:wintek/features/auth/presentaion/screens/register_screen.dart';
 import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/screens/card_jackpot_screen.dart';
 
@@ -21,31 +19,31 @@ class AppRouter {
     switch (settings.name) {
       case RoutesNames.loginWithPhone:
         return _buildPageTransition(
-          const LoginPhoneScreen(),
+          const LoginScreen(),
           settings,
           PageTransitionType.fade,
         );
-      case RoutesNames.loginWithEmail:
-        return _buildPageTransition(
-          const LoginEmailScreen(),
-          settings,
-          PageTransitionType.fade,
-        );
+      // case RoutesNames.loginWithEmail:
+      //   return _buildPageTransition(
+      //     const LoginEmailScreen(),
+      //     settings,
+      //     PageTransitionType.fade,
+      //   );
       case RoutesNames.registerphone:
         return _buildPageTransition(
-          RegisterPhoneScreen(),
+          RegisterScreen(),
           settings,
           PageTransitionType.fade,
         );
-      case RoutesNames.registeremail:
-        return _buildPageTransition(
-          const RegisterEmailScreen(),
-          settings,
-          PageTransitionType.fade,
-        );
+      // case RoutesNames.registeremail:
+      //   return _buildPageTransition(
+      //     const RegisterEmailScreen(),
+      //     settings,
+      //     PageTransitionType.fade,
+      //   );
       case RoutesNames.otp:
         return _buildPageTransition(
-          const OtpVarificationCodeScreen(),
+          const OtpVarificationScreen(),
           settings,
           PageTransitionType.fade,
         );
@@ -102,7 +100,7 @@ class AppRouter {
 
       default:
         return _buildPageTransition(
-          const LoginPhoneScreen(),
+          const LoginScreen(),
           settings,
           PageTransitionType.fade,
         );

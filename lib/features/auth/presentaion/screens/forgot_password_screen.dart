@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wintek/features/auth/domain/model/forgot_password_model.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/services/auth_notifier.dart';
 import 'package:wintek/utils/constants/theme.dart';
@@ -33,7 +32,7 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authNotifierProvider);
-
+    final authNotifier = ref.read(authNotifierProvider.notifier);
     return Scaffold(
       appBar: CustomAppbar(
         height: 224,
@@ -176,17 +175,21 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                         bottom: 10,
                       ),
                       onPressed: () {
-                        ref
-                            .read(authNotifierProvider.notifier)
-                            .sendOtp(_phoneController.text);
+                        authNotifier.sendOtp(_phoneController.text);
                       },
                       backgroundColor: AppColors.authTertiaryColor,
-                      child: Text(
-                        'Send',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.authBodyLargeTertiary,
-                      ),
+                      child: authState.isLoading == true
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              'Send',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.authBodyLargeTertiary,
+                            ),
                     ),
                     validator: Validators.validateVericationCode,
                     autoValidate: true,
@@ -233,36 +236,27 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                       }
 
                       if (_formKey.currentState!.validate()) {
-                        final authNotifier = ref.read(
-                          authNotifierProvider.notifier,
+                        final result = await authNotifier.forgottenPassword(
+                          ForgotPasswordRequestModel(
+                            mobile: _phoneController.text,
+                            password: _setPassController.text,
+                            otp: _verificationCodeController.text,
+                          ),
                         );
 
-                        await authNotifier.forgottenPassword(
-                          mobile: _phoneController.text,
-                          password: _setPassController.text,
-                          otp: _verificationCodeController.text,
-                        );
-
-                        final authState = ref.read(authNotifierProvider);
-
-                        if (mounted && authState.message != null) {
-                          CustomSnackbar.show(
-                            context,
-                            message: authState.message!,
-                          );
-                        }
-
-                        if (mounted &&
-                            authState.message?.toLowerCase().contains(
-                                  "success",
-                                ) ==
-                                true) {
+                        if (mounted && result == true) {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             RoutesNames.loginWithPhone,
                             (route) => false,
                           );
                         }
+                      }
+                      if (mounted && authState.message != null) {
+                        CustomSnackbar.show(
+                          context,
+                          message: authState.message!,
+                        );
                       }
                     },
                     backgroundColor: AppColors.authTertiaryColor,

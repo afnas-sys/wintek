@@ -5,11 +5,11 @@ import 'package:wintek/utils/constants/app_colors.dart';
 ThemeData theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: AppColors.aviatorSixteenthColor),
   //! scaffold
-  scaffoldBackgroundColor: AppColors.authPrimaryColor,
+  scaffoldBackgroundColor: AppColors.bgScaffoldAuthScreen,
 
   //!appbar
   appBarTheme: AppBarTheme(
-    backgroundColor: AppColors.authSecondaryColor,
+    backgroundColor: AppColors.bgAppbarAuthScreen,
     iconTheme: IconThemeData(color: AppColors.authFifthColor),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
@@ -69,7 +69,7 @@ extension CustomTextStyle on TextTheme {
   );
 
   TextStyle get authBodyLargePrimary => GoogleFonts.roboto(
-    color: AppColors.authFourthColor,
+    color: Color(0x80FFFFFF),
     fontSize: 16,
     fontWeight: FontWeight.w400,
   );
@@ -92,12 +92,19 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w500,
   );
 
+  // vasil changed the color
   TextStyle get authBodyMediumPrimary => GoogleFonts.roboto(
-    color: AppColors.authFourthColor,
+    color: Color(0xFFA395EE),
+    // color: AppColors.authFourthColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
-
+  TextStyle get authBodyMediumThird => GoogleFonts.roboto(
+    color: Colors.white,
+    // color: AppColors.authFourthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
   TextStyle get authBodyMediumSecondary => GoogleFonts.roboto(
     color: AppColors.authTertiaryColor,
     fontSize: 14,
