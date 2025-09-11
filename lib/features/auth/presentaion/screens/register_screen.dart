@@ -6,7 +6,6 @@ import 'package:wintek/features/auth/domain/model/register_model.dart';
 
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
-import 'package:wintek/features/auth/providers/mobile_provider.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/constants/theme.dart';
@@ -15,7 +14,7 @@ import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/validators.dart';
 
 // Import your Auth Notifier
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -39,7 +38,6 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authProvider = ref.watch(authNotifierProvider);
     final authNotifier = ref.watch(authNotifierProvider.notifier);
-    final draftProvider = ref.watch(userDraftProvider.notifier);
 
     return Scaffold(
       appBar: CustomAppbar(
@@ -224,33 +222,28 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                               return;
                             }
                             if (_formkey.currentState!.validate()) {
-                              log('Register API call');
-
                               final data = RegisterRequestModel(
                                 name: _nameController.text,
                                 mobile: _phoneController.text,
                                 password: _setPassController.text,
                                 referralCode: _inviteCodeController.text,
                               );
-                              draftProvider.state = data.toJson();
-
-                              log('user details1   ${draftProvider.state}');
-                              log(
-                                '  user details2 : ${_nameController.text + _phoneController.text + _setPassController.text + _inviteCodeController.text}',
+                              final bool res = await authNotifier.registerUser(
+                                data,
                               );
-                              await authNotifier.sendOtp(_phoneController.text);
-                              // Save mobile in provider for OTP screen
-                              ref.read(mobileNumberProvider.notifier).state =
-                                  _phoneController.text;
 
-                              // Navigate to OTP screen
-                              Navigator.pushNamed(context, RoutesNames.otp);
+                              // After registerUser finishes, get the latest state
+                              final latestState = ref.read(
+                                authNotifierProvider,
+                              );
 
-                              if (authProvider.message != null) {
+                              if (res) {
+                                Navigator.pushNamed(context, RoutesNames.otp);
+                              } else if (latestState.message != null) {
                                 CustomSnackbar.show(
                                   context,
-                                  message: authProvider.message!,
-                                  backgroundColor: Colors.green,
+                                  message: latestState.message!,
+                                  backgroundColor: Colors.red,
                                 );
                               }
                             }
@@ -279,11 +272,11 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
-                        RoutesNames.loginWithPhone,
+                        RoutesNames.loginScreen,
                         (_) => false,
                       );
                     },
-                    backgroundColor: AppColors.authPrimaryColor,
+                    backgroundColor: AppColors.authEighthColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
@@ -294,7 +287,9 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                     child: Text.rich(
                       TextSpan(
                         text: 'I have an Account ',
-                        style: Theme.of(context).textTheme.authBodyLargePrimary,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyLargeSecondary,
                         children: [
                           TextSpan(
                             text: 'Log in',

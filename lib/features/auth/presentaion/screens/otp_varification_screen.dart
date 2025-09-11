@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/features/auth/domain/model/secure_storage_model.dart';
 
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
+import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 // <-- make sure this path matches your project structure
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 
 class OtpVarificationScreen extends ConsumerStatefulWidget {
   const OtpVarificationScreen({super.key});
@@ -145,19 +147,26 @@ class _OtpVarificationCodeScreenState
 
                     final bool result = await ref
                         .read(authNotifierProvider.notifier)
-                        .verifyOtpAndSignup(otp: otp);
+                        .verifyOtp(otp: otp);
 
                     final res = ref.read(authNotifierProvider).message;
                     debugPrint("✅ Verify response: $res");
-                    if (result) {
+                    SecureStorageService storage = SecureStorageService();
+                    SecureStorageModel userCredential = await storage
+                        .readCredentials();
+                    if (result && userCredential.token != null) {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
-                        RoutesNames.home,
+                        RoutesNames.bottombar,
                         (route) => false,
                       );
                     }
                     if (authState.message != null) {
-                      CustomSnackbar.show(context, message: authState.message!);
+                      CustomSnackbar.show(
+                        backgroundColor: AppColors.snackbarSuccessValidateColor,
+                        context,
+                        message: 'Successfully ${authState.message!}',
+                      );
                     }
                   },
                   backgroundColor: AppColors.authTertiaryColor,

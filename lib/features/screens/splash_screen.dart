@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:wintek/features/auth/domain/constants/secure_storage_constants.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,12 +13,29 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final _storage = const FlutterSecureStorage();
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, RoutesNames.welcome);
-    });
+    _navigate();
+  }
+
+  Future<void> _navigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    final token = await _storage.read(key: SecureStorageConstants.tokenKey);
+    final isFirstLaunch = await _storage.read(key: 'isFirstLaunch');
+
+    if (token != null) {
+      //already logged in
+      Navigator.pushReplacementNamed(context, RoutesNames.bottombar);
+    } else {
+      if (isFirstLaunch == null || isFirstLaunch == 'true') {
+        Navigator.pushReplacementNamed(context, RoutesNames.welcome);
+      } else {
+        Navigator.pushReplacementNamed(context, RoutesNames.loginScreen);
+      }
+    }
   }
 
   @override
@@ -32,10 +51,6 @@ class _SplashScreenState extends State<SplashScreen> {
               Color(0x006041FF),
             ],
             radius: 150,
-            // focal: Alignment.center,
-            // tileMode: TileMode.clamp,
-
-            //  stops: [0.0, 1], // 0% to 100%
           ),
         ),
         child: Center(

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //initialRoute: RoutesNames.bottombar,
-      initialRoute: RoutesNames.loginWithPhone,
+      initialRoute: RoutesNames.splash,
       // initialRoute: RoutesNames.loginWithPhone,
       onGenerateRoute: AppRouter.generateRoute,
       title: 'Wintek',

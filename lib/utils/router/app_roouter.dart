@@ -17,7 +17,7 @@ import 'package:wintek/utils/widgets/custom_bottom_bar.dart';
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case RoutesNames.loginWithPhone:
+      case RoutesNames.loginScreen:
         return _buildPageTransition(
           const LoginScreen(),
           settings,
@@ -29,7 +29,7 @@ class AppRouter {
       //     settings,
       //     PageTransitionType.fade,
       //   );
-      case RoutesNames.registerphone:
+      case RoutesNames.registerScreen:
         return _buildPageTransition(
           RegisterScreen(),
           settings,

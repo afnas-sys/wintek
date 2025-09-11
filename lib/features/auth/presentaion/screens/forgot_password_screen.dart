@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/domain/model/forgot_password_model.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/utils/constants/theme.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
@@ -224,7 +224,7 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                     ],
                   ),
                   SizedBox(height: 30),
-                  //Button for Register
+                  //! Button for Reset
                   CustomElevatedButton(
                     onPressed: () async {
                       if (!_isChecked) {
@@ -244,21 +244,33 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                           ),
                         );
 
+                        final latestState = ref.read(authNotifierProvider);
+
                         if (mounted && result == true) {
+                          CustomSnackbar.show(
+                            backgroundColor:
+                                AppColors.snackbarSuccessValidateColor,
+                            context,
+                            message:
+                                latestState.message ??
+                                "Password changed successfully",
+                          );
+
                           Navigator.pushNamedAndRemoveUntil(
                             context,
-                            RoutesNames.loginWithPhone,
+                            RoutesNames.loginScreen,
                             (route) => false,
+                          );
+                        } else if (mounted && latestState.message != null) {
+                          CustomSnackbar.show(
+                            backgroundColor: AppColors.snackbarValidateColor,
+                            context,
+                            message: latestState.message!,
                           );
                         }
                       }
-                      if (mounted && authState.message != null) {
-                        CustomSnackbar.show(
-                          context,
-                          message: authState.message!,
-                        );
-                      }
                     },
+
                     backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.only(
