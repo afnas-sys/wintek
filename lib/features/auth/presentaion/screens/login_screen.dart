@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/domain/model/login_model.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/utils/constants/app_images.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
@@ -36,8 +36,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final authState = ref.watch(authNotifierProvider);
-
+    final authNotifier = ref.read(authNotifierProvider.notifier);
     return Scaffold(
       appBar: CustomAppbar(
         showBackButton: false,
@@ -185,17 +184,11 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                   CustomElevatedButton(
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
-                        final authNotifier = ref.read(
-                          authNotifierProvider.notifier,
-                        );
-
-                        await authNotifier.login(
+                        final bool res = await authNotifier.login(
                           LoginRequestModel(
                             mobile: _phoneController.text.trim(),
                             password: _passwordController.text.trim(),
                           ),
-                          // mobile: _phoneController.text.trim(),
-                          // password: _passwordController.text.trim(),
                         );
 
                         final authState = ref.read(authNotifierProvider);
@@ -207,11 +200,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                           );
                         }
 
-                        if (mounted &&
-                            authState.message?.toLowerCase().contains(
-                                  "success",
-                                ) ==
-                                true) {
+                        if (mounted && res) {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             RoutesNames.bottombar,
@@ -229,18 +218,20 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    child: ref.watch(authNotifierProvider).isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(
-                            'Log in',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.authBodyLargeTertiary,
-                          ),
+                    child:
+                        //  ref.watch(authNotifierProvider).isLoading
+                        //     ? const SizedBox(
+                        //         height: 20,
+                        //         width: 20,
+                        //         child: CircularProgressIndicator(strokeWidth: 2),
+                        //       )
+                        //     :
+                        Text(
+                          'Log in',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.authBodyLargeTertiary,
+                        ),
                   ),
 
                   SizedBox(height: 20),
@@ -248,7 +239,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                   //Register
                   CustomElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, RoutesNames.registerphone);
+                      Navigator.pushNamed(context, RoutesNames.registerScreen);
                     },
                     backgroundColor: Colors.transparent,
                     borderRadius: 30,

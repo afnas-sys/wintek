@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wintek/utils/router/routes_names.dart';
@@ -158,10 +159,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           height: 52,
                           width: 147,
                           borderRadius: 30,
-                          onPressed: () {
+                          onPressed: () async {
+                            final storage = const FlutterSecureStorage();
+                            await storage.write(
+                              key: 'isFirstLaunch',
+                              value: 'false',
+                            );
                             Navigator.pushReplacementNamed(
                               context,
-                              RoutesNames.bottombar,
+                              RoutesNames.loginScreen,
                             );
                           },
                           child: Row(

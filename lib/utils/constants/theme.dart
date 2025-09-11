@@ -99,14 +99,20 @@ extension CustomTextStyle on TextTheme {
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
+  TextStyle get authBodyMediumSecondary => GoogleFonts.roboto(
+    color: AppColors.authTertiaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
   TextStyle get authBodyMediumThird => GoogleFonts.roboto(
     //color: Colors.white,
     color: AppColors.authFifthColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
-  TextStyle get authBodyMediumSecondary => GoogleFonts.roboto(
-    color: AppColors.authTertiaryColor,
+
+  TextStyle get authBodyMediumFourth => GoogleFonts.roboto(
+    color: AppColors.authSixthColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );

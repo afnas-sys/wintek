@@ -25,7 +25,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this.ref, this.apiService) : super(AuthState());
 
-  /// Send OTP only
+  //! Send OTP
   Future<bool> sendOtp(String mobile) async {
     state = AuthState(isLoading: true);
     try {
@@ -40,10 +40,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  /*
-
-  */
-
+  //! Register
   Future<bool> registerUser(RegisterRequestModel signupData) async {
     ref.read(userDraftProvider.notifier).state = signupData.toJson();
     if (ref.read(userDraftProvider.notifier).state == null) {
@@ -58,6 +55,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
             .read(authNotifierProvider.notifier)
             .sendOtp(signupData.mobile);
         state = AuthState(message: res['message']);
+        ref.read(userDraftProvider.notifier).state = null;
         return true;
       } else if (res['status'] == 'failure') {
         log(' ALREADY USER EXIST ${res['message']}');
@@ -68,14 +66,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       return false;
     } catch (e) {
-      log('Sign up is error ${e.toString()}');
-
       Exception(e.toString());
       return false;
     }
   }
 
-  ///! Step 2 → Verify OTP, then signup
+  //! Verify OTP
   Future<bool> verifyOtp({required String otp}) async {
     final draft = ref.read(userDraftProvider);
     if (draft == null) {
@@ -112,18 +108,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  /*
-
-  */
   //! login
-  Future<void> login(LoginRequestModel userLoginData) async {
+  Future<bool> login(LoginRequestModel userLoginData) async {
     state = AuthState(isLoading: true);
     try {
       final res = await apiService.login(userLoginData);
 
       if (res.status == 'success') {
-        //SAVE Credentials
-
         _storage.saveCredentials(
           SecureStorageModel(
             token: res.tokenData.token,
@@ -131,17 +122,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
             expiry: res.tokenData.expiresIn,
           ),
         );
+        return true;
       }
 
       state = AuthState(message: res.message);
+      return false;
     } catch (e) {
       state = AuthState(message: e.toString());
+      return false;
     }
   }
 
-  /*
-
-  */
   //! forgotten password
   Future<bool> forgottenPassword(ForgotPasswordRequestModel forgotData) async {
     state = AuthState(isLoading: true);
@@ -160,11 +151,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return false;
     }
   }
+
+  //! Logout
+  Future<void> logout(WidgetRef ref) async {
+    await ref.read(authNotifierProvider.notifier)._storage.clearCredentials();
+  }
 }
 
-/*
-
-*/
 /// Provider
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((
   ref,

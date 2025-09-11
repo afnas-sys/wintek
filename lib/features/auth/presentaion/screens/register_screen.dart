@@ -6,7 +6,6 @@ import 'package:wintek/features/auth/domain/model/register_model.dart';
 
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
-import 'package:wintek/features/auth/providers/mobile_provider.dart';
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_text_form_field.dart';
 import 'package:wintek/utils/constants/theme.dart';
@@ -15,7 +14,7 @@ import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/validators.dart';
 
 // Import your Auth Notifier
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -39,7 +38,6 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authProvider = ref.watch(authNotifierProvider);
     final authNotifier = ref.watch(authNotifierProvider.notifier);
-    final draftProvider = ref.watch(userDraftProvider.notifier);
 
     return Scaffold(
       appBar: CustomAppbar(
@@ -224,8 +222,6 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                               return;
                             }
                             if (_formkey.currentState!.validate()) {
-                              log('Register API call');
-
                               final data = RegisterRequestModel(
                                 name: _nameController.text,
                                 mobile: _phoneController.text,
@@ -276,7 +272,7 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
                         context,
-                        RoutesNames.loginWithPhone,
+                        RoutesNames.loginScreen,
                         (_) => false,
                       );
                     },
