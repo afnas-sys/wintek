@@ -1,13 +1,44 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
+import 'package:wintek/features/auth/providers/dio_provider.dart';
+import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
+import 'package:wintek/features/auth/services/google_auth_services.dart';
 import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final authState = ref.watch(googleAuthProvider);
+
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final googleAuthService = GoogleAuthService(
+                ref.read(dioProvider),
+              );
+              final res = await googleAuthService.signOut();
+              ref.watch(googleAuthProvider.notifier).setMessage(res);
+
+              log('User sign out');
+              // if (authState.message != null) {
+              //   CustomSnackbar.show(context, message: authState.message!);
+              // }
+              Future.delayed(Duration(seconds: 2)).then((d) {
+                Navigator.pushNamed(context, RoutesNames.loginWithPhone);
+              });
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -67,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
               textColor: Colors.white,
               borderRadius: 30,
               backgroundColor: const Color(0XFFEB644C),
-              onPressed: () {},
+              onPressed: () async {},
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

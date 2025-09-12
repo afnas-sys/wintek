@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"wintek-game","appId":"1:512256426654:android:7d578d3ba8aab66128f18f","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"wintek-game","configurations":{"android":"1:512256426654:android:7d578d3ba8aab66128f18f","ios":"1:512256426654:ios:d4b87a355a680ada28f18f"}}}}}}

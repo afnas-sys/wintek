@@ -15,7 +15,7 @@ import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/validators.dart';
 
 // Import your Auth Notifier
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});

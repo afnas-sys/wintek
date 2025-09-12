@@ -10,7 +10,7 @@ import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
 // <-- make sure this path matches your project structure
-import 'package:wintek/features/auth/services/auth_notifier.dart';
+import 'package:wintek/features/auth/providers/auth_notifier.dart';
 
 class OtpVarificationScreen extends ConsumerStatefulWidget {
   const OtpVarificationScreen({super.key});

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "512256426654",
+    "project_id": "wintek-game",
+    "storage_bucket": "wintek-game.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512256426654:android:7d578d3ba8aab66128f18f",
+        "android_client_info": {
+          "package_name": "com.example.winket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "512256426654-k2pk6gl97kpmc0t41grts5rq11dk00ir.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.winket",
+            "certificate_hash": "13bca1f57da68501903644d9cbdf0abbd0a78211"
+          }
+        },
+        {
+          "client_id": "512256426654-qhbr1aqke2p5ojef14s7885el3idhm61.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjA0G0ncYGvRxAdD1OLOM4Scu_Wp3exdU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "512256426654-qhbr1aqke2p5ojef14s7885el3idhm61.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "512256426654-ns69rhfc4qon3avdlov2i3ndt5qjb8oc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.winket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

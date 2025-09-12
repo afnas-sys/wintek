@@ -3,6 +3,7 @@ class ApiConstants {
 
   /// API Requests
   static const String loginMobileAPI = "auth/loginmobile";
+  static const String googleLoginAPI = "auth/logingoogle";
 
   static const String signupAPI = "auth/signup";
 
