@@ -1,8 +1,17 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// <<<<<<< google_auth
+import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
+import 'package:wintek/features/auth/providers/dio_provider.dart';
+import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
+import 'package:wintek/features/auth/services/google_auth_services.dart';
+import 'package:wintek/utils/constants/app_images.dart';
+// =======
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/utils/constants/app_images.dart';
 import 'package:wintek/utils/constants/theme.dart';
+// >>>>>>> main
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
@@ -11,8 +20,35 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+// <<<<<<< google_auth
+    // final authState = ref.watch(googleAuthProvider);
+
+// =======
     final authNotifier = ref.watch(authNotifierProvider.notifier);
+// >>>>>>> main
     return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final googleAuthService = GoogleAuthService(
+                ref.read(dioProvider),
+              );
+              final res = await googleAuthService.signOut();
+              ref.watch(googleAuthProvider.notifier).setMessage(res);
+
+              log('User sign out');
+              // if (authState.message != null) {
+              //   CustomSnackbar.show(context, message: authState.message!);
+              // }
+              Future.delayed(Duration(seconds: 2)).then((d) {
+                Navigator.pushNamed(context, RoutesNames.loginWithPhone);
+              });
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -72,10 +108,14 @@ class ProfileScreen extends ConsumerWidget {
               textColor: Colors.white,
               borderRadius: 30,
               backgroundColor: const Color(0XFFEB644C),
+// <<<<<<< google_auth
+//               onPressed: () async {},
+// =======
               onPressed: () {
                 // handle logout
                 _showLogoutConfirmation(context, ref, authNotifier);
               },
+// >>>>>>> main
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

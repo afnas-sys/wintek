@@ -1,5 +1,8 @@
 import 'dart:developer';
+// <<<<<<< google_auth
+// =======
 
+// >>>>>>> main
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/domain/model/forgot_password_model.dart';
 import 'package:wintek/features/auth/domain/model/login_model.dart';
@@ -25,7 +28,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   AuthNotifier(this.ref, this.apiService) : super(AuthState());
 
-  //! Send OTP
+// <<<<<<< google_auth
+  /// Send OTP only
+// =======
+  ! Send OTP
+// >>>>>>> main
   Future<bool> sendOtp(String mobile) async {
     state = AuthState(isLoading: true);
     try {
@@ -40,6 +47,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+// <<<<<<< google_auth
+//   /*
+
+//   */
+//   ///! Step 2 → Verify OTP, then signup
+//   Future<bool> verifyOtpAndSignup({required String otp}) async {
+// =======
   //! Register
   Future<bool> registerUser(RegisterRequestModel signupData) async {
     ref.read(userDraftProvider.notifier).state = signupData.toJson();
@@ -72,6 +86,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   //! Verify OTP
   Future<bool> verifyOtp({required String otp}) async {
+// >>>>>>> main
     final draft = ref.read(userDraftProvider);
     if (draft == null) {
       state = AuthState(message: "No registration draft found");
@@ -87,6 +102,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = AuthState(message: verifyResponce.message);
 
       if (verifyResponce.status == "success") {
+// <<<<<<< google_auth
+//         log('otp verificatio for registration is success');
+//         log('user data is in verify otp $draft');
+//         final signupResponce = await apiService.signup(
+//           RegisterRequestModel.fromJson(draft),
+//         );
+//         log('signup responce is outside checking $signupResponce');
+//         if (signupResponce['status'] == "failure") {
+//           log('sign up  is success');
+//           log('sign up responce is ${signupResponce['message']}');
+
+//           await _storage.saveCredentials(
+//             SecureStorageModel(
+//               token: verifyResponce.tokenData.token,
+//               cookie: verifyResponce.cookie,
+//               expiry: verifyResponce.tokenData.expiresIn,
+//             ),
+//           );
+//           return true;
+//         } else {
+//           state = AuthState(message: 'User Signup error');
+//         }
+// =======
         // final signupResponce = await apiService.signup(
         //   RegisterRequestModel.fromJson(draft),
         // );
@@ -99,6 +137,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           ),
         );
         return true;
+// >>>>>>> main
       }
       return false;
     } catch (e) {
@@ -107,13 +146,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+// <<<<<<< google_auth
+  /*
+
+  */
+  //! login
+//   Future<void> login(LoginRequestModel userLoginData) async {
+// =======
   //! login
   Future<bool> login(LoginRequestModel userLoginData) async {
+// >>>>>>> main
     state = AuthState(isLoading: true);
     try {
       final res = await apiService.login(userLoginData);
 
       if (res.status == 'success') {
+// <<<<<<< google_auth
+        //SAVE Credentials
+
+// =======
+// >>>>>>> main
         _storage.saveCredentials(
           SecureStorageModel(
             token: res.tokenData.token,
@@ -121,6 +173,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
             expiry: res.tokenData.expiresIn,
           ),
         );
+// <<<<<<< google_auth
+//       }
+
+//       state = AuthState(message: res.message);
+//     } catch (e) {
+//       state = AuthState(message: e.toString());
+//     }
+//   }
+
+  /*
+
+  */
+// =======
         return true;
       }
 
@@ -132,6 +197,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+// >>>>>>> main
   //! forgotten password
   Future<bool> forgottenPassword(ForgotPasswordRequestModel forgotData) async {
     state = AuthState(isLoading: true);
@@ -150,6 +216,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
       return false;
     }
   }
+// <<<<<<< google_auth
+// }
+
+// /*
+
+// */
+// =======
 
   //! Logout
   Future<void> logout(WidgetRef ref) async {
@@ -158,6 +231,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
+// >>>>>>> main
 /// Provider
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((
   ref,
