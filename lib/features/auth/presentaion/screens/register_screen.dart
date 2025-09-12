@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,6 +32,16 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
 
   bool _isObscure = true;
   bool _isChecked = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _setPassController.dispose();
+    _confirmPassController.dispose();
+    _inviteCodeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,8 +174,9 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                     ),
                     validator: (va) => Validators.validateConfirmPassword(
                       _setPassController.text,
-                      _confirmPassController.text,
+                      va ?? "",
                     ),
+
                     autoValidate: true,
                   ),
 
@@ -243,7 +253,8 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                                 CustomSnackbar.show(
                                   context,
                                   message: latestState.message!,
-                                  backgroundColor: Colors.red,
+                                  backgroundColor:
+                                      AppColors.snackbarValidateColor,
                                 );
                               }
                             }

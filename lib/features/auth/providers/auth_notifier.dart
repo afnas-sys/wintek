@@ -55,7 +55,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
             .read(authNotifierProvider.notifier)
             .sendOtp(signupData.mobile);
         state = AuthState(message: res['message']);
-        ref.read(userDraftProvider.notifier).state = null;
         return true;
       } else if (res['status'] == 'failure') {
         log(' ALREADY USER EXIST ${res['message']}');
@@ -155,6 +154,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   //! Logout
   Future<void> logout(WidgetRef ref) async {
     await ref.read(authNotifierProvider.notifier)._storage.clearCredentials();
+    ref.read(userDraftProvider.notifier).state = null;
   }
 }
 

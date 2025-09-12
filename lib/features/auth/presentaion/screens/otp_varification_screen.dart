@@ -204,6 +204,12 @@ class _OtpVarificationCodeScreenState
                         ref
                             .read(authNotifierProvider.notifier)
                             .sendOtp(ref.read(userDraftProvider)!['mobile']);
+                        CustomSnackbar.show(
+                          backgroundColor:
+                              AppColors.snackbarSuccessValidateColor,
+                          context,
+                          message: 'OTP sent successfully',
+                        );
                       },
                       child: Text(
                         'Resend',
