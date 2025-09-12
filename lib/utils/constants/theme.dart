@@ -10,7 +10,7 @@ ThemeData theme = ThemeData(
   //!appbar
   appBarTheme: AppBarTheme(
     backgroundColor: AppColors.bgAppbarAuthScreen,
-    iconTheme: IconThemeData(color: AppColors.authFifthColor),
+    iconTheme: IconThemeData(color: AppColors.authFifthColor, size: 16),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(30),
@@ -69,7 +69,7 @@ extension CustomTextStyle on TextTheme {
   );
 
   TextStyle get authBodyLargePrimary => GoogleFonts.roboto(
-    color: Color(0x80FFFFFF),
+    color: AppColors.authInputTextColor,
     fontSize: 16,
     fontWeight: FontWeight.w400,
   );
@@ -94,19 +94,25 @@ extension CustomTextStyle on TextTheme {
 
   // vasil changed the color
   TextStyle get authBodyMediumPrimary => GoogleFonts.roboto(
-    color: Color(0xFFA395EE),
-    // color: AppColors.authFourthColor,
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-  );
-  TextStyle get authBodyMediumThird => GoogleFonts.roboto(
-    color: Colors.white,
+    color: AppColors.authSeventhColor,
     // color: AppColors.authFourthColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
   TextStyle get authBodyMediumSecondary => GoogleFonts.roboto(
     color: AppColors.authTertiaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get authBodyMediumThird => GoogleFonts.roboto(
+    //color: Colors.white,
+    color: AppColors.authFifthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get authBodyMediumFourth => GoogleFonts.roboto(
+    color: AppColors.authSixthColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
