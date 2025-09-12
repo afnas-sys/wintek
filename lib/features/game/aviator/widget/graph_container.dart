@@ -217,7 +217,7 @@ class _GraphContainerState extends State<GraphContainer>
                           bottom: (peak.y / 8) * (294 - 69 - 10),
                           child: Image.asset(
                             AppImages.graphContainerplaneImage,
-                            width: 120,
+                            width: 80,
                             height: 62,
                           ),
                         ),

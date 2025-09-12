@@ -92,6 +92,7 @@ class ApiServices {
   Future<Map<String, dynamic>> forgottenPass(
     ForgotPasswordRequestModel forgotData,
   ) async {
+    log("ForgotPassword: ${forgotData.toJson()}");
     try {
       final response = await dio.post(
         ApiConstants.forgetAPI,
@@ -99,7 +100,7 @@ class ApiServices {
       );
       return response.data;
     } on DioException catch (e) {
-      throw e.response?.data ?? {'status': 'failure', 'message': e.message};
+      throw e.response?.data ?? {'status': e.error, 'message': e.message};
     }
   }
 }
