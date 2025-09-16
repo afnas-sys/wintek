@@ -158,11 +158,11 @@ class _OtpVarificationCodeScreenState
                         (route) => false,
                       );
                     }
-                    if (authState.message != null) {
+                    if (res != null) {
                       CustomSnackbar.show(
                         backgroundColor: AppColors.snackbarSuccessValidateColor,
                         context,
-                        message: 'Successfully ${authState.message!}',
+                        message: res,
                       );
                     }
                   },
