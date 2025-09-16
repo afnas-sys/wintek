@@ -10,17 +10,24 @@ import 'package:wintek/features/auth/services/secure_storage.dart';
 
 class GoogleAuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;
+  bool isGoogleLogin = false;
   GoogleAuthNotifier(this.ref) : super(AuthState());
   void setMessage(String msg) {
     state = AuthState(message: msg);
   }
 
-  Future<bool> googleSignIn() async {
+  /// Sign in with Google
+  ///
+  /// This function is used to sign in with Google, and then send the user details to the backend
+  ///
+  /// Returns a Future that resolves to a Map containing a boolean value indicating whether the sign in was successful,
+  /// and a string value containing the message returned by the backend
+  Future<Map<bool, String>> googleSignIn() async {
     final apiServices = GoogleAuthService(ref.read(dioProvider));
     final storage = SecureStorageService();
-    state = AuthState(isLoading: true);
 
     final user = await apiServices.signInWithGoogle();
+    state = AuthState(isLoading: false);
 
     if (user != null) {
       final GoogleAuthResponse? res = await apiServices
@@ -41,25 +48,22 @@ class GoogleAuthNotifier extends StateNotifier<AuthState> {
         log(
           'cookie: ${data.cookie}\nexpiry: ${data.expiry}\ntoken: ${data.token}\n',
         );
-        // state = AuthState(isLoading: false);
+        state = AuthState(isLoading: false);
 
-        return true;
+        return {true: res.message};
       } else {
         await apiServices.signOut();
-        state = AuthState(
-          message: 'Login Failed. Please try again.',
-          isLoading: false,
-        );
-        log("Failed SEnt to backend");
+        state = AuthState(isLoading: false);
 
-        return false;
+        log("Failed SEnt to backend");
+        return {false: res?.message ?? "Sign in Failed"};
       }
     }
-    state = AuthState(message: 'Google Sign-In Cancelled', isLoading: false);
+    state = AuthState(isLoading: false);
 
-    log("Google login Failed");
+    log("Google login Failed Not Selected");
 
-    return false;
+    return {false: "Sign in Failed"};
   }
 }
 

@@ -31,5 +31,6 @@ class SecureStorageService {
     await _storage.delete(key: tokenKey);
     await _storage.delete(key: cookieKey);
     await _storage.delete(key: expiryKey);
+    log('Storage cleared');
   }
 }

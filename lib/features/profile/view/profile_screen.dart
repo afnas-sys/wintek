@@ -1,17 +1,14 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// <<<<<<< google_auth
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/features/auth/providers/dio_provider.dart';
 import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
 import 'package:wintek/features/auth/services/google_auth_services.dart';
+import 'package:wintek/utils/constants/app_colors.dart';
 import 'package:wintek/utils/constants/app_images.dart';
-// =======
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
-import 'package:wintek/utils/constants/app_images.dart';
 import 'package:wintek/utils/constants/theme.dart';
-// >>>>>>> main
 import 'package:wintek/utils/router/routes_names.dart';
 import 'package:wintek/utils/widgets/custom_elevated_button.dart';
 
@@ -20,35 +17,8 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-// <<<<<<< google_auth
-    // final authState = ref.watch(googleAuthProvider);
-
-// =======
     final authNotifier = ref.watch(authNotifierProvider.notifier);
-// >>>>>>> main
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final googleAuthService = GoogleAuthService(
-                ref.read(dioProvider),
-              );
-              final res = await googleAuthService.signOut();
-              ref.watch(googleAuthProvider.notifier).setMessage(res);
-
-              log('User sign out');
-              // if (authState.message != null) {
-              //   CustomSnackbar.show(context, message: authState.message!);
-              // }
-              Future.delayed(Duration(seconds: 2)).then((d) {
-                Navigator.pushNamed(context, RoutesNames.loginWithPhone);
-              });
-            },
-            icon: Icon(Icons.logout),
-          ),
-        ],
-      ),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(20),
@@ -108,14 +78,10 @@ class ProfileScreen extends ConsumerWidget {
               textColor: Colors.white,
               borderRadius: 30,
               backgroundColor: const Color(0XFFEB644C),
-// <<<<<<< google_auth
-//               onPressed: () async {},
-// =======
+
               onPressed: () {
-                // handle logout
                 _showLogoutConfirmation(context, ref, authNotifier);
               },
-// >>>>>>> main
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -137,6 +103,8 @@ Future<void> _showLogoutConfirmation(
   WidgetRef ref,
   AuthNotifier authNotifier,
 ) async {
+  final googleAuthNotifier = ref.watch(googleAuthProvider.notifier);
+  final googleAuthService = GoogleAuthService(ref.read(dioProvider));
   showDialog<bool>(
     context: context,
     builder: (context) {
@@ -152,52 +120,54 @@ Future<void> _showLogoutConfirmation(
               Navigator.pop(context, false);
             },
             child: Padding(
-              padding: const EdgeInsets.only(
-                //   top: 14,
-                //  bottom: 14,
-                left: 20,
-                right: 20,
-              ),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               child: Text(
                 'Cancel',
                 style: Theme.of(context).textTheme.authBodyMediumFourth,
               ),
             ),
           ),
-          // TextButton(
-          //   onPressed: () => Navigator.pop(context, false),
-          //   child: const Text('Cancel'),
-          // ),
-          // TextButton(
-          //   onPressed: () {
-          //     //  Navigator.pop(context, true);
-          //     authNotifier.logout(ref);
-          //     Navigator.pushNamedAndRemoveUntil(
-          //       context,
-          //       RoutesNames.loginScreen,
-          //       (_) => false,
-          //     );
-          //   },
-          //   child: const Text('Logout'),
-          // ),
+
           CustomElevatedButton(
             backgroundColor: Color(0XFFEB644C),
             borderRadius: 30,
-            onPressed: () {
-              authNotifier.logout(ref);
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                RoutesNames.loginScreen,
-                (_) => false,
-              );
+            onPressed: () async {
+              if (googleAuthNotifier.isGoogleLogin) {
+                final res = await googleAuthService.signOut();
+                ref.watch(googleAuthProvider.notifier).setMessage(res);
+
+                Future.delayed(Duration(seconds: 2)).then((d) {
+                  Navigator.pushNamed(context, RoutesNames.loginScreen);
+                  CustomSnackbar.show(
+                    backgroundColor: AppColors.snackbarSuccessValidateColor,
+                    context,
+                    message: 'SignOut Successfully',
+                  );
+                });
+
+                log('Google LogOUt Sucess');
+                googleAuthNotifier.isGoogleLogin = false;
+                await ref
+                    .read(authNotifierProvider.notifier)
+                    .getStorage()
+                    .clearCredentials();
+              } else {
+                authNotifier.logout(ref);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RoutesNames.loginScreen,
+                  (_) => false,
+                );
+                CustomSnackbar.show(
+                  backgroundColor: AppColors.snackbarSuccessValidateColor,
+                  context,
+                  message: 'SignOut Successfully',
+                );
+                log('Mobile LogOUt Sucess');
+              }
             },
             child: Padding(
-              padding: const EdgeInsets.only(
-                //  top: 7,
-                //  bottom: 7,
-                left: 15,
-                right: 15,
-              ),
+              padding: const EdgeInsets.only(left: 15, right: 15),
               child: Text(
                 'Yes, Logout',
                 style: Theme.of(context).textTheme.authBodyMediumThird,

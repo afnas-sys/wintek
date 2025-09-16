@@ -32,6 +32,19 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
 
   bool _isObscure = true;
   bool _isChecked = false;
+  void _clearFields() {
+    _nameController.clear();
+    _phoneController.clear();
+    _setPassController.clear();
+    _confirmPassController.clear();
+    _inviteCodeController.clear();
+  }
+
+  @override
+  void initState() {
+    _clearFields();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -40,12 +53,12 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
     _setPassController.dispose();
     _confirmPassController.dispose();
     _inviteCodeController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = ref.watch(authNotifierProvider);
     final authNotifier = ref.watch(authNotifierProvider.notifier);
 
     return Scaffold(
@@ -221,44 +234,45 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
 
                   /// Register button
                   CustomElevatedButton(
-                    onPressed: authProvider.isLoading
-                        ? null
-                        : () async {
-                            if (!_isChecked) {
-                              CustomSnackbar.show(
-                                context,
-                                message: 'Please accept terms and conditions',
-                              );
-                              return;
-                            }
-                            if (_formkey.currentState!.validate()) {
-                              final data = RegisterRequestModel(
-                                name: _nameController.text,
-                                mobile: _phoneController.text,
-                                password: _setPassController.text,
-                                referralCode: _inviteCodeController.text,
-                              );
-                              final bool res = await authNotifier.registerUser(
-                                data,
-                              );
+                    onPressed: () async {
+                      if (!_isChecked) {
+                        CustomSnackbar.show(
+                          context,
+                          message: 'Please accept terms and conditions',
+                        );
+                        return;
+                      }
+                      if (_formkey.currentState!.validate()) {
+                        final data = RegisterRequestModel(
+                          name: _nameController.text,
+                          mobile: _phoneController.text,
+                          password: _setPassController.text,
+                          referralCode: _inviteCodeController.text,
+                        );
+                        final String? res = await authNotifier.registerUser(
+                          data,
+                        );
 
-                              // After registerUser finishes, get the latest state
-                              final latestState = ref.read(
-                                authNotifierProvider,
-                              );
+                        // After registerUser finishes, get the latest state
+                        final latestState = ref.read(authNotifierProvider);
 
-                              if (res) {
-                                Navigator.pushNamed(context, RoutesNames.otp);
-                              } else if (latestState.message != null) {
-                                CustomSnackbar.show(
-                                  context,
-                                  message: latestState.message!,
-                                  backgroundColor:
-                                      AppColors.snackbarValidateColor,
-                                );
-                              }
-                            }
-                          },
+                        if (res == 'signup') {
+                          Navigator.pushNamed(context, RoutesNames.otp);
+                          CustomSnackbar.show(
+                            backgroundColor:
+                                AppColors.snackbarSuccessValidateColor,
+                            context,
+                            message: 'OTP sent successfully',
+                          );
+                        } else if (latestState.message != null) {
+                          CustomSnackbar.show(
+                            context,
+                            message: latestState.message!,
+                            backgroundColor: AppColors.snackbarValidateColor,
+                          );
+                        }
+                      }
+                    },
                     backgroundColor: AppColors.authTertiaryColor,
                     borderRadius: 30,
                     padding: const EdgeInsets.symmetric(
@@ -266,14 +280,10 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
                       vertical: 14,
                     ),
                     width: double.infinity,
-                    child: authProvider.isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(
-                            'Register',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.authBodyLargeTertiary,
-                          ),
+                    child: Text(
+                      'Register',
+                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
+                    ),
                   ),
 
                   const SizedBox(height: 20),

@@ -15,6 +15,15 @@ class ApiServices {
   ApiServices(this.dio);
 
   //!SignUp
+  /// Signup user with the given [signupData]
+  ///
+  /// This function calls the signup API with the given [signupData]
+  /// and returns the response message from the API.
+  ///
+  /// If the signup is successful, it returns the response message from the API.
+  /// If the signup fails, it returns the error message from the API.
+  ///
+  /// If an exception occurs while calling the API, it returns null.
   Future<Map<String, dynamic>> signup(RegisterRequestModel signupData) async {
     log('user data is ${signupData.name} ${signupData.mobile}');
     log(signupData.toJson().toString());
@@ -46,6 +55,14 @@ class ApiServices {
   }
 
   //!Send otp
+  /// Sends an OTP to the given mobile number
+  ///
+  /// This function calls the sendOtp API with the given [mobile]
+  /// and returns the response message from the API.
+  ///
+  /// If the OTP is sent successfully, it returns the response message from the API.
+  /// If the OTP sending fails, it returns the error message from the API.
+  ///
   Future<Map<String, dynamic>> sendOtp(String mobile) async {
     log('otp is sented to  $mobile');
     try {
@@ -60,6 +77,16 @@ class ApiServices {
   }
 
   //! otp verify
+  /// Verify OTP
+  ///
+  /// This function takes an OTP and verifies it with the API.
+  /// If the OTP is verified successfully, it returns a VerifyOtpResponseModel
+  /// containing the response from the API.
+  /// If the OTP verification fails, it returns a VerifyOtpResponseModel
+  /// containing the error message from the API.
+  ///
+  /// If an exception occurs while calling the API, it re-throws the
+  /// exception.
   Future<VerifyOtpResponseModel> verifyOtp(
     VerifyOtpRequestModel otpRequestData,
   ) async {
@@ -76,6 +103,17 @@ class ApiServices {
   }
 
   //! Log in
+  /// Log in a user with the given [userLoginData]
+  ///
+  /// This function takes a [LoginRequestModel] containing the user's
+  /// login data and calls the login API with it.
+  /// If the login is successful, it returns a [LoginResponseModel]
+  /// containing the response from the API.
+  /// If the login fails, it returns a [LoginResponseModel]
+  /// containing the error message from the API.
+  ///
+  /// If an exception occurs while calling the API, it re-throws the
+  /// exception.
   Future<LoginResponseModel> login(LoginRequestModel userLoginData) async {
     try {
       final response = await dio.post(
@@ -89,6 +127,20 @@ class ApiServices {
   }
 
   //! Forgotten pass
+  /// Sends a forgotten password request to the API
+  ///
+  /// This function takes a [ForgotPasswordRequestModel] containing the
+  /// user's forgotten password data and calls the forgot password API
+  /// with it.
+  ///
+  /// If the request is successful, it returns a [Map] containing
+  /// the response from the API.
+  ///
+  /// If the request fails, it returns a [Map] containing the error
+  /// message from the API.
+  ///
+  /// If an exception occurs while calling the API, it re-throws the
+  /// exception.
   Future<Map<String, dynamic>> forgottenPass(
     ForgotPasswordRequestModel forgotData,
   ) async {

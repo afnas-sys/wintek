@@ -14,7 +14,15 @@ class GoogleAuthService {
 
   GoogleAuthService(this.dio);
 
-  /// 🔹 Google Sign-In + Firebase
+  /// Sign in with Google
+  ///
+  /// This function signs in with Google using the Google Sign In library
+  /// and then uses the Firebase Authentication library to sign in the user
+  /// with the obtained credential.
+  ///
+  /// If the sign in is successful, a GoogleAuthRequest object is returned
+  /// containing the user's data. If the sign in fails or no user is found,
+  /// null is returned.
   Future<GoogleAuthRequest?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -55,16 +63,14 @@ class GoogleAuthService {
     return null;
   }
 
+  /// Sends the user's details to the backend server after a successful Google sign-in.
   ///
+  /// This function makes a POST request to the server with the user's details.
+  /// If the response is successful (200 or 201), a [GoogleAuthResponse] object is returned.
+  /// If the response is not successful, an error message is set in the [GoogleAuthNotifier] and null is returned.
   ///
-  ///
-  ///
-  ///
-  /// 🔹 Send user details to backend
-  ///
-  ///
-  ///
-  ///
+  /// If a [DioException] occurs during the request, an error message is set in the [GoogleAuthNotifier] and null is returned.
+  /// If any other exception occurs, an error message is set in the [GoogleAuthNotifier] and null is returned.
   Future<GoogleAuthResponse?> sendUserDetailsToBackend(
     GoogleAuthRequest request,
     Ref ref,
@@ -96,12 +102,13 @@ class GoogleAuthService {
     return null;
   }
 
-  //
-  //
-  //
-  /// 🔹 Sign out
-  //
-  //
+  /// Signs out the user from Google and Firebase authentication.
+  ///
+  /// This function first signs out the user from Google sign-in.
+  /// Then, it signs out the user from Firebase authentication.
+  ///
+  /// If both sign-outs are successful, 'Logout Success' is returned.
+  /// If either sign-out fails, 'Logout Failed' is returned.
   Future<String> signOut() async {
     try {
       await _googleSignIn.signOut();

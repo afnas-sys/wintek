@@ -133,15 +133,12 @@ class _OtpVarificationCodeScreenState
                 CustomElevatedButton(
                   onPressed: () async {
                     if (authState.isLoading) {
-                      // don’t let user spam while loading
                       return;
                     }
 
                     final otp = getOtp();
-                    debugPrint("Entered OTP: $otp");
 
                     if (otp.length != 6) {
-                      debugPrint("❌ OTP incomplete (need 6 digits)");
                       return;
                     }
 

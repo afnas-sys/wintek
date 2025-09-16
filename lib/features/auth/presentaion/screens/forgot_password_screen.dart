@@ -31,8 +31,8 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
   bool _isChecked = false;
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authNotifierProvider);
     final authNotifier = ref.read(authNotifierProvider.notifier);
+
     return Scaffold(
       appBar: CustomAppbar(
         height: 224,
@@ -174,22 +174,26 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                         top: 10,
                         bottom: 10,
                       ),
-                      onPressed: () {
-                        authNotifier.sendOtp(_phoneController.text);
+                      onPressed: () async {
+                        final msg = await authNotifier.sendOtp(
+                          _phoneController.text,
+                        );
+
+                        CustomSnackbar.show(
+                          backgroundColor:
+                              AppColors.snackbarSuccessValidateColor,
+                          context,
+                          message: msg ?? 'Something went wrong',
+                        );
                       },
+
                       backgroundColor: AppColors.authTertiaryColor,
-                      child: authState.isLoading == true
-                          ? SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(
-                              'Send',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.authBodyLargeTertiary,
-                            ),
+                      child: Text(
+                        'Send',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.authBodyLargeTertiary,
+                      ),
                     ),
                     validator: Validators.validateVericationCode,
                     autoValidate: true,
@@ -280,18 +284,10 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
                       bottom: 14,
                     ),
                     width: double.infinity,
-                    child: authState.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(
-                            'Reset',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.authBodyLargeTertiary,
-                          ),
+                    child: Text(
+                      'Reset',
+                      style: Theme.of(context).textTheme.authBodyLargeTertiary,
+                    ),
                   ),
                 ],
               ),
