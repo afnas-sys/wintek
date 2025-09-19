@@ -1,8 +1,8 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/app_images.dart';
-import 'package:wintek/utils/constants/theme.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/core/theme/theme.dart';
 
 class TransactionHistory extends StatefulWidget {
   const TransactionHistory({super.key});

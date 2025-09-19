@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/core/router/routes_names.dart';
+import 'package:wintek/core/widgets/custom_elevated_button.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 ThemeData theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: AppColors.aviatorSixteenthColor),

@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class CustomHomeCarousel extends StatefulWidget {
   const CustomHomeCarousel({super.key});

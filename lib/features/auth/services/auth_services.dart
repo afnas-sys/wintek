@@ -2,17 +2,17 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/auth/domain/constants/api_constants.dart';
+import 'package:wintek/features/auth/domain/constants/auth_api_constants.dart';
 import 'package:wintek/features/auth/domain/model/forgot_password_model.dart';
 import 'package:wintek/features/auth/domain/model/login_model.dart';
 import 'package:wintek/features/auth/domain/model/register_model.dart';
 import 'package:wintek/features/auth/domain/model/verify_otp_model.dart';
-import 'package:wintek/features/auth/providers/dio_provider.dart';
+import 'package:wintek/core/network/dio_provider.dart';
 
-class ApiServices {
+class AuthServices {
   final Dio dio;
 
-  ApiServices(this.dio);
+  AuthServices(this.dio);
 
   //!SignUp
   /// Signup user with the given [signupData]
@@ -30,7 +30,7 @@ class ApiServices {
 
     try {
       final response = await dio.post(
-        ApiConstants.signupAPI,
+        AuthApiConstants.signupAPI,
         data: signupData.toJson(),
         // Optionally: treat only network errors as exceptions
         options: Options(validateStatus: (status) => status! < 500),
@@ -67,7 +67,7 @@ class ApiServices {
     log('otp is sented to  $mobile');
     try {
       final response = await dio.post(
-        ApiConstants.sentotpAPI,
+        AuthApiConstants.sentotpAPI,
         data: {'mobile': mobile},
       );
       return response.data;
@@ -92,7 +92,7 @@ class ApiServices {
   ) async {
     try {
       final response = await dio.post(
-        ApiConstants.otpVerifyAPI,
+        AuthApiConstants.otpVerifyAPI,
         data: otpRequestData.toJson(),
       );
 
@@ -117,7 +117,7 @@ class ApiServices {
   Future<LoginResponseModel> login(LoginRequestModel userLoginData) async {
     try {
       final response = await dio.post(
-        ApiConstants.loginMobileAPI,
+        AuthApiConstants.loginMobileAPI,
         data: userLoginData.toJson(),
       );
       return LoginResponseModel.fromJson(response.data);
@@ -147,7 +147,7 @@ class ApiServices {
     log("ForgotPassword: ${forgotData.toJson()}");
     try {
       final response = await dio.post(
-        ApiConstants.forgetAPI,
+        AuthApiConstants.forgetAPI,
         data: forgotData.toJson(),
       );
       return response.data;
@@ -157,6 +157,6 @@ class ApiServices {
   }
 }
 
-final authrepositoryProvider = Provider<ApiServices>((ref) {
-  return ApiServices(ref.read(dioProvider));
+final authrepositoryProvider = Provider<AuthServices>((ref) {
+  return AuthServices(ref.read(dioProvider));
 });

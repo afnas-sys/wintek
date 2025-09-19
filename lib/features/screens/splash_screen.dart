@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:wintek/features/auth/domain/constants/secure_storage_constants.dart';
-import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/core/router/routes_names.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

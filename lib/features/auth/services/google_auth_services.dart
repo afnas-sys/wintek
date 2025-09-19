@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:wintek/features/auth/domain/constants/api_constants.dart';
+import 'package:wintek/features/auth/domain/constants/auth_api_constants.dart';
 import 'package:wintek/features/auth/domain/model/google_auth_model.dart';
 import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
 
@@ -77,7 +77,7 @@ class GoogleAuthService {
   ) async {
     try {
       final response = await dio.post(
-        ApiConstants.googleLoginAPI,
+        AuthApiConstants.googleLoginAPI,
         data: request.toJson(),
         options: Options(
           sendTimeout: const Duration(seconds: 10),

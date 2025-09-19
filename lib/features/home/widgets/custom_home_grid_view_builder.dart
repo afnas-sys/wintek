@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/constants/app_images.dart';
-import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/core/router/routes_names.dart';
 
 class CustomHomeGridViewBuilder extends StatefulWidget {
   const CustomHomeGridViewBuilder({super.key});

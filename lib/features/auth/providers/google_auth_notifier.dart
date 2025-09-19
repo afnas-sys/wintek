@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/domain/model/google_auth_model.dart';
 import 'package:wintek/features/auth/domain/model/secure_storage_model.dart';
-import 'package:wintek/features/auth/providers/dio_provider.dart';
+import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/features/auth/services/google_auth_services.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
@@ -42,6 +42,7 @@ class GoogleAuthNotifier extends StateNotifier<AuthState> {
           token: res.tokenData.token,
           cookie: res.cookie,
           expiry: res.tokenData.expiresIn,
+          userId: res.data.id,
         );
         await storage.saveCredentials(tokenData);
         final data = await storage.readCredentials();

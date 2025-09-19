@@ -2,9 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/firebase_options.dart';
-import 'package:wintek/utils/constants/theme.dart';
-import 'package:wintek/utils/router/app_roouter.dart';
-import 'package:wintek/utils/router/routes_names.dart';
+import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/core/router/app_roouter.dart';
+import 'package:wintek/core/router/routes_names.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

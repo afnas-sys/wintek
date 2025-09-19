@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/theme.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/theme/theme.dart';
 
 class AviatorButtons extends StatefulWidget {
   const AviatorButtons({super.key});
@@ -66,42 +66,47 @@ class _AviatorButtonsState extends State<AviatorButtons> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // first row → 5 chips + button
+        // first row → 4 chips + button
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            for (int i = 0; i < 5 && i < multipliers.length; i++)
-              _chip(multipliers[i], context),
+            for (int i = 0; i < 4 && i < multipliers.length; i++)
+              Expanded(child: _chip(multipliers[i], context)),
             // Button for showing Balance history of the multplier
-            ElevatedButton(
-              onPressed: () => setState(() => showBalance = !showBalance),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.aviatorTenthColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  side: BorderSide(color: AppColors.aviatorEleventhColor),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () => setState(() => showBalance = !showBalance),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.aviatorTenthColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: AppColors.aviatorEleventhColor),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 4,
+                  ),
+                  minimumSize: const Size(55, 30),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                minimumSize: const Size(55, 30),
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    FontAwesomeIcons.clock,
-                    size: 16,
-                    color: AppColors.aviatorTertiaryColor,
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    showBalance
-                        ? FontAwesomeIcons.angleUp
-                        : FontAwesomeIcons.angleDown,
-                    size: 16,
-                    color: AppColors.aviatorTertiaryColor,
-                  ),
-                ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      FontAwesomeIcons.clock,
+                      size: 16,
+                      color: AppColors.aviatorTertiaryColor,
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      showBalance
+                          ? FontAwesomeIcons.angleUp
+                          : FontAwesomeIcons.angleDown,
+                      size: 16,
+                      color: AppColors.aviatorTertiaryColor,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

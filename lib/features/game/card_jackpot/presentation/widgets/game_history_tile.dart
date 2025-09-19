@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/card_jackpot/domain/game_round/round_model.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/core/constants/app_images.dart';
 
 class GameHistoryTile extends StatelessWidget {
   final BetModel bet;

@@ -4,7 +4,7 @@ import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/offers/view/offers_screen.dart';
 import 'package:wintek/features/profile/view/profile_screen.dart';
 import 'package:wintek/features/wallet/view/wallet_screen.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class CustomBottomBar extends StatefulWidget {
   const CustomBottomBar({super.key});

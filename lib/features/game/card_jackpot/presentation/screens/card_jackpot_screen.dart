@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/background_stack.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/foreground_stack.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class CardJackpotScreen extends StatelessWidget {
   const CardJackpotScreen({super.key});

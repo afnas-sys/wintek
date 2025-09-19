@@ -8,16 +8,16 @@ import 'package:wintek/features/auth/presentaion/screens/otp_varification_screen
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
-import 'package:wintek/features/auth/providers/dio_provider.dart';
+import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
 import 'package:wintek/features/auth/services/google_auth_services.dart';
-import 'package:wintek/utils/constants/app_images.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/theme.dart';
-import 'package:wintek/utils/constants/validators.dart';
-import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/widgets/custom_text_form_field.dart';
+import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/core/widgets/custom_elevated_button.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/core/utils/validators.dart';
+import 'package:wintek/core/router/routes_names.dart';
+import 'package:wintek/core/widgets/custom_text_form_field.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});

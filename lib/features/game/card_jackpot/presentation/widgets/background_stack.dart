@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 // 1. Background Stack Widget with two Containers
 //  - Top Container: 35% of screen height, primary color - orange
