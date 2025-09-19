@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String hintText;
@@ -17,7 +17,6 @@ class CustomTextFormField extends StatelessWidget {
   final EdgeInsetsGeometry? contentPadding;
   final List<TextInputFormatter>? inputFormatters;
 
-  /// ✅ New
   final void Function(String)? onChanged;
   final FocusNode? focusNode;
 
@@ -35,16 +34,16 @@ class CustomTextFormField extends StatelessWidget {
     this.textAlign = TextAlign.start,
     this.contentPadding,
     this.inputFormatters,
-    this.onChanged, // ✅
-    this.focusNode, // ✅
+    this.onChanged,
+    this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      focusNode: focusNode, // ✅
-      onChanged: onChanged, // ✅
+      focusNode: focusNode,
+      onChanged: onChanged,
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,

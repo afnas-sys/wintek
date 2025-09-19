@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final String? text;
   final Widget? child;
-  final VoidCallback? onPressed; // ✅ make it nullable
+  final VoidCallback? onPressed;
   final double borderRadius;
   final Color? backgroundColor;
   final EdgeInsetsGeometry padding;
@@ -23,7 +23,7 @@ class CustomElevatedButton extends StatelessWidget {
     super.key,
     this.text,
     this.child,
-    required this.onPressed, // ✅ nullable
+    required this.onPressed,
     this.borderRadius = 12.0,
     this.backgroundColor,
     this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -67,7 +67,7 @@ class CustomElevatedButton extends StatelessWidget {
           padding: padding,
           elevation: elevation ?? 0,
         ),
-        onPressed: onPressed, // ✅ fixed
+        onPressed: onPressed,
         child: icon == null
             ? content
             : Row(

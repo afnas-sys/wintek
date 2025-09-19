@@ -7,8 +7,8 @@ import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
 import 'package:wintek/features/game/aviator/widget/graph_container.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/theme.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/theme/theme.dart';
 
 class AviatorGameScreen extends StatefulWidget {
   const AviatorGameScreen({super.key});
@@ -51,9 +51,20 @@ class _AviatorGameScreenState extends State<AviatorGameScreen> {
                 SizedBox(height: 1),
                 GraphContainer(),
                 SizedBox(height: 16),
-                BetContainer(),
-                SizedBox(height: 16),
-                BetContainer(),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: 2,
+                  itemBuilder: (context, index) {
+                    return BetContainer(index: index);
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 16);
+                  },
+                ),
+                // BetContainer(),
+                // SizedBox(height: 16),
+                // BetContainer(),
                 SizedBox(height: 20),
                 CustomTabBar(
                   tabs: ['All Bets', 'My Bets', 'Top'],

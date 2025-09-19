@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/wallet/widget/available_balance_container.dart';
 import 'package:wintek/features/wallet/widget/transaction_history.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/app_images.dart';
-import 'package:wintek/utils/constants/theme.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/core/widgets/custom_elevated_button.dart';
 
 class WalletScreen extends StatelessWidget {
   const WalletScreen({super.key});

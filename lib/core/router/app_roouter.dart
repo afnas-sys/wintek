@@ -11,8 +11,8 @@ import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/screens/splash_screen.dart';
 import 'package:wintek/features/screens/welcome_screen.dart';
 import 'package:wintek/features/wallet/view/wallet_screen.dart';
-import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/widgets/custom_bottom_bar.dart';
+import 'package:wintek/core/router/routes_names.dart';
+import 'package:wintek/core/widgets/custom_bottom_bar.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {

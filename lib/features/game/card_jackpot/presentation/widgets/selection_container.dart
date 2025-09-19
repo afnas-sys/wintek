@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class SelectContainer extends StatelessWidget {
   final int index;

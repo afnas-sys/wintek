@@ -1,5 +1,5 @@
-class ApiConstants {
-  static const String baseUrl = 'https://ank143matkaapp.info/api/v1/';
+class AuthApiConstants {
+  // static const String baseUrl = 'https://ank143matkaapp.info/api/v1/';
 
   /// API Requests
   static const String loginMobileAPI = "auth/loginmobile";

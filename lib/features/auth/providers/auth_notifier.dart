@@ -8,7 +8,7 @@ import 'package:wintek/features/auth/domain/model/secure_storage_model.dart';
 import 'package:wintek/features/auth/domain/model/register_model.dart';
 import 'package:wintek/features/auth/domain/model/verify_otp_model.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
-import 'package:wintek/features/auth/services/api_services.dart';
+import 'package:wintek/features/auth/services/auth_services.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 
 /// Auth State class
@@ -28,7 +28,7 @@ final userDraftProvider = StateProvider<Map<String, dynamic>?>((ref) => null);
 class AuthNotifier extends StateNotifier<AuthState> {
   final _storage = SecureStorageService();
   final Ref ref;
-  final ApiServices apiService;
+  final AuthServices apiService;
   SecureStorageService getStorage() => _storage;
 
   AuthNotifier(this.ref, this.apiService) : super(AuthState());
@@ -131,6 +131,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
             token: verifyResponce.tokenData.token,
             cookie: verifyResponce.cookie,
             expiry: verifyResponce.tokenData.expiresIn,
+            userId: verifyResponce.data.id,
           ),
         );
         return true;
@@ -176,6 +177,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
             token: res.tokenData.token,
             cookie: res.cookie,
             expiry: res.tokenData.expiresIn,
+            userId: res.data.id,
           ),
         );
       } else {

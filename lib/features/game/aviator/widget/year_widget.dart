@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/theme.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/theme/theme.dart';
 
 class YearWidget extends StatefulWidget {
   const YearWidget({super.key});

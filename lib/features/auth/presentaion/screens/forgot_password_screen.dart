@@ -4,13 +4,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/auth/domain/model/forgot_password_model.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_appbar.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
-import 'package:wintek/utils/constants/theme.dart';
-import 'package:wintek/utils/widgets/custom_elevated_button.dart';
+import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
-import 'package:wintek/utils/widgets/custom_text_form_field.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/router/routes_names.dart';
-import 'package:wintek/utils/constants/validators.dart';
+import 'package:wintek/core/widgets/custom_text_form_field.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/router/routes_names.dart';
+import 'package:wintek/core/utils/validators.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});

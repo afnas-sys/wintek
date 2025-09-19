@@ -4,7 +4,7 @@ import 'package:wintek/features/game/card_jackpot/presentation/widgets/card_numb
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/main_cards.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class CardsSection extends ConsumerWidget {
   final int selectedCardTypeIndex;

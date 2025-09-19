@@ -4,7 +4,7 @@ import 'package:wintek/features/game/aviator/widget/day_widget.dart';
 import 'package:wintek/features/game/aviator/widget/month_widget.dart';
 import 'package:wintek/features/game/aviator/widget/year_widget.dart';
 
-import 'package:wintek/utils/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 
 class Top extends StatefulWidget {
   const Top({super.key});

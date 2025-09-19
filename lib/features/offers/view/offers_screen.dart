@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
 
 class OffersScreen extends StatelessWidget {
   const OffersScreen({super.key});

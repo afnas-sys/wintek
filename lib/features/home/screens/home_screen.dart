@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wintek/features/home/widgets/custom_home_appbar.dart';
 import 'package:wintek/features/home/widgets/custom_home_carousel.dart';
 import 'package:wintek/features/home/widgets/custom_home_grid_view_builder.dart';
-import 'package:wintek/utils/constants/app_colors.dart';
-import 'package:wintek/utils/constants/app_images.dart';
+import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   //! Grid Items
                   CustomHomeGridViewBuilder(),
+                  //    CustomBetButton(),
                 ],
               ),
             ),
