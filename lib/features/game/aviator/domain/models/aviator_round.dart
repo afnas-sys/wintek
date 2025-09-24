@@ -1,93 +1,144 @@
-class AviatorRound {
-  final String id;
-  final int seq;
-  final String state; // Prepare,  started and Crashed
-  final double multiplier;
-  final int bets;
-  final int players;
-  final double maxCashout;
-  final DateTime startedAt;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String serverSeedHash;
-  final String serverSeed;
-  final int nonce;
-  final bool active;
+// class AviatorRound {
+//   final String roundId;
+//   final int seq;
+//   final String state;
+//   final double? crashAt;
+//   final double? multiplier;
+//   final int? msRemaining;
+//   final int? now; // Add this field
 
-  AviatorRound({
-    required this.id,
-    required this.seq,
-    required this.state,
-    required this.multiplier,
-    required this.bets,
-    required this.players,
-    required this.maxCashout,
-    required this.startedAt,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.serverSeedHash,
-    required this.serverSeed,
-    required this.nonce,
-    required this.active,
+//   AviatorRound({
+//     required this.roundId,
+//     required this.seq,
+//     required this.state,
+//     this.crashAt,
+//     this.multiplier,
+//     this.msRemaining,
+//     this.now,
+//   });
+
+//   factory AviatorRound.fromJson(Map<String, dynamic> json) => AviatorRound(
+//     roundId: json['roundId'] ?? 'unknown',
+//     seq: json['seq'] ?? 0,
+//     state: json['state'] ?? 'UNKNOWN',
+//     crashAt: json['crashAt'] != null
+//         ? (json['crashAt'] as num).toDouble()
+//         : null,
+//     multiplier: json['multiplier'] != null
+//         ? (json['multiplier'] as num).toDouble()
+//         : null,
+//     msRemaining: json['msRemaining'],
+//     now: json['now'] != null ? (json['now'] as num).toInt() : null, // parse now
+//   );
+// }
+
+// class AviatorRound {
+//   final String roundState;
+
+//   AviatorRound({required this.roundState});
+
+//   factory AviatorRound.fromJson(Map<String, dynamic> json) {
+//     return AviatorRound(roundState: json['roundState']);
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       "roundState": roundState,
+//     };
+//   }
+// }
+// class AviatorRound {
+//   final RoundState? roundState;
+//   final Tick? tick;
+//   final Crash? crash;
+
+//   AviatorRound({this.roundState, this.tick, this.crash});
+// }
+
+//! State Model
+class RoundState {
+  final String? roundId;
+  final String? seq;
+  final String? state;
+  final String? startedAt;
+  final String? msRemaining;
+  final String? endedAt;
+  final String? crashAt;
+
+  RoundState({
+    this.roundId,
+    this.seq,
+    this.state,
+    this.startedAt,
+    this.msRemaining,
+    this.endedAt,
+    this.crashAt,
   });
 
-  factory AviatorRound.fromJson(Map<String, dynamic> json) {
-    final round = json['round'] ?? json;
-    return AviatorRound(
-      id: round['_id'] ?? round['id'] ?? round['roundId'] ?? '',
-      seq: round['seq'] ?? 0,
-      state: round['state'] ?? 'PREPARE',
-      multiplier: (round['multiplier'] ?? 1.0).toDouble(),
-      bets: (round['stats']?['bets'] ?? 0),
-      players: round['stats']?['players'] ?? 0,
-      maxCashout: (round['stats']?['maxCashout'] ?? 0).toDouble(),
-      startedAt: DateTime.tryParse(round['startedAt'] ?? '') ?? DateTime.now(),
-      createdAt: DateTime.tryParse(round['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(round['updatedAt'] ?? '') ?? DateTime.now(),
-      serverSeedHash: round['serverSeedHash'] ?? '',
-      serverSeed: round['serverSeed'] ?? '',
-      nonce: round['nonce'] ?? 0,
-      active: round['active'] ?? false,
+  factory RoundState.fromJson(Map<String, dynamic> json) {
+    return RoundState(
+      roundId: json['roundId'].toString(),
+      seq: json['seq'].toString(),
+      state: json['state']..toString(),
+      startedAt: json['startedAt'].toString(),
+      msRemaining: json['msRemaining'].toString(),
+      endedAt: json['endedAt'].toString(),
+      crashAt: json['crashAt'].toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "round": {
-        "_id": id,
-        "seq": seq,
-        "state": state,
-        "multiplier": multiplier,
-        "stats": {"bets": bets, "players": players, "maxCashout": maxCashout},
-        "startedAt": startedAt.toIso8601String(),
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
-        "serverSeedHash": serverSeedHash,
-        "serverSeed": serverSeed,
-        "nonce": nonce,
-      },
-      "active": active,
+      "roundId": roundId,
+      "seq": seq,
+      "state": state,
+      "startedAt": startedAt,
+      "msRemaining": msRemaining,
+      "endedAt": endedAt,
+      "crashAt": crashAt,
     };
   }
 }
 
-extension AviatorRoundCopy on AviatorRound {
-  AviatorRound copyWithFrom(AviatorRound other) {
-    return AviatorRound(
-      id: other.id,
-      seq: other.seq,
-      state: other.state,
-      multiplier: other.multiplier,
-      startedAt: other.startedAt,
-      createdAt: other.createdAt,
-      updatedAt: other.updatedAt,
-      serverSeedHash: other.serverSeedHash,
-      serverSeed: other.serverSeed,
-      nonce: other.nonce,
-      active: other.active,
-      bets: other.bets,
-      players: other.players,
-      maxCashout: other.maxCashout,
+//! Tick Model
+class Tick {
+  final String? seq;
+  final String? multiplier;
+  final String? now;
+
+  Tick({this.seq, this.multiplier, this.now});
+
+  factory Tick.fromJson(Map<String, dynamic> json) {
+    return Tick(
+      seq: json['seq'].toString(),
+      multiplier: json['multiplier'].toString(),
+      now: json['now'].toString(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"seq": seq, "multiplier": multiplier, "now": now};
+  }
+}
+
+//! Crash Model
+class Crash {
+  final String? roundId;
+  final String? seq;
+  final String? crashAt;
+
+  Crash({this.roundId, this.seq, this.crashAt});
+
+  factory Crash.fromJson(Map<String, dynamic> json) {
+    return Crash(
+      roundId: json['roundId'].toString(),
+      seq: json['seq'].toString(),
+
+      crashAt: json['crashAt'].toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {"roundId": roundId, "seq": seq, "crashAt": crashAt};
   }
 }

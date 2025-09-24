@@ -35,4 +35,9 @@ class AppImages {
   static const String welcomeBonus = 'assets/images/welcome_bonus.png';
   static const String logout = 'assets/images/logout.png';
   static const String googleIcon = 'assets/images/google.png';
+
+  //! Lottie
+
+  static const String aviatorbg = 'assets/images/aviator_backround.json';
+  static const String aviatorloading = 'assets/images/aviator_loading.json';
 }

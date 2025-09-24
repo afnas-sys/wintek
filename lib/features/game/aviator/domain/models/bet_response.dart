@@ -1,52 +1,52 @@
 class BetResponse {
-  final String id;
   final String roundId;
   final String userId;
-  final double stake;
+  final int stake;
   final String currency;
-  final double autoCashout;
+  final double? autoCashout;
   final int betIndex;
-  final DateTime placedAt;
-  final DateTime? cashoutAt;
-  final DateTime? cashedOutAt;
+  final String placedAt;
+  final String? cashoutAt;
+  final String? cashedOutAt;
   final double? payout;
   final String status;
+  final String id;
+  final String createdAt;
+  final String updateAt;
 
   BetResponse({
-    required this.id,
     required this.roundId,
     required this.userId,
     required this.stake,
     required this.currency,
-    required this.autoCashout,
+    this.autoCashout,
     required this.betIndex,
     required this.placedAt,
     this.cashoutAt,
     this.cashedOutAt,
     this.payout,
     required this.status,
+    required this.id,
+    required this.createdAt,
+    required this.updateAt,
   });
 
   factory BetResponse.fromJson(Map<String, dynamic> json) {
     return BetResponse(
-      id: json['_id'],
       roundId: json['roundId'],
       userId: json['userId'],
-      stake: (json['stake'] as num).toDouble(),
+      stake: json['stake'],
       currency: json['currency'],
-      autoCashout: (json['autoCashout'] as num).toDouble(),
+      autoCashout: (json['autoCashout'] as num?)?.toDouble(),
       betIndex: json['betIndex'],
-      placedAt: DateTime.parse(json['placedAt']),
-      cashoutAt: json['cashoutAt'] != null
-          ? DateTime.parse(json['cashoutAt'])
-          : null,
-      cashedOutAt: json['cashedOutAt'] != null
-          ? DateTime.parse(json['cashedOutAt'])
-          : null,
-      payout: json['payout'] != null
-          ? (json['payout'] as num).toDouble()
-          : null,
+      placedAt: json['placedAt'],
+      cashoutAt: json['cashoutAt'],
+      cashedOutAt: json['cashedOutAt'],
+      payout: (json['payout'] as num?)?.toDouble(),
       status: json['status'],
+      id: json['id'],
+      createdAt: json['createdAt'],
+      updateAt: json['updateAt'],
     );
   }
 }

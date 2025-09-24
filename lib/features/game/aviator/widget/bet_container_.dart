@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
@@ -5,12 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
-import 'package:wintek/features/game/aviator/providers/aviator_provider.dart';
+import 'package:wintek/features/game/aviator/providers/aviator_graph_provider.dart';
+import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
-import 'package:wintek/features/game/aviator/widget/custom_bet_button.dart';
+import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
 
 class BetContainer extends ConsumerStatefulWidget {
   final int index;
@@ -24,75 +26,14 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   final _switchController = TextEditingController();
   int _selectedValue = 0;
   bool _isSwitched = false;
-  BetButtonState _manualState = BetButtonState.bet;
-  BetButtonState _autoState = BetButtonState.bet;
-  //manual
-  void _placeBet() async {
-    final creds = await SecureStorageService().readCredentials();
-    debugPrint("Placing Bet...");
-    setState(() {
-      _manualState = BetButtonState.cancel;
-
-      final amountText = _amountController.text.trim();
-      final stake = double.tryParse(amountText) ?? 0.0;
-      final betNotifier = ref.read(aviatorGraphProvider.notifier);
-
-      final bet = BetRequest(
-        betIndex: widget.index,
-        roundId: betNotifier.currentRoundId ?? 'RoundId not found',
-        stake: stake,
-        seq: betNotifier.currentSeq ?? 0,
-        userId: creds.userId ?? 'UserId not found',
-      );
-
-      ref.read(betNotifierProvider.notifier).placeBet(bet);
-      final multi = betNotifier.currentMultiplier;
-      Flushbar(
-        flushbarPosition: FlushbarPosition.TOP,
-        message: 'You have Crashed at $multi WIN INR;- ${(multi! * stake)}',
-        duration: const Duration(seconds: 3),
-      ).show(context);
-
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text(
-      //       'You have Crashed at $multi WIN INR;- ${(multi! * stake)}',
-      //     ),
-      //     clipBehavior: Clip.,
-      //     behavior: SnackBarBehavior.floating,
-      //   ),
-      // );
-    });
-  }
-
-  void _cashoutBet() {
-    debugPrint("Manual Cashing Out...");
-    setState(() => _manualState = BetButtonState.bet);
-  }
-
-  void _cancelBet() {
-    debugPrint("Manual Cancelling Bet...");
-    setState(() => _manualState = BetButtonState.cashout);
-  }
-
-  //Auto
-  void _placeAutoBet() {
-    debugPrint("Auto Manual Placing Bet...");
-    setState(() => _autoState = BetButtonState.cancel);
-  }
-
-  void _cashoutAutoBet() {
-    debugPrint("Auto Cashing Out...");
-    setState(() => _autoState = BetButtonState.bet);
-  }
-
-  void _cancelAutoBet() {
-    debugPrint("Auto Cancelling Bet...");
-    setState(() => _autoState = BetButtonState.cashout);
-  }
-
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
+  final secureStorageService = SecureStorageService();
+
+  Future<String?> getUserId() async {
+    final creds = await secureStorageService.readCredentials();
+    return creds.userId; // this will be null if nothing was saved
+  }
 
   void _setAmount(String value) {
     setState(() {
@@ -419,12 +360,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                             children: [
                               Expanded(
                                 child: CustomBetButton(
-                                  onBet: _placeBet,
-                                  onCancel: _cancelBet,
-                                  onCashout: _cashoutBet,
-                                  state: _manualState,
-                                  // betLabel:
-                                  //     '      BET\n${_amountController.text}.00 INR',
+                                  index: widget.index,
+                                  amountController: _amountController,
                                 ),
                               ),
                             ],
@@ -646,14 +583,14 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                         ),
                         //  SizedBox(width: 20),
                         //!Auto BUTTON FOR BET---------------------------------------------------
-                        Expanded(
-                          child: CustomBetButton(
-                            onBet: _placeAutoBet,
-                            onCancel: _cancelAutoBet,
-                            onCashout: _cashoutAutoBet,
-                            state: _autoState,
-                          ),
-                        ),
+                        // Expanded(
+                        //   child: CustomBetButton(
+                        //     onBet: _placeAutoBet,
+                        //     onCancel: _cancelAutoBet,
+                        //     onCashout: _cashoutAutoBet,
+                        //     state: _autoState,
+                        //   ),
+                        // ),
                       ],
                     ),
             ),
