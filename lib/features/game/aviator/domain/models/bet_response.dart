@@ -44,7 +44,7 @@ class BetResponse {
       cashedOutAt: json['cashedOutAt'],
       payout: (json['payout'] as num?)?.toDouble(),
       status: json['status'],
-      id: json['id'],
+      id: json['_id'],
       createdAt: json['createdAt'],
       updateAt: json['updateAt'],
     );

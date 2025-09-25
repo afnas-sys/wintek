@@ -42,12 +42,8 @@
 //       return BetNotifier(betService);
 //     });
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/core/constants/api_constants/api_constants.dart';
 import 'package:wintek/core/network/dio_provider.dart';
-import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
-import 'package:wintek/features/game/aviator/domain/models/bet_response.dart';
 import 'package:wintek/features/game/aviator/service/bet_api_service.dart';
 
 // final dioProvider = Provider<Dio>((ref) {

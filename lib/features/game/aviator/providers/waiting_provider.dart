@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 
-/// Tracks "waiting for next round" per bet index: Map<betIndex, bool>
+/// Tracks "waiting for next round" per bet index: Map<betIndex, bool
 final waitingForNextRoundProvider =
     StateNotifierProvider<WaitingNotifier, Map<int, bool>>((ref) {
       return WaitingNotifier(ref);

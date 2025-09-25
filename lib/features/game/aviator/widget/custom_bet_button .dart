@@ -1,14 +1,15 @@
-// custom_bet_button.dart
+// ignore_for_file: file_names
+
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
-import 'package:wintek/features/game/aviator/providers/waiting_provider.dart'; // import the waiting provider
-import 'package:wintek/features/game/aviator/service/bet_api_service.dart'; // for betServiceProvider
+import 'package:wintek/features/game/aviator/providers/waiting_provider.dart';
 
 class CustomBetButton extends ConsumerWidget {
   final int index; // pass 1 or 2 (API expected)
@@ -60,7 +61,7 @@ class CustomBetButton extends ConsumerWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: isWaiting
-              ? Colors.red
+              ? Color(0XFFcb001b)
               : AppColors.aviatorEighteenthColor,
 
           shape: RoundedRectangleBorder(
@@ -130,7 +131,10 @@ class CustomBetButton extends ConsumerWidget {
                 }
               }
             : null,
-        child: Text(buttonText),
+        child: Text(
+          buttonText,
+          style: Theme.of(context).textTheme.aviatorHeadlineSmall,
+        ),
       ),
     );
   }

@@ -17,7 +17,7 @@ class BetApiService {
         data: request.toJson(),
       );
 
-      log('✅ Bet API success: ${response.data}');
+      log('✅ Bet API success: ${(response.data)}');
       return BetResponse.fromJson(response.data);
     } on DioException catch (e) {
       log('❌ DioException: ${e.message}');

@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,10 +5,7 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
-import 'package:wintek/features/game/aviator/providers/aviator_graph_provider.dart';
-import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
-import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
+
 import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
 
 class BetContainer extends ConsumerStatefulWidget {

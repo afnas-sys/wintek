@@ -33,7 +33,7 @@ class AviatorSocketService {
 
     //! state
     socket!.on(AviatorSocketConstants.roundState, (data) {
-      //    log('Round State: $data');
+      // log('Round State: $data');
       try {
         final state = RoundState.fromJson(data);
         _stateController.add(state);
@@ -45,7 +45,7 @@ class AviatorSocketService {
 
     //! Tick
     socket!.on(AviatorSocketConstants.roundTick, (data) {
-      //  log('Round Tick: $data');
+      //log('Round Tick: $data');
       try {
         final tick = Tick.fromJson(data);
         _tickController.add(tick);

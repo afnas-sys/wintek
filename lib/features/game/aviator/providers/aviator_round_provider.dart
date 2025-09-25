@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
@@ -25,8 +24,8 @@ final aviatorTickProvider = StreamProvider<Tick>((ref) {
 //! Crash provider
 
 final aviatorCrashProvider = StreamProvider<Crash>((ref) {
-  final Service = ref.watch(aviatorRoundProvider);
-  return Service.crashStream;
+  final service = ref.watch(aviatorRoundProvider);
+  return service.crashStream;
 });
 
 class AviatorRoundNotifier extends StateNotifier<RoundState?> {

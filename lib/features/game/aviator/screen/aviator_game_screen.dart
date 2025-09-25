@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/widget/all_bets.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:wintek/features/game/aviator/widget/balance_container.dart';
@@ -10,7 +9,6 @@ import 'package:wintek/features/game/aviator/widget/graph_container.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
 import 'package:wintek/core/constants/app_colors.dart';
-import 'package:wintek/core/theme/theme.dart';
 
 class AviatorGameScreen extends ConsumerStatefulWidget {
   const AviatorGameScreen({super.key});
@@ -22,7 +20,7 @@ class AviatorGameScreen extends ConsumerStatefulWidget {
 class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
   @override
   Widget build(BuildContext context) {
-    final roundState = ref.watch(aviatorRoundNotifierProvider);
+    //   final roundState = ref.watch(aviatorRoundNotifierProvider);
     // final roundState = ref.watch();
     // final tickEvent = ref.watch();
     // final crashEvent = ref.watch(aviatorCrashProvider);

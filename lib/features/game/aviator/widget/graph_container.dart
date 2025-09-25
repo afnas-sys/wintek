@@ -15,7 +15,7 @@ class GraphContainer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final state = ref.watch(aviatorStateProvider);
     final tick = ref.watch(aviatorTickProvider);
-    final crash = ref.watch(aviatorCrashProvider);
+    //  final crash = ref.watch(aviatorCrashProvider);
     final round = ref.watch(aviatorRoundNotifierProvider);
     //final round = ref.watch(aviatorProvider);
 
