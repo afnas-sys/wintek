@@ -1,8 +1,11 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/features/game/card_jackpot/domain/models/socket/event_model.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/bottum_history_tab.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/cards_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/timer_section.dart';
+import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
 import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
 import 'package:wintek/core/constants/app_icons.dart';
 import 'package:wintek/core/constants/app_strings.dart';
@@ -20,15 +23,17 @@ class _GameTabsState extends ConsumerState<GameTabs> {
 
   @override
   void initState() {
-    super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.watch(cardSocketProvider);
+
       ref.read(timerProvider.notifier).start();
     });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    // showFlushbar(context, ref);
     return Column(
       children: [
         // Tabs Container
@@ -150,4 +155,19 @@ class _GameTabsState extends ConsumerState<GameTabs> {
       ],
     );
   }
+}
+
+void showFlushbar(BuildContext context, WidgetRef ref) {
+  ref.listen<RoundEvent?>(cardRoundNotifierProvider, (previous, next) {
+    // previous and next are of type RoundEvent?
+    if (next?.state != null && next != previous) {
+      Flushbar(
+        message: "Game ${next?.state}",
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: Duration(seconds: 3),
+        borderRadius: BorderRadius.circular(10),
+        backgroundColor: Colors.green,
+      ).show(context);
+    }
+  });
 }
