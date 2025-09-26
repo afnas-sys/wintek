@@ -141,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       // Handle skip action (e.g., navigate to main screen)
                       Navigator.pushReplacementNamed(
                         context,
-                        RoutesNames.bottombar,
+                        RoutesNames.loginScreen,
                       );
                     },
                     child: const Text(
