@@ -10,7 +10,7 @@ class BetApiService {
 
   BetApiService(this.dio);
 
-  Future<BetResponse> placeBet(BetRequest request) async {
+  Future<BetResponse?> placeBet(BetRequest request) async {
     try {
       final response = await dio.post(
         AviatorApiConstants.bet,
@@ -18,7 +18,8 @@ class BetApiService {
       );
 
       log('✅ Bet API success: ${(response.data)}');
-      return BetResponse.fromJson(response.data);
+
+      return BetResponse.fromJson(response.data['bet']);
     } on DioException catch (e) {
       log('❌ DioException: ${e.message}');
       log('👉 Request path: ${e.requestOptions.path}');

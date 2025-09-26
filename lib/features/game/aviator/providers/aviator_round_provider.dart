@@ -23,10 +23,12 @@ final aviatorTickProvider = StreamProvider<Tick>((ref) {
 });
 //! Crash provider
 
-final aviatorCrashProvider = StreamProvider<Crash>((ref) {
-  final service = ref.watch(aviatorRoundProvider);
-  return service.crashStream;
-});
+// final aviatorCrashProvider = StreamProvider<Crash>((ref) {
+//   final service = ref.watch(aviatorRoundProvider);
+//   return service.crashStream;
+// });
+
+//! --- State Notifier ---
 
 class AviatorRoundNotifier extends StateNotifier<RoundState?> {
   final AviatorSocketService _service;
@@ -50,4 +52,28 @@ final aviatorRoundNotifierProvider =
     StateNotifierProvider<AviatorRoundNotifier, RoundState?>((ref) {
       final service = ref.watch(aviatorRoundProvider);
       return AviatorRoundNotifier(service);
+    });
+
+//! --- Crash Notifier ---
+class AviatorCrashNotifier extends StateNotifier<Crash?> {
+  final AviatorSocketService _service;
+  late final StreamSubscription _sub;
+
+  AviatorCrashNotifier(this._service) : super(null) {
+    _sub = _service.crashStream.listen((crash) {
+      state = crash;
+    });
+  }
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
+}
+
+final aviatorCrashNotifierProvider =
+    StateNotifierProvider<AviatorCrashNotifier, Crash?>((ref) {
+      final service = ref.watch(aviatorRoundProvider);
+      return AviatorCrashNotifier(service);
     });

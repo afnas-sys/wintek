@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'dart:developer';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -9,17 +10,26 @@ import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
-import 'package:wintek/features/game/aviator/providers/waiting_provider.dart';
+import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
+import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
 
-class CustomBetButton extends ConsumerWidget {
+class CustomBetButton extends ConsumerStatefulWidget {
   final int index; // pass 1 or 2 (API expected)
   final TextEditingController amountController;
 
-  CustomBetButton({
+  const CustomBetButton({
     super.key,
     required this.index,
     required this.amountController,
   });
+
+  @override
+  ConsumerState<CustomBetButton> createState() => _CustomBetButtonState();
+}
+
+class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
+  bool hasPlacedBet = false;
+  String? lastRoundId;
 
   final secureStorageService = SecureStorageService();
 
@@ -29,105 +39,156 @@ class CustomBetButton extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final round = ref.watch(aviatorRoundNotifierProvider);
-    final betStatusMap = ref.watch(betStateProvider);
-    final waitingMap = ref.watch(waitingForNextRoundProvider);
-    final isWaiting = waitingMap[index] ?? false;
-    final status = betStatusMap[index] ?? BetStatus.none;
-    final isBetPlaced = status == BetStatus.placed;
+    final tick = ref.watch(aviatorTickProvider);
 
-    // decide label + enabled state
-    String buttonText;
-    bool enabled;
-
-    if (isWaiting) {
-      buttonText = " Waiting for next round...";
-      enabled = true;
-    } else {
-      // default label logic: if placed -> Cancel, otherwise Place Bet
-      buttonText = "Place Bet";
-
-      // enabled if round state is PREPARE, RUNNING, or CASHOUT
-      enabled =
-          round != null &&
-          (round.state == 'PREPARE' ||
-              round.state == 'RUNNING' ||
-              round.state == 'CRASHED');
+    // Reset hasPlacedBet if a new round starts
+    if (round != null && round.roundId != lastRoundId) {
+      hasPlacedBet = false;
+      lastRoundId = round.roundId;
     }
+
+    final bet = ref.watch(betResponseProvider)[widget.index];
+
+    // Handle waiting state between placing bet and running
+    final isWaitingForRound = hasPlacedBet && round?.state == 'PREPARE';
+    final isCashoutButton = hasPlacedBet && round?.state == 'RUNNING';
+
+    final buttonText = !hasPlacedBet
+        ? "BET"
+        : isCashoutButton
+        ? "CASHOUT"
+        : isWaitingForRound
+        ? "WAITING"
+        : "BET";
+
+    final enabled = !hasPlacedBet || isCashoutButton;
 
     return SizedBox(
       height: 108,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isWaiting
-              ? Color(0XFFcb001b)
-              : AppColors.aviatorEighteenthColor,
-
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
+            if (!hasPlacedBet) {
+              return AppColors.aviatorEighteenthColor; // initial Place Bet
+            } else if (hasPlacedBet && round?.state == 'RUNNING') {
+              return AppColors.aviatorSeventeenthColor; // CASHOUT
+            } else if (round?.state == 'CRASHED') {
+              return AppColors.aviatorSeventeenthColor;
+            } else {
+              return AppColors
+                  .aviatorTwentySixthColor; // Bet placed but waiting
+            }
+          }),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-          minimumSize: const Size(55, 30),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          ),
+          minimumSize: MaterialStateProperty.all(const Size(55, 30)),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
+
         onPressed: enabled
             ? () async {
-                // If user tried to place bet during RUNNING and they don't yet have a placed bet:
-                if (round?.state == "RUNNING" && !isBetPlaced) {
-                  log(
-                    'User attempted to place during RUNNING — showing waiting state for index $index',
-                  );
-                  ref
-                      .read(waitingForNextRoundProvider.notifier)
-                      .setWaiting(index);
-                  return; // do not call API
+                final betService = ref.read(betServiceProvider);
+                final userId = await getUserId();
+
+                if (userId == null) {
+                  log('❌ No userId found!');
+                  return;
                 }
 
-                // Normal place or cancel flow
-                if (!isBetPlaced) {
-                  // PLACE BET (only when not RUNNING or when allowed)
-                  final betService = ref.read(betServiceProvider);
-                  final userId = await getUserId();
-
-                  log(
-                    'Placing bet: roundId=${round?.roundId}, userId=$userId, seq=${round?.seq}, stake=${amountController.text}, betIndex=$index',
-                  );
-
-                  if (userId == null) {
-                    log('❌ No userId found!');
+                // Place Bet
+                if (!hasPlacedBet && round != null) {
+                  if (round.state == 'RUNNING') {
+                    Flushbar(
+                      messageText: Text(
+                        ' You cannot place a bet while the game is running',
+                        style: const TextStyle(
+                          color: AppColors.aviatorTertiaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      backgroundColor: AppColors.aviatorTwentySixthColor,
+                      margin: const EdgeInsets.all(16.0),
+                      duration: const Duration(seconds: 1),
+                      flushbarPosition: FlushbarPosition.TOP,
+                      flushbarStyle: FlushbarStyle.FLOATING,
+                      borderRadius: BorderRadius.circular(20),
+                      animationDuration: const Duration(seconds: 1),
+                    ).show(context);
                     return;
                   }
+                  final amountText = widget.amountController.text.trim();
+                  if (amountText.isEmpty) {
+                    log('⚠️ Bet amount is empty');
+                    return;
+                  }
+                  final roundId = round.roundId;
+                  final seq = round.seq;
 
                   try {
-                    final bet = await betService.placeBet(
+                    final newBet = await betService.placeBet(
                       BetRequest(
-                        roundId: '${round?.roundId}',
+                        roundId: roundId!,
                         userId: userId,
-                        seq: int.parse('${round?.seq}'),
-                        stake: int.parse(amountController.text),
-                        betIndex: index,
+                        seq: int.parse(seq.toString()),
+                        stake: int.parse(amountText),
+                        betIndex: widget.index,
                       ),
                     );
 
-                    log('✅ Bet placed successfully: ${bet.stake}');
-                    // update bet status (persisted by riverpod)
-                    ref.read(betStateProvider.notifier).placeBet(index);
-                    // ensure waiting flag cleared for this index
-                    ref
-                        .read(waitingForNextRoundProvider.notifier)
-                        .clearWaiting(index);
+                    if (newBet != null) {
+                      ref
+                          .read(betResponseProvider.notifier)
+                          .setBetResponse(widget.index, newBet);
+
+                      ref
+                          .read(betStateProvider.notifier)
+                          .placeBet(widget.index);
+
+                      setState(() {
+                        hasPlacedBet = true;
+                      });
+
+                      log('✅ Bet placed successfully: ${newBet.stake}');
+                    }
                   } catch (e) {
                     log('❌ Error placing bet: $e');
                   }
-                } else {
-                  // CANCEL BET (local only)
-                  log('⚠️ Bet cancelled by user (index $index)');
-                  ref.read(betStateProvider.notifier).cancelBet(index);
-                  // also clear waiting if any
-                  ref
-                      .read(waitingForNextRoundProvider.notifier)
-                      .clearWaiting(index);
+                }
+                // Cashout
+                else if (isCashoutButton && bet != null) {
+                  final cashoutService = ref.read(cashoutServiceProvider);
+                  final multiplier = tick.maybeWhen(
+                    data: (tick) {
+                      final value = tick.multiplier;
+                      if (value is num) {
+                        return double.tryParse(value.toString()) ?? 0.0;
+                      }
+                      if (value is String) return double.tryParse(value) ?? 0.0;
+                      return 0.0;
+                    },
+                    orElse: () => 0.0,
+                  );
+
+                  try {
+                    log(
+                      "📤 Cashout request: id=${bet.id}, cashOutAt=$multiplier",
+                    );
+
+                    final cashout = await cashoutService.cashout(
+                      id: bet.id,
+                      cashOutAt: multiplier, // ✅ send current multiplier safely
+                    );
+                    log("✅ Cashout success: ${cashout.toJson()}");
+                  } catch (e) {
+                    log("❌ Cashout error: $e");
+                  }
                 }
               }
             : null,
