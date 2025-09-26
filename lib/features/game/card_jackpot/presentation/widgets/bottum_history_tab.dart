@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/features/game/card_jackpot/presentation/widgets/history_list_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -55,7 +54,7 @@ class _BottumHistoryTabState extends State<BottumHistoryTab> {
             ),
           ),
         // ListView changes based on button
-        HistoryListSection(isGameHistory: selectedIndex == 0),
+        // HistoryListSection(isGameHistory: selectedIndex == 0),
       ],
     );
   }

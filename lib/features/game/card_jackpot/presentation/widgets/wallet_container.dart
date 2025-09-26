@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/wallet_provider/wallet_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/wallet/wallet_provider.dart';
 
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
@@ -12,7 +12,7 @@ class WalletContainer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final num walletBalance = ref.watch(walletBalanceAmountProvider);
+    final futureWallet = ref.watch(walletBalanceProvider);
     return Container(
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
@@ -58,16 +58,49 @@ class WalletContainer extends ConsumerWidget {
                 Row(
                   spacing: 10,
                   children: [
-                    AppText(
-                      text: '₹ $walletBalance',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
+                    futureWallet.when(
+                      data: (walletBalance) => AppText(
+                        text: '₹ ${walletBalance?.data.balance}',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      error: (e, s) => AppText(
+                        text: '₹ 0',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      loading: () => RefreshProgressIndicator(
+                        color: AppColors.cardPrimaryColor,
+                      ),
+                      //  SizedBox.shrink(),
                     ),
                     InkWell(
+                      splashColor: AppColors.cardPrimaryColor,
                       child: Icon(
                         Icons.autorenew,
                         color: AppColors.cardUnfocusedColor,
                       ),
+                      onTap: () {
+                        ref.read(walletBalanceProvider);
+                        futureWallet.when(
+                          data: (data) =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    data?.message ?? 'Fetching wallet error',
+                                  ),
+                                ),
+                              ),
+                          error: (error, stackTrace) =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(error.toString())),
+                              ),
+                          loading: () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Fetching in progress')),
+                              ),
+                        );
+                      },
                     ),
                   ],
                 ),

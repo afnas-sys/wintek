@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/card_jackpot/domain/selection/selection_model.dart';
+import 'package:wintek/features/game/card_jackpot/domain/models/selection/selection_model.dart';
 
-final selectionProvider =
-    StateNotifierProvider<SelectionNotifier, SelectionModel>((ref) {
-      return SelectionNotifier();
+final amountSelectProvider =
+    StateNotifierProvider<AmountSelectionNotifier, SelectionModel>((ref) {
+      return AmountSelectionNotifier();
     });
 
-class SelectionNotifier extends StateNotifier<SelectionModel> {
-  SelectionNotifier()
+class AmountSelectionNotifier extends StateNotifier<SelectionModel> {
+  AmountSelectionNotifier()
     : super(
         const SelectionModel(
           walletValue: 10,

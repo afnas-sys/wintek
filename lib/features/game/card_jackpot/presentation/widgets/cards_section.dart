@@ -3,16 +3,47 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/card_numbers.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/main_cards.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
+import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
 import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
 class CardsSection extends ConsumerWidget {
   final int selectedCardTypeIndex;
+
   const CardsSection({super.key, required this.selectedCardTypeIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final round = ref.watch(cardRoundNotifierProvider);
     final timer = ref.watch(timerProvider);
+
+    String overlayText;
+    double fontSize = 130;
+
+    if (round == null) {
+      // 1️⃣ Initial load
+      overlayText = 'Loading...';
+      fontSize = 50;
+    } else if (round.state == 'PREPARE') {
+      // 2️⃣ Preparing
+      overlayText = 'Preparing';
+      fontSize = 50;
+    } else if (round.state == 'RUNNING') {
+      // 2️⃣ Running
+      overlayText = timer.inSeconds.toString();
+      fontSize = 130;
+    } else if (round.state == 'ENDED') {
+      // 3️⃣ Ended
+      overlayText = 'END';
+      fontSize = 50;
+    } else {
+      // Fallback for unknown states
+      overlayText = 'Loading...';
+      fontSize = 50;
+    }
+
+    // Show overlay if not running OR if still loading
+    final showOverlay = round == null || round.state != 'RUNNING';
 
     return SizedBox(
       child: Stack(
@@ -25,9 +56,7 @@ class CardsSection extends ConsumerWidget {
               NumbersCards(selectedCardTypeIndex: selectedCardTypeIndex),
             ],
           ),
-
-          // Show overlay only at last 5 seconds
-          if (timer.inSeconds <= 5)
+          if (showOverlay && overlayText.isNotEmpty)
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -40,9 +69,9 @@ class CardsSection extends ConsumerWidget {
                 ),
                 child: Center(
                   child: AppText(
-                    text: timer.inSeconds.toString(),
+                    text: overlayText,
                     color: Colors.white,
-                    fontSize: 130,
+                    fontSize: fontSize,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

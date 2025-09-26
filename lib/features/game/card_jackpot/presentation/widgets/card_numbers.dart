@@ -12,7 +12,7 @@ class NumbersCards extends StatelessWidget {
       builder: (context, constraints) {
         int firstRowLength = 5;
         int secondRowLength = 4;
-        if (constraints.maxWidth < 500) {
+        if (constraints.maxWidth < 350) {
           firstRowLength = 4;
           secondRowLength = 4;
         }
