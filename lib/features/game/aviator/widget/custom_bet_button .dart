@@ -176,6 +176,10 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     orElse: () => 0.0,
                   );
 
+                  log(
+                    "🔍 Cashout debug: bet.id=${bet.id}, multiplier=$multiplier, tick state=${tick.runtimeType}",
+                  );
+
                   try {
                     log(
                       "📤 Cashout request: id=${bet.id}, cashOutAt=$multiplier",
@@ -183,11 +187,31 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
                     final cashout = await cashoutService.cashout(
                       id: bet.id,
-                      cashOutAt: multiplier, // ✅ send current multiplier safely
+                      cashOutAt: multiplier,
                     );
+
                     log("✅ Cashout success: ${cashout.toJson()}");
-                  } catch (e) {
-                    log("❌ Cashout error: $e");
+
+                    // ✅ show Flushbar only if success
+                    Flushbar(
+                      messageText: Text(
+                        'Win INR ${(multiplier * bet.stake).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                          color: AppColors.aviatorTertiaryColor,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      backgroundColor: AppColors.aviatorEighteenthColor,
+                      margin: const EdgeInsets.all(16.0),
+                      duration: const Duration(seconds: 1),
+                      flushbarPosition: FlushbarPosition.TOP,
+                      flushbarStyle: FlushbarStyle.FLOATING,
+                      borderRadius: BorderRadius.circular(30),
+                      animationDuration: const Duration(seconds: 1),
+                    ).show(context);
+                  } catch (e, st) {
+                    log("❌ Cashout error: $e\n$st");
                   }
                 }
               }
