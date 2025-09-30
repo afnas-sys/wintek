@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -157,8 +158,29 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
                       log('✅ Bet placed successfully: ${newBet.stake}');
                     }
+                  } on DioException catch (e) {
+                    final errorMsg =
+                        e.response?.data?['message'] ?? 'Bet failed';
+                    log('❌ Error placing bet: $errorMsg');
+                    // 🔔 Show error in Scaffold
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(errorMsg),
+                        backgroundColor: Colors.red,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   } catch (e) {
                     log('❌ Error placing bet: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Something went wrong. Please try again.",
+                        ),
+                        backgroundColor: Colors.red,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   }
                 }
                 // Cashout
@@ -194,21 +216,84 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
                     // ✅ show Flushbar only if success
                     Flushbar(
-                      messageText: Text(
-                        'Win INR ${(multiplier * bet.stake).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          color: AppColors.aviatorTertiaryColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w400,
-                        ),
+                      messageText: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Center(
+                              child: RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'You Have Crashed\nout!',
+                                      style: TextStyle(
+                                        color: AppColors.aviatorSixteenthColor,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '\n$multiplier X',
+                                      style: TextStyle(
+                                        color: AppColors.aviatorTertiaryColor,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: BoxDecoration(
+                                color: AppColors.aviatorEighteenthColor,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                child: RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Win INR\n',
+                                        style: TextStyle(
+                                          color:
+                                              AppColors.aviatorSixteenthColor,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: (multiplier * bet.stake)
+                                            .toStringAsFixed(2),
+                                        style: TextStyle(
+                                          color: AppColors.aviatorTertiaryColor,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      backgroundColor: AppColors.aviatorEighteenthColor,
-                      margin: const EdgeInsets.all(16.0),
-                      duration: const Duration(seconds: 1),
+
+                      backgroundColor: Color(0XFF133206),
+                      margin: const EdgeInsets.all(2.0),
+                      borderWidth: 2,
+                      borderColor: AppColors.aviatorEighteenthColor,
+                      duration: const Duration(seconds: 5),
                       flushbarPosition: FlushbarPosition.TOP,
                       flushbarStyle: FlushbarStyle.FLOATING,
-                      borderRadius: BorderRadius.circular(30),
+                      borderRadius: BorderRadius.circular(50),
                       animationDuration: const Duration(seconds: 1),
+                      maxWidth: 300,
                     ).show(context);
                   } catch (e, st) {
                     log("❌ Cashout error: $e\n$st");
