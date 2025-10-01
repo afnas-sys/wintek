@@ -15,7 +15,7 @@ import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart
 import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
 
 class CustomBetButton extends ConsumerStatefulWidget {
-  final int index; // pass 1 or 2 (API expected)
+  final int index;
   final TextEditingController amountController;
 
   const CustomBetButton({
@@ -166,7 +166,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(errorMsg),
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.aviatorTwentySixthColor,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -177,7 +177,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                         content: Text(
                           "Something went wrong. Please try again.",
                         ),
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.aviatorTwentySixthColor,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );

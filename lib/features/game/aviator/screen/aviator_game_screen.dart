@@ -24,7 +24,7 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
   Widget build(BuildContext context) {
     //   final roundState = ref.watch(aviatorRoundNotifierProvider);
     final roundState = ref.watch(aviatorStateProvider);
-    final userId = roundState.when(
+    final roundId = roundState.when(
       data: (round) => round.roundId!,
       error: (error, st) => error.toString(),
       loading: () => '',
@@ -46,7 +46,7 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'User Id: $userId',
+                      'Round Id: $roundId',
                       style: Theme.of(
                         context,
                       ).textTheme.aviatorbodySmallPrimary,
