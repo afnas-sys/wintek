@@ -8,7 +8,7 @@ import 'package:wintek/features/game/card_jackpot/services/wallet_service.dart';
 final walletBalanceProvider = FutureProvider<WalletResponse?>((ref) async {
   final walletService = WalletService(ref.read(dioProvider));
   final wallet = await walletService.getWalletBalance();
-  log('wallet balance is  $wallet');
+  log('wallet balance is  ${wallet?.data.balance}');
 
   return wallet;
 });

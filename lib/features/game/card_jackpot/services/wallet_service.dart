@@ -16,8 +16,7 @@ class WalletService {
       final res = await dio.get(
         '${CardApiConstants.baseUrl}/user/balance?user_id=${storageData.userId}',
       );
-      log('wallet balance is  ${res.data}');
-      // Assuming your API returns something like { "balance": 1000 }
+      log('response:  ${res.data}');
       return WalletResponse.fromJson(res.data);
     } on DioException catch (e) {
       // Dio-specific error
