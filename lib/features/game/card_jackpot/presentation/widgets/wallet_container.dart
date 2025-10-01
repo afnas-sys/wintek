@@ -80,25 +80,16 @@ class WalletContainer extends ConsumerWidget {
                         Icons.autorenew,
                         color: AppColors.cardUnfocusedColor,
                       ),
-                      onTap: () {
-                        ref.read(walletBalanceProvider);
-                        futureWallet.when(
-                          data: (data) =>
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    data?.message ?? 'Fetching wallet error',
-                                  ),
-                                ),
-                              ),
-                          error: (error, stackTrace) =>
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(error.toString())),
-                              ),
-                          loading: () =>
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Fetching in progress')),
-                              ),
+                      onTap: () async {
+                        final wallet = await ref.refresh(
+                          walletBalanceProvider.future,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              wallet?.message ?? 'Fetched wallet successfully',
+                            ),
+                          ),
                         );
                       },
                     ),
