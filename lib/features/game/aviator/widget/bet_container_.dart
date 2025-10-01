@@ -52,6 +52,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   }
 
   @override
+  void initState() {
+    _amountController.text = 1.toString();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     //!------BET CONTAINER------
 
@@ -143,201 +149,30 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                               Column(
                                 children: [
                                   //! container for Amount, + & - button
-                                  SizedBox(
-                                    width: 140,
-                                    height: 36,
-                                    child: TextField(
-                                      cursorColor:
-                                          AppColors.aviatorSixteenthColor,
-                                      cursorHeight: 20,
-                                      controller: _amountController,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.aviatorHeadlineSmall,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                              vertical: 2,
-                                              horizontal: 8,
-                                            ),
-                                        hintText: "1.00",
-                                        hintStyle: Theme.of(
-                                          context,
-                                        ).textTheme.aviatorHeadlineSmall,
-                                        filled: true,
-                                        fillColor: AppColors.aviatorSixthColor,
-
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            52,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                AppColors.aviatorFifteenthColor,
-                                          ),
-                                        ),
-                                        disabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            52,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                AppColors.aviatorFifteenthColor,
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            52,
-                                          ),
-                                          borderSide: BorderSide(),
-                                        ),
-
-                                        suffixIcon: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            CustomElevatedButton(
-                                              hasBorder: false,
-                                              backgroundColor: AppColors
-                                                  .aviatorSixteenthColor,
-                                              padding: const EdgeInsets.all(2),
-                                              height: 22,
-                                              width: 22,
-                                              onPressed: _decrement,
-                                              child: Icon(
-                                                Icons.remove,
-                                                size: 18.33,
-                                                color:
-                                                    AppColors.aviatorSixthColor,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            CustomElevatedButton(
-                                              hasBorder: false,
-                                              backgroundColor: AppColors
-                                                  .aviatorSixteenthColor,
-                                              padding: const EdgeInsets.all(2),
-                                              height: 22,
-                                              width: 22,
-                                              onPressed: _increment,
-                                              child: Icon(
-                                                Icons.add,
-                                                size: 18.33,
-                                                color:
-                                                    AppColors.aviatorSixthColor,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 4),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  _buildAmountTextField(
+                                    context,
+                                    _amountController,
                                   ),
 
                                   SizedBox(height: 10),
                                   //! BUTTON FOR ₹10 & ₹20
                                   Row(
                                     children: [
-                                      //Button for ₹10
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('10'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        //   width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹10',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
-                                      ),
-
-                                      SizedBox(width: 6),
-                                      //Button for ₹20
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('20'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        //   width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹20',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
-                                      ),
+                                      _quickAmountButton(context, '₹10', '10'),
+                                      const SizedBox(width: 6),
+                                      _quickAmountButton(context, '₹20', '20'),
                                     ],
                                   ),
                                   SizedBox(height: 6),
                                   //! BUTTON FOR ₹50 & ₹100
                                   Row(
                                     children: [
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('50'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        // width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹50',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
-                                      ),
-
-                                      SizedBox(width: 6),
-
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('100'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        //  width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹100',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
+                                      _quickAmountButton(context, '₹50', '50'),
+                                      const SizedBox(width: 6),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹100',
+                                        '100',
                                       ),
                                     ],
                                   ),
@@ -363,7 +198,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                         ),
                       ],
                     )
-                  //!   AUTO-------
+                  //!      ----------------------  AUTO---------------------------------
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -374,148 +209,18 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                               Column(
                                 children: [
                                   //! CONTAINER FOR AMOUNT, + & - button in AUTo
-                                  SizedBox(
-                                    width: 140,
-                                    height: 36,
-                                    child: TextField(
-                                      cursorColor:
-                                          AppColors.aviatorSixteenthColor,
-                                      controller: _autoAmountController,
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                          ),
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.aviatorHeadlineSmall,
-                                      decoration: InputDecoration(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                              vertical: 2,
-                                              horizontal: 8,
-                                            ),
-                                        hintText: "1.00",
-                                        hintStyle: Theme.of(
-                                          context,
-                                        ).textTheme.aviatorHeadlineSmall,
-                                        filled: true,
-                                        fillColor: AppColors.aviatorSixthColor,
-
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            52,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                AppColors.aviatorFifteenthColor,
-                                          ),
-                                        ),
-                                        disabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            52,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color:
-                                                AppColors.aviatorFifteenthColor,
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            52,
-                                          ),
-                                          borderSide: BorderSide(),
-                                        ),
-
-                                        suffixIcon: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            CustomElevatedButton(
-                                              hasBorder: false,
-                                              backgroundColor: AppColors
-                                                  .aviatorSixteenthColor,
-                                              padding: const EdgeInsets.all(2),
-                                              height: 22,
-                                              width: 22,
-                                              onPressed: _decrement,
-                                              child: Icon(
-                                                Icons.remove,
-                                                size: 18.33,
-                                                color:
-                                                    AppColors.aviatorSixthColor,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 4),
-                                            CustomElevatedButton(
-                                              hasBorder: false,
-                                              backgroundColor: AppColors
-                                                  .aviatorSixteenthColor,
-                                              padding: const EdgeInsets.all(2),
-                                              height: 22,
-                                              width: 22,
-                                              onPressed: _increment,
-                                              child: Icon(
-                                                Icons.add,
-                                                size: 18.33,
-                                                color:
-                                                    AppColors.aviatorSixthColor,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 4),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  _buildAmountTextField(
+                                    context,
+                                    _autoAmountController,
                                   ),
+
                                   SizedBox(height: 10),
                                   //!Auto BUTTON FOR AMOUNT 10 & 20
                                   Row(
                                     children: [
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('10'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        //width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹10',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
-                                      ),
-
-                                      SizedBox(width: 6),
-
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('20'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        //  width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹20',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
-                                      ),
+                                      _quickAmountButton(context, '₹10', '10'),
+                                      const SizedBox(width: 6),
+                                      _quickAmountButton(context, '₹20', '20'),
                                     ],
                                   ),
                                   SizedBox(height: 6),
@@ -523,50 +228,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                                   //!Auto BUTTON FOR AMOUNT 50 &100
                                   Row(
                                     children: [
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('50'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        // width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹50',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
-                                      ),
-
-                                      SizedBox(width: 6),
-
-                                      CustomElevatedButton(
-                                        onPressed: () => _setAmount('100'),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
-                                        ),
-                                        borderColor:
-                                            AppColors.aviatorFifteenthColor,
-                                        backgroundColor:
-                                            AppColors.aviatorFourteenthColor,
-                                        borderRadius: 30,
-                                        height: 28,
-                                        // width: 74,
-                                        elevation: 0,
-                                        child: Text(
-                                          '₹100',
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.aviatorBodyMediumPrimary,
-                                        ),
+                                      _quickAmountButton(context, '₹50', '50'),
+                                      const SizedBox(width: 6),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹100',
+                                        '100',
                                       ),
                                     ],
                                   ),
@@ -577,14 +244,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                         ),
                         //  SizedBox(width: 20),
                         //!Auto BUTTON FOR BET---------------------------------------------------
-                        // Expanded(
-                        //   child: CustomBetButton(
-                        //     onBet: _placeAutoBet,
-                        //     onCancel: _cancelAutoBet,
-                        //     onCashout: _cashoutAutoBet,
-                        //     state: _autoState,
-                        //   ),
-                        // ),
+                        Expanded(
+                          child: CustomBetButton(
+                            index: widget.index,
+                            amountController: _amountController,
+                          ),
+                        ),
                       ],
                     ),
             ),
@@ -595,100 +260,167 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           if (_selectedValue == 1)
             Row(
               children: [
-                // AUTOPLAY button
-                Flexible(
-                  flex: 2,
-                  child: CustomElevatedButton(
-                    onPressed: () {},
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    borderRadius: 52,
-                    backgroundColor: AppColors.aviatorNineteenthColor,
-                    height: 28,
-                    borderColor: AppColors.aviatorNineteenthColor,
-                    child: Text(
-                      'AUTOPLAY',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.aviatorBodyMediumPrimary,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
+                //! AUTOPLAY button
+                _buildAutoplayButton(context),
+                // const SizedBox(width: 16),
+                Spacer(),
 
-                // Right section (Auto Cash Out + Switch + TextField)
-                Expanded(
-                  flex: 3,
-                  child: Row(
-                    children: [
-                      // Label
-                      Expanded(
-                        child: Text(
-                          'Auto Cash Out',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.aviatorbodySmallPrimary,
-                          // overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-
-                      // Switch
-                      Transform.scale(
-                        scale: 0.65,
-                        child: Switch(
-                          value: _isSwitched,
-                          activeColor: AppColors.aviatorTertiaryColor,
-                          inactiveThumbColor: AppColors.aviatorTertiaryColor,
-                          activeTrackColor: AppColors.aviatorEighteenthColor,
-                          inactiveTrackColor: AppColors.aviatorFourteenthColor,
-                          onChanged: (value) {
-                            setState(() {
-                              _isSwitched = value;
-                            });
-                          },
-                        ),
-                      ),
-
-                      // TextField
-                      SizedBox(
-                        width: 70,
-                        height: 28,
-                        child: TextField(
-                          enabled: _isSwitched,
-                          controller: _switchController,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.aviatorBodyMediumSecondary,
-                          decoration: InputDecoration(
-                            suffixText: "X",
-                            suffixStyle: TextStyle(
-                              color: AppColors.aviatorSixteenthColor,
-                            ),
-                            hintText: "1.5",
-                            filled: true,
-                            fillColor: AppColors.aviatorSixthColor,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 4,
-                              horizontal: 6,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(52),
-                              borderSide: BorderSide(
-                                color: AppColors.aviatorFifteenthColor,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                //! section (Auto Cash Out + Switch + TextField)
+                _buildAutoCashOutRow(context),
               ],
             ),
+        ],
+      ),
+    );
+  }
+
+  //!Auto BUTTON FOR AMOUNT
+  Widget _buildAmountTextField(
+    BuildContext context,
+    TextEditingController controller,
+  ) {
+    return SizedBox(
+      width: 140,
+      height: 36,
+      child: TextField(
+        controller: controller,
+        cursorColor: AppColors.aviatorSixteenthColor,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.aviatorHeadlineSmall,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 2,
+            horizontal: 8,
+          ),
+          hintText: "1.00",
+          hintStyle: Theme.of(context).textTheme.aviatorHeadlineSmall,
+          filled: true,
+          fillColor: AppColors.aviatorSixthColor,
+          enabledBorder: _borderStyle(),
+          disabledBorder: _borderStyle(),
+          focusedBorder: _borderStyle(),
+          suffixIcon: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildIconButton(Icons.remove, _decrement),
+              const SizedBox(width: 4),
+              _buildIconButton(Icons.add, _increment),
+              const SizedBox(width: 4),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  OutlineInputBorder _borderStyle() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(52),
+      borderSide: BorderSide(color: AppColors.aviatorFifteenthColor),
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
+    return CustomElevatedButton(
+      hasBorder: false,
+      backgroundColor: AppColors.aviatorSixteenthColor,
+      padding: const EdgeInsets.all(2),
+      height: 22,
+      width: 22,
+      onPressed: onPressed,
+      child: Icon(icon, size: 18.33, color: AppColors.aviatorSixthColor),
+    );
+  }
+
+  //!Quick Amount Button
+  Widget _quickAmountButton(BuildContext context, String label, String value) {
+    return CustomElevatedButton(
+      onPressed: () => _setAmount(value),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      borderColor: AppColors.aviatorFifteenthColor,
+      backgroundColor: AppColors.aviatorFourteenthColor,
+      borderRadius: 30,
+      height: 28,
+      elevation: 0,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+      ),
+    );
+  }
+
+  //!AUTOPLAY
+  Widget _buildAutoplayButton(BuildContext context) {
+    return Flexible(
+      flex: 2,
+      child: CustomElevatedButton(
+        onPressed: () {},
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        borderRadius: 52,
+        backgroundColor: AppColors.aviatorNineteenthColor,
+        height: 28,
+        borderColor: AppColors.aviatorNineteenthColor,
+        child: Text(
+          'AUTOPLAY',
+          style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+  }
+
+  //!AUTO CASH OUT
+  Widget _buildAutoCashOutRow(BuildContext context) {
+    return Expanded(
+      flex: 3,
+      child: Row(
+        children: [
+          // Label
+          Expanded(
+            child: Text(
+              'Auto Cash Out',
+              style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+            ),
+          ),
+          // Switch
+          Transform.scale(
+            scale: 0.65,
+            child: Switch(
+              value: _isSwitched,
+              activeColor: AppColors.aviatorTertiaryColor,
+              inactiveThumbColor: AppColors.aviatorTertiaryColor,
+              activeTrackColor: AppColors.aviatorEighteenthColor,
+              inactiveTrackColor: AppColors.aviatorFourteenthColor,
+              onChanged: (value) => setState(() => _isSwitched = value),
+            ),
+          ),
+          // TextField
+          SizedBox(
+            width: 70,
+            height: 28,
+            child: TextField(
+              enabled: _isSwitched,
+              controller: _switchController,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.aviatorBodyMediumSecondary,
+              decoration: InputDecoration(
+                suffixText: "X",
+                suffixStyle: TextStyle(color: AppColors.aviatorSixteenthColor),
+                hintText: "1.5",
+                filled: true,
+                fillColor: AppColors.aviatorSixthColor,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 4,
+                  horizontal: 6,
+                ),
+                border: _borderStyle(),
+              ),
+            ),
+          ),
         ],
       ),
     );

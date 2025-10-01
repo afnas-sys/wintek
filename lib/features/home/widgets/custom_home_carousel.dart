@@ -17,7 +17,7 @@ class _CustomHomeCarouselState extends State<CustomHomeCarousel> {
 
   final List<String> _images = [
     'assets/images/aviatrix.png',
-    'assets/images/aviator.png',
+    'assets/images/aviatrix.png',
     'assets/images/aviatrix.png',
   ];
   @override
