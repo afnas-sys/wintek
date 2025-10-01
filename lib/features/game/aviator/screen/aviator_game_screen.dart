@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/widget/all_bets.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:wintek/features/game/aviator/widget/balance_container.dart';
@@ -21,7 +23,12 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
   @override
   Widget build(BuildContext context) {
     //   final roundState = ref.watch(aviatorRoundNotifierProvider);
-    // final roundState = ref.watch();
+    final roundState = ref.watch(aviatorStateProvider);
+    final userId = roundState.when(
+      data: (round) => round.roundId!,
+      error: (error, st) => error.toString(),
+      loading: () => '',
+    );
     // final tickEvent = ref.watch();
     // final crashEvent = ref.watch(aviatorCrashProvider);
     return Scaffold(
@@ -31,73 +38,19 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // roundState.when(
-                //   data: (round) => Center(
-                //     child: Text(
-                //       'state: ${round.state}\n Round id: ${round.roundId},\n Seq: ${round.seq}, \nstart AT: ${round.startedAt},\nmsRemaining: ${round.msRemaining}, \nended AT: ${round.endedAt}, \nCrash at: ${round.crashAt},',
-                //       style: TextStyle(
-                //         color: AppColors.textPrimaryColor,
-                //         fontSize: 20,
-                //         fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //   ),
-                //   error: (error, st) => Text(error.toString()),
-                //   loading: () => CircularProgressIndicator(),
-                // ),
-                // SizedBox(height: 16),
-                // tickEvent.when(
-                //   data: (event) => Text(
-                //     'seq: ${event.seq}, \nmultiplier: ${event.multiplier}, \nnow: ${event.now},',
-                //     style: TextStyle(
-                //       color: AppColors.textPrimaryColor,
-                //       fontSize: 20,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                //   error: (error, st) => Text(error.toString()),
-                //   loading: () => CircularProgressIndicator(),
-                // ),
-                // SizedBox(height: 16),
-                // crashEvent.when(
-                //   data: (event) => Text(
-                //     'RoundId ${event.roundId},\n seq ${event.seq},\n Crash at ${event.crashAt}',
-                //     style: TextStyle(
-                //       color: AppColors.textPrimaryColor,
-                //       fontSize: 20,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                //   error: (error, st) => Text(error.toString()),
-                //   loading: () => CircularProgressIndicator(),
-                // ),
                 BalanceContainer(),
                 SizedBox(height: 16),
                 AviatorButtons(),
                 SizedBox(height: 1),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Text(
-                    //   roundState.when(
-                    //     data: (round) => round.roundId!,
-                    //     error: (error, st) => error.toString(),
-                    //     loading: () => '',
-                    //   ),
-                    //   style: Theme.of(
-                    //     context,
-                    //   ).textTheme.aviatorbodySmallPrimary,
-                    // ),
-                    // Text(
-                    //   roundState.when(
-                    //     data: (round) => round.roundId!,
-                    //     error: (error, st) => error.toString(),
-                    //     loading: () => '',
-                    //   ),
-                    //   style: Theme.of(
-                    //     context,
-                    //   ).textTheme.aviatorbodySmallPrimary,
-                    // ),
+                    Text(
+                      'User Id: $userId',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.aviatorbodySmallPrimary,
+                    ),
                   ],
                 ),
                 SizedBox(height: 1),
@@ -108,20 +61,12 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: 2,
                   itemBuilder: (context, index) {
-                    return BetContainer(
-                      index:
-                          index +
-                          1, // Convert 0-based list index to 1-based API index
-                    );
+                    return BetContainer(index: index + 1);
                   },
                   separatorBuilder: (context, index) {
                     return SizedBox(height: 16);
                   },
                 ),
-
-                // BetContainer(),
-                // SizedBox(height: 16),
-                // BetContainer(),
                 SizedBox(height: 20),
                 CustomTabBar(
                   tabs: ['All Bets', 'My Bets', 'Top'],

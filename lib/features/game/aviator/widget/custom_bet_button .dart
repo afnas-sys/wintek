@@ -162,7 +162,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     final errorMsg =
                         e.response?.data?['message'] ?? 'Bet failed';
                     log('❌ Error placing bet: $errorMsg');
-                    // 🔔 Show error in Scaffold
+                    // Show error in
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(errorMsg),
