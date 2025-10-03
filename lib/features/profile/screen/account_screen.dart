@@ -1,49 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/features/auth/domain/model/user_data.dart';
+import 'package:wintek/features/profile/provider/profile_provider.dart';
 
-class AccountScreen extends StatefulWidget {
+class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  ConsumerState<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _AccountScreenState extends ConsumerState<AccountScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController(text: 'Rohit Mehra');
-  final _emailController = TextEditingController(text: 'rohit.mehra@example.com');
-  final _phoneController = TextEditingController(text: '+91 9876543210');
-  final _dobController = TextEditingController(text: '15 June 1999');
-  String _selectedGender = 'Male';
-
-  @override
-  void dispose() {
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _dobController.dispose();
-    super.dispose();
-  }
+  DateTime? selectedDate;
+  String? selectedGender;
 
   @override
   Widget build(BuildContext context) {
+    final profileAsync = ref.watch(profileProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF140A2D),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildStatusBar(),
-              _buildHeader(context),
-              const SizedBox(height: 40),
-              _buildProfileImage(),
-              const SizedBox(height: 40),
-              _buildForm(),
-            ],
+        child: profileAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Text(
+              'Error loading profile: $error',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          data: (userData) => Builder(
+            builder: (context) {
+              selectedDate ??= userData?.dob;
+              selectedGender ??= userData?.gender;
+              return SingleChildScrollView(
+                child: Column(
+                  spacing: 40,
+                  children: [
+                    _buildStatusBar(),
+                    _buildHeader(context),
+                    _buildProfileImage(userData),
+                    _buildForm(userData),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) => Theme(
+        data: Theme.of(
+          context,
+        ).copyWith(dialogBackgroundColor: Colors.transparent),
+        child: child!,
+      ),
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectGender(BuildContext context) async {
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Select Gender',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            const SizedBox(height: 20),
+            ListTile(
+              title: const Text('Male', style: TextStyle(color: Colors.white)),
+              onTap: () => Navigator.pop(context, 'Male'),
+            ),
+            ListTile(
+              title: const Text(
+                'Female',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () => Navigator.pop(context, 'Female'),
+            ),
+            ListTile(
+              title: const Text('Other', style: TextStyle(color: Colors.white)),
+              onTap: () => Navigator.pop(context, 'Other'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result != null) {
+      setState(() {
+        selectedGender = result;
+      });
+    }
   }
 
   Widget _buildStatusBar() {
@@ -69,22 +137,25 @@ class _AccountScreenState extends State<AccountScreen> {
             children: [
               // Signal bars
               Row(
-                children: List.generate(4, (index) => Container(
-                  margin: const EdgeInsets.only(right: 2),
-                  width: 3,
-                  height: 4 + (index * 2).toDouble(),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(1),
+                children: List.generate(
+                  4,
+                  (index) => Container(
+                    margin: const EdgeInsets.only(right: 2),
+                    width: 3,
+                    height: 4 + (index * 2).toDouble(),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(1),
+                    ),
                   ),
-                )),
+                ),
               ),
               const SizedBox(width: 4),
               // WiFi icon
               const Icon(Icons.wifi, color: Colors.white, size: 16),
               const SizedBox(width: 4),
               // Battery
-              Container(
+              SizedBox(
                 width: 28,
                 height: 13,
                 child: Stack(
@@ -93,7 +164,9 @@ class _AccountScreenState extends State<AccountScreen> {
                       width: 25,
                       height: 13,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white.withOpacity(0.35)),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.35),
+                        ),
                         borderRadius: BorderRadius.circular(2.5),
                       ),
                     ),
@@ -139,7 +212,7 @@ class _AccountScreenState extends State<AccountScreen> {
           // Back button
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: Container(
+            child: SizedBox(
               width: 80,
               child: Row(
                 children: [
@@ -171,18 +244,12 @@ class _AccountScreenState extends State<AccountScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-              ),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.edit,
-                  color: Colors.white,
-                  size: 14,
-                ),
+                const Icon(Icons.edit, color: Colors.white, size: 14),
                 const SizedBox(width: 8),
                 const Text(
                   'Edit',
@@ -200,7 +267,10 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
-  Widget _buildProfileImage() {
+  Widget _buildProfileImage(UserProfileData? userData) {
+    final profileImage =
+        userData?.profileImage ??
+        'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5';
     return Stack(
       children: [
         Container(
@@ -209,36 +279,29 @@ class _AccountScreenState extends State<AccountScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5',
-              ),
+            image: DecorationImage(
+              image: NetworkImage(profileImage),
               fit: BoxFit.cover,
             ),
           ),
         ),
         Positioned(
-          bottom: 5,
-          right: 4,
+          bottom: 0,
+          right: 0,
           child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
+            padding: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
+              color: AppColors.profileSecondaryColor,
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.2),
-              border: Border.all(color: const Color(0xFF140A2D), width: 2),
             ),
-            child: const Icon(
-              Icons.camera_alt,
-              color: Colors.white,
-              size: 14,
-            ),
+            child: Image.asset(AppImages.cameraIcon),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(UserProfileData? userData) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Form(
@@ -247,28 +310,26 @@ class _AccountScreenState extends State<AccountScreen> {
           children: [
             _buildFormField(
               label: 'Full Name',
-              controller: _fullNameController,
+              value: userData?.name ?? 'Add name',
             ),
             const SizedBox(height: 20),
             _buildFormField(
               label: 'Email',
-              controller: _emailController,
+              value: userData?.email ?? 'Add email',
             ),
             const SizedBox(height: 20),
             _buildFormField(
               label: 'Phone',
-              controller: _phoneController,
+              value: userData?.mobileNumber ?? 'Add phone number',
             ),
             const SizedBox(height: 20),
             _buildFormField(
               label: 'Date of Birth',
-              controller: _dobController,
-              suffixIcon: const Icon(
-                Icons.calendar_today,
-                color: Colors.white,
-                size: 20,
-              ),
+              value: selectedDate != null
+                  ? _formatDate(selectedDate)
+                  : 'select',
               onTap: () => _selectDate(context),
+              suffixIcon: Icon(Icons.date_range, color: Colors.white54),
             ),
             const SizedBox(height: 20),
             _buildGenderField(),
@@ -279,9 +340,28 @@ class _AccountScreenState extends State<AccountScreen> {
     );
   }
 
+  String _formatDate(DateTime? dob) {
+    if (dob == null) return 'select';
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return '${dob.day} ${months[dob.month - 1]} ${dob.year}';
+  }
+
   Widget _buildFormField({
     required String label,
-    required TextEditingController controller,
+    required String value,
     Widget? suffixIcon,
     VoidCallback? onTap,
   }) {
@@ -313,7 +393,7 @@ class _AccountScreenState extends State<AccountScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    controller.text,
+                    value,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -336,23 +416,23 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _buildGenderField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Gender',
-          style: TextStyle(
-            color: Color(0xFFA395EE),
-            fontSize: 14,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            height: 1.3,
+    return GestureDetector(
+      onTap: () => _selectGender(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Gender',
+            style: TextStyle(
+              color: Color(0xFFA395EE),
+              fontSize: 14,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w400,
+              height: 1.3,
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        GestureDetector(
-          onTap: () => _showGenderPicker(context),
-          child: Container(
+          const SizedBox(height: 10),
+          Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
@@ -364,7 +444,7 @@ class _AccountScreenState extends State<AccountScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    _selectedGender,
+                    selectedGender ?? 'select',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -374,104 +454,11 @@ class _AccountScreenState extends State<AccountScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
-                const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Colors.white,
-                  size: 20,
-                ),
               ],
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(1999, 6, 15),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFA395EE),
-              onPrimary: Colors.white,
-              surface: Color(0xFF271777),
-              onSurface: Colors.white,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      final months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      
-      setState(() {
-        _dobController.text = '${picked.day} ${months[picked.month - 1]} ${picked.year}';
-      });
-    }
-  }
-
-  void _showGenderPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF271777),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ],
       ),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Select Gender',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ...['Male', 'Female', 'Other'].map((gender) {
-                return ListTile(
-                  title: Text(
-                    gender,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  leading: Radio<String>(
-                    value: gender,
-                    groupValue: _selectedGender,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedGender = value!;
-                      });
-                      Navigator.pop(context);
-                    },
-                    activeColor: const Color(0xFFA395EE),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _selectedGender = gender;
-                    });
-                    Navigator.pop(context);
-                  },
-                );
-              }).toList(),
-            ],
-          ),
-        );
-      },
     );
   }
 }

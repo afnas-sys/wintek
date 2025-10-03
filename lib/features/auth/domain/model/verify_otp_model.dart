@@ -21,7 +21,7 @@ class VerifyOtpResponseModel {
   final String message;
   final TokenData tokenData;
   final String cookie;
-  final UserData data;
+  final VerifyUserData data;
 
   VerifyOtpResponseModel({
     required this.status,
@@ -37,7 +37,7 @@ class VerifyOtpResponseModel {
       message: json['message'] ?? '',
       tokenData: TokenData.fromJson(json['tokenData'] ?? {}),
       cookie: json['cookie'] ?? '',
-      data: UserData.fromJson(json['data'] ?? {}),
+      data: VerifyUserData.fromJson(json['data'] ?? {}),
     );
   }
 
@@ -70,14 +70,14 @@ class TokenData {
   }
 }
 
-class UserData {
+class VerifyUserData {
   final String id;
   final String mobile;
 
-  UserData({required this.id, required this.mobile});
+  VerifyUserData({required this.id, required this.mobile});
 
-  factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(id: json['id'] ?? '', mobile: json['mobile'] ?? '');
+  factory VerifyUserData.fromJson(Map<String, dynamic> json) {
+    return VerifyUserData(id: json['id'] ?? '', mobile: json['mobile'] ?? '');
   }
 
   Map<String, dynamic> toJson() {

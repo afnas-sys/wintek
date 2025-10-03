@@ -7,6 +7,7 @@ import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/features/auth/services/google_auth_services.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/profile/provider/profile_provider.dart';
 
 class GoogleAuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;
@@ -49,6 +50,8 @@ class GoogleAuthNotifier extends StateNotifier<AuthState> {
         log(
           'cookie: ${data.cookie}\nexpiry: ${data.expiry}\ntoken: ${data.token}\n',
         );
+        ref.invalidate(profileProvider);
+        isGoogleLogin = true;
         state = AuthState(isLoading: false);
 
         return {true: res.message};

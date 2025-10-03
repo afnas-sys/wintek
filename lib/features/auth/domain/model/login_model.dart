@@ -27,7 +27,7 @@ class LoginResponseModel {
   final String message;
   final TokenData tokenData;
   final String cookie;
-  final UserData data;
+  final LoginUserData data;
 
   LoginResponseModel({
     required this.status,
@@ -43,7 +43,7 @@ class LoginResponseModel {
       message: json['message'] ?? '',
       tokenData: TokenData.fromJson(json['tokenData'] ?? {}),
       cookie: json['cookie'] ?? '',
-      data: UserData.fromJson(json['data'] ?? {}),
+      data: LoginUserData.fromJson(json['data'] ?? {}),
     );
   }
 
@@ -76,15 +76,19 @@ class TokenData {
   }
 }
 
-class UserData {
+class LoginUserData {
   final String id;
   final String mobile;
   final bool verified;
 
-  UserData({required this.id, required this.mobile, required this.verified});
+  LoginUserData({
+    required this.id,
+    required this.mobile,
+    required this.verified,
+  });
 
-  factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(
+  factory LoginUserData.fromJson(Map<String, dynamic> json) {
+    return LoginUserData(
       id: json['id'] ?? '',
       mobile: json['mobile'] ?? '',
       verified: json['verified'] ?? false,

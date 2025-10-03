@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/core/network/dio_provider.dart';
@@ -10,31 +11,15 @@ import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/profile/model/profile_item.dart';
+import 'package:wintek/features/profile/provider/profile_provider.dart';
+import 'package:wintek/features/profile/screen/responsible_gaming_screen.dart';
 import 'package:wintek/features/profile/widgets/profile_tile.dart';
+import 'package:wintek/features/auth/domain/model/user_data.dart';
 import 'account_screen.dart';
-
-class _ProfileItem {
-  final String title;
-  final IconData icon;
-  final bool isSpecial;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-
-  _ProfileItem(
-    this.title,
-    this.icon, {
-    this.isSpecial = false,
-    this.trailing,
-    this.onTap,
-  });
-}
-
-class _ProfileSection {
-  final String title;
-  final List<_ProfileItem> items;
-
-  _ProfileSection({required this.title, required this.items});
-}
+import 'change_password_screen.dart';
+import 'terms_conditions_screen.dart';
+import 'privacy_policy_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -44,141 +29,180 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  bool _isNotificationEnabled = false;
-
   @override
   Widget build(BuildContext context) {
     final authNotifier = ref.watch(authNotifierProvider.notifier);
+    final profileAsync = ref.watch(profileProvider);
 
     return Scaffold(
       backgroundColor: AppColors.profilePrimaryColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
+        child: profileAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(
+            child: Text(
+              'Error loading profile: $error',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          data: (userData) {
+            return RefreshIndicator(
+              onRefresh: () async {
+                // ✅ force re-fetch only when user pulls down
+                ref.invalidate(profileProvider);
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 50),
 
-              // Profile Card with Avatar
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // Card
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.only(
-                      top: 70,
-                      bottom: 30,
-                    ), // extra top padding
-                    decoration: BoxDecoration(
-                      color: AppColors.profileSecondaryColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
+                    // Profile Card with Avatar
+                    Stack(
+                      clipBehavior: Clip.none,
                       children: [
-                        // User Info
-                        _buildUserInfo(),
-
-                        // Divider
+                        // Card
                         Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          height: 1,
-                          color: AppColors.profileTextcolor.withOpacity(0.1),
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.only(
+                            top: 70,
+                            bottom: 30,
+                          ), // extra top padding
+                          decoration: BoxDecoration(
+                            color: AppColors.profileSecondaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Column(
+                            children: [
+                              // User Info
+                              _buildUserInfo(userData),
+
+                              // Divider
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
+                                height: 1,
+                                color: AppColors.profileTextcolor.withOpacity(
+                                  0.1,
+                                ),
+                              ),
+
+                              // Profile Options
+                              _buildProfileOptions(context, ref, authNotifier),
+                            ],
+                          ),
                         ),
 
-                        // Profile Options
-                        _buildProfileOptions(context, ref, authNotifier),
+                        // Profile Avatar (half out of card)
+                        Positioned(
+                          top: -50, // half outside
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Stack(
+                              children: [
+                                // Circle Avatar
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.profileTextcolor,
+                                      width: 2,
+                                    ),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        userData?.profileImage ??
+                                            'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5',
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+
+                                // Camera Icon
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(2),
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.profileSecondaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Image.asset(AppImages.cameraIcon),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
 
-                  // Profile Avatar (half out of card)
-                  Positioned(
-                    top: -50, // half outside
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Stack(
-                        children: [
-                          // Circle Avatar
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.profileTextcolor,
-                                width: 2,
-                              ),
-                              image: const DecorationImage(
-                                image: AssetImage('assets/images/shield.png'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
+                    const SizedBox(height: 16),
 
-                          // Camera Icon
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: const BoxDecoration(
-                                color: AppColors.profileSecondaryColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Image.asset(AppImages.cameraIcon),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+                    // Logout Button
+                    _buildLogoutButton(context, ref, authNotifier),
+
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Logout Button
-              _buildLogoutButton(context, ref, authNotifier),
-
-              const SizedBox(height: 32),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(UserProfileData? userData) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: const Column(
+      child: Column(
         children: [
           Text(
-            'Rahul Sharma',
-            style: TextStyle(
+            userData?.name ?? 'User',
+            style: const TextStyle(
               color: AppColors.profileTextcolor,
               fontSize: 20,
               fontFamily: 'Inter',
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'USR23910',
-                style: TextStyle(
+                userData?.mobileNumber ?? 'USR00000',
+                style: const TextStyle(
                   color: AppColors.profileTextcolor,
                   fontSize: 14,
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(width: 10),
-              Icon(Icons.copy_rounded, color: Colors.white54, size: 16),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: () {
+                  Clipboard.setData(
+                    ClipboardData(text: userData?.mobileNumber ?? 'USR00000'),
+                  );
+                  CustomSnackbar.show(
+                    backgroundColor: Colors.green,
+                    context,
+                    message: 'Mobile number copied to clipboard!',
+                  );
+                },
+                child: const Icon(
+                  Icons.copy_rounded,
+                  color: Colors.white54,
+                  size: 16,
+                ),
+              ),
             ],
           ),
         ],
@@ -192,10 +216,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     AuthNotifier authNotifier,
   ) {
     final sections = [
-      _ProfileSection(
+      ProfileSection(
         title: 'Account Settings',
         items: [
-          _ProfileItem(
+          ProfileItem(
             'My Account Details',
             Icons.person,
             onTap: () => Navigator.push(
@@ -203,17 +227,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               MaterialPageRoute(builder: (context) => const AccountScreen()),
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Change Password',
             Icons.lock,
-            onTap: () => Navigator.pushNamed(context, RoutesNames.forgot),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ChangePasswordScreen(),
+              ),
+            ),
           ),
         ],
       ),
-      _ProfileSection(
+      ProfileSection(
         title: 'Activity',
         items: [
-          _ProfileItem(
+          ProfileItem(
             'My Game History',
             Icons.games,
             onTap: () => CustomSnackbar.show(
@@ -222,12 +251,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               message: 'Game History screen coming soon!',
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Transaction History',
             Icons.receipt,
             onTap: () => Navigator.pushNamed(context, RoutesNames.wallet),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Rewards & Offers Claimed',
             Icons.card_giftcard,
             isSpecial: true,
@@ -239,10 +268,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
-      _ProfileSection(
+      ProfileSection(
         title: 'Preferences',
         items: [
-          _ProfileItem(
+          ProfileItem(
             'Notifications',
             Icons.notifications,
             trailing: _buildToggleSwitch(),
@@ -252,7 +281,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               message: 'Notifications toggled!',
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Language',
             Icons.translate,
             trailing: _buildLanguageTrailing(),
@@ -264,10 +293,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
-      _ProfileSection(
+      ProfileSection(
         title: 'Support',
         items: [
-          _ProfileItem(
+          ProfileItem(
             'Help & FAQ',
             Icons.help,
             onTap: () => CustomSnackbar.show(
@@ -276,7 +305,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               message: 'Help & FAQ screen coming soon!',
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Contact Support',
             Icons.support_agent,
             onTap: () => CustomSnackbar.show(
@@ -285,7 +314,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               message: 'Contact Support screen coming soon!',
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Report a Problem',
             Icons.report_problem,
             onTap: () => CustomSnackbar.show(
@@ -296,34 +325,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
-      _ProfileSection(
+      ProfileSection(
         title: 'Legal',
         items: [
-          _ProfileItem(
+          ProfileItem(
             'Terms & Conditions',
             Icons.description,
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
+            onTap: () => Navigator.push(
               context,
-              message: 'Terms & Conditions screen coming soon!',
+              MaterialPageRoute(
+                builder: (context) => const TermsConditionsScreen(),
+              ),
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Privacy Policy',
             Icons.privacy_tip,
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
+            onTap: () => Navigator.push(
               context,
-              message: 'Privacy Policy screen coming soon!',
+              MaterialPageRoute(
+                builder: (context) => const PrivacyPolicyScreen(),
+              ),
             ),
           ),
-          _ProfileItem(
+          ProfileItem(
             'Responsible Gaming',
             Icons.security,
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
+            onTap: () => Navigator.push(
               context,
-              message: 'Responsible Gaming screen coming soon!',
+              MaterialPageRoute(
+                builder: (context) => const ResponsibleGamingScreen(),
+              ),
             ),
           ),
         ],
@@ -427,22 +459,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       height: 20,
       child: FittedBox(
         fit: BoxFit.fitHeight,
-        child: Theme(
-          data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-          ),
-          child: Switch(
-            value: _isNotificationEnabled,
-            onChanged: (value) =>
-                setState(() => _isNotificationEnabled = value),
-            activeColor: const Color(0xFF271777),
-            activeTrackColor: Colors.white,
-            inactiveThumbColor: const Color(0xFF271777),
-            inactiveTrackColor: Colors.white,
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-        ),
+        // child: Theme(
+        //   data: ThemeData(
+        //     splashColor: Colors.transparent,
+        //     highlightColor: Colors.transparent,
+        //   ),
+        // child: Switch(
+        //   value: _isNotificationEnabled,
+        //   onChanged: (value) =>
+        //       setState(() => _isNotificationEnabled = value),
+        //   activeColor: const Color(0xFF271777),
+        //   activeTrackColor: Colors.white,
+        //   inactiveThumbColor: const Color(0xFF271777),
+        //   inactiveTrackColor: Colors.white,
+        //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        // ),
+        // ),
       ),
     );
   }
@@ -504,11 +536,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 }
 
-Future<void> _showLogoutConfirmation(
+void _showLogoutConfirmation(
   BuildContext context,
   WidgetRef ref,
   AuthNotifier authNotifier,
-) async {
+) {
   final googleAuthNotifier = ref.watch(googleAuthProvider.notifier);
   final googleAuthService = GoogleAuthService(ref.read(dioProvider));
 
@@ -581,8 +613,10 @@ Future<void> _showLogoutConfirmation(
                           .read(authNotifierProvider.notifier)
                           .getStorage()
                           .clearCredentials();
+                      ref.invalidate(profileProvider);
                     } else {
                       authNotifier.logout(ref);
+                      ref.invalidate(profileProvider);
                       Navigator.pushNamedAndRemoveUntil(
                         context,
                         RoutesNames.loginScreen,
