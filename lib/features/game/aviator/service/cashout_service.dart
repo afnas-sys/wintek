@@ -13,7 +13,7 @@ class CashoutService {
   }) async {
     log('🔍 Cashout service: id=$id, cashOutAt=$cashOutAt');
     try {
-      final requestData = {"cashoutAt": cashOutAt.toInt()};
+      final requestData = {"cashoutAt": cashOutAt};
       log('📤 Sending data: $requestData');
       final response = await dio.post(
         "app/aviator/bets/$id/cashout",

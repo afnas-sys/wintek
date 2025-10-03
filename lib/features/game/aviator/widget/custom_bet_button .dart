@@ -17,11 +17,13 @@ import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
 class CustomBetButton extends ConsumerStatefulWidget {
   final int index;
   final TextEditingController amountController;
+  final TextEditingController? switchController;
 
   const CustomBetButton({
     super.key,
     required this.index,
     required this.amountController,
+    this.switchController,
   });
 
   @override
@@ -30,6 +32,7 @@ class CustomBetButton extends ConsumerStatefulWidget {
 
 class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
   bool hasPlacedBet = false;
+  bool hasAutoCashedOut = false;
   String? lastRoundId;
 
   final secureStorageService = SecureStorageService();
@@ -47,6 +50,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
     // Reset hasPlacedBet if a new round starts
     if (round != null && round.roundId != lastRoundId) {
       hasPlacedBet = false;
+      hasAutoCashedOut = false;
       lastRoundId = round.roundId;
     }
 
@@ -55,6 +59,113 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
     // Handle waiting state between placing bet and running
     final isWaitingForRound = hasPlacedBet && round?.state == 'PREPARE';
     final isCashoutButton = hasPlacedBet && round?.state == 'RUNNING';
+
+    if (isCashoutButton && bet != null && bet.autoCashout != null) {
+      tick.whenData((tickData) async {
+        final multiplier =
+            double.tryParse(tickData.multiplier.toString()) ?? 0.0;
+
+        if (multiplier >= bet.autoCashout!) {
+          final cashoutService = ref.read(cashoutServiceProvider);
+
+          try {
+            final cashout = await cashoutService.cashout(
+              id: bet.id,
+              cashOutAt: multiplier,
+            );
+            log('Cashout response: ${cashout.toJson()}');
+
+            log("✅ Auto Cashout triggered at $multiplier X");
+
+            setState(() {
+              hasPlacedBet = false;
+            });
+            Flushbar(
+              messageText: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Auto Cashout at!',
+                              style: TextStyle(
+                                color: AppColors.aviatorSixteenthColor,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '\n$multiplier X',
+                              style: TextStyle(
+                                color: AppColors.aviatorTertiaryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.aviatorEighteenthColor,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Center(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Win INR\n',
+                                style: TextStyle(
+                                  color: AppColors.aviatorSixteenthColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              TextSpan(
+                                text: (multiplier * bet.stake).toStringAsFixed(
+                                  2,
+                                ),
+                                style: TextStyle(
+                                  color: AppColors.aviatorTertiaryColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              backgroundColor: Color(0XFF133206),
+              margin: const EdgeInsets.all(2.0),
+              borderWidth: 2,
+              borderColor: AppColors.aviatorEighteenthColor,
+              duration: const Duration(seconds: 5),
+              flushbarPosition: FlushbarPosition.TOP,
+              flushbarStyle: FlushbarStyle.FLOATING,
+              borderRadius: BorderRadius.circular(50),
+              animationDuration: const Duration(seconds: 1),
+              maxWidth: 300,
+            ).show(context);
+          } catch (e) {
+            log("❌ Auto Cashout failed: $e");
+          }
+        }
+      });
+    }
 
     final buttonText = !hasPlacedBet
         ? "BET"
@@ -125,6 +236,12 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     return;
                   }
                   final amountText = widget.amountController.text.trim();
+                  final autoCashoutText =
+                      widget.switchController?.text.trim() ?? '';
+
+                  final autoCashoutValue = autoCashoutText.isNotEmpty
+                      ? double.tryParse(autoCashoutText)
+                      : null;
                   if (amountText.isEmpty) {
                     log('⚠️ Bet amount is empty');
                     return;
@@ -140,6 +257,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                         seq: int.parse(seq.toString()),
                         stake: int.parse(amountText),
                         betIndex: widget.index,
+                        autoCashout: autoCashoutValue,
                       ),
                     );
 
@@ -201,6 +319,26 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                   log(
                     "🔍 Cashout debug: bet.id=${bet.id}, multiplier=$multiplier, tick state=${tick.runtimeType}",
                   );
+                  // Auto Cashout check
+                  if (!hasAutoCashedOut &&
+                      bet.autoCashout != null &&
+                      multiplier >= bet.autoCashout!) {
+                    hasAutoCashedOut = true; // mark as done
+                    final cashoutService = ref.read(cashoutServiceProvider);
+
+                    try {
+                      await cashoutService.cashout(
+                        id: bet.id,
+                        cashOutAt: multiplier,
+                      );
+                      log("✅ Auto Cashout triggered at $multiplier X");
+                      setState(() {
+                        hasPlacedBet = false; // reset button if needed
+                      });
+                    } catch (e) {
+                      log("❌ Auto Cashout failed: $e");
+                    }
+                  }
 
                   try {
                     log(

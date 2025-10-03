@@ -173,6 +173,12 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
+  TextStyle get aviatorbodySmallThird => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+  );
+
   //!________________________________Home_____________________________________
 
   TextStyle get homeSmallPrimary => GoogleFonts.roboto(
