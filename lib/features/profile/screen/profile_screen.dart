@@ -1,7 +1,10 @@
 import 'dart:developer';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wintek/features/auth/domain/constants/auth_api_constants.dart';
 import 'package:wintek/features/auth/presentaion/widgets/custom_snackbar.dart';
 import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
@@ -10,9 +13,9 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/core/router/routes_names.dart';
-import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/profile/model/profile_item.dart';
 import 'package:wintek/features/profile/provider/profile_provider.dart';
+import 'package:wintek/features/profile/screen/contact_support_screen.dart';
 import 'package:wintek/features/profile/screen/responsible_gaming_screen.dart';
 import 'package:wintek/features/profile/widgets/profile_tile.dart';
 import 'package:wintek/features/auth/domain/model/user_data.dart';
@@ -20,6 +23,8 @@ import 'account_screen.dart';
 import 'change_password_screen.dart';
 import 'terms_conditions_screen.dart';
 import 'privacy_policy_screen.dart';
+import 'help_faq_screen.dart';
+import 'report_problem_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -29,6 +34,9 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  String selectedLanguage = 'English';
+  bool _isNotificationEnabled = true;
+
   @override
   Widget build(BuildContext context) {
     final authNotifier = ref.watch(authNotifierProvider.notifier);
@@ -275,21 +283,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             'Notifications',
             Icons.notifications,
             trailing: _buildToggleSwitch(),
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.green,
-              context,
-              message: 'Notifications toggled!',
-            ),
           ),
           ProfileItem(
             'Language',
             Icons.translate,
             trailing: _buildLanguageTrailing(),
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
-              context,
-              message: 'Language settings coming soon!',
-            ),
+            onTap: () => _showLanguageBottomSheet(context),
           ),
         ],
       ),
@@ -299,28 +298,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ProfileItem(
             'Help & FAQ',
             Icons.help,
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
+            onTap: () => Navigator.push(
               context,
-              message: 'Help & FAQ screen coming soon!',
+              MaterialPageRoute(builder: (context) => const HelpFaqScreen()),
             ),
           ),
           ProfileItem(
             'Contact Support',
             Icons.support_agent,
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
+            onTap: () => Navigator.push(
               context,
-              message: 'Contact Support screen coming soon!',
+              MaterialPageRoute(
+                builder: (context) => const ContactSupportScreen(),
+              ),
             ),
           ),
           ProfileItem(
             'Report a Problem',
             Icons.report_problem,
-            onTap: () => CustomSnackbar.show(
-              backgroundColor: Colors.blue,
+            onTap: () => Navigator.push(
               context,
-              message: 'Report Problem screen coming soon!',
+              MaterialPageRoute(
+                builder: (context) => const ReportProblemScreen(),
+              ),
             ),
           ),
         ],
@@ -455,26 +455,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildToggleSwitch() {
-    return SizedBox(
-      height: 20,
-      child: FittedBox(
-        fit: BoxFit.fitHeight,
-        // child: Theme(
-        //   data: ThemeData(
-        //     splashColor: Colors.transparent,
-        //     highlightColor: Colors.transparent,
-        //   ),
-        // child: Switch(
-        //   value: _isNotificationEnabled,
-        //   onChanged: (value) =>
-        //       setState(() => _isNotificationEnabled = value),
-        //   activeColor: const Color(0xFF271777),
-        //   activeTrackColor: Colors.white,
-        //   inactiveThumbColor: const Color(0xFF271777),
-        //   inactiveTrackColor: Colors.white,
-        //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        // ),
-        // ),
+    return Transform.scale(
+      scale: 0.6,
+      child: Switch(
+        value: _isNotificationEnabled,
+        onChanged: (bool value) {
+          setState(() {
+            _isNotificationEnabled = value;
+          });
+        },
+        activeTrackColor: Colors.white,
+        activeThumbColor: AppColors.profileSecondaryColor,
+        inactiveThumbColor: AppColors.profileSecondaryColor,
+        inactiveTrackColor: Colors.grey.shade300,
       ),
     );
   }
@@ -483,9 +476,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'English',
-          style: TextStyle(
+        Text(
+          selectedLanguage,
+          style: const TextStyle(
             color: Color(0xFFA395EE),
             fontSize: 12,
             fontFamily: 'Inter',
@@ -495,6 +488,216 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         const SizedBox(width: 10),
         const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
       ],
+    );
+  }
+
+  void _showLanguageBottomSheet(BuildContext context) {
+    String tempSelectedLanguage = selectedLanguage;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setBottomSheetState) => BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+          child: Container(
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            decoration: const BoxDecoration(
+              color: Color(0xFF271777),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(
+                MediaQuery.of(context).size.width * 0.075,
+              ),
+              child: Column(
+                children: [
+                  // Header with title and save button
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Choose Language',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w500,
+                            height: 1.375,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedLanguage = tempSelectedLanguage;
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFA82E),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: const Text(
+                            'Save Changes',
+                            style: TextStyle(
+                              color: Color(0xFF0B0F1A),
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // Language options
+                  Expanded(
+                    child: Column(
+                      children: [
+                        _buildLanguageOption(
+                          'English',
+                          tempSelectedLanguage == 'English',
+                          (value) {
+                            if (value == true) {
+                              setBottomSheetState(() {
+                                tempSelectedLanguage = 'English';
+                              });
+                            }
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildLanguageOption(
+                          'Hindi',
+                          tempSelectedLanguage == 'Hindi',
+                          (value) {
+                            if (value == true) {
+                              setBottomSheetState(() {
+                                tempSelectedLanguage = 'Hindi';
+                              });
+                            }
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildLanguageOption(
+                          'Marathi',
+                          tempSelectedLanguage == 'Marathi',
+                          (value) {
+                            if (value == true) {
+                              setBottomSheetState(() {
+                                tempSelectedLanguage = 'Marathi';
+                              });
+                            }
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildLanguageOption(
+                          'Tamil',
+                          tempSelectedLanguage == 'Tamil',
+                          (value) {
+                            if (value == true) {
+                              setBottomSheetState(() {
+                                tempSelectedLanguage = 'Tamil';
+                              });
+                            }
+                          },
+                        ),
+                        _buildDivider(),
+                        _buildLanguageOption(
+                          'Bengali',
+                          tempSelectedLanguage == 'Bengali',
+                          (value) {
+                            if (value == true) {
+                              setBottomSheetState(() {
+                                tempSelectedLanguage = 'Bengali';
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(
+    String language,
+    bool isSelected,
+    ValueChanged<bool?> onChanged,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.5),
+                width: 1,
+              ),
+            ),
+            child: isSelected
+                ? Center(
+                    child: Container(
+                      width: 11,
+                      height: 11,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 18),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(!isSelected),
+              child: Text(
+                language,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  height: 1.6,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      height: 1,
+      color: const Color(0xFFE5E5E5).withOpacity(0.1),
     );
   }
 
@@ -541,112 +744,260 @@ void _showLogoutConfirmation(
   WidgetRef ref,
   AuthNotifier authNotifier,
 ) {
-  final googleAuthNotifier = ref.watch(googleAuthProvider.notifier);
   final googleAuthService = GoogleAuthService(ref.read(dioProvider));
 
   showDialog<bool>(
     context: context,
+    barrierDismissible: true,
     builder: (context) {
-      return AlertDialog(
-        backgroundColor: const Color(0xFF271777),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Center(
-          child: Text(
-            'Logout',
-            style: TextStyle(
-              color: AppColors.profileTextcolor,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+      return BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 388, minWidth: 300),
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Title
+                const Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Color(0xFF010101),
+                    fontSize: 18,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                const SizedBox(height: 14),
+
+                // Subtitle
+                Container(
+                  constraints: const BoxConstraints(maxWidth: 266),
+                  child: const Text(
+                    'Are you sure you want to logout?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color.fromRGBO(1, 1, 1, 0.5),
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      height: 1.43, // line-height: 20px / font-size: 14px
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+
+                // Buttons Row
+                Row(
+                  children: [
+                    // Cancel Button
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context, false),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 20,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: const Color.fromRGBO(0, 0, 0, 0.5),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Text(
+                            'Cancel',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF242424),
+                              fontSize: 14,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              height:
+                                  1.43, // line-height: 20px / font-size: 14px
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 20),
+
+                    // Logout Button
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          final isGoogleLogin =
+                              prefs.getBool(AuthApiConstants.isGoogleLogin) ??
+                              false;
+                          log('shre pref data is : $isGoogleLogin');
+                          if (isGoogleLogin) {
+                            final res = await googleAuthService.signOut();
+
+                            if (!context.mounted) return;
+
+                            ref
+                                .watch(googleAuthProvider.notifier)
+                                .setMessage(res);
+
+                            Future.delayed(const Duration(seconds: 2)).then((
+                              d,
+                            ) {
+                              if (context.mounted) {
+                                Navigator.pushNamed(
+                                  context,
+                                  RoutesNames.loginScreen,
+                                );
+                                CustomSnackbar.show(
+                                  backgroundColor: Colors.green,
+                                  context,
+                                  message: 'SignOut Successfully',
+                                );
+                              }
+                            });
+
+                            log('Google LogOut Success');
+                            prefs.clear();
+                            await ref
+                                .read(authNotifierProvider.notifier)
+                                .getStorage()
+                                .clearCredentials();
+
+                            if (context.mounted) {
+                              ref.invalidate(profileProvider);
+                            }
+                          } else {
+                            authNotifier.logout(ref);
+
+                            if (!context.mounted) return;
+
+                            ref.invalidate(profileProvider);
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              RoutesNames.loginScreen,
+                              (_) => false,
+                            );
+                            CustomSnackbar.show(
+                              backgroundColor: Colors.green,
+                              context,
+                              message: 'SignOut Successfully',
+                            );
+                            log('Mobile LogOut Success');
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 20,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: const Color(0xFFEB644C),
+                          ),
+                          child: const Text(
+                            'Yes, Logout',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              height:
+                                  1.43, // line-height: 20px / font-size: 14px
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
-        content: const Text(
-          'Are you sure you want to logout?',
-          style: TextStyle(color: AppColors.profileTextcolor, fontSize: 14),
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: CustomElevatedButton(
-                  backgroundColor: Colors.transparent,
-                  borderRadius: 30,
-                  onPressed: () {
-                    Navigator.pop(context, false);
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: AppColors.profileTextcolor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: CustomElevatedButton(
-                  backgroundColor: const Color(0xFFEB644C),
-                  borderRadius: 30,
-                  onPressed: () async {
-                    if (googleAuthNotifier.isGoogleLogin) {
-                      final res = await googleAuthService.signOut();
-                      ref.watch(googleAuthProvider.notifier).setMessage(res);
-
-                      Future.delayed(const Duration(seconds: 2)).then((d) {
-                        Navigator.pushNamed(context, RoutesNames.loginScreen);
-                        CustomSnackbar.show(
-                          backgroundColor: Colors.green,
-                          context,
-                          message: 'SignOut Successfully',
-                        );
-                      });
-
-                      log('Google LogOut Success');
-                      googleAuthNotifier.isGoogleLogin = false;
-                      await ref
-                          .read(authNotifierProvider.notifier)
-                          .getStorage()
-                          .clearCredentials();
-                      ref.invalidate(profileProvider);
-                    } else {
-                      authNotifier.logout(ref);
-                      ref.invalidate(profileProvider);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        RoutesNames.loginScreen,
-                        (_) => false,
-                      );
-                      CustomSnackbar.show(
-                        backgroundColor: Colors.green,
-                        context,
-                        message: 'SignOut Successfully',
-                      );
-                      log('Mobile LogOut Success');
-                    }
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                    child: Text(
-                      'Yes, Logout',
-                      style: TextStyle(
-                        color: AppColors.profileTextcolor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       );
     },
   );
+}
+
+class ContactSupportPage extends StatelessWidget {
+  const ContactSupportPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Contact Support')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            const SectionTitle(title: 'Customer Support'),
+            InfoTile(label: 'Contact Number', value: '+91 98765 43210'),
+            InfoTile(label: 'Email Address', value: '+91 98765 43210'),
+
+            const SizedBox(height: 24),
+            const SectionTitle(title: 'Social Media'),
+            InfoTile(label: 'Instagram', value: '@pixelsurfer'),
+            InfoTile(label: 'Twitter', value: '@pixelsurfer'),
+            InfoTile(label: 'Facebook', value: '@pixelsurfer'),
+
+            const SizedBox(height: 24),
+            const SectionTitle(title: 'Live Chat & Call'),
+            ElevatedButton(
+              onPressed: () {
+                // Add live chat functionality here
+              },
+              child: const Text('Start Live Chat'),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text(
+                'All Conversations are safe & private.',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  final String title;
+  const SectionTitle({required this.title, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+class InfoTile extends StatelessWidget {
+  final String label;
+  final String value;
+  const InfoTile({required this.label, required this.value, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(label),
+      subtitle: Text(value),
+    );
+  }
 }

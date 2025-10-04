@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -51,7 +50,6 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(googleAuthProvider);
-    final googleAuthNotifier = ref.watch(googleAuthProvider.notifier);
     final authNotifier = ref.read(authNotifierProvider.notifier);
     return authState.isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -327,7 +325,6 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                                   context,
                                   message: res.values.first,
                                 );
-                                googleAuthNotifier.isGoogleLogin = true;
                               },
                               borderColor: AppColors.borderAuthTextField,
                               padding: EdgeInsets.symmetric(vertical: 16),
