@@ -416,7 +416,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                   suffixStyle: TextStyle(
                     color: AppColors.aviatorSixteenthColor,
                   ),
-                  hintText: "1.5",
+                  hintText: "1.5X",
                   filled: true,
                   fillColor: AppColors.aviatorSixthColor,
                   contentPadding: const EdgeInsets.symmetric(
