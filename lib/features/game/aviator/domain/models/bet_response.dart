@@ -3,8 +3,8 @@ class BetResponse {
   final String userId;
   final int stake;
   final String currency;
-  final double? autoCashout;
   final int betIndex;
+  final double? autoCashout;
   final String placedAt;
   final String? cashoutAt;
   final String? cashedOutAt;

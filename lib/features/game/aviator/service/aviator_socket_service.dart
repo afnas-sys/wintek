@@ -73,7 +73,7 @@ class AviatorSocketService {
     });
   }
 
-  void disConnect() {
+  void disconnect() {
     socket?.disconnect();
     socket?.destroy();
     _stateController.close();
