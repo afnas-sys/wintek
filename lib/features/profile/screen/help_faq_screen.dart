@@ -9,7 +9,7 @@ class HelpFaqScreen extends StatefulWidget {
 
 class _HelpFaqScreenState extends State<HelpFaqScreen>
     with TickerProviderStateMixin {
-  final Map<int, bool> _expandedStates = {0: true}; // First item expanded by default
+  final Map<int, bool> _expandedStates = {};
   final Map<int, AnimationController> _animationControllers = {};
 
   final List<FaqItem> _faqItems = [
@@ -19,27 +19,33 @@ class _HelpFaqScreenState extends State<HelpFaqScreen>
     ),
     FaqItem(
       question: 'What if transaction fails?',
-      answer: 'If your transaction fails, the amount will be automatically refunded to your original payment method within 3-5 business days. You can also contact our support team for immediate assistance.',
+      answer:
+          'If your transaction fails, the amount will be automatically refunded to your original payment method within 3-5 business days. You can also contact our support team for immediate assistance.',
     ),
     FaqItem(
       question: 'How do I add money to wallet?',
-      answer: 'You can add money to your wallet by going to Wallet → Add Money → Choose payment method (UPI/Card/Net Banking) → Enter amount and complete payment.',
+      answer:
+          'You can add money to your wallet by going to Wallet → Add Money → Choose payment method (UPI/Card/Net Banking) → Enter amount and complete payment.',
     ),
     FaqItem(
       question: 'What are the withdrawal limits?',
-      answer: 'Minimum withdrawal amount is ₹100 and maximum is ₹50,000 per day. You can make up to 3 withdrawal requests per day.',
+      answer:
+          'Minimum withdrawal amount is ₹100 and maximum is ₹50,000 per day. You can make up to 3 withdrawal requests per day.',
     ),
     FaqItem(
       question: 'Is my money safe?',
-      answer: 'Yes, your money is completely safe. We use bank-grade security with SSL encryption. All transactions are processed through secure payment gateways and we are fully compliant with RBI guidelines.',
+      answer:
+          'Yes, your money is completely safe. We use bank-grade security with SSL encryption. All transactions are processed through secure payment gateways and we are fully compliant with RBI guidelines.',
     ),
     FaqItem(
       question: 'How long do withdrawals take?',
-      answer: 'UPI withdrawals are usually instant. Bank transfers take 1-2 hours during banking hours (9 AM - 6 PM) and up to 24 hours on weekends and holidays.',
+      answer:
+          'UPI withdrawals are usually instant. Bank transfers take 1-2 hours during banking hours (9 AM - 6 PM) and up to 24 hours on weekends and holidays.',
     ),
     FaqItem(
       question: 'Can I cancel a withdrawal request?',
-      answer: 'You can cancel a withdrawal request only if it hasn\'t been processed yet. Go to Transaction History and check if the cancel option is available.',
+      answer:
+          'You can cancel a withdrawal request only if it hasn\'t been processed yet. Go to Transaction History and check if the cancel option is available.',
     ),
   ];
 
@@ -72,7 +78,7 @@ class _HelpFaqScreenState extends State<HelpFaqScreen>
     setState(() {
       final isExpanded = _expandedStates[index] ?? false;
       _expandedStates[index] = !isExpanded;
-      
+
       if (_expandedStates[index]!) {
         _animationControllers[index]!.forward();
       } else {
@@ -96,10 +102,7 @@ class _HelpFaqScreenState extends State<HelpFaqScreen>
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
-                  children: [
-                    ..._buildFaqItems(),
-                    const SizedBox(height: 32),
-                  ],
+                  children: [..._buildFaqItems(), const SizedBox(height: 32)],
                 ),
               ),
             ),
@@ -208,11 +211,7 @@ class _HelpFaqScreenState extends State<HelpFaqScreen>
             onTap: () => Navigator.pop(context),
             child: const SizedBox(
               width: 42,
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: Icon(Icons.arrow_back_ios, color: Colors.white, size: 24),
             ),
           ),
           const SizedBox(width: 20),
@@ -247,9 +246,7 @@ class _HelpFaqScreenState extends State<HelpFaqScreen>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isExpanded 
-                ? Colors.white 
-                : Colors.white.withOpacity(0.1),
+              color: isExpanded ? Colors.white : Colors.white.withOpacity(0.1),
             ),
             boxShadow: [
               BoxShadow(
@@ -285,7 +282,9 @@ class _HelpFaqScreenState extends State<HelpFaqScreen>
                         animation: _animationControllers[index]!,
                         builder: (context, child) {
                           return Transform.rotate(
-                            angle: _animationControllers[index]!.value * 3.14159, // 180 degrees
+                            angle:
+                                _animationControllers[index]!.value *
+                                3.14159, // 180 degrees
                             child: Icon(
                               Icons.keyboard_arrow_down,
                               color: Colors.white,
@@ -335,8 +334,5 @@ class FaqItem {
   final String question;
   final String answer;
 
-  FaqItem({
-    required this.question,
-    required this.answer,
-  });
+  FaqItem({required this.question, required this.answer});
 }
