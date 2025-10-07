@@ -247,7 +247,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                         Expanded(
                           child: CustomBetButton(
                             index: widget.index,
-                            amountController: _amountController,
+                            amountController: _autoAmountController,
                             switchController: _switchController,
                           ),
                         ),
