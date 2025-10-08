@@ -9,6 +9,7 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
+import 'package:wintek/features/game/aviator/domain/models/cashout_response.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
@@ -84,9 +85,9 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
               id: bet.id,
               cashOutAt: bet.autoCashout!,
             );
+            final autoCashoutAt = cashout.cashoutAt;
 
-            log("✅ Auto Cashout triggered at $multiplier X");
-            log("Cashout response: ${cashout.toJson()}");
+            log("✅ Auto Cashout triggered at $autoCashoutAt X");
 
             if (mounted) {
               setState(() {
@@ -98,9 +99,9 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
             _successFlushbar(
               context: context,
               message1: "Auto Cashout at!\n",
-              multiplier: '$multiplier X',
+              multiplier: '$autoCashoutAt X',
               message2: 'Win INR\n',
-              winAmount: (multiplier * bet.stake).toStringAsFixed(2),
+              winAmount: (autoCashoutAt! * bet.stake).toStringAsFixed(2),
             );
           } catch (e) {
             log("❌ Auto Cashout failed: $e");
@@ -236,29 +237,27 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     },
                     orElse: () => 0.0,
                   );
-
-                  log(
-                    "🔍 Cashout debug: bet.id=${bet.id}, multiplier=$multiplier, tick state=${tick.runtimeType}",
-                  );
                   // Auto Cashout check
                   if (!hasAutoCashedOut &&
                       bet.autoCashout != null &&
                       multiplier >= bet.autoCashout!) {
                     hasAutoCashedOut = true; // mark as done
-                    final cashoutService = ref.read(cashoutServiceProvider);
+                    //   final cashoutService = ref.read(cashoutServiceProvider);
 
-                    try {
-                      await cashoutService.cashout(
-                        id: bet.id,
-                        cashOutAt: multiplier,
-                      );
-                      log("✅ Auto Cashout triggered at $multiplier X");
-                      setState(() {
-                        hasPlacedBet = false; // reset button if needed
-                      });
-                    } catch (e) {
-                      log("❌ Auto Cashout failed: $e");
-                    }
+                    // try {
+                    //   final response = await cashoutService.cashout(
+                    //     id: bet.id,
+                    //     cashOutAt: multiplier,
+                    //   );
+                    //   log(
+                    //     "✅ Auto Cashout triggered at ${response.cashoutAt} X",
+                    //   );
+                    //   setState(() {
+                    //     hasPlacedBet = false; // reset button if needed
+                    //   });
+                    // } catch (e) {
+                    //   log("❌ Auto Cashout failed: $e");
+                    // }
                   }
 
                   try {
@@ -268,7 +267,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
                     // Small delay to ensure multiplier is stable
                     //      await Future.delayed(const Duration(milliseconds: 50));
-                    await cashoutService.cashout(
+                    final response = await cashoutService.cashout(
                       id: bet.id,
                       cashOutAt: multiplier,
                     );
@@ -277,14 +276,16 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                         hasPlacedBet = false;
                       });
                     }
+                    final cashoutAt = response.cashoutAt;
+                    log('✅ CashoutAt: $cashoutAt X');
 
                     // ✅ show Flushbar only if success
                     _successFlushbar(
                       context: context,
                       message1: "You Have Crashed\nout!",
-                      multiplier: '\n$multiplier X',
+                      multiplier: '\n$cashoutAt X',
                       message2: "Win INR\n",
-                      winAmount: (multiplier * bet.stake).toStringAsFixed(2),
+                      winAmount: (cashoutAt! * bet.stake).toStringAsFixed(2),
                     );
                   } catch (e, st) {
                     log("❌ Cashout error: $e\n$st");

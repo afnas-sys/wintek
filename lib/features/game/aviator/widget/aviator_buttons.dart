@@ -1,34 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/game/aviator/providers/recent_rounds_provider.dart';
+import 'package:wintek/features/game/aviator/domain/models/rounds.dart';
 
-class AviatorButtons extends StatefulWidget {
+class AviatorButtons extends ConsumerStatefulWidget {
   const AviatorButtons({super.key});
 
   @override
-  State<AviatorButtons> createState() => _AviatorButtonsState();
+  ConsumerState<AviatorButtons> createState() => _AviatorButtonsState();
 }
 
-class _AviatorButtonsState extends State<AviatorButtons> {
-  final List<String> multipliers = [
-    "4.87x",
-    "16.00x",
-    "6.20x",
-    "9.99x",
-    "1.02x",
-    "8.12x",
-    "1.50x",
-    "4.87x",
-    "15.00x",
-    "6.20x",
-    "9.99x",
-    "12.45x",
-    "1.02x",
-    "8.12x",
-    "1.50x",
-  ];
-
+class _AviatorButtonsState extends ConsumerState<AviatorButtons> {
   bool showBalance = false;
   // colors
   Color _getColor(String text) {
@@ -63,66 +48,83 @@ class _AviatorButtonsState extends State<AviatorButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // first row → 4 chips + button
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+    final recentRoundsService = ref.watch(recentRoundsServiceProvider);
+    return StreamBuilder<List<Rounds>>(
+      stream: recentRoundsService.roundsStream,
+      builder: (context, snapshot) {
+        List<String> multipliers = [];
+        if (snapshot.hasData) {
+          final crashedRounds = snapshot.data!
+              .where((round) => round.crashAt != null && round.endedAt != null)
+              .toList();
+          multipliers = crashedRounds
+              .take(15)
+              .map((round) => "${round.crashAt}x")
+              .toList();
+        }
+        // If no data, use empty or default, but for now empty
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            for (int i = 0; i < 4 && i < multipliers.length; i++)
-              Expanded(child: _chip(multipliers[i], context)),
-            // Button for showing Balance history of the multplier
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () => setState(() => showBalance = !showBalance),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.aviatorTenthColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(color: AppColors.aviatorEleventhColor),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 4,
-                  ),
-                  minimumSize: const Size(55, 30),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      FontAwesomeIcons.clock,
-                      size: 16,
-                      color: AppColors.aviatorTertiaryColor,
+            // first row → 4 chips + button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                for (int i = 0; i < 4 && i < multipliers.length; i++)
+                  Expanded(child: _chip(multipliers[i], context)),
+                // Button for showing Balance history of the multplier
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => setState(() => showBalance = !showBalance),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.aviatorTenthColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        side: BorderSide(color: AppColors.aviatorEleventhColor),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
+                      minimumSize: const Size(55, 30),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      showBalance
-                          ? FontAwesomeIcons.angleUp
-                          : FontAwesomeIcons.angleDown,
-                      size: 16,
-                      color: AppColors.aviatorTertiaryColor,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          FontAwesomeIcons.clock,
+                          size: 16,
+                          color: AppColors.aviatorTertiaryColor,
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          showBalance
+                              ? FontAwesomeIcons.angleUp
+                              : FontAwesomeIcons.angleDown,
+                          size: 16,
+                          color: AppColors.aviatorTertiaryColor,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-        const SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-        //  second row → wrap chips in multiple lines
-        if (showBalance)
-          Wrap(
-            runSpacing: 8,
-            children: [
-              for (int i = 6; i < multipliers.length; i++)
-                _chip(multipliers[i], context),
-            ],
-          ),
-      ],
+            //  second row → wrap chips in multiple lines
+            if (showBalance)
+              Wrap(
+                runSpacing: 8,
+                children: [
+                  for (int i = 4; i < multipliers.length; i++)
+                    _chip(multipliers[i], context),
+                ],
+              ),
+          ],
+        );
+      },
     );
   }
 }
