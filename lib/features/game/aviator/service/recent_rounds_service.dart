@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:wintek/features/game/aviator/domain/models/rounds.dart';
 
@@ -24,7 +25,7 @@ class RecentRoundsService {
 
   Future<void> fetchRecentRounds() async {
     try {
-      final response = await dio.get('app/aviator/rounds/recent');
+      final response = await dio.get('app/aviator/rounds/recent?limit=15');
       final data = response.data;
       List<dynamic> roundsData;
       if (data is List) {
@@ -38,7 +39,7 @@ class RecentRoundsService {
       _roundsController.add(rounds);
     } catch (e) {
       // Handle error, e.g., log or emit error event
-      print('Error fetching recent rounds: $e');
+      log('Error fetching recent rounds: $e');
     }
   }
 }

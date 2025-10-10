@@ -54,6 +54,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   @override
   void initState() {
     _amountController.text = 1.toString();
+    _autoAmountController.text = 1.toString();
     super.initState();
   }
 
@@ -412,11 +413,11 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.aviatorBodyMediumSecondary,
                 decoration: InputDecoration(
-                  suffixText: "X",
+                  suffixText: "x",
                   suffixStyle: TextStyle(
                     color: AppColors.aviatorSixteenthColor,
                   ),
-                  hintText: "1.5X",
+                  hintText: "1.5",
                   filled: true,
                   fillColor: AppColors.aviatorSixthColor,
                   contentPadding: const EdgeInsets.symmetric(

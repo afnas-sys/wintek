@@ -9,7 +9,6 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
-import 'package:wintek/features/game/aviator/domain/models/cashout_response.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
