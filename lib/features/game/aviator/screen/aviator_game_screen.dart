@@ -4,6 +4,7 @@ import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/recent_rounds_provider.dart';
 import 'package:wintek/features/game/aviator/widget/all_bets.dart';
+import 'package:wintek/features/game/aviator/widget/animated_containerr.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:wintek/features/game/aviator/widget/balance_container.dart';
 import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
@@ -64,7 +65,10 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                   ],
                 ),
                 SizedBox(height: 1),
-                GraphContainer(),
+                AnimatedContainerr(),
+                // SizedBox(height: 10),
+
+                // GraphContainer(),
                 SizedBox(height: 16),
                 ListView.separated(
                   shrinkWrap: true,
