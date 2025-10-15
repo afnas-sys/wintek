@@ -9,7 +9,6 @@ import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:wintek/features/game/aviator/widget/balance_container.dart';
 import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
 import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
-import 'package:wintek/features/game/aviator/widget/graph_container.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -22,14 +21,24 @@ class AviatorGameScreen extends ConsumerStatefulWidget {
 }
 
 class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
+  // late final AviatorSocketService _socketService;
   @override
   void initState() {
     super.initState();
     // Start listening to recent rounds
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(recentRoundsServiceProvider).startListening();
+
+      // _socketService = ref.read(aviatorRoundProvider); // get the service
+      // _socketService.connect(); // connect when screen loads
     });
   }
+
+  // @override
+  // void dispose() {
+  //   _socketService.disconnect(); // disconnect when leaving screen
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -7,14 +7,15 @@ import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 
-class AnimatedContainerr extends ConsumerStatefulWidget {
-  const AnimatedContainerr({super.key});
+class AviatorFlightAnimation extends ConsumerStatefulWidget {
+  const AviatorFlightAnimation({super.key});
 
   @override
-  ConsumerState<AnimatedContainerr> createState() => _AnimatedContainerState();
+  ConsumerState<AviatorFlightAnimation> createState() =>
+      _AnimatedContainerState();
 }
 
-class _AnimatedContainerState extends ConsumerState<AnimatedContainerr>
+class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     with TickerProviderStateMixin {
   late AnimationController _takeoffController;
   late AnimationController _waveController;
@@ -54,17 +55,28 @@ class _AnimatedContainerState extends ConsumerState<AnimatedContainerr>
       curve: Curves.easeInOutCubic,
     );
 
-    _waveController =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 50),
-        )..addListener(() {
-          if (_isWaving) {
-            setState(() {
-              _waveProgress += 1.0;
-            });
-          }
+    _waveController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 50),
+    );
+
+    double lastWaveTick = 0.0;
+
+    _waveController.addListener(() {
+      if (_isWaving) {
+        final now =
+            _waveController.lastElapsedDuration?.inMilliseconds.toDouble() ??
+            0.0;
+        final delta = now - lastWaveTick; // elapsed time in ms
+        lastWaveTick = now;
+
+        // adjust the factor to control wave speed
+        final speed = 0.02; // tweak this value
+        setState(() {
+          _waveProgress += delta * speed; // smooth increment based on time
         });
+      }
+    });
 
     _flyAwayController = AnimationController(
       vsync: this,
@@ -477,7 +489,7 @@ class PathPainter extends CustomPainter {
 
     final pathPaint = Paint()
       ..color = AppColors.aviatorGraphBarColor
-      ..strokeWidth = 4.0
+      ..strokeWidth = 6.0
       ..style = PaintingStyle.stroke;
 
     final path = Path()..moveTo(displayPoints.first.dx, displayPoints.first.dy);
