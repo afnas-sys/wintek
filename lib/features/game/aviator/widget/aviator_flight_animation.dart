@@ -67,20 +67,19 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         final now =
             _waveController.lastElapsedDuration?.inMilliseconds.toDouble() ??
             0.0;
-        final delta = now - lastWaveTick; // elapsed time in ms
+        final delta = now - lastWaveTick;
         lastWaveTick = now;
 
-        // adjust the factor to control wave speed
-        final speed = 0.02; // tweak this value
+        const speed = 0.02;
         setState(() {
-          _waveProgress += delta * speed; // smooth increment based on time
+          _waveProgress += delta * speed;
         });
       }
     });
 
     _flyAwayController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 6),
     );
     _flyAwayAnimation = CurvedAnimation(
       parent: _flyAwayController,
@@ -102,8 +101,44 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     final round = ref.watch(aviatorRoundNotifierProvider);
     final tick = ref.watch(aviatorTickProvider);
 
-    // Handle PREPARE state
-    if (round?.state == 'PREPARE') {
+    // 👇 Detect if socket is connecting (no data yet)
+    final isSocketConnecting =
+        round == null || tick.isLoading || tick.value == null;
+
+    if (isSocketConnecting) {
+      // 🛫 Initial loader + plane
+      return Container(
+        width: double.infinity,
+        height: 294,
+        decoration: const BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Plane at (0,0)
+            Positioned(
+              left: 0,
+              bottom: 0,
+              child: Image.asset(AppImages.graphContainerplaneImage, width: 70),
+            ),
+
+            // Circular progress indicator
+            const CircularProgressIndicator(
+              color: Colors.white,
+              strokeWidth: 3,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // PREPARE countdown logic
+    if (round.state == 'PREPARE') {
       if (_prepareTimer == null) _startPrepareCountdown();
     } else {
       _prepareTimer?.cancel();
@@ -113,10 +148,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     }
 
     // RUNNING and CRASHED triggers
-    if (round?.state == 'RUNNING' && !_isAnimating) _startTakeoff();
-    if (round?.state == 'CRASHED' && !_hasFlownAway) _startFlyAway();
+    if (round.state == 'RUNNING' && !_isAnimating) _startTakeoff();
+    if (round.state == 'CRASHED' && !_hasFlownAway) _startFlyAway();
 
-    // Current multiplier from socket tick
+    // Current multiplier
     final currentValue = tick.when(
       data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
       error: (_, _) => 0.0,
@@ -155,41 +190,49 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
           ),
 
           // PREPARE UI
-          if (round?.state == 'PREPARE')
+          if (round.state == 'PREPARE')
             Expanded(
               child: Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Circular progress ring
                     TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 1.0, end: _prepareProgress),
+                      tween: Tween(begin: 0.0, end: _prepareProgress),
                       duration: const Duration(milliseconds: 300),
                       builder: (context, value, child) {
-                        return SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: CircularProgressIndicator(
-                            value: value,
-                            strokeWidth: 10,
-                            backgroundColor: Colors.white24,
-                            color: AppColors.aviatorGraphBarColor,
+                        return Container(
+                          width: 200, // adjust width as needed
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.white24, // background track
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: value, // controls fill percentage
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors
+                                    .aviatorGraphBarColor, // active color
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
                         );
                       },
                     ),
 
-                    // Countdown text
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(height: 50),
-                        Text(
-                          "$_prepareSecondsLeft",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.aviatorDisplayLarge,
-                        ),
+                        //! 20s center text
+                        // Text(
+                        //   "$_prepareSecondsLeft",
+                        //   style: Theme.of(
+                        //     context,
+                        //   ).textTheme.aviatorDisplayLarge,
+                        // ),
                         const SizedBox(height: 28),
                         Text(
                           "Next round starts",
@@ -204,7 +247,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
               ),
             )
           else
-            // RUNNING / CRASHED area
+            // RUNNING / CRASHED UI
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -226,7 +269,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                         final start = Offset(width * 0.65, height * 0.5);
                         final control = Offset(width * 0.85, height * 0.8);
                         final end = Offset(width * 1.2, height + 150);
-
                         x =
                             (1 - t) * (1 - t) * start.dx +
                             2 * (1 - t) * t * control.dx +
@@ -239,10 +281,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                       } else {
                         final t = _takeoffAnimation.value;
                         final start = Offset(0, 0);
-                        final control = Offset(
-                          width * 0.45,
-                          height * 0.1,
-                        ); // move right and up
+                        final control = Offset(width * 0.45, height * 0.1);
                         final end = Offset(width * 0.65, height * 0.5);
 
                         x =
@@ -267,7 +306,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                         waveOffset =
                             sin(_waveProgress * _waveFrequency) *
                             _waveAmplitude;
-
                         final waveTangent =
                             cos(_waveProgress * _waveFrequency) *
                             _waveAmplitude *
@@ -296,7 +334,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                       return Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          // Plane path painter
                           CustomPaint(
                             size: Size(width, height),
                             painter: PathPainter(
@@ -309,8 +346,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                               _waveFrequency,
                             ),
                           ),
-
-                          // Plane
                           Positioned(
                             left: currentPoint.dx,
                             bottom: bottomPos,
@@ -322,9 +357,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                               ),
                             ),
                           ),
-
-                          // RUNNING multiplier
-                          if (round?.state == 'RUNNING')
+                          if (round.state == 'RUNNING')
                             Center(
                               child: Text(
                                 "${currentValue.toStringAsFixed(2)}x",
@@ -333,9 +366,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                 ).textTheme.aviatorDisplayLarge,
                               ),
                             ),
-
-                          // CRASHED overlay
-                          if (round?.state == 'CRASHED' &&
+                          if (round.state == 'CRASHED' &&
                               _flyAwayController.isAnimating)
                             Center(
                               child: Column(

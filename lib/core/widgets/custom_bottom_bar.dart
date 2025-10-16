@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/offers/view/offers_screen.dart';
 import 'package:wintek/features/profile/view/profile_screen.dart';
+import 'package:wintek/features/test/test.dart';
 import 'package:wintek/features/wallet/view/wallet_screen.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
@@ -20,6 +21,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
     WalletScreen(),
     OffersScreen(),
     ProfileScreen(),
+    Test(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -70,6 +72,10 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                   BottomNavigationBarItem(
                     icon: Icon(FontAwesomeIcons.idBadge),
                     label: 'Profile',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(FontAwesomeIcons.table),
+                    label: 'Test',
                   ),
                 ],
               ),
