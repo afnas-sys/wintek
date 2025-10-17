@@ -122,6 +122,11 @@ extension CustomTextStyle on TextTheme {
   TextStyle get aviatorDisplayLarge => GoogleFonts.roboto(
     color: AppColors.aviatorTertiaryColor,
     fontSize: 70,
+    fontWeight: FontWeight.bold,
+  );
+  TextStyle get aviatorDisplayLargeSecond => GoogleFonts.roboto(
+    color: AppColors.aviatorTwentyEighthColor,
+    fontSize: 70,
     fontWeight: FontWeight.w600,
   );
 
@@ -130,6 +135,12 @@ extension CustomTextStyle on TextTheme {
     fontSize: 24,
     fontWeight: FontWeight.w600,
   );
+
+  // TextStyle get aviatorHeadlineSmallSecond => GoogleFonts.roboto(
+  //   color: AppColors.aviatorTwentyEighthColor,
+  //   fontSize: 24,
+  //   fontWeight: FontWeight.w600,
+  // );
 
   TextStyle get aviatorBodyTitleMdeium => GoogleFonts.roboto(
     color: AppColors.aviatorTertiaryColor,
