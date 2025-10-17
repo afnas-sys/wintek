@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/domain/models/get_bet_user_model.dart';
+import 'package:wintek/features/game/aviator/domain/models/my_bets_model.dart';
 import 'package:wintek/features/game/aviator/service/bet_history_service.dart';
 
-class BetHistoryNotifier extends StateNotifier<AsyncValue<GetBetUserModel?>> {
+class BetHistoryNotifier extends StateNotifier<AsyncValue<MyBetsModel?>> {
   final BetHistoryService _betHistoryService;
 
   BetHistoryNotifier(this._betHistoryService)
@@ -36,6 +36,6 @@ final betHistoryServiceProvider = Provider<BetHistoryService>((ref) {
 });
 
 final betHistoryProvider =
-    StateNotifierProvider<BetHistoryNotifier, AsyncValue<GetBetUserModel?>>(
+    StateNotifierProvider<BetHistoryNotifier, AsyncValue<MyBetsModel?>>(
       (ref) => BetHistoryNotifier(ref.watch(betHistoryServiceProvider)),
     );

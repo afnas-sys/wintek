@@ -1,14 +1,14 @@
-class GetBetUserModel {
+class MyBetsModel {
   // final bool success;
-  final List<GetBetUserData> data;
+  final List<MyBetsData> data;
 
-  GetBetUserModel({required this.data});
+  MyBetsModel({required this.data});
 
-  factory GetBetUserModel.fromJson(Map<String, dynamic> json) {
-    return GetBetUserModel(
+  factory MyBetsModel.fromJson(Map<String, dynamic> json) {
+    return MyBetsModel(
       //success: json['success'],
       data: (json['data'] as List)
-          .map((item) => GetBetUserData.fromJson(item))
+          .map((item) => MyBetsData.fromJson(item))
           .toList(),
     );
   }
@@ -21,7 +21,7 @@ class GetBetUserModel {
   }
 }
 
-class GetBetUserData {
+class MyBetsData {
   final String id;
   final Round roundId;
   final User user;
@@ -37,7 +37,7 @@ class GetBetUserData {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  GetBetUserData({
+  MyBetsData({
     required this.id,
     required this.roundId,
     required this.user,
@@ -54,8 +54,8 @@ class GetBetUserData {
     required this.updatedAt,
   });
 
-  factory GetBetUserData.fromJson(Map<String, dynamic> json) {
-    return GetBetUserData(
+  factory MyBetsData.fromJson(Map<String, dynamic> json) {
+    return MyBetsData(
       id: json['_id'],
       roundId: Round.fromJson(json['roundId']),
       user: User.fromJson(json['userId']),

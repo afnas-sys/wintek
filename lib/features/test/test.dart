@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/aviator/domain/models/get_bet_user_model.dart';
-import 'package:wintek/features/game/aviator/providers/bet_history_provider.dart';
+import 'package:wintek/features/game/aviator/providers/top_bets_provider.dart';
 
 class Test extends ConsumerStatefulWidget {
   const Test({super.key});
@@ -14,104 +13,66 @@ class _TestState extends ConsumerState<Test> {
   @override
   void initState() {
     super.initState();
-    // Fetch bet history on init, assuming userId is 'someUserId'
+    // Fetch top bets on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(betHistoryProvider.notifier).fetchBetHistory();
+      ref.read(topBetsProvider.notifier).fetchTopBets();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final betHistoryAsync = ref.watch(betHistoryProvider);
+    final topBetsAsync = ref.watch(topBetsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Bet History')),
-      body: betHistoryAsync.when(
+      appBar: AppBar(title: const Text('Top Bets')),
+      body: topBetsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Text(
-            'Error: $error',
-            style: const TextStyle(color: Colors.white),
-          ),
-        ),
-        data: (betHistory) {
-          if (betHistory == null || betHistory.data.isEmpty) {
-            return const Center(
-              child: Text(
-                'No bets found',
-                style: TextStyle(color: Colors.white),
-              ),
-            );
+        error: (error, stack) => Center(child: Text('Error: $error')),
+        data: (topBetsModel) {
+          if (topBetsModel == null || topBetsModel.data.isEmpty) {
+            return const Center(child: Text('No data available'));
           }
           return ListView.builder(
-            itemCount: betHistory.data.length,
+            itemCount: topBetsModel.data.length,
             itemBuilder: (context, index) {
-              final bet = betHistory.data[index];
+              final bet = topBetsModel.data[index];
+              return Card(
+                margin: const EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('id: ${bet.id}'),
+                      Text('Stake: ${bet.stake}'),
+                      Text('Currency: ${bet.currency}'),
+                      Text('Auto Cashout: ${bet.autoCashout}'),
+                      Text('bet index: ${bet.betIndex}'),
+                      Text('Placed At: ${bet.placedAt}'),
+                      Text('cashout At: ${bet.cashoutAt}'),
+                      if (bet.cashedOutAt != null)
+                        Text('Cashed Out At: ${bet.cashedOutAt}'),
+                      Text('Payout: ${bet.payout}'),
+                      Text('Status: ${bet.status}'),
+                      Text('Created At: ${bet.createdAt}'),
+                      Text('Updated At: ${bet.updatedAt}'),
 
-              // Helper function to format numbers safely
-              String formatNum(num? value) =>
-                  value?.toStringAsFixed(2) ?? '0.00';
+                      SizedBox(height: 20),
+                      Text('Round Id: ${bet.roundId?.id}'),
+                      Text('Seq: ${bet.roundId?.seq}'),
+                      Text('State: ${bet.roundId?.state}'),
+                      Text('Started At: ${bet.roundId?.startedAt}'),
+                      Text('Crash At: ${bet.roundId?.crashAt}'),
+                      Text('Ended At: ${bet.roundId?.endedAt}'),
 
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  color: Colors.grey[900],
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'id: ${bet.id}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Status: ${(bet.status)} ',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Stake: ${formatNum(bet.stake)} ${bet.currency}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Auto Cashout: ${formatNum(bet.autoCashout)}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Crash At: ${formatNum(bet.roundId.crashAt)}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          'Payout: ${formatNum(bet.payout)}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'User Name: ${(bet.user.userName)}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        const SizedBox(height: 4),
-                        // Text(
-                        //   'Cashed Out At: ${bet.cashedOutAt != null ? formatNum(bet.cashedOutAt) : 'N/A'}',
-                        //   style: const TextStyle(color: Colors.white),
-                        // ),
-                        // const SizedBox(height: 4),
-                        // Text(
-                        //   'Multiplier: ${formatNum(bet.multiplier)}x',
-                        //   style: const TextStyle(color: Colors.white),
-                        // ),
-                      ],
-                    ),
+                      SizedBox(height: 20),
+                      Text('User Id: ${bet.userId?.id}'),
+                      Text(
+                        'User: ${bet.userId?.userName ?? 'Unknown'}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text('email: ${bet.userId?.email}'),
+                    ],
                   ),
                 ),
               );

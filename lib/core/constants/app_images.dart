@@ -14,6 +14,9 @@ class AppImages {
   static const String homeSpinToWinImage = 'assets/images/Spin_to_win.png';
   static const String homecardJackPotImage = 'assets/images/Card_Jackpot.png';
 
+  //aviator
+  static const String previousHand = 'assets/images/previousHand.png';
+
   //Home appBar
   static const String homeAppBarImage = 'assets/images/home_appbarImage.png';
 

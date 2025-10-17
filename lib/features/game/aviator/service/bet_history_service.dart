@@ -2,8 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/domain/constants/aviator_api_constants.dart';
-import 'package:wintek/features/game/aviator/domain/models/get_bet_user_model.dart';
+import 'package:wintek/features/game/aviator/domain/models/my_bets_model.dart';
 
 class BetHistoryService {
   final Dio dio;
@@ -11,10 +10,7 @@ class BetHistoryService {
 
   BetHistoryService(this.dio, this.storageService);
 
-  Future<GetBetUserModel?> fetchBetHistory({
-    int page = 1,
-    int limit = 50,
-  }) async {
+  Future<MyBetsModel?> fetchBetHistory({int page = 1, int limit = 50}) async {
     try {
       // Read userId from secure storage
       final credentials = await storageService.readCredentials();
@@ -32,7 +28,7 @@ class BetHistoryService {
 
       log('✅ Bet History API success: ${response.data}');
 
-      return GetBetUserModel.fromJson(response.data);
+      return MyBetsModel.fromJson(response.data);
     } on DioException catch (e) {
       log('❌ DioException: ${e.message}');
       log('👉 Request path: ${e.requestOptions.path}');
