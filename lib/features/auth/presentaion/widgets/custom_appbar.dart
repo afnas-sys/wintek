@@ -100,6 +100,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
                       subtitle,
                       style: Theme.of(context).textTheme.authBodyLargePrimary,
                       // style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
