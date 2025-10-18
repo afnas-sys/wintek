@@ -54,6 +54,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   @override
   void initState() {
     _amountController.text = 1.toString();
+    _autoAmountController.text = 1.toString();
     super.initState();
   }
 
@@ -81,41 +82,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                 width: 191,
                 height: 28,
                 //! SWITCH
-                child: CustomSlidingSegmentedControl<int>(
-                  initialValue: _selectedValue,
-                  children: {
-                    0: Text(
-                      'Bet',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.aviatorBodyMediumPrimary,
-                    ),
-                    1: Text(
-                      'Auto',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.aviatorBodyMediumPrimary,
-                    ),
-                  },
-                  decoration: BoxDecoration(
-                    color: AppColors.aviatorFourteenthColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: AppColors.aviatorFifteenthColor,
-                      width: 1,
-                    ),
-                  ),
-                  thumbDecoration: BoxDecoration(
-                    color: AppColors.aviatorFifteenthColor,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
-                  onValueChanged: (v) {
-                    setState(() => _selectedValue = v);
-                  },
-                ),
+                child: _buildSwitch(),
               ),
               //! TOP RIGHT SIDED BUTTON '-'
               CustomElevatedButton(
@@ -186,14 +153,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                         Expanded(
                           flex: 1,
                           child: Row(
-                            children: [
-                              Expanded(
-                                child: CustomBetButton(
-                                  index: widget.index,
-                                  amountController: _amountController,
-                                ),
-                              ),
-                            ],
+                            children: [Expanded(child: _manualBetButton())],
                           ),
                         ),
                       ],
@@ -244,12 +204,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                         ),
                         //  SizedBox(width: 20),
                         //!Auto BUTTON FOR BET---------------------------------------------------
-                        Expanded(
-                          child: CustomBetButton(
-                            index: widget.index,
-                            amountController: _amountController,
-                          ),
-                        ),
+                        Expanded(child: _autoBetButton()),
                       ],
                     ),
             ),
@@ -271,6 +226,38 @@ class _BetContainerState extends ConsumerState<BetContainer> {
             ),
         ],
       ),
+    );
+  }
+
+  //!Switch
+  Widget _buildSwitch() {
+    return CustomSlidingSegmentedControl<int>(
+      initialValue: _selectedValue,
+      children: {
+        0: Text(
+          'Bet',
+          style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+        ),
+        1: Text(
+          'Auto',
+          style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+        ),
+      },
+      decoration: BoxDecoration(
+        color: AppColors.aviatorFourteenthColor,
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
+      ),
+      thumbDecoration: BoxDecoration(
+        color: AppColors.aviatorFifteenthColor,
+        borderRadius: BorderRadius.circular(30),
+      ),
+
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      onValueChanged: (v) {
+        setState(() => _selectedValue = v);
+      },
     );
   }
 
@@ -321,6 +308,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     );
   }
 
+  //! IconButton
   Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
     return CustomElevatedButton(
       hasBorder: false,
@@ -373,56 +361,80 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   //!AUTO CASH OUT
   Widget _buildAutoCashOutRow(BuildContext context) {
     return Expanded(
-      flex: 3,
+      flex: 4,
       child: Row(
         children: [
           // Label
           Expanded(
             child: Text(
-              'Auto Cash Out',
-              style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+              'Auto Cash out',
+              style: Theme.of(context).textTheme.aviatorbodySmallThird,
             ),
           ),
           // Switch
-          Transform.scale(
-            scale: 0.65,
-            child: Switch(
-              value: _isSwitched,
-              activeColor: AppColors.aviatorTertiaryColor,
-              inactiveThumbColor: AppColors.aviatorTertiaryColor,
-              activeTrackColor: AppColors.aviatorEighteenthColor,
-              inactiveTrackColor: AppColors.aviatorFourteenthColor,
-              onChanged: (value) => setState(() => _isSwitched = value),
+          Expanded(
+            child: Transform.scale(
+              scale: 0.65,
+              child: Switch(
+                value: _isSwitched,
+                activeColor: AppColors.aviatorTertiaryColor,
+                inactiveThumbColor: AppColors.aviatorTertiaryColor,
+                activeTrackColor: AppColors.aviatorEighteenthColor,
+                inactiveTrackColor: AppColors.aviatorFourteenthColor,
+                onChanged: (value) => setState(() => _isSwitched = value),
+              ),
             ),
           ),
           // TextField
-          SizedBox(
-            width: 70,
-            height: 28,
-            child: TextField(
-              enabled: _isSwitched,
-              controller: _switchController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.aviatorBodyMediumSecondary,
-              decoration: InputDecoration(
-                suffixText: "X",
-                suffixStyle: TextStyle(color: AppColors.aviatorSixteenthColor),
-                hintText: "1.5",
-                filled: true,
-                fillColor: AppColors.aviatorSixthColor,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 4,
-                  horizontal: 6,
+          Expanded(
+            child: SizedBox(
+              width: 70,
+              height: 28,
+              child: TextField(
+                enabled: _isSwitched,
+                controller: _switchController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
                 ),
-                border: _borderStyle(),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.aviatorBodyMediumSecondary,
+                decoration: InputDecoration(
+                  suffixText: "x",
+                  suffixStyle: TextStyle(
+                    color: AppColors.aviatorSixteenthColor,
+                  ),
+                  hintText: "1.5",
+                  filled: true,
+                  fillColor: AppColors.aviatorSixthColor,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 6,
+                  ),
+                  border: _borderStyle(),
+                ),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  //! MANUAL BET
+  Widget _manualBetButton() {
+    return CustomBetButton(
+      index: widget.index,
+      amountController: _amountController,
+      //   switchController: _switchController,
+    );
+  }
+
+  //! AUTO BET
+  Widget _autoBetButton() {
+    return CustomBetButton(
+      index: widget.index,
+      amountController: _autoAmountController,
+      switchController: _switchController,
     );
   }
 }

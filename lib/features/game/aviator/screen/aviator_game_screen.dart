@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
+import 'package:wintek/features/game/aviator/providers/recent_rounds_provider.dart';
 import 'package:wintek/features/game/aviator/widget/all_bets.dart';
+import 'package:wintek/features/game/aviator/widget/aviator_flight_animation.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:wintek/features/game/aviator/widget/balance_container.dart';
 import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
 import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
-import 'package:wintek/features/game/aviator/widget/graph_container.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -20,11 +21,30 @@ class AviatorGameScreen extends ConsumerStatefulWidget {
 }
 
 class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
+  // late final AviatorSocketService _socketService;
+  @override
+  void initState() {
+    super.initState();
+    // Start listening to recent rounds
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(recentRoundsServiceProvider).startListening();
+
+      // _socketService = ref.read(aviatorRoundProvider); // get the service
+      // _socketService.connect(); // connect when screen loads
+    });
+  }
+
+  // @override
+  // void dispose() {
+  //   _socketService.disconnect(); // disconnect when leaving screen
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     //   final roundState = ref.watch(aviatorRoundNotifierProvider);
     final roundState = ref.watch(aviatorStateProvider);
-    final userId = roundState.when(
+    final roundId = roundState.when(
       data: (round) => round.roundId!,
       error: (error, st) => error.toString(),
       loading: () => '',
@@ -46,7 +66,7 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'User Id: $userId',
+                      'Round Id: $roundId',
                       style: Theme.of(
                         context,
                       ).textTheme.aviatorbodySmallPrimary,
@@ -54,7 +74,10 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                   ],
                 ),
                 SizedBox(height: 1),
-                GraphContainer(),
+                AviatorFlightAnimation(),
+                // SizedBox(height: 10),
+
+                // GraphContainer(),
                 SizedBox(height: 16),
                 ListView.separated(
                   shrinkWrap: true,

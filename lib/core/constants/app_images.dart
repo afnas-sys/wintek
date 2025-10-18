@@ -14,6 +14,9 @@ class AppImages {
   static const String homeSpinToWinImage = 'assets/images/Spin_to_win.png';
   static const String homecardJackPotImage = 'assets/images/Card_Jackpot.png';
 
+  //aviator
+  static const String previousHand = 'assets/images/previousHand.png';
+
   //Home appBar
   static const String homeAppBarImage = 'assets/images/home_appbarImage.png';
 
@@ -35,6 +38,10 @@ class AppImages {
   static const String welcomeBonus = 'assets/images/welcome_bonus.png';
   static const String logout = 'assets/images/logout.png';
   static const String googleIcon = 'assets/images/google.png';
+  static const String offerCarousel1 = 'assets/images/offer_carousel_1.png';
+  static const String welcomeBonusText = 'assets/images/welcome_BonusText.png';
+  static const String inviteFriends = 'assets/images/invite_friends.png';
+  static const String gamesPlayed = 'assets/images/games_played.png';
 
   //! Lottie
 

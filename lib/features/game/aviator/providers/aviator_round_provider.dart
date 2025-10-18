@@ -7,7 +7,7 @@ import 'package:wintek/features/game/aviator/service/aviator_socket_service.dart
 final aviatorRoundProvider = Provider<AviatorSocketService>((ref) {
   final service = AviatorSocketService();
   service.connect();
-  ref.onDispose(() => service.disConnect());
+  ref.onDispose(() => service.disconnect());
   return service;
 });
 // //! Round State Provider

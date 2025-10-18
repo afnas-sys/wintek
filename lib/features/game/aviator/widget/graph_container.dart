@@ -106,13 +106,13 @@ class GraphContainer extends ConsumerWidget {
                     case "RUNNING":
                       return Stack(
                         children: [
-                          Positioned.fill(
-                            child: Lottie.asset(
-                              AppImages.aviatorbg, // your lottie file path
-                              fit: BoxFit.fill,
-                              repeat: true,
-                            ),
-                          ),
+                          // Positioned.fill(
+                          //   child: Lottie.asset(
+                          //     AppImages.aviatorbg, // your lottie file path
+                          //     fit: BoxFit.fill,
+                          //     repeat: true,
+                          //   ),
+                          // ),
 
                           /// Graph chart + UI
                           LineChart(
