@@ -116,7 +116,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
                             ),
 
                             //! Google field
-                            _googleButton(googleAuthNotifier),
+                            _googleButton(),
                           ],
                         ),
                       ],
@@ -308,7 +308,7 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
   }
 
   //! Google Button
-  Widget _googleButton(GoogleAuthNotifier googleAuthNotifier) {
+  Widget _googleButton() {
     return CustomElevatedButton(
       onPressed: () async {
         final Map<bool, String> res = await ref
@@ -328,7 +328,6 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
           context,
           message: res.values.first,
         );
-        googleAuthNotifier.isGoogleLogin = true;
       },
       borderColor: AppColors.borderAuthTextField,
       padding: EdgeInsets.symmetric(vertical: 16),
