@@ -1,16 +1,18 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wintek/features/auth/domain/constants/auth_api_constants.dart';
 import 'package:wintek/features/auth/domain/model/google_auth_model.dart';
 import 'package:wintek/features/auth/domain/model/secure_storage_model.dart';
 import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/features/auth/services/google_auth_services.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/profile/provider/profile_provider.dart';
 
 class GoogleAuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;
-  bool isGoogleLogin = false;
   GoogleAuthNotifier(this.ref) : super(AuthState());
   void setMessage(String msg) {
     state = AuthState(message: msg);
@@ -25,7 +27,7 @@ class GoogleAuthNotifier extends StateNotifier<AuthState> {
   Future<Map<bool, String>> googleSignIn() async {
     final apiServices = GoogleAuthService(ref.read(dioProvider));
     final storage = SecureStorageService();
-
+    final prefs = await SharedPreferences.getInstance();
     final user = await apiServices.signInWithGoogle();
     state = AuthState(isLoading: false);
 
@@ -49,6 +51,8 @@ class GoogleAuthNotifier extends StateNotifier<AuthState> {
         log(
           'cookie: ${data.cookie}\nexpiry: ${data.expiry}\ntoken: ${data.token}\n',
         );
+        ref.invalidate(profileProvider);
+        prefs.setBool(AuthApiConstants.isGoogleLogin, true);
         state = AuthState(isLoading: false);
 
         return {true: res.message};

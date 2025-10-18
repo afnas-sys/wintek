@@ -47,4 +47,8 @@ class AppImages {
 
   static const String aviatorbg = 'assets/images/aviator_backround.json';
   static const String aviatorloading = 'assets/images/aviator_loading.json';
+
+  // ! Profile Screen
+
+  static const String cameraIcon = 'assets/images/cameraIcon1.png';
 }
