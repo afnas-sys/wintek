@@ -257,6 +257,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                         context,
                                       ).textTheme.aviatorBodyLargePrimary,
                                       overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                     Text(
                                       DateFormat('dd-MM-yyyy').format(
@@ -267,6 +268,8 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                       style: Theme.of(
                                         context,
                                       ).textTheme.aviatorBodyMediumPrimary,
+                                      //  overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                     ),
                                   ],
                                 ),
