@@ -6,7 +6,10 @@ class RoutesNames {
   static const String otp = '/otp';
   static const String forgot = '/forgot';
   static const String aviatorGame = '/aviatorGame';
-  //hom
+  static const String carrom = '/carrom';
+  static const String crash = '/crash';
+  static const String spinToWin = '/spinToWin';
+  //home
   static const String home = '/home';
   //bottombar
   static const String bottombar = '/bottombar';

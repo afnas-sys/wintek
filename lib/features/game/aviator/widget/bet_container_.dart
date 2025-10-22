@@ -31,11 +31,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   void _setAmount(String value) {
     setState(() {
-      if (_selectedValue == 0) {
-        _amountController.text = value;
-      } else {
-        _autoAmountController.text = value;
-      }
+      TextEditingController controller = _selectedValue == 0
+          ? _amountController
+          : _autoAmountController;
+      int current = int.tryParse(controller.text) ?? 0;
+      int add = int.tryParse(value) ?? 0;
+      controller.text = (current + add).toString();
     });
   }
 

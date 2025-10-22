@@ -98,9 +98,10 @@ class _OffersScreenState extends State<OffersScreen> {
     return CarouselSlider(
       options: CarouselOptions(
         autoPlay: true,
-        aspectRatio: 2,
+        height: 184.0,
         //  enlargeCenterPage: true, // enlarge the current page
-        viewportFraction: 0.8, // visible part of neighboring items
+        viewportFraction:
+            0.86, // adjusted for approximately 368 width on 428px screen
         onPageChanged: (index, reason) {
           setState(() {}); // if you need to update indicators
         },
@@ -108,7 +109,7 @@ class _OffersScreenState extends State<OffersScreen> {
       items:
           [
             AppImages.offerCarousel1,
-            AppImages.offerCarousel1,
+            AppImages.offerCarousel2,
             // Add more images here
           ].map((imagePath) {
             return Builder(
