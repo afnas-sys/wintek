@@ -6,6 +6,9 @@ import 'package:wintek/features/auth/presentaion/screens/otp_varification_screen
 import 'package:wintek/features/auth/presentaion/screens/register_screen.dart';
 import 'package:wintek/features/game/aviator/screen/aviator_game_screen.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/screens/card_jackpot_screen.dart';
+import 'package:wintek/features/game/carrom/screens/carrom_game_screen.dart';
+import 'package:wintek/features/game/crash/screens/crash_game_screen.dart';
+import 'package:wintek/features/game/spin_to_win/screens/spin_to_win_screen.dart';
 
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/screens/splash_screen.dart';
@@ -94,6 +97,24 @@ class AppRouter {
       case RoutesNames.wallet:
         return _buildPageTransition(
           const WalletScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.carrom:
+        return _buildPageTransition(
+          const CarromGameScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.crash:
+        return _buildPageTransition(
+          const CrashGameScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.spinToWin:
+        return _buildPageTransition(
+          const SpinToWinScreen(),
           settings,
           PageTransitionType.fade,
         );

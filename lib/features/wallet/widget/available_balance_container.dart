@@ -16,16 +16,16 @@ class AvailableBalanceContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.walletFourthColor, width: 1),
         image: DecorationImage(
-          image: AssetImage(AppImages.homeBgImage),
+          image: AssetImage(AppImages.walletImage),
           fit: BoxFit.fill,
         ),
-        gradient: LinearGradient(
-          colors: [
-            AppColors.walletSecondaryColor,
-            AppColors.walletThirdColor,
-            AppColors.walletSecondaryColor,
-          ],
-        ),
+        // gradient: LinearGradient(
+        //   colors: [
+        //     AppColors.walletSecondaryColor,
+        //     AppColors.walletThirdColor,
+        //     AppColors.walletSecondaryColor,
+        //   ],
+        // ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

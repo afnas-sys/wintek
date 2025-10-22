@@ -79,8 +79,8 @@ class AppColors {
 
   //!_____________________________________Wallet_______________________________________
   static const Color walletPrimaryColor = Color(0xFF140A2D);
-  static const Color walletSecondaryColor = Color(0xFF6647ED);
-  static final Color walletThirdColor = Color(0xFF6647ED).withOpacity(0.5);
+  // static const Color walletSecondaryColor = Color(0xFF6647ED);
+  //  static final Color walletThirdColor = Color(0xFF6647ED).withOpacity(0.5);
   static const Color walletFourthColor = Color(0xFF271777);
   static const Color walletFifthColor = Color(0xFFFFA500);
   static const Color walletSixthColor = Colors.transparent;

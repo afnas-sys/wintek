@@ -22,7 +22,8 @@ class AppImages {
 
   //home appbar image
   static const String homeAppbarImage = 'assets/images/user.png';
-  //
+  //Wallet Images
+  static const String walletImage = 'assets/images/wallet_balance.png';
 
   // Card Jackpot Game Images
 
@@ -39,10 +40,15 @@ class AppImages {
   static const String logout = 'assets/images/logout.png';
   static const String googleIcon = 'assets/images/google.png';
   static const String offerCarousel1 = 'assets/images/offer_carousel_1.png';
+  static const String offerCarousel2 = 'assets/images/offerCarousel12.png';
   static const String welcomeBonusText = 'assets/images/welcome_BonusText.png';
   static const String inviteFriends = 'assets/images/invite_friends.png';
   static const String gamesPlayed = 'assets/images/games_played.png';
 
+  //Carrom
+  static const String carrom1v1 = 'assets/images/carrom1v1.png';
+  static const String carromTournament = 'assets/images/carrom_tournament.png';
+  static const String carromPractice = 'assets/images/carrom_practice.png';
   //! Lottie
 
   static const String aviatorbg = 'assets/images/aviator_backround.json';
