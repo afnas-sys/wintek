@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/features/game/carrom/screens/carrom_match_fixing%20_screen.dart';
 
 class CarromGameScreen extends StatelessWidget {
   const CarromGameScreen({super.key});
@@ -17,11 +18,23 @@ class CarromGameScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 14),
-                    _buildGameModeCard(image: AppImages.carrom1v1),
+                    _buildGameModeCard(
+                      context,
+                      CarromMatchFixingScreen(),
+                      image: AppImages.carrom1v1,
+                    ),
                     const SizedBox(height: 16),
-                    _buildGameModeCard(image: AppImages.carromTournament),
+                    _buildGameModeCard(
+                      context,
+                      CarromMatchFixingScreen(),
+                      image: AppImages.carromTournament,
+                    ),
                     const SizedBox(height: 16),
-                    _buildGameModeCard(image: AppImages.carromPractice),
+                    _buildGameModeCard(
+                      context,
+                      CarromMatchFixingScreen(),
+                      image: AppImages.carromPractice,
+                    ),
 
                     ///////
                     const SizedBox(height: 20),
@@ -92,14 +105,24 @@ class CarromGameScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGameModeCard({required String image}) {
-    return Container(
-      width: 388,
-      height: 156,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+  Widget _buildGameModeCard(
+    BuildContext context,
+    CarromMatchFixingScreen match, {
+    required String image,
+  }) {
+    return GestureDetector(
+      onDoubleTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => match),
+      ),
+      child: Container(
+        width: 388,
+        height: 156,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          image: DecorationImage(image: AssetImage(image), fit: BoxFit.cover),
+        ),
       ),
     );
   }
