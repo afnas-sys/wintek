@@ -32,12 +32,19 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-
+        signingConfigs {
+        create("release") {
+            keyAlias = "wintek-key"
+            keyPassword = "wintek"
+            storeFile = file("C:/Users/admin/.android/wintek-release-key.jks")
+            storePassword = "wintek"
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
