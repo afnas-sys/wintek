@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
-import 'package:wintek/features/auth/domain/model/user_data.dart';
-import 'package:wintek/features/profile/provider/profile_provider.dart';
+import 'package:wintek/features/profile/provider/profile_notifier.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
   const AccountScreen({super.key});
@@ -19,7 +18,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profileAsync = ref.watch(profileProvider);
+    final profileAsync = ref.watch(currentUserDataProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFF140A2D),
@@ -34,16 +33,16 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
           ),
           data: (userData) => Builder(
             builder: (context) {
-              selectedDate ??= userData?.dob;
-              selectedGender ??= userData?.gender;
+              final data = userData["data"];
+              selectedDate ?? 'date_of_birth';
+              selectedGender ?? 'gender';
               return SingleChildScrollView(
                 child: Column(
                   spacing: 40,
                   children: [
-                    _buildStatusBar(),
                     _buildHeader(context),
-                    _buildProfileImage(userData),
-                    _buildForm(userData),
+                    _buildProfileImage(data['picture']),
+                    _buildForm(data),
                   ],
                 ),
               );
@@ -114,96 +113,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     }
   }
 
-  Widget _buildStatusBar() {
-    return Container(
-      height: 50,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Time
-          const Text(
-            '9:41',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'SF Pro Text',
-            ),
-          ),
-          // Status icons
-          Row(
-            children: [
-              // Signal bars
-              Row(
-                children: List.generate(
-                  4,
-                  (index) => Container(
-                    margin: const EdgeInsets.only(right: 2),
-                    width: 3,
-                    height: 4 + (index * 2).toDouble(),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              // WiFi icon
-              const Icon(Icons.wifi, color: Colors.white, size: 16),
-              const SizedBox(width: 4),
-              // Battery
-              SizedBox(
-                width: 28,
-                height: 13,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 25,
-                      height: 13,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.35),
-                        ),
-                        borderRadius: BorderRadius.circular(2.5),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 4,
-                      child: Container(
-                        width: 2,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(1),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 2,
-                      top: 2,
-                      child: Container(
-                        width: 21,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(1.5),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -267,10 +176,10 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     );
   }
 
-  Widget _buildProfileImage(UserProfileData? userData) {
-    final profileImage =
-        userData?.profileImage ??
-        'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5';
+  Widget _buildProfileImage(String? profileImage) {
+    final image = profileImage == "-" || profileImage == null
+        ? 'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5'
+        : profileImage;
     return Stack(
       children: [
         Container(
@@ -280,7 +189,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
             image: DecorationImage(
-              image: NetworkImage(profileImage),
+              image: NetworkImage(image),
               fit: BoxFit.cover,
             ),
           ),
@@ -301,7 +210,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     );
   }
 
-  Widget _buildForm(UserProfileData? userData) {
+  Widget _buildForm(Map<String, dynamic> userData) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Form(
@@ -310,17 +219,17 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
           children: [
             _buildFormField(
               label: 'Full Name',
-              value: userData?.name ?? 'Add name',
+              value: userData['user_name'] ?? 'Add name',
             ),
             const SizedBox(height: 20),
             _buildFormField(
               label: 'Email',
-              value: userData?.email ?? 'Add email',
+              value: userData['email'] ?? 'Add email',
             ),
             const SizedBox(height: 20),
             _buildFormField(
               label: 'Phone',
-              value: userData?.mobileNumber ?? 'Add phone number',
+              value: userData['mobile'] ?? 'Add phone number',
             ),
             const SizedBox(height: 20),
             _buildFormField(

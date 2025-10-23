@@ -9,7 +9,7 @@ import 'package:wintek/core/network/dio_provider.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/features/auth/services/google_auth_services.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/profile/provider/profile_provider.dart';
+import 'package:wintek/features/profile/provider/profile_notifier.dart';
 
 class GoogleAuthNotifier extends StateNotifier<AuthState> {
   final Ref ref;

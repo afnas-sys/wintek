@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/features/profile/provider/profile_notifier.dart';
+import 'package:wintek/features/profile/services/profile_services.dart';
 
 class ChangePasswordScreen extends ConsumerStatefulWidget {
-  const ChangePasswordScreen({super.key});
+  final String mobile;
+  const ChangePasswordScreen({super.key, required this.mobile});
 
   @override
   ConsumerState<ChangePasswordScreen> createState() =>
@@ -27,16 +30,32 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     super.dispose();
   }
 
-  void _handleSave() {
+  void _handleSave() async {
     if (_formKey.currentState?.validate() ?? false) {
       // Handle password change logic here
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password changed successfully!'),
-          backgroundColor: Colors.green,
-        ),
+      final data = ChangePasswordModel(
+        mobileNumber: widget.mobile,
+        oldPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
       );
-      Navigator.pop(context);
+      Color color = Colors.green;
+      String? content;
+      final Map<String, dynamic> res = await ref
+          .read(profileProvider)
+          .changePassword(data);
+      if (res['status'] == 'success') {
+        content = res['message'];
+        Navigator.pop(context);
+      } else if (res['status'] == 'failure') {
+        content = res['message'];
+        color = Colors.red;
+      } else if (res['status'] == 'error') {
+        content = res['message'] + ' Please try again';
+        color = Colors.orange;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(content!), backgroundColor: color));
     }
   }
 
@@ -48,7 +67,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              _buildStatusBar(),
               const SizedBox(height: 16),
               _buildHeader(context),
               const SizedBox(height: 50),
@@ -56,96 +74,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatusBar() {
-    return Container(
-      height: 50,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Time
-          const Text(
-            '9:41',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'SF Pro Text',
-            ),
-          ),
-          // Status icons
-          Row(
-            children: [
-              // Signal bars
-              Row(
-                children: List.generate(
-                  4,
-                  (index) => Container(
-                    margin: const EdgeInsets.only(right: 2),
-                    width: 3,
-                    height: 4 + (index * 2).toDouble(),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(1),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              // WiFi icon
-              const Icon(Icons.wifi, color: Colors.white, size: 16),
-              const SizedBox(width: 4),
-              // Battery
-              SizedBox(
-                width: 28,
-                height: 13,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 25,
-                      height: 13,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.35),
-                        ),
-                        borderRadius: BorderRadius.circular(2.5),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 4,
-                      child: Container(
-                        width: 2,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.4),
-                          borderRadius: BorderRadius.circular(1),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 2,
-                      top: 2,
-                      child: Container(
-                        width: 21,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(1.5),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
