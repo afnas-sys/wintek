@@ -27,7 +27,11 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
     return SizedBox(
       height: 400, // Fixed height for the container
       child: topBetsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.aviatorTwentyEighthColor,
+          ),
+        ),
         error: (error, stack) => Center(child: Text('Error: $error')),
         data: (topBetsModel) {
           if (topBetsModel == null || topBetsModel.data.isEmpty) {
@@ -53,7 +57,12 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
           }).toList();
 
           if (currentYearBets.isEmpty) {
-            return const Center(child: Text('No bets for this year'));
+            return Center(
+              child: Text(
+                'No bets for this year',
+                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+              ),
+            );
           }
 
           return ListView.separated(
