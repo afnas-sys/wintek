@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wintek/features/auth/domain/constants/auth_api_constants.dart';
 import 'package:wintek/features/auth/domain/model/google_auth_model.dart';
-import 'package:wintek/features/auth/domain/model/user_data.dart';
 import 'package:wintek/features/auth/providers/google_auth_notifier.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 
@@ -48,21 +47,6 @@ class GoogleAuthService {
       final User? user = userCredential.user;
 
       if (user != null) {
-        final userProfileData = UserProfileData(
-          email: user.email,
-          name: user.displayName,
-          mobileNumber: user.phoneNumber,
-          profileImage: user.photoURL,
-        );
-
-        //
-
-        // Save user data in secure storage
-
-        await storage.saveUserData(userProfileData);
-
-        //
-
         final userData = GoogleAuthRequest(
           googleId: user.uid,
           email: user.email ?? '',

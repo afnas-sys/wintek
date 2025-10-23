@@ -14,11 +14,10 @@ import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/features/auth/providers/auth_notifier.dart';
 import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/features/profile/model/profile_item.dart';
-import 'package:wintek/features/profile/provider/profile_provider.dart';
+import 'package:wintek/features/profile/provider/profile_notifier.dart';
 import 'package:wintek/features/profile/screen/contact_support_screen.dart';
 import 'package:wintek/features/profile/screen/responsible_gaming_screen.dart';
 import 'package:wintek/features/profile/widgets/profile_tile.dart';
-import 'package:wintek/features/auth/domain/model/user_data.dart';
 import 'account_screen.dart';
 import 'change_password_screen.dart';
 import 'terms_conditions_screen.dart';
@@ -36,16 +35,27 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String selectedLanguage = 'English';
   bool _isNotificationEnabled = true;
+  @override
+  initState() {
+    // ref.read(currentUserDataProvider);
+
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(currentUserDataProvider); // Force refetch
+      ref.watch(currentUserDataProvider);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final authNotifier = ref.watch(authNotifierProvider.notifier);
-    final profileAsync = ref.watch(profileProvider);
+    final currentUser = ref.watch(currentUserDataProvider);
+    // final profileAsync = ref.watch(profileProvider);
 
     return Scaffold(
       backgroundColor: AppColors.profilePrimaryColor,
       body: SafeArea(
-        child: profileAsync.when(
+        child: currentUser.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => Center(
             child: Text(
@@ -54,10 +64,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
           ),
           data: (userData) {
+            final Map<String, dynamic>? data = userData['data'];
+            log('from profile screeen user data is $data');
+            if (data == null) {
+              return const Center(
+                child: Text(
+                  'No user data available',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
             return RefreshIndicator(
               onRefresh: () async {
                 // ✅ force re-fetch only when user pulls down
-                ref.invalidate(profileProvider);
+                ref.invalidate(currentUserDataProvider);
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -83,7 +103,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           child: Column(
                             children: [
                               // User Info
-                              _buildUserInfo(userData),
+                              _buildUserInfo(data),
 
                               // Divider
                               Container(
@@ -97,7 +117,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ),
 
                               // Profile Options
-                              _buildProfileOptions(context, ref, authNotifier),
+                              _buildProfileOptions(
+                                context,
+                                ref,
+                                authNotifier,
+                                data['mobile'] ?? '',
+                              ),
                             ],
                           ),
                         ),
@@ -122,8 +147,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     ),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                        userData?.profileImage ??
-                                            'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5',
+                                        data['picture'] == '-' ||
+                                                data['picture'] == null
+                                            ? 'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5'
+                                            : data['picture'],
                                       ),
                                       fit: BoxFit.cover,
                                     ),
@@ -166,13 +193,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildUserInfo(UserProfileData? userData) {
+  Widget _buildUserInfo(Map<String, dynamic> userData) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
           Text(
-            userData?.name ?? 'User',
+            userData['user_name'] ?? 'no name',
             style: const TextStyle(
               color: AppColors.profileTextcolor,
               fontSize: 20,
@@ -185,7 +212,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                userData?.mobileNumber ?? 'USR00000',
+                'USR00000',
                 style: const TextStyle(
                   color: AppColors.profileTextcolor,
                   fontSize: 14,
@@ -196,9 +223,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(width: 10),
               GestureDetector(
                 onTap: () {
-                  Clipboard.setData(
-                    ClipboardData(text: userData?.mobileNumber ?? 'USR00000'),
-                  );
+                  Clipboard.setData(ClipboardData(text: 'USR00000'));
                   CustomSnackbar.show(
                     backgroundColor: Colors.green,
                     context,
@@ -222,6 +247,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     BuildContext context,
     WidgetRef ref,
     AuthNotifier authNotifier,
+    String mobile,
   ) {
     final sections = [
       ProfileSection(
@@ -241,7 +267,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ChangePasswordScreen(),
+                builder: (context) => ChangePasswordScreen(mobile: mobile),
               ),
             ),
           ),
@@ -1001,3 +1027,5 @@ class InfoTile extends StatelessWidget {
     );
   }
 }
+
+//
