@@ -56,24 +56,52 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                 ),
 
                 onTap: (i) => setState(() => _currentIndex = i),
-                items: const [
+                items: [
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.house),
+                    icon: Image.asset(
+                      'assets/images/home.png',
+                      width: 24,
+                      height: 24,
+                      color: _currentIndex == 0
+                          ? AppColors.bottomBarSelectedColor
+                          : AppColors.bottomBarUnselectedColor,
+                    ),
                     label: 'Home',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.wallet),
+                    icon: Image.asset(
+                      'assets/images/empty-wallet.png',
+                      width: 24,
+                      height: 24,
+                      color: _currentIndex == 1
+                          ? AppColors.bottomBarSelectedColor
+                          : AppColors.bottomBarUnselectedColor,
+                    ),
                     label: 'Wallet',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.percent),
+                    icon: Image.asset(
+                      'assets/images/discount-circle.png',
+                      width: 24,
+                      height: 24,
+                      color: _currentIndex == 2
+                          ? AppColors.bottomBarSelectedColor
+                          : AppColors.bottomBarUnselectedColor,
+                    ),
                     label: 'Offers',
                   ),
                   BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.idBadge),
+                    icon: Image.asset(
+                      'assets/images/user-square.png',
+                      width: 24,
+                      height: 24,
+                      color: _currentIndex == 3
+                          ? AppColors.bottomBarSelectedColor
+                          : AppColors.bottomBarUnselectedColor,
+                    ),
                     label: 'Profile',
                   ),
-                  BottomNavigationBarItem(
+                  const BottomNavigationBarItem(
                     icon: Icon(FontAwesomeIcons.table),
                     label: 'Test',
                   ),

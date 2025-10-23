@@ -38,7 +38,11 @@ class _MyBetsState extends ConsumerState<MyBets> {
           color: AppColors.aviatorFourteenthColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Center(child: CircularProgressIndicator()),
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.aviatorTwentyEighthColor,
+          ),
+        ),
       ),
       error: (error, stack) => Container(
         height: 400,
