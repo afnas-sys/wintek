@@ -13,7 +13,7 @@ class AutoPlayWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
         ),
-        child: Text('Auto Play'),
+        child: Text('Auto Play options'),
       ),
     );
   }
