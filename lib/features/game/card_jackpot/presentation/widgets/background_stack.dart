@@ -12,12 +12,18 @@ class BackgroundStack extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    // Responsive height adjustment for top container based on screen height
+    double topHeight;
+    if (screenHeight < 700) {
+      topHeight = screenHeight * 0.40;
+    } else if (screenHeight < 900) {
+      topHeight = screenHeight * 0.35;
+    } else {
+      topHeight = screenHeight * 0.33;
+    }
     return Column(
       children: [
-        Container(
-          color: AppColors.cardPrimaryColor,
-          height: screenHeight * 0.33,
-        ),
+        Container(color: AppColors.cardPrimaryColor, height: topHeight),
         Container(color: AppColors.cardSecondPrimaryColor),
       ],
     );

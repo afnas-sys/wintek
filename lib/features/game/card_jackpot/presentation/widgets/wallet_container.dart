@@ -69,10 +69,7 @@ class WalletContainer extends ConsumerWidget {
                         fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
-                      loading: () => RefreshProgressIndicator(
-                        color: AppColors.cardPrimaryColor,
-                      ),
-                      //  SizedBox.shrink(),
+                      loading: () => SizedBox.shrink(),
                     ),
                     InkWell(
                       splashColor: AppColors.cardPrimaryColor,
