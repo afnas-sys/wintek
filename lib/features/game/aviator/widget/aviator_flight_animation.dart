@@ -38,7 +38,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   final double _waveFrequency = 0.05;
 
   // 👈 PREPARE state countdown variables
-  int _prepareSecondsLeft = 20;
+  int _prepareSecondsLeft = 0;
+  int _initialPrepareSeconds = 0;
   double _prepareProgress = 1.0;
   Timer? _prepareTimer;
 
@@ -129,7 +130,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
             // Circular progress indicator
             const CircularProgressIndicator(
-              color: Colors.white,
+              color: AppColors.aviatorTwentyEighthColor,
               strokeWidth: 3,
             ),
           ],
@@ -139,11 +140,19 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
     // PREPARE countdown logic
     if (round.state == 'PREPARE') {
-      if (_prepareTimer == null) _startPrepareCountdown();
+      final msRemaining = int.tryParse(round.msRemaining ?? '0') ?? 0;
+      final secondsRemaining = (msRemaining / 1000).ceil();
+      if (_initialPrepareSeconds != secondsRemaining && secondsRemaining > 0) {
+        _initialPrepareSeconds = secondsRemaining;
+        _prepareSecondsLeft = secondsRemaining;
+        _prepareProgress = 1.0;
+        if (_prepareTimer == null) _startPrepareCountdown();
+      }
     } else {
       _prepareTimer?.cancel();
       _prepareTimer = null;
-      _prepareSecondsLeft = 20;
+      _prepareSecondsLeft = 0;
+      _initialPrepareSeconds = 0;
       _prepareProgress = 1.0;
     }
 
@@ -402,8 +411,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
   // PREPARE countdown
   void _startPrepareCountdown() {
-    _prepareSecondsLeft = 20;
-    _prepareProgress = 1.0;
     _prepareTimer?.cancel();
 
     _prepareTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -417,7 +424,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       } else {
         setState(() {
           _prepareSecondsLeft--;
-          _prepareProgress = _prepareSecondsLeft / 20;
+          _prepareProgress = _prepareSecondsLeft / _initialPrepareSeconds;
         });
       }
     });

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 
@@ -30,6 +30,7 @@ class _AllBetsState extends State<AllBets> {
       decoration: BoxDecoration(
         color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
       child: Column(
         children: [
@@ -47,19 +48,21 @@ class _AllBetsState extends State<AllBets> {
                 padding: const EdgeInsets.only(
                   left: 7,
                   right: 7,
-                  top: 6,
-                  bottom: 6,
+                  top: 5,
+                  bottom: 4,
                 ),
                 borderRadius: 30,
-                backgroundColor: AppColors.aviatorFifteenthColor,
+                backgroundColor: AppColors.aviatorTwentiethColor,
                 onPressed: () {},
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      FontAwesomeIcons.clockRotateLeft,
-                      size: 16,
-                      color: AppColors.aviatorTertiaryColor,
+                    ClipRRect(
+                      child: Image.asset(
+                        AppImages.previousHand,
+                        height: 20,
+                        width: 20,
+                      ),
                     ),
                     Text(
                       'Previous hand',
@@ -140,7 +143,7 @@ class _AllBetsState extends State<AllBets> {
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: bgColor, width: 1),
+                  border: Border.all(color: bgColor, width: 2),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

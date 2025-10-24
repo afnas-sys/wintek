@@ -83,7 +83,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: AppColors.aviatorFifteenthColor,
-              width: 2,
+              width: 1,
             ),
           ),
           child: Column(
@@ -103,8 +103,9 @@ class _MyBetsState extends ConsumerState<MyBets> {
                       left: 7,
                       right: 7,
                       top: 5,
-                      bottom: 6,
+                      bottom: 4,
                     ),
+                    borderColor: AppColors.aviatorFifteenthColor,
                     borderRadius: 30,
                     backgroundColor: AppColors.aviatorTwentiethColor,
                     onPressed: () {
@@ -184,7 +185,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          'Cashout, INR',
+                          'Cashout INR',
                           style: Theme.of(
                             context,
                           ).textTheme.aviatorBodyMediumSecondary,

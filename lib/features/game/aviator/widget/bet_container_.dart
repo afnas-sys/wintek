@@ -5,6 +5,7 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 
 import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
 
@@ -22,6 +23,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   bool _isSwitched = false;
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
+  final _autoPlayController = TextEditingController();
   final secureStorageService = SecureStorageService();
 
   Future<String?> getUserId() async {
@@ -281,7 +283,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
             vertical: 2,
             horizontal: 8,
           ),
-          hintText: "1.00",
+          // hintText: "1.00",
           hintStyle: Theme.of(context).textTheme.aviatorHeadlineSmall,
           filled: true,
           fillColor: AppColors.aviatorSixthColor,
@@ -344,10 +346,18 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     return Flexible(
       flex: 2,
       child: CustomElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AutoPlayWidget();
+            },
+          );
+        },
         padding: const EdgeInsets.symmetric(horizontal: 12),
         borderRadius: 52,
-        backgroundColor: AppColors.aviatorNineteenthColor,
+        backgroundColor: AppColors.aviatorTwentyNinthColor,
+        hasBorder: true,
         height: 28,
         borderColor: AppColors.aviatorNineteenthColor,
         child: Text(
@@ -368,7 +378,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           // Label
           Expanded(
             child: Text(
-              'Auto Cash out',
+              'Auto Cash Out',
               style: Theme.of(context).textTheme.aviatorbodySmallThird,
             ),
           ),

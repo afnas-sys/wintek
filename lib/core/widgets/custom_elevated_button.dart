@@ -18,6 +18,9 @@ class CustomElevatedButton extends StatelessWidget {
   final double fontSize;
   final FontWeight fontWeight;
   final double? elevation;
+  final Color? hoverColor;
+  final bool isSelected;
+  final Color? selectedBackgroundColor;
 
   const CustomElevatedButton({
     super.key,
@@ -36,6 +39,9 @@ class CustomElevatedButton extends StatelessWidget {
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
     this.elevation,
+    this.hoverColor,
+    this.isSelected = false,
+    this.selectedBackgroundColor,
   }) : assert(
          text != null || child != null,
          'Either text or child must be provided',
@@ -58,15 +64,31 @@ class CustomElevatedButton extends StatelessWidget {
       width: width,
       height: height,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-            side: hasBorder ? BorderSide(color: borderColor) : BorderSide.none,
-          ),
-          padding: padding,
-          elevation: elevation ?? 0,
-        ),
+        style:
+            ElevatedButton.styleFrom(
+              backgroundColor: isSelected
+                  ? (selectedBackgroundColor ??
+                        backgroundColor ??
+                        Theme.of(context).primaryColor)
+                  : (backgroundColor ?? Theme.of(context).primaryColor),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius),
+                side: hasBorder
+                    ? BorderSide(color: borderColor)
+                    : BorderSide.none,
+              ),
+              padding: padding,
+              elevation: elevation ?? 0,
+            ).copyWith(
+              overlayColor: WidgetStateProperty.resolveWith<Color?>((
+                Set<WidgetState> states,
+              ) {
+                if (states.contains(WidgetState.hovered)) {
+                  return hoverColor ?? Colors.white.withOpacity(0.1);
+                }
+                return null;
+              }),
+            ),
         onPressed: onPressed,
         child: icon == null
             ? content
