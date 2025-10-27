@@ -21,6 +21,7 @@ class _TopState extends State<Top> {
       decoration: BoxDecoration(
         color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
       child: Column(
         children: [

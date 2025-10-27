@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/aviator/providers/top_bets_provider.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 
 class Test extends ConsumerStatefulWidget {
   const Test({super.key});
@@ -13,70 +13,77 @@ class _TestState extends ConsumerState<Test> {
   @override
   void initState() {
     super.initState();
-    // Fetch top bets on init
+    // Fetch user data on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(topBetsProvider.notifier).fetchTopBets();
+      ref.read(userProvider.notifier).fetchUser();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final topBetsAsync = ref.watch(topBetsProvider);
+    final userAsync = ref.watch(userProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Top Bets')),
-      body: topBetsAsync.when(
+      appBar: AppBar(title: const Text('User Data')),
+      body: userAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(child: Text('Error: $error')),
-        data: (topBetsModel) {
-          if (topBetsModel == null || topBetsModel.data.isEmpty) {
+        data: (userModel) {
+          if (userModel == null) {
             return const Center(child: Text('No data available'));
           }
-          return ListView.builder(
-            itemCount: topBetsModel.data.length,
-            itemBuilder: (context, index) {
-              final bet = topBetsModel.data[index];
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('id: ${bet.id}'),
-                      Text('Stake: ${bet.stake}'),
-                      Text('Currency: ${bet.currency}'),
-                      Text('Auto Cashout: ${bet.autoCashout}'),
-                      Text('bet index: ${bet.betIndex}'),
-                      Text('Placed At: ${bet.placedAt}'),
-                      Text('cashout At: ${bet.cashoutAt}'),
-                      if (bet.cashedOutAt != null)
-                        Text('Cashed Out At: ${bet.cashedOutAt}'),
-                      Text('Payout: ${bet.payout}'),
-                      Text('Status: ${bet.status}'),
-                      Text('Created At: ${bet.createdAt}'),
-                      Text('Updated At: ${bet.updatedAt}'),
-
-                      SizedBox(height: 20),
-                      Text('Round Id: ${bet.roundId?.id}'),
-                      Text('Seq: ${bet.roundId?.seq}'),
-                      Text('State: ${bet.roundId?.state}'),
-                      Text('Started At: ${bet.roundId?.startedAt}'),
-                      Text('Crash At: ${bet.roundId?.crashAt}'),
-                      Text('Ended At: ${bet.roundId?.endedAt}'),
-
-                      SizedBox(height: 20),
-                      Text('User Id: ${bet.userId?.id}'),
+          final user = userModel.data;
+          return SingleChildScrollView(
+            child: Card(
+              margin: const EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Status: ${userModel.status}'),
+                    const SizedBox(height: 16),
+                    Text('ID: ${user.id}'),
+                    Text('User Name: ${user.userName}'),
+                    Text('Mobile: ${user.mobile}'),
+                    Text('Wallet: ${user.wallet}'),
+                    Text('Verified: ${user.verified}'),
+                    Text('OTP Verified: ${user.otpVerified}'),
+                    Text('Status: ${user.status}'),
+                    Text('Is Show: ${user.isShow}'),
+                    Text('Picture: ${user.picture}'),
+                    Text('Branch Name: ${user.branchName}'),
+                    Text('Bank Name: ${user.bankName}'),
+                    Text('Account Holder Name: ${user.accountHolderName}'),
+                    Text('Account No: ${user.accountNo}'),
+                    Text('IFSC Code: ${user.ifscCode}'),
+                    Text('Referral Code: ${user.referralCode}'),
+                    Text('UPI ID: ${user.upiId}'),
+                    Text('UPI Number: ${user.upiNumber}'),
+                    Text('Betting: ${user.betting}'),
+                    Text('Transfer: ${user.transfer}'),
+                    Text('FCM: ${user.fcm}'),
+                    Text('Personal Notification: ${user.personalNotification}'),
+                    Text('Main Notification: ${user.mainNotification}'),
+                    Text('Starline Notification: ${user.starlineNotification}'),
+                    Text(
+                      'Galidisawar Notification: ${user.galidisawarNotification}',
+                    ),
+                    if (user.transactionBlockedUntil != null)
                       Text(
-                        'User: ${bet.userId?.userName ?? 'Unknown'}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        'Transaction Blocked Until: ${user.transactionBlockedUntil}',
                       ),
-                      Text('email: ${bet.userId?.email}'),
-                    ],
-                  ),
+                    Text(
+                      'Transaction Permanently Blocked: ${user.transactionPermanentlyBlocked}',
+                    ),
+                    Text('Created At: ${user.createdAt}'),
+                    Text('Updated At: ${user.updatedAt}'),
+                    Text('Authentication: ${user.authentication}'),
+                    Text('Last Login: ${user.lastLogin}'),
+                  ],
                 ),
-              );
-            },
+              ),
+            ),
           );
         },
       ),

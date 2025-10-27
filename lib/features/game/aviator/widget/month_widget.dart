@@ -75,16 +75,22 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
             },
             itemBuilder: (context, index) {
               final topBet = currentMonthBets[index];
+              String formatNum(num? value) =>
+                  value?.toStringAsFixed(2) ?? '0.00';
               return Container(
                 height: 71,
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 5,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.aviatorSixthColor,
                   borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.aviatorFifteenthColor,
+                    width: 1,
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,7 +128,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                                 context,
                               ).textTheme.aviatorBodyMediumSecondary,
                             ),
-                            //! container for cash out- 10000
+                            //! container for cash out
                             Container(
                               height: 24,
                               width: 73,
@@ -157,7 +163,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                                 context,
                               ).textTheme.aviatorBodyMediumSecondary,
                             ),
-                            //! container for win- 10000
+                            //! container for win
                             Container(
                               height: 24,
                               width: 73,
@@ -173,7 +179,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                               ),
                               child: Center(
                                 child: Text(
-                                  topBet.payout.toString(),
+                                  formatNum(topBet.payout),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.aviatorbodySmallPrimary,
