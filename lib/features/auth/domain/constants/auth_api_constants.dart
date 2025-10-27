@@ -11,4 +11,6 @@ class AuthApiConstants {
 
   static const String sentotpAPI = "auth/send";
   static const String otpVerifyAPI = "auth/verify";
+
+  static const String isGoogleLogin = "isGoogleLogin";
 }

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "512256426654-7ab781qn7gqj6abcn0gi6kk0sh30mk9v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.winket",
+            "certificate_hash": "481bcc4f3ada10a52d30106aac470ffd4c2c8665"
+          }
+        },
+        {
           "client_id": "512256426654-k2pk6gl97kpmc0t41grts5rq11dk00ir.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -50,8 +50,13 @@ class AppImages {
   static const String carrom1v1 = 'assets/images/carrom1v1.png';
   static const String carromTournament = 'assets/images/carrom_tournament.png';
   static const String carromPractice = 'assets/images/carrom_practice.png';
+  static const String carromMatchBg = 'assets/images/carromMatchBg.png';
   //! Lottie
 
   static const String aviatorbg = 'assets/images/aviator_backround.json';
   static const String aviatorloading = 'assets/images/aviator_loading.json';
+
+  // ! Profile Screen
+
+  static const String cameraIcon = 'assets/images/cameraIcon1.png';
 }

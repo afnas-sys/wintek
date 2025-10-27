@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/selection_container.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/game_round/game_round_provider.dart';
-import 'package:wintek/features/game/card_jackpot/providers/selection/selection_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/checkout/amount_provider.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
@@ -23,16 +22,15 @@ class BottumSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selection = ref.watch(selectionProvider);
-    final selectionNotifier = ref.read(selectionProvider.notifier);
-    final betNotifier = ref.read(betProvider.notifier);
+    final selection = ref.watch(amountSelectProvider);
+    final selectionNotifier = ref.read(amountSelectProvider.notifier);
     final double width = MediaQuery.of(context).size.width;
     final cardName = isMainCard
         ? AppStrings.mainCardNames[cardIndex]
         : cardIndex;
     final String title = isMainCard
         ? 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName'
-        : 'SELECT NUMBER $cardName';
+        : 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName';
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cardSecondPrimaryColor,
@@ -226,10 +224,10 @@ class BottumSheet extends ConsumerWidget {
                   // Confirmation button
                   InkWell(
                     onTap: () {
-                      betNotifier.addRound(
-                        cardName: cardName.toString(),
-                        amount: selection.total,
-                      );
+                      // betNotifier.addRound(
+                      //   cardName: cardName.toString(),
+                      //   amount: selection.total,
+                      // );
                       Navigator.pop(context);
                     },
                     child: Container(

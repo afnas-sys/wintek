@@ -45,7 +45,7 @@ class GoogleAuthResponse {
   final String message;
   final TokenData tokenData;
   final String cookie;
-  final UserData data;
+  final GoogleData data;
 
   GoogleAuthResponse({
     required this.status,
@@ -61,7 +61,7 @@ class GoogleAuthResponse {
       message: json['message'] ?? '',
       tokenData: TokenData.fromJson(json['tokenData'] ?? {}),
       cookie: json['cookie'] ?? '',
-      data: UserData.fromJson(json['data'] ?? {}),
+      data: GoogleData.fromJson(json['data'] ?? {}),
     );
   }
 
@@ -94,7 +94,7 @@ class TokenData {
   }
 }
 
-class UserData {
+class GoogleData {
   final String id;
   final String email;
   final String name;
@@ -102,7 +102,7 @@ class UserData {
   final int wallet;
   final String googleId;
 
-  UserData({
+  GoogleData({
     required this.id,
     required this.email,
     required this.name,
@@ -111,8 +111,8 @@ class UserData {
     required this.googleId,
   });
 
-  factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(
+  factory GoogleData.fromJson(Map<String, dynamic> json) {
+    return GoogleData(
       id: json['id'] ?? '',
       email: json['email'] ?? '',
       name: json['name'] ?? '',

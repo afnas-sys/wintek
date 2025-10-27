@@ -121,6 +121,7 @@ class AppColors {
 
   static const Color profilePrimaryColor = Color(0XFF140A2D);
   static const Color profileSecondaryColor = Color(0XFF271777);
+  static const Color profileTextcolor = Colors.white;
 
   //! -----------------------------------------------------------------------------------------------------------------------------
 
