@@ -23,7 +23,6 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   bool _isSwitched = false;
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
-  final _autoPlayController = TextEditingController();
   final secureStorageService = SecureStorageService();
 
   Future<String?> getUserId() async {

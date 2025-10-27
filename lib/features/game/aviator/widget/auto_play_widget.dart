@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -49,170 +51,173 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Color(0XFF1a1c1c),
-      contentPadding: const EdgeInsets.all(0),
-      content: SizedBox(
-        height: 400,
-        width: double.maxFinite,
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.aviatorFourteenthColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            spacing: 2,
-            children: [
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Color(0XFF2d2d31),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Auto play options',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.aviatorBodyMediumPrimary,
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Icon(
-                        Icons.close,
-                        color: AppColors.aviatorTertiaryColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Rounds
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Color(0XFF2d2d31),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    spacing: 6,
-                    children: [
-                      Text(
-                        'Number of rounds:',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.aviatorBodyMediumPrimary,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _autoPlayButton(context, '10'),
-                          _autoPlayButton(context, '20'),
-                          _autoPlayButton(context, '50'),
-                          _autoPlayButton(context, '100'),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              //!cash Decrease
-              autoPlayCondition(
-                'Stop if cash decreases by',
-                _decrementController,
-                stopIfCashDecreases,
-                (value) => setState(() => stopIfCashDecreases = value),
-              ),
-              SizedBox(height: 2),
-              //!cash Increase
-              autoPlayCondition(
-                'Stop if cash increase by',
-                _incrementController,
-                stopIfCashIncreases,
-                (value) => setState(() => stopIfCashIncreases = value),
-              ),
-              SizedBox(height: 2),
-
-              //!single win exceeds
-              autoPlayCondition(
-                'Stop if single win exceeds',
-                _exceedsController,
-                stopIfSingleWinExceeds,
-                (value) => setState(() => stopIfSingleWinExceeds = value),
-              ),
-              SizedBox(height: 20),
-
-              Expanded(
-                child: Container(
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+      child: AlertDialog(
+        backgroundColor: AppColors.aviatorThirtyFirstColor,
+        contentPadding: const EdgeInsets.all(0),
+        content: SizedBox(
+          height: 400,
+          width: double.maxFinite,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.aviatorFourteenthColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              spacing: 2,
+              children: [
+                Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Color(0XFF2d2d31),
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(
-                        child: CustomElevatedButton(
-                          borderRadius: 100,
-                          width: 100,
-                          hasBorder: true,
-                          borderColor: AppColors.aviatorSeventeenthColor,
-                          backgroundColor: AppColors.aviatorSeventeenthColor,
-                          onPressed: _resetAll,
-                          padding: EdgeInsets.only(
-                            left: 23,
-                            right: 23,
-                            top: 4,
-                            bottom: 4,
-                          ),
-                          child: Text(
-                            'Reset',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.aviatorBodyTitleMdeium,
-                          ),
-                        ),
+                      Text(
+                        'Auto play options',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.aviatorBodyMediumPrimary,
                       ),
-                      Flexible(
-                        child: CustomElevatedButton(
-                          borderRadius: 100,
-                          width: 100,
-                          hasBorder: true,
-                          borderColor: AppColors.aviatorEighteenthColor,
-                          backgroundColor: AppColors.aviatorEighteenthColor,
-                          onPressed: () {},
-                          padding: EdgeInsets.only(
-                            left: 23,
-                            right: 23,
-                            top: 4,
-                            bottom: 4,
-                          ),
-                          child: Text(
-                            'Start',
-                            style: Theme.of(
-                              context,
-                            ).textTheme.aviatorBodyTitleMdeium,
-                          ),
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Icon(
+                          Icons.close,
+                          color: AppColors.aviatorTertiaryColor,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+
+                // Rounds
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Color(0XFF2d2d31),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      spacing: 6,
+                      children: [
+                        Text(
+                          'Number of rounds:',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.aviatorBodyMediumPrimary,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _autoPlayButton(context, '10'),
+                            _autoPlayButton(context, '20'),
+                            _autoPlayButton(context, '50'),
+                            _autoPlayButton(context, '100'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                //!cash Decrease
+                autoPlayCondition(
+                  'Stop if cash decreases by',
+                  _decrementController,
+                  stopIfCashDecreases,
+                  (value) => setState(() => stopIfCashDecreases = value),
+                ),
+                SizedBox(height: 2),
+                //!cash Increase
+                autoPlayCondition(
+                  'Stop if cash increase by',
+                  _incrementController,
+                  stopIfCashIncreases,
+                  (value) => setState(() => stopIfCashIncreases = value),
+                ),
+                SizedBox(height: 2),
+
+                //!single win exceeds
+                autoPlayCondition(
+                  'Stop if single win exceeds',
+                  _exceedsController,
+                  stopIfSingleWinExceeds,
+                  (value) => setState(() => stopIfSingleWinExceeds = value),
+                ),
+                SizedBox(height: 20),
+
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Color(0XFF2d2d31),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Flexible(
+                          child: CustomElevatedButton(
+                            borderRadius: 100,
+                            width: 100,
+                            hasBorder: true,
+                            borderColor: AppColors.aviatorSeventeenthColor,
+                            backgroundColor: AppColors.aviatorSeventeenthColor,
+                            onPressed: _resetAll,
+                            padding: EdgeInsets.only(
+                              left: 23,
+                              right: 23,
+                              top: 4,
+                              bottom: 4,
+                            ),
+                            child: Text(
+                              'Reset',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.aviatorBodyTitleMdeium,
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: CustomElevatedButton(
+                            borderRadius: 100,
+                            width: 100,
+                            hasBorder: true,
+                            borderColor: AppColors.aviatorEighteenthColor,
+                            backgroundColor: AppColors.aviatorEighteenthColor,
+                            onPressed: () {},
+                            padding: EdgeInsets.only(
+                              left: 23,
+                              right: 23,
+                              top: 4,
+                              bottom: 4,
+                            ),
+                            child: Text(
+                              'Start',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.aviatorBodyTitleMdeium,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -250,7 +255,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                   ),
                   trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                   activeColor: AppColors.aviatorFourteenthColor,
-                  inactiveThumbColor: AppColors.aviatorTwentyTenthColor,
+                  inactiveThumbColor: AppColors.aviatorThirtyColor,
 
                   inactiveTrackColor: AppColors.aviatorFourteenthColor,
                 ),
@@ -262,9 +267,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                 label,
                 style: Theme.of(context).textTheme.aviatorbodySmallPrimary
                     .copyWith(
-                      color: switchValue
-                          ? null
-                          : AppColors.aviatorTwentyTenthColor,
+                      color: switchValue ? null : AppColors.aviatorThirtyColor,
                     ),
               ),
             ),
@@ -398,7 +401,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
             size: 18.33,
             color: enabled
                 ? AppColors.aviatorTertiaryColor
-                : AppColors.aviatorTwentyTenthColor,
+                : AppColors.aviatorThirtyColor,
           ),
         ),
       ),
