@@ -16,6 +16,7 @@ class AppImages {
 
   //aviator
   static const String previousHand = 'assets/images/previousHand.png';
+  static const String refresh = 'assets/images/refresh.png';
 
   //Home appBar
   static const String homeAppBarImage = 'assets/images/home_appbarImage.png';

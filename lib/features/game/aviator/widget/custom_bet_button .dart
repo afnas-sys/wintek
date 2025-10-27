@@ -13,6 +13,7 @@ import 'package:wintek/features/game/aviator/providers/aviator_round_provider.da
 import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
 import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 
 class CustomBetButton extends ConsumerStatefulWidget {
   final int index;
@@ -87,6 +88,19 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
             final autoCashoutAt = cashout.cashoutAt;
 
             log("✅ Auto Cashout triggered at $autoCashoutAt X");
+
+            // Update wallet after auto cashout
+            final currentUser = ref.read(userProvider);
+            currentUser.maybeWhen(
+              data: (userModel) {
+                if (userModel != null) {
+                  final winAmount = autoCashoutAt! * bet.stake;
+                  final newWallet = userModel.data.wallet + winAmount;
+                  ref.read(userProvider.notifier).updateWallet(newWallet);
+                }
+              },
+              orElse: () {},
+            );
 
             if (mounted) {
               setState(() {
@@ -202,6 +216,21 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                           .read(betStateProvider.notifier)
                           .placeBet(widget.index);
 
+                      // Update wallet after placing bet
+                      final currentUser = ref.read(userProvider);
+                      currentUser.maybeWhen(
+                        data: (userModel) {
+                          if (userModel != null) {
+                            final newWallet =
+                                userModel.data.wallet - newBet.stake;
+                            ref
+                                .read(userProvider.notifier)
+                                .updateWallet(newWallet);
+                          }
+                        },
+                        orElse: () {},
+                      );
+
                       setState(() {
                         hasPlacedBet = true;
                       });
@@ -277,6 +306,21 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     }
                     final cashoutAt = response.cashoutAt;
                     log('✅ CashoutAt: $cashoutAt X');
+
+                    // Update wallet after cashout
+                    final currentUser = ref.read(userProvider);
+                    currentUser.maybeWhen(
+                      data: (userModel) {
+                        if (userModel != null) {
+                          final winAmount = cashoutAt! * bet.stake;
+                          final newWallet = userModel.data.wallet + winAmount;
+                          ref
+                              .read(userProvider.notifier)
+                              .updateWallet(newWallet);
+                        }
+                      },
+                      orElse: () {},
+                    );
 
                     // ✅ show Flushbar only if success
                     _successFlushbar(
