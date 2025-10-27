@@ -17,32 +17,8 @@ class CardsSection extends ConsumerWidget {
     final round = ref.watch(cardRoundNotifierProvider);
     final timer = ref.watch(timerProvider);
 
-    String overlayText;
-    double fontSize = 130;
-
-    if (round == null) {
-      // 1️⃣ Initial load
-      overlayText = 'Loading...';
-      fontSize = 50;
-    } else if (round.state == 'PREPARE') {
-      // 2️⃣ Preparing
-      overlayText = 'Preparing';
-      fontSize = 50;
-    } else if (round.state == 'RUNNING') {
-      // 2️⃣ Running
-      overlayText = timer.inSeconds.toString();
-      fontSize = 130;
-    } else if (round.state == 'ENDED') {
-      // 3️⃣ Ended
-      overlayText = 'END';
-      fontSize = 50;
-    } else {
-      // Fallback for unknown states
-      overlayText = 'Loading...';
-      fontSize = 50;
-    }
-
-    // Show overlay if not running OR if still loading
+    // Determine overlay text and font size based on round state
+    final overlayData = _getOverlayData(round, timer);
     final showOverlay = round == null || round.state != 'RUNNING';
 
     return SizedBox(
@@ -56,29 +32,48 @@ class CardsSection extends ConsumerWidget {
               NumbersCards(selectedCardTypeIndex: selectedCardTypeIndex),
             ],
           ),
-          if (showOverlay && overlayText.isNotEmpty)
+          if (showOverlay && overlayData.text.isNotEmpty)
             Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.cardUnfocusedColor,
-                    width: 6,
-                  ),
-                ),
-                child: Center(
-                  child: AppText(
-                    text: overlayText,
-                    color: Colors.white,
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
+              child: overlayData.text == 'null'
+                  ? const Center(child: CircularProgressIndicator())
+                  : Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: AppColors.cardUnfocusedColor,
+                          width: 6,
+                        ),
+                      ),
+                      child: Center(
+                        child: AppText(
+                          text: overlayData.text,
+                          color: Colors.white,
+                          fontSize: overlayData.fontSize,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
             ),
         ],
       ),
     );
+  }
+
+  ({String text, double fontSize}) _getOverlayData(
+    dynamic round,
+    Duration timer,
+  ) {
+    if (round == null) return (text: 'null', fontSize: 50.0);
+    switch (round.state) {
+      case 'PREPARE':
+        return (text: timer.inSeconds.toString(), fontSize: 130.0);
+      case 'RUNNING':
+        return (text: timer.inSeconds.toString(), fontSize: 130.0);
+      case 'ENDED':
+        return (text: 'ENDED', fontSize: 50.0);
+      default:
+        return (text: 'null', fontSize: 50.0);
+    }
   }
 }

@@ -55,7 +55,7 @@ class _BottumHistoryTabState extends State<BottumHistoryTab> {
             ),
           ),
         // ListView changes based on button
-        // HistoryListSection(isGameHistory: selectedIndex == 0),
+        HistoryListSection(isGameHistory: selectedIndex == 0),
       ],
     );
   }
