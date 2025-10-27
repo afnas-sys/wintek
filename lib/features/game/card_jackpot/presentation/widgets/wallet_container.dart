@@ -60,7 +60,8 @@ class WalletContainer extends ConsumerWidget {
                   children: [
                     futureWallet.when(
                       data: (walletBalance) => AppText(
-                        text: '₹ ${walletBalance?.data.balance}',
+                        text:
+                            '₹ ${walletBalance?.data.balance.toStringAsFixed(2)}',
                         fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
