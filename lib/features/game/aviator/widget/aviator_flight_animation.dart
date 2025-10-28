@@ -389,10 +389,16 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    "${currentValue.toStringAsFixed(2)}x",
+                                    "${round.crashAt.toString()}x",
                                     style: Theme.of(
                                       context,
                                     ).textTheme.aviatorDisplayLargeSecond,
+                                    // ),
+                                    // Text(
+                                    //   ' ${round.crashAt.toString()}',
+                                    //   style: Theme.of(
+                                    //     context,
+                                    //   ).textTheme.aviatorHeadlineSmall,
                                   ),
                                 ],
                               ),

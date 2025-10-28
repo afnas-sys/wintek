@@ -5,9 +5,38 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 
 import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
+
+class AutoPlayState {
+  final AutoPlaySettings? settings;
+  final int roundsPlayed;
+  final double initialWallet;
+  final double lastWinAmount;
+
+  AutoPlayState({
+    this.settings,
+    this.roundsPlayed = 0,
+    this.initialWallet = 0.0,
+    this.lastWinAmount = 0.0,
+  });
+
+  AutoPlayState copyWith({
+    AutoPlaySettings? settings,
+    int? roundsPlayed,
+    double? initialWallet,
+    double? lastWinAmount,
+  }) {
+    return AutoPlayState(
+      settings: settings ?? this.settings,
+      roundsPlayed: roundsPlayed ?? this.roundsPlayed,
+      initialWallet: initialWallet ?? this.initialWallet,
+      lastWinAmount: lastWinAmount ?? this.lastWinAmount,
+    );
+  }
+}
 
 class BetContainer extends ConsumerStatefulWidget {
   final int index;
@@ -25,6 +54,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   final _autoAmountController = TextEditingController();
   final secureStorageService = SecureStorageService();
 
+  AutoPlayState _autoPlayState = AutoPlayState();
+
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
     return creds.userId; // this will be null if nothing was saved
@@ -39,6 +70,72 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       int add = int.tryParse(value) ?? 0;
       controller.text = (current + add).toString();
     });
+  }
+
+  void _startAutoPlay(AutoPlaySettings settings) {
+    final user = ref.read(userProvider);
+    user.maybeWhen(
+      data: (userModel) {
+        if (userModel != null) {
+          setState(() {
+            _autoPlayState = AutoPlayState(
+              settings: settings,
+              roundsPlayed: 0,
+              initialWallet: userModel.data.wallet,
+              lastWinAmount: 0.0,
+            );
+          });
+          // Place the first bet immediately
+          _placeFirstAutoBet();
+        }
+      },
+      orElse: () {},
+    );
+  }
+
+  void _placeFirstAutoBet() {
+    // Trigger the first bet placement for autoplay
+    // This will be handled by the CustomBetButton's autoplay logic
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // The CustomBetButton will handle placing the first bet when autoplay starts
+    });
+  }
+
+  void _stopAutoPlay() {
+    setState(() {
+      _autoPlayState = AutoPlayState();
+    });
+  }
+
+  bool _shouldContinueAutoPlay(double currentWallet, double winAmount) {
+    if (_autoPlayState.settings == null) return false;
+
+    final settings = _autoPlayState.settings!;
+    final roundsPlayed = _autoPlayState.roundsPlayed;
+    final maxRounds = int.tryParse(settings.selectedRounds ?? '0') ?? 0;
+
+    // Check if max rounds reached
+    if (maxRounds > 0 && roundsPlayed >= maxRounds) return false;
+
+    // Check cash decrease condition
+    if (settings.stopIfCashDecreases) {
+      final decrease = _autoPlayState.initialWallet - currentWallet;
+      if (decrease >= settings.decrementAmount) return false;
+    }
+
+    // Check cash increase condition
+    if (settings.stopIfCashIncreases) {
+      final increase = currentWallet - _autoPlayState.initialWallet;
+      if (increase >= settings.incrementAmount) return false;
+    }
+
+    // Check single win exceeds condition
+    if (settings.stopIfSingleWinExceeds &&
+        winAmount >= settings.exceedsAmount) {
+      return false;
+    }
+
+    return true;
   }
 
   void _increment() {
@@ -342,25 +439,48 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   //!AUTOPLAY
   Widget _buildAutoplayButton(BuildContext context) {
+    final isAutoPlayActive = _autoPlayState.settings != null;
+    final maxRounds = _autoPlayState.settings?.selectedRounds != null
+        ? int.tryParse(_autoPlayState.settings!.selectedRounds!) ?? 0
+        : 0;
+    final currentRound = _autoPlayState.roundsPlayed;
+
     return Flexible(
       flex: 2,
       child: CustomElevatedButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AutoPlayWidget();
-            },
-          );
+        onPressed: () async {
+          if (isAutoPlayActive) {
+            // Stop autoplay
+            _stopAutoPlay();
+          } else {
+            // Start autoplay - show dialog with callback
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AutoPlayWidget(
+                  onStart: (settings) {
+                    _startAutoPlay(settings);
+                  },
+                );
+              },
+            );
+          }
         },
         padding: const EdgeInsets.symmetric(horizontal: 12),
         borderRadius: 52,
-        backgroundColor: AppColors.aviatorTwentyNinthColor,
+        backgroundColor: isAutoPlayActive
+            ? AppColors
+                  .aviatorTwentySixthColor // Red color for stop
+            : AppColors.aviatorTwentyNinthColor,
         hasBorder: true,
         height: 28,
-        borderColor: AppColors.aviatorNineteenthColor,
+        borderColor: isAutoPlayActive
+            ? AppColors.aviatorTwentySixthColor
+            : AppColors.aviatorNineteenthColor,
         child: Text(
-          'AUTOPLAY',
+          isAutoPlayActive
+              ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
+              : 'AUTOPLAY',
           style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
           overflow: TextOverflow.ellipsis,
         ),
@@ -445,6 +565,17 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       index: widget.index,
       amountController: _autoAmountController,
       switchController: _switchController,
+      autoPlayState: _autoPlayState,
+      onAutoPlayUpdate: (roundsPlayed, lastWinAmount) {
+        setState(() {
+          _autoPlayState = _autoPlayState.copyWith(
+            roundsPlayed: roundsPlayed,
+            lastWinAmount: lastWinAmount,
+          );
+        });
+      },
+      onAutoPlayStop: _stopAutoPlay,
+      shouldContinueAutoPlay: _shouldContinueAutoPlay,
     );
   }
 }

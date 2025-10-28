@@ -58,6 +58,8 @@ class AppColors {
   ).withOpacity(80 / 100);
   static Color aviatorThirtyColor = Colors.grey.shade400;
   static const Color aviatorThirtyFirstColor = Color(0XFF1a1c1c);
+  static const Color aviatorThirtyTwoColor = Color(0XFFd8011f);
+  static const Color aviatorThirtyThreeColor = Color(0XFFb3021b);
 
   //graph
   static const Color aviatorGraphYaxisColor = Color(0xFF2A94C7);
