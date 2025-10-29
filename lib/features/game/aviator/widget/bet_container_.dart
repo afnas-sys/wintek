@@ -40,7 +40,19 @@ class AutoPlayState {
 
 class BetContainer extends ConsumerStatefulWidget {
   final int index;
-  const BetContainer({super.key, required this.index});
+  final bool showAddButton;
+  final VoidCallback? onAddPressed;
+  final bool showRemoveButton;
+  final VoidCallback? onRemovePressed;
+
+  const BetContainer({
+    super.key,
+    required this.index,
+    this.showAddButton = false,
+    this.onAddPressed,
+    this.showRemoveButton = false,
+    this.onRemovePressed,
+  });
 
   @override
   ConsumerState<BetContainer> createState() => _BetContainerState();
@@ -139,14 +151,20 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   }
 
   void _increment() {
-    int value = int.tryParse(_amountController.text) ?? 0;
-    _amountController.text = (value + 1).toString();
+    TextEditingController controller = _selectedValue == 0
+        ? _amountController
+        : _autoAmountController;
+    int value = int.tryParse(controller.text) ?? 0;
+    controller.text = (value + 1).toString();
   }
 
   void _decrement() {
-    int value = int.tryParse(_amountController.text) ?? 0;
+    TextEditingController controller = _selectedValue == 0
+        ? _amountController
+        : _autoAmountController;
+    int value = int.tryParse(controller.text) ?? 0;
     if (value > 0) {
-      _amountController.text = (value - 1).toString();
+      controller.text = (value - 1).toString();
     }
   }
 
@@ -160,7 +178,6 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   @override
   Widget build(BuildContext context) {
     //!------BET CONTAINER------
-
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
       height: _selectedValue == 0 ? 210 : 258,
@@ -183,21 +200,38 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                 //! SWITCH
                 child: _buildSwitch(),
               ),
-              //! TOP RIGHT SIDED BUTTON '-'
-              CustomElevatedButton(
-                hasBorder: true,
-                borderColor: AppColors.aviatorFifteenthColor,
-                backgroundColor: AppColors.aviatorFourteenthColor,
-                padding: EdgeInsetsGeometry.all(2),
-                height: 22,
-                width: 22,
-                onPressed: () {},
-                child: Icon(
-                  Icons.remove,
-                  size: 18.33,
-                  color: AppColors.aviatorFifteenthColor,
-                ),
-              ),
+              if (widget.showRemoveButton)
+                CustomElevatedButton(
+                  hasBorder: true,
+                  borderColor: AppColors.aviatorFifteenthColor,
+                  backgroundColor: AppColors.aviatorFourteenthColor,
+                  padding: EdgeInsetsGeometry.all(2),
+                  height: 22,
+                  width: 22,
+                  onPressed: widget.onRemovePressed,
+                  child: Icon(
+                    Icons.remove,
+                    size: 18.33,
+                    color: AppColors.aviatorFifteenthColor,
+                  ),
+                )
+              else if (widget.showAddButton)
+                CustomElevatedButton(
+                  hasBorder: true,
+                  borderColor: AppColors.aviatorFifteenthColor,
+                  backgroundColor: AppColors.aviatorFourteenthColor,
+                  padding: EdgeInsetsGeometry.all(2),
+                  height: 22,
+                  width: 22,
+                  onPressed: widget.onAddPressed,
+                  child: Icon(
+                    Icons.add,
+                    size: 18.33,
+                    color: AppColors.aviatorFifteenthColor,
+                  ),
+                )
+              else
+                SizedBox(width: 22, height: 22),
             ],
           ),
           const SizedBox(height: 20),
@@ -308,7 +342,6 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                     ),
             ),
           ),
-
           SizedBox(height: 16),
           //! AUTOPLAY Button
           if (_selectedValue == 1)
@@ -470,16 +503,16 @@ class _BetContainerState extends ConsumerState<BetContainer> {
         borderRadius: 52,
         backgroundColor: isAutoPlayActive
             ? AppColors
-                  .aviatorTwentySixthColor // Red color for stop
+                  .aviatorSeventeenthColor // Red color for stop
             : AppColors.aviatorTwentyNinthColor,
         hasBorder: true,
         height: 28,
         borderColor: isAutoPlayActive
-            ? AppColors.aviatorTwentySixthColor
+            ? AppColors.aviatorEighteenthColor
             : AppColors.aviatorNineteenthColor,
         child: Text(
           isAutoPlayActive
-              ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
+              ? 'STOP (${currentRound}/${maxRounds > 0 ? maxRounds : '∞'})'
               : 'AUTOPLAY',
           style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
           overflow: TextOverflow.ellipsis,
