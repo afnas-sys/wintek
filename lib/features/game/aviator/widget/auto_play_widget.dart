@@ -174,7 +174,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Color(0XFF2d2d31),
+                    color: AppColors.aviatorThirtyFourColor,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -206,7 +206,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                   child: Container(
                     padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Color(0XFF2d2d31),
+                      color: AppColors.aviatorThirtyFourColor,
                       borderRadius: BorderRadius.circular(20),
                       border: _roundsError != null
                           ? Border.all(
@@ -336,7 +336,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                   child: Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Color(0XFF2d2d31),
+                      color: AppColors.aviatorThirtyFourColor,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(20),
                         bottomRight: Radius.circular(20),
@@ -413,7 +413,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
       child: Container(
         padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Color(0XFF2d2d31),
+          color: AppColors.aviatorThirtyFourColor,
           borderRadius: BorderRadius.circular(20),
           border: errorText != null
               ? Border.all(color: AppColors.aviatorThirtyThreeColor, width: 2)

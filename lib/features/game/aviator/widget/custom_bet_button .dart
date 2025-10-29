@@ -81,8 +81,10 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
   }
 
   void _handleAutoPlayContinuation() {
-    if (widget.autoPlayState == null || widget.autoPlayState!.settings == null)
+    if (widget.autoPlayState == null ||
+        widget.autoPlayState!.settings == null) {
       return;
+    }
 
     final user = ref.read(userProvider);
     user.maybeWhen(
