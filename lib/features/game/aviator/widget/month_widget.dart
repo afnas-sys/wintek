@@ -35,7 +35,12 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
         error: (error, stack) => Center(child: Text('Error: $error')),
         data: (topBetsModel) {
           if (topBetsModel == null || topBetsModel.data.isEmpty) {
-            return const Center(child: Text('No data available'));
+            return Center(
+              child: Text(
+                'No data available',
+                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+              ),
+            );
           }
 
           // Filter bets to show only current month's bets

@@ -14,17 +14,26 @@ import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
 import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
+import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
 
 class CustomBetButton extends ConsumerStatefulWidget {
   final int index;
   final TextEditingController amountController;
   final TextEditingController? switchController;
+  final AutoPlayState? autoPlayState;
+  final Function(int, double)? onAutoPlayUpdate;
+  final VoidCallback? onAutoPlayStop;
+  final bool Function(double, double)? shouldContinueAutoPlay;
 
   const CustomBetButton({
     super.key,
     required this.index,
     required this.amountController,
     this.switchController,
+    this.autoPlayState,
+    this.onAutoPlayUpdate,
+    this.onAutoPlayStop,
+    this.shouldContinueAutoPlay,
   });
 
   @override
@@ -36,12 +45,159 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
   bool hasAutoCashedOut = false;
   String? lastRoundId;
   double? lastMultiplier;
+  bool _isPlacingBet = false; // Flag to prevent duplicate bet placement
 
   final secureStorageService = SecureStorageService();
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
     return creds.userId;
+  }
+
+  void _handleRoundCrash() {
+    // If autoplay is active and we crashed (lost the bet), update rounds played
+    if (widget.autoPlayState != null &&
+        widget.autoPlayState!.settings != null) {
+      widget.onAutoPlayUpdate?.call(
+        widget.autoPlayState!.roundsPlayed + 1,
+        0.0, // No win on crash
+      );
+
+      // Check if should continue autoplay after crash
+      final user = ref.read(userProvider);
+      user.maybeWhen(
+        data: (userModel) {
+          if (userModel != null) {
+            final currentWallet = userModel.data.wallet;
+            if (widget.shouldContinueAutoPlay != null &&
+                !widget.shouldContinueAutoPlay!(currentWallet, 0.0)) {
+              widget.onAutoPlayStop?.call();
+            }
+          }
+        },
+        orElse: () {},
+      );
+    }
+  }
+
+  void _handleAutoPlayContinuation() {
+    if (widget.autoPlayState == null ||
+        widget.autoPlayState!.settings == null) {
+      return;
+    }
+
+    final user = ref.read(userProvider);
+    user.maybeWhen(
+      data: (userModel) {
+        if (userModel != null) {
+          final currentWallet = userModel.data.wallet;
+          final lastWinAmount = widget.autoPlayState!.lastWinAmount;
+
+          // Check if should continue autoplay
+          if (widget.shouldContinueAutoPlay != null &&
+              widget.shouldContinueAutoPlay!(currentWallet, lastWinAmount)) {
+            // Automatically place next bet
+            _placeBet();
+          } else {
+            // Stop autoplay
+            widget.onAutoPlayStop?.call();
+          }
+        }
+      },
+      orElse: () {},
+    );
+  }
+
+  void _startAutoPlayBetting() {
+    // This method is called when autoplay is first started
+    // Place the initial bet immediately if conditions allow
+    final round = ref.read(aviatorRoundNotifierProvider);
+    if (round != null && round.state == 'PREPARE') {
+      _placeBet();
+    }
+  }
+
+  Future<void> _placeBet() async {
+    // Prevent duplicate bet placement
+    if (_isPlacingBet || hasPlacedBet) return;
+
+    _isPlacingBet = true;
+
+    try {
+      final round = ref.watch(aviatorRoundNotifierProvider);
+      final betService = ref.read(betServiceProvider);
+      final userId = await getUserId();
+
+      if (userId == null || round == null) return;
+
+      if (round.state == 'RUNNING') {
+        _customSnackBar(
+          context,
+          'You cannot place a bet while the game is running',
+        );
+        return;
+      }
+
+      final amountText = widget.amountController.text.trim();
+      final autoCashoutText = widget.switchController?.text.trim() ?? '';
+
+      final autoCashoutValue = autoCashoutText.isNotEmpty
+          ? double.tryParse(autoCashoutText)
+          : null;
+
+      if (amountText.isEmpty) {
+        log('⚠️ Bet amount is empty');
+        return;
+      }
+
+      final roundId = round.roundId;
+      final seq = round.seq;
+
+      final newBet = await betService.placeBet(
+        BetRequest(
+          roundId: roundId!,
+          userId: userId,
+          seq: int.parse(seq.toString()),
+          stake: int.parse(amountText),
+          betIndex: widget.index,
+          autoCashout: autoCashoutValue,
+        ),
+      );
+
+      if (newBet != null) {
+        ref
+            .read(betResponseProvider.notifier)
+            .setBetResponse(widget.index, newBet);
+        ref.read(betStateProvider.notifier).placeBet(widget.index);
+
+        // Update wallet after placing bet
+        final currentUser = ref.read(userProvider);
+        currentUser.maybeWhen(
+          data: (userModel) {
+            if (userModel != null) {
+              final newWallet = userModel.data.wallet - newBet.stake;
+              ref.read(userProvider.notifier).updateWallet(newWallet);
+            }
+          },
+          orElse: () {},
+        );
+
+        setState(() {
+          hasPlacedBet = true;
+        });
+
+        log('✅ Bet placed successfully: ${newBet.stake}');
+      }
+    } on DioException catch (e) {
+      final errorMsg = e.response?.data?['message'] ?? 'Bet failed';
+      log('❌ Error placing bet: $errorMsg');
+      _customSnackBar(context, errorMsg);
+    } catch (e) {
+      log('❌ Error placing bet: $e');
+      _customSnackBar(context, 'Something went wrong. Please try again.');
+    } finally {
+      _isPlacingBet = false;
+    }
   }
 
   @override
@@ -55,6 +211,29 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
       hasAutoCashedOut = false;
       lastMultiplier = null;
       lastRoundId = round.roundId;
+
+      // Handle crash - if we had a bet placed and round crashed, update autoplay
+      if (lastRoundId != null && round.state == 'CRASHED') {
+        _handleRoundCrash();
+      }
+
+      // Handle autoplay continuation after round reset
+      if (widget.autoPlayState != null &&
+          widget.autoPlayState!.settings != null) {
+        _handleAutoPlayContinuation();
+      }
+    }
+
+    // Check if autoplay was just started and place first bet
+    if (widget.autoPlayState != null &&
+        widget.autoPlayState!.settings != null &&
+        widget.autoPlayState!.roundsPlayed == 0 &&
+        !hasPlacedBet &&
+        round != null &&
+        round.state == 'PREPARE') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startAutoPlayBetting();
+      });
     }
 
     final bet = ref.watch(betResponseProvider)[widget.index];
@@ -97,6 +276,22 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                   final winAmount = autoCashoutAt! * bet.stake;
                   final newWallet = userModel.data.wallet + winAmount;
                   ref.read(userProvider.notifier).updateWallet(newWallet);
+
+                  // Update autoplay state
+                  if (widget.autoPlayState != null) {
+                    widget.onAutoPlayUpdate?.call(
+                      widget.autoPlayState!.roundsPlayed + 1,
+                      winAmount,
+                    );
+
+                    // Check if should continue autoplay
+                    if (widget.shouldContinueAutoPlay != null &&
+                        !widget.shouldContinueAutoPlay!(newWallet, winAmount)) {
+                      widget.onAutoPlayStop?.call();
+                    } else {
+                      // Continue autoplay - next bet will be placed when round resets
+                    }
+                  }
                 }
               },
               orElse: () {},
@@ -164,92 +359,9 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
         onPressed: enabled
             ? () async {
-                final betService = ref.read(betServiceProvider);
-                final userId = await getUserId();
-
-                if (userId == null) {
-                  log('❌ No userId found!');
-                  return;
-                }
-
                 // Place Bet
                 if (!hasPlacedBet && round != null) {
-                  if (round.state == 'RUNNING') {
-                    _customSnackBar(
-                      context,
-                      'You cannot place a bet while the game is running',
-                    );
-                    return;
-                  }
-                  final amountText = widget.amountController.text.trim();
-                  final autoCashoutText =
-                      widget.switchController?.text.trim() ?? '';
-
-                  final autoCashoutValue = autoCashoutText.isNotEmpty
-                      ? double.tryParse(autoCashoutText)
-                      : null;
-                  if (amountText.isEmpty) {
-                    log('⚠️ Bet amount is empty');
-                    return;
-                  }
-                  final roundId = round.roundId;
-                  final seq = round.seq;
-
-                  try {
-                    final newBet = await betService.placeBet(
-                      BetRequest(
-                        roundId: roundId!,
-                        userId: userId,
-                        seq: int.parse(seq.toString()),
-                        stake: int.parse(amountText),
-                        betIndex: widget.index,
-                        autoCashout: autoCashoutValue,
-                      ),
-                    );
-
-                    if (newBet != null) {
-                      ref
-                          .read(betResponseProvider.notifier)
-                          .setBetResponse(widget.index, newBet);
-
-                      ref
-                          .read(betStateProvider.notifier)
-                          .placeBet(widget.index);
-
-                      // Update wallet after placing bet
-                      final currentUser = ref.read(userProvider);
-                      currentUser.maybeWhen(
-                        data: (userModel) {
-                          if (userModel != null) {
-                            final newWallet =
-                                userModel.data.wallet - newBet.stake;
-                            ref
-                                .read(userProvider.notifier)
-                                .updateWallet(newWallet);
-                          }
-                        },
-                        orElse: () {},
-                      );
-
-                      setState(() {
-                        hasPlacedBet = true;
-                      });
-
-                      log('✅ Bet placed successfully: ${newBet.stake}');
-                    }
-                  } on DioException catch (e) {
-                    final errorMsg =
-                        e.response?.data?['message'] ?? 'Bet failed';
-                    log('❌ Error placing bet: $errorMsg');
-                    // Show error in
-                    _customSnackBar(context, errorMsg);
-                  } catch (e) {
-                    log('❌ Error placing bet: $e');
-                    _customSnackBar(
-                      context,
-                      'Something went wrong. Please try again.',
-                    );
-                  }
+                  await _placeBet();
                 }
                 // Cashout
                 else if (isCashoutButton && bet != null) {

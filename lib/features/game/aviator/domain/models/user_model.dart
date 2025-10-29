@@ -44,10 +44,10 @@ class UserData {
   final bool galidisawarNotification;
   final DateTime? transactionBlockedUntil;
   final bool transactionPermanentlyBlocked;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final bool authentication;
-  final DateTime lastLogin;
+  final DateTime? lastLogin;
 
   UserData({
     required this.id,
@@ -85,40 +85,46 @@ class UserData {
 
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
-      id: json['_id'],
-      userName: json['user_name'],
-      password: json['password'],
-      mobile: json['mobile'],
+      id: json['_id'] ?? '',
+      userName: json['user_name'] ?? '',
+      password: json['password'] ?? '',
+      mobile: json['mobile'] ?? '',
       wallet: (json['wallet'] ?? 0).toDouble(),
-      verified: json['verified'],
-      otpVerified: json['otp_verified'],
-      status: json['status'],
-      isShow: json['is_show'],
-      picture: json['picture'],
-      branchName: json['branch_name'],
-      bankName: json['bank_name'],
-      accountHolderName: json['account_holder_name'],
-      accountNo: json['account_no'],
-      ifscCode: json['ifsc_code'],
-      referralCode: json['referral_code'],
-      upiId: json['upi_id'],
-      upiNumber: json['upi_number'],
-      betting: json['betting'],
-      transfer: json['transfer'],
-      fcm: json['fcm'],
-      personalNotification: json['personal_notification'],
-      mainNotification: json['main_notification'],
-      starlineNotification: json['starline_notification'],
-      galidisawarNotification: json['galidisawar_notification'],
+      verified: json['verified'] ?? false,
+      otpVerified: json['otp_verified'] ?? false,
+      status: json['status'] ?? false,
+      isShow: json['is_show'] ?? false,
+      picture: json['picture'] ?? '',
+      branchName: json['branch_name'] ?? '',
+      bankName: json['bank_name'] ?? '',
+      accountHolderName: json['account_holder_name'] ?? '',
+      accountNo: json['account_no'] ?? '',
+      ifscCode: json['ifsc_code'] ?? '',
+      referralCode: json['referral_code'] ?? '',
+      upiId: json['upi_id'] ?? '',
+      upiNumber: json['upi_number'] ?? '',
+      betting: json['betting'] ?? false,
+      transfer: json['transfer'] ?? false,
+      fcm: json['fcm'] ?? '',
+      personalNotification: json['personal_notification'] ?? false,
+      mainNotification: json['main_notification'] ?? false,
+      starlineNotification: json['starline_notification'] ?? false,
+      galidisawarNotification: json['galidisawar_notification'] ?? false,
       transactionBlockedUntil: json['transaction_blocked_until'] != null
           ? DateTime.parse(json['transaction_blocked_until'])
           : null,
       transactionPermanentlyBlocked:
           json['transaction_permanently_blocked'] ?? false,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      authentication: json['authentication'],
-      lastLogin: DateTime.parse(json['last_login']),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      authentication: json['authentication'] ?? false,
+      lastLogin: json['last_login'] != null
+          ? DateTime.parse(json['last_login'])
+          : null,
     );
   }
 
@@ -151,10 +157,10 @@ class UserData {
       'galidisawar_notification': galidisawarNotification,
       'transaction_blocked_until': transactionBlockedUntil?.toIso8601String(),
       'transaction_permanently_blocked': transactionPermanentlyBlocked,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'authentication': authentication,
-      'last_login': lastLogin.toIso8601String(),
+      'last_login': lastLogin?.toIso8601String(),
     };
   }
 }

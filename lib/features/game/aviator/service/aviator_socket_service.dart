@@ -4,17 +4,20 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:wintek/core/constants/socket_constants/socket_constants.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/constants/aviator_socket_constants.dart';
+import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 
 class AviatorSocketService {
   final _stateController = StreamController<RoundState>.broadcast();
   final _tickController = StreamController<Tick>.broadcast();
   final _crashController = StreamController<Crash>.broadcast();
+  final _betsController = StreamController<AllBetsModel>.broadcast();
   final secureStorageService = SecureStorageService();
 
   Stream<RoundState> get stateStream => _stateController.stream;
   Stream<Tick> get tickStream => _tickController.stream;
   Stream<Crash> get crashStream => _crashController.stream;
+  Stream<AllBetsModel> get betsStream => _betsController.stream;
   IO.Socket? socket;
 
   void connect() async {
@@ -71,6 +74,16 @@ class AviatorSocketService {
         //   log('😴😴😴Error: $e');
       }
     });
+
+    //! Bets data
+    socket!.on(AviatorSocketConstants.roundBetsData, (data) {
+      try {
+        final bets = AllBetsModel.fromJson(data);
+        _betsController.add(bets);
+      } catch (e) {
+        log('😴😴😴Error: $e');
+      }
+    });
   }
 
   void disconnect() {
@@ -78,6 +91,16 @@ class AviatorSocketService {
     socket?.destroy();
     _stateController.close();
     _tickController.close();
+    _crashController.close();
+    _betsController.close();
     log('Socket disconnected');
   }
+
+  // void disconnect() {
+  //   socket?.disconnect();
+  //   socket?.destroy();
+  //   _stateController.close();
+  //   _tickController.close();
+  //   log('Socket disconnected');
+  // }
 }
