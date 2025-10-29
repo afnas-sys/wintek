@@ -11,6 +11,8 @@ import 'package:wintek/features/game/crash/screens/crash_game_screen.dart';
 import 'package:wintek/features/game/spin_to_win/screens/spin_to_win_screen.dart';
 
 import 'package:wintek/features/home/screens/home_screen.dart';
+import 'package:wintek/features/payment/deposit/screens/deposit_screen.dart';
+import 'package:wintek/features/payment/withdraw/screens/withdraw_screen.dart';
 import 'package:wintek/features/screens/splash_screen.dart';
 import 'package:wintek/features/screens/welcome_screen.dart';
 import 'package:wintek/features/wallet/view/wallet_screen.dart';
@@ -115,6 +117,18 @@ class AppRouter {
       case RoutesNames.spinToWin:
         return _buildPageTransition(
           const SpinToWinScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.withdraw:
+        return _buildPageTransition(
+          const WithdrawScreen(),
+          settings,
+          PageTransitionType.fade,
+        );
+      case RoutesNames.deposit:
+        return _buildPageTransition(
+          const DepositScreen(),
           settings,
           PageTransitionType.fade,
         );
