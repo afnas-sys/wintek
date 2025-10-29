@@ -25,12 +25,18 @@ class BottumSheet extends ConsumerWidget {
     final selection = ref.watch(amountSelectProvider);
     final selectionNotifier = ref.read(amountSelectProvider.notifier);
     final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     final cardName = isMainCard
         ? AppStrings.mainCardNames[cardIndex]
         : cardIndex;
     final String title = isMainCard
         ? 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName'
         : 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName';
+
+    // Responsive padding for content
+    double horizontalPadding = width < 400 ? 15 : 30;
+    double verticalPadding = height < 600 ? 15 : 23;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cardSecondPrimaryColor,
@@ -60,34 +66,46 @@ class BottumSheet extends ConsumerWidget {
 
           // Content
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 23),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Balance Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const AppText(
                       text: 'Balance',
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
                     ),
-                    Row(
-                      children: List.generate(balanceValues.length, (index) {
-                        final val = balanceValues[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: SelectContainer(
-                            index: index,
-                            selectedIndex: balanceValues.indexOf(
-                              selection.walletValue,
-                            ),
-                            value: val.toString(),
-                            onTap: () => selectionNotifier.selectWallet(val),
-                          ),
-                        );
-                      }),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: List.generate(balanceValues.length, (
+                            index,
+                          ) {
+                            final val = balanceValues[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: SelectContainer(
+                                index: index,
+                                selectedIndex: balanceValues.indexOf(
+                                  selection.walletValue,
+                                ),
+                                value: val.toString(),
+                                onTap: () =>
+                                    selectionNotifier.selectWallet(val),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -95,9 +113,9 @@ class BottumSheet extends ConsumerWidget {
                 const SizedBox(height: 15),
 
                 // Quantity Row
-                //
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const AppText(
                       text: 'Quantity',
@@ -129,9 +147,9 @@ class BottumSheet extends ConsumerWidget {
                         // Quantity display container
                         // increase quantity based on user interaction
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 12),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width < 400 ? 20 : 40,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
@@ -153,10 +171,7 @@ class BottumSheet extends ConsumerWidget {
                           },
                           child: Container(
                             color: AppColors.cardPrimaryColor,
-                            padding: const EdgeInsets.symmetric(
-                              // vertical: 2,
-                              horizontal: 12,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: const AppText(
                               text: '+',
                               fontSize: 22,
@@ -175,21 +190,29 @@ class BottumSheet extends ConsumerWidget {
                 // while pressing the each multiplies button the amount will increase based on the selection
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: List.generate(multipleValues.length, (index) {
-                    final val = multipleValues[index];
-                    final selectedIndex = multipleValues.indexOf(
-                      selection.multiplier,
-                    );
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 13),
-                      child: SelectContainer(
-                        index: index,
-                        selectedIndex: selectedIndex,
-                        value: 'X$val',
-                        onTap: () => selectionNotifier.selectMultiplier(val),
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        spacing: 10,
+                        runSpacing: 8,
+                        children: List.generate(multipleValues.length, (index) {
+                          final val = multipleValues[index];
+                          final selectedIndex = multipleValues.indexOf(
+                            selection.multiplier,
+                          );
+                          return SelectContainer(
+                            index: index,
+                            selectedIndex: selectedIndex,
+                            value: 'X$val',
+                            onTap: () =>
+                                selectionNotifier.selectMultiplier(val),
+                          );
+                        }),
                       ),
-                    );
-                  }),
+                    ),
+                  ],
                 ),
               ],
             ),

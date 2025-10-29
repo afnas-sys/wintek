@@ -16,9 +16,14 @@ class CustomNumberCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double containerSize = screenWidth < 400 || screenHeight < 600 ? 55 : 60;
+    double fontSize = screenWidth < 400 || screenHeight < 600 ? 23 : 25;
     return InkWell(
       child: Container(
-        padding: EdgeInsets.all(cardNameIndex < 10 ? 22 : 15.5),
+        width: containerSize,
+        height: containerSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
@@ -36,13 +41,17 @@ class CustomNumberCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
-          child: AppText(
-            text: cardNameIndex.toString(),
-            color: Colors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.w500,
-          ),
+        child: Stack(
+          children: [
+            Center(
+              child: AppText(
+                text: cardNameIndex.toString(),
+                color: Colors.white,
+                fontSize: fontSize,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
       onTap: () {

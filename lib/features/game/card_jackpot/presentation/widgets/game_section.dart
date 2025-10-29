@@ -1,7 +1,5 @@
-import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/card_jackpot/domain/models/socket/event_model.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/bottum_history_tab.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/cards_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/timer_section.dart';
@@ -116,18 +114,9 @@ class _GameTabsState extends ConsumerState<GameTabs> {
           ),
         ),
         AnimatedSwitcher(
-          duration: Duration(milliseconds: 400),
+          duration: Duration(milliseconds: 200),
           transitionBuilder: (child, animation) {
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: Offset(0.2, 0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              ),
-            );
+            return FadeTransition(opacity: animation, child: child);
           },
           child: Column(
             key: ValueKey(selectedCardTypeIndex),
@@ -157,17 +146,17 @@ class _GameTabsState extends ConsumerState<GameTabs> {
   }
 }
 
-void showFlushbar(BuildContext context, WidgetRef ref) {
-  ref.listen<RoundEvent?>(cardRoundNotifierProvider, (previous, next) {
-    // previous and next are of type RoundEvent?
-    if (next?.state != null && next != previous) {
-      Flushbar(
-        message: "Game ${next?.state}",
-        flushbarPosition: FlushbarPosition.TOP,
-        duration: Duration(seconds: 3),
-        borderRadius: BorderRadius.circular(10),
-        backgroundColor: Colors.green,
-      ).show(context);
-    }
-  });
-}
+// void showFlushbar(BuildContext context, WidgetRef ref) {
+//   ref.listen<RoundEvent?>(cardRoundNotifierProvider, (previous, next) {
+//     // previous and next are of type RoundEvent?
+//     if (next?.state != null && next != previous) {
+//       Flushbar(
+//         message: "Game ${next?.state}",
+//         flushbarPosition: FlushbarPosition.TOP,
+//         duration: Duration(seconds: 3),
+//         borderRadius: BorderRadius.circular(10),
+//         backgroundColor: Colors.green,
+//       ).show(context);
+//     }
+//   });
+// }

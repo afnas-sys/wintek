@@ -14,7 +14,7 @@ class WalletService {
     final storageData = await secureStorageService.readCredentials();
     try {
       final res = await dio.get(
-        '${CardApiConstants.baseUrl}/user/balance?user_id=${storageData.userId}',
+        '${CardApiConstants.getWalletBalance}${storageData.userId}',
       );
       log('response:  ${res.data}');
       return WalletResponse.fromJson(res.data);
