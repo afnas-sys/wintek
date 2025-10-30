@@ -5,4 +5,6 @@ class CardApiConstants {
 
   static final String getMyHistory = '$baseUrl/bets?user_id=';
   static const String getWalletBalance = '$baseUrl/user/balance?user_id=';
+  static const String placeBet = '$baseUrl/bet/place';
+  static const String recentRounds = '$baseUrl/rounds/recent';
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/selection_container.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/checkout/amount_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/amount_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/bet_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
@@ -24,6 +26,9 @@ class BottumSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selection = ref.watch(amountSelectProvider);
     final selectionNotifier = ref.read(amountSelectProvider.notifier);
+    final betNotifier = ref.read(betNotifierProvider.notifier);
+    final sessionId = ref.watch(currentBetIdProvider);
+    final roundEvent = ref.watch(cardRoundNotifierProvider);
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     final cardName = isMainCard
@@ -96,7 +101,7 @@ class BottumSheet extends ConsumerWidget {
                               child: SelectContainer(
                                 index: index,
                                 selectedIndex: balanceValues.indexOf(
-                                  selection.walletValue,
+                                  selection.baseAmount,
                                 ),
                                 value: val.toString(),
                                 onTap: () =>
@@ -245,12 +250,20 @@ class BottumSheet extends ConsumerWidget {
                   ),
 
                   // Confirmation button
+                  // Bet Button
                   InkWell(
-                    onTap: () {
-                      // betNotifier.addRound(
-                      //   cardName: cardName.toString(),
-                      //   amount: selection.total,
-                      // );
+                    onTap: () async {
+                      await betNotifier.placeBet(
+                        cardName: cardName.toString(),
+                        amount: selection.totalAmount,
+                        sessionId: sessionId,
+                        roundId: roundEvent?.roundId ?? '',
+                        cardTypeIndex: cardTypeIndex,
+                      );
+                      // Reset amount selection after bet
+                      selectionNotifier.selectWallet(10);
+                      selectionNotifier.selectQuantity(1);
+                      selectionNotifier.selectMultiplier(1);
                       Navigator.pop(context);
                     },
                     child: Container(
@@ -259,7 +272,7 @@ class BottumSheet extends ConsumerWidget {
                       color: Colors.amber,
                       child: Center(
                         child: AppText(
-                          text: 'TOTAL AMOUNT : ${selection.total}',
+                          text: 'TOTAL AMOUNT : ${selection.totalAmount}',
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           color: AppColors.cardSecondPrimaryColor,

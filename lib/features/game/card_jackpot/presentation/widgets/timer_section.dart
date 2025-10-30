@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
-import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/time_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
 class TimerSection extends ConsumerWidget {
@@ -10,12 +10,13 @@ class TimerSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //
     final timer = ref.watch(timerProvider);
-    ref.read(timerProvider.notifier).start();
-
     final currentBetId = ref.watch(currentBetIdProvider);
     final minute = timer.inMinutes.remainder(60).toString().padLeft(2, '0');
     final second = timer.inSeconds.remainder(60).toString().padLeft(2, '0');
+
+    //
     return Container(
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.all(20),

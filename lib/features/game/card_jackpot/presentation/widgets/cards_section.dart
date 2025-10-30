@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/card_numbers.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/main_cards.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
-import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/time_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
 class CardsSection extends ConsumerWidget {
@@ -34,26 +34,24 @@ class CardsSection extends ConsumerWidget {
           ),
           if (showOverlay && overlayData.text.isNotEmpty)
             Positioned.fill(
-              child: overlayData.text == 'null'
-                  ? const Center(child: CircularProgressIndicator())
-                  : Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppColors.cardUnfocusedColor,
-                          width: 6,
-                        ),
-                      ),
-                      child: Center(
-                        child: AppText(
-                          text: overlayData.text,
-                          color: Colors.white,
-                          fontSize: overlayData.fontSize,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.cardUnfocusedColor,
+                    width: 6,
+                  ),
+                ),
+                child: Center(
+                  child: AppText(
+                    text: overlayData.text,
+                    color: Colors.white,
+                    fontSize: overlayData.fontSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
         ],
       ),
@@ -73,7 +71,7 @@ class CardsSection extends ConsumerWidget {
       case 'ENDED':
         return (text: 'ENDED', fontSize: 50.0);
       default:
-        return (text: 'null', fontSize: 50.0);
+        return (text: 'loading..', fontSize: 50.0);
     }
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/network/dio_provider.dart';
@@ -22,27 +20,23 @@ class HistoryService {
       final response = await _dio.get(
         '${CardApiConstants.getMyHistory}${secureData.userId}',
       );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        log('total bets : ${response.data['data']}');
+      if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data['data'] ?? []);
       } else {
-        log('Else is working');
         throw Exception('Failed to fetch my history');
       }
     } catch (e) {
-      log('error is working');
-
       throw Exception('Error fetching my history: $e');
     }
   }
 
   Future<List<Map<String, dynamic>>> fetchGameHistory() async {
     try {
-      final response = await _dio.post('');
+      final response = await _dio.get(CardApiConstants.recentRounds);
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data['data'] ?? []);
       } else {
-        throw Exception('Failed to fetch game history');
+        throw Exception('Failed to fetch Game history');
       }
     } catch (e) {
       throw Exception('Error fetching game history: $e');

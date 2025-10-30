@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/wallet/wallet_provider.dart';
-
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
@@ -60,7 +59,8 @@ class WalletContainer extends ConsumerWidget {
                   children: [
                     futureWallet.when(
                       data: (walletBalance) => AppText(
-                        text: '₹ ${walletBalance?.data.balance}',
+                        text:
+                            '₹ ${walletBalance?.data.balance.toStringAsFixed(2)}',
                         fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),

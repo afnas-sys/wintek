@@ -33,8 +33,8 @@ class MyHistoryNotifier
       final data = await _historyService.fetchMyHistory();
       state = AsyncValue.data(data);
     } catch (e) {
-      // Handle API errors gracefully by returning empty data
-      state = const AsyncValue.data([]);
+      // Keep loading state on error
+      state = const AsyncValue.loading();
     }
   }
 }
@@ -43,15 +43,19 @@ class GameHistoryNotifier
     extends StateNotifier<AsyncValue<List<Map<String, dynamic>>>> {
   final HistoryService _historyService;
 
-  GameHistoryNotifier(this._historyService) : super(const AsyncValue.data([]));
+  GameHistoryNotifier(this._historyService)
+    : super(const AsyncValue.loading()) {
+    fetchGameHistory();
+  }
 
   Future<void> fetchGameHistory() async {
     state = const AsyncValue.loading();
     try {
       final data = await _historyService.fetchGameHistory();
       state = AsyncValue.data(data);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e) {
+      // Keep loading state on error
+      state = const AsyncValue.loading();
     }
   }
 }

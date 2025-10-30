@@ -7,7 +7,7 @@ import 'package:wintek/features/game/card_jackpot/domain/models/socket/bet_resul
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/round_end_event.dart';
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/round_new_event.dart';
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/round_state_event.dart';
-import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
 
 class CardSocketService {
   late IO.Socket socket;
