@@ -59,4 +59,11 @@ class AppImages {
   // ! Profile Screen
 
   static const String cameraIcon = 'assets/images/cameraIcon1.png';
+
+  //! Payment
+
+  static const String gpay = 'assets/images/gpay.png';
+  static const String phonepay = 'assets/images/phonepay.png';
+  static const String paytm = 'assets/images/paytm.png';
+  static const String upiIcon = 'assets/images/upi_icon.png';
 }

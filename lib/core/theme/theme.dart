@@ -240,7 +240,69 @@ extension CustomTextStyle on TextTheme {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+
   //!________________________________Offers_____________________________________
+  //!________________________________Payment___________________________________
+
+  TextStyle get paymentTitleMediumPrimary => GoogleFonts.roboto(
+    color: AppColors.paymentFifteenthColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get paymentBodyLargePrimary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get paymentBodyLargeSecondary => GoogleFonts.roboto(
+    color: AppColors.paymentEighthColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get paymentBodyLargeThird => GoogleFonts.roboto(
+    color: AppColors.paymentSixthColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+  TextStyle get paymentSmallPrimary => GoogleFonts.roboto(
+    color: AppColors.paymentPrimaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get paymentSmallSecondary => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get paymentSmallThird => GoogleFonts.roboto(
+    color: AppColors.paymentFourthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get paymentSmallFourth => GoogleFonts.roboto(
+    color: AppColors.paymentTwelfthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get paymentSmallFifth => GoogleFonts.roboto(
+    color: AppColors.paymentThirteenthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get paymentBodySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.paymentTenthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get paymentBodySmallSecondary => GoogleFonts.roboto(
+    color: AppColors.paymentSeventeenthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
 
   /*
   !Use it for reference for Naming
