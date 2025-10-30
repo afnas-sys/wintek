@@ -12,8 +12,8 @@ class ForegroundStack extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     // Responsive padding based on screen width
     EdgeInsets padding = screenWidth < 400
-        ? const EdgeInsets.only(right: 10, left: 10, top: 40)
-        : const EdgeInsets.only(right: 20, left: 20, top: 70);
+        ? const EdgeInsets.only(right: 10, left: 10, top: 30)
+        : const EdgeInsets.only(right: 20, left: 20, top: 30);
     return Padding(
       padding: padding,
       child: Column(

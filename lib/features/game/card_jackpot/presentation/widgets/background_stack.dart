@@ -15,11 +15,11 @@ class BackgroundStack extends StatelessWidget {
     // Responsive height adjustment for top container based on screen height
     double topHeight;
     if (screenHeight < 700) {
-      topHeight = screenHeight * 0.40;
+      topHeight = screenHeight * 0.38;
     } else if (screenHeight < 900) {
-      topHeight = screenHeight * 0.35;
+      topHeight = screenHeight * 0.30;
     } else {
-      topHeight = screenHeight * 0.33;
+      topHeight = screenHeight * 0.28;
     }
     return Column(
       children: [

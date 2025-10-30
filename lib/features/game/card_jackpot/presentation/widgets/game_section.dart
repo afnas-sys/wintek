@@ -6,6 +6,7 @@ import 'package:wintek/features/game/card_jackpot/presentation/widgets/timer_sec
 import 'package:wintek/features/game/card_jackpot/providers/history_provider.dart';
 import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
 import 'package:wintek/features/game/card_jackpot/providers/time_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 import 'package:wintek/core/constants/app_icons.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -24,6 +25,7 @@ class _GameTabsState extends ConsumerState<GameTabs> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.watch(cardSocketProvider);
+      ref.watch(walletBalanceProvider);
       ref.watch(gameHistoryProvider.notifier).fetchGameHistory();
       ref.watch(myHistoryProvider.notifier).fetchMyHistory();
       ref.read(timerProvider.notifier).start();
