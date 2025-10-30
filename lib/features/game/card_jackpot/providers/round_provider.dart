@@ -65,7 +65,7 @@ final cardRoundNotifierProvider =
 //
 final cardSocketProvider = Provider<CardSocketService>((ref) {
   final notifier = ref.read(cardRoundNotifierProvider.notifier);
-  final service = CardSocketService(notifier);
+  final service = CardSocketService(notifier, ref);
 
   service.connect();
   ref.onDispose(() => service.disconnect());
