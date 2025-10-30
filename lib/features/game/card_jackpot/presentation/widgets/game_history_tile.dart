@@ -34,7 +34,7 @@ class GameHistoryTile extends StatelessWidget {
                   height: 20,
                   fit: BoxFit.contain,
                 ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 18),
               Expanded(
                 child: AppText(
                   text: displayValue,
