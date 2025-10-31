@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/wallet/wallet_provider.dart';
-
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
@@ -30,6 +29,8 @@ class WalletContainer extends ConsumerWidget {
                   children: [
                     ClipRRect(
                       child: Image.asset(
+                        color: AppColors.cardPrimaryColor,
+
                         AppImages.wallet,
                         width: 40,
                         height: 40,
@@ -84,6 +85,7 @@ class WalletContainer extends ConsumerWidget {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            backgroundColor: AppColors.cardPrimaryColor,
                             content: Text(
                               wallet?.message ?? 'Fetched wallet successfully',
                             ),

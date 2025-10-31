@@ -30,7 +30,9 @@ class SelectContainer extends StatelessWidget {
         child: AppText(
           text: value,
           fontSize: 16,
-          color: index != selectedIndex ? AppColors.cardUnfocusedColor : null,
+          color: index != selectedIndex
+              ? AppColors.cardUnfocusedColor
+              : AppColors.cardSecondPrimaryColor,
         ),
       ),
     );

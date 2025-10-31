@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:wintek/core/constants/socket_constants/socket_constants.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
@@ -7,13 +8,15 @@ import 'package:wintek/features/game/card_jackpot/domain/models/socket/bet_resul
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/round_end_event.dart';
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/round_new_event.dart';
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/round_state_event.dart';
-import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
+import 'package:wintek/features/game/card_jackpot/providers/history_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
 
 class CardSocketService {
   late IO.Socket socket;
   final CardRoundNotifier notifier;
+  final Ref ref;
   final secureStorageService = SecureStorageService();
-  CardSocketService(this.notifier);
+  CardSocketService(this.notifier, this.ref);
 
   void connect() async {
     final secureStorage = await secureStorageService.readCredentials();
@@ -52,6 +55,8 @@ class CardSocketService {
     socket.on("round:end", (data) {
       final event = RoundEndEvent.fromJson(data);
       notifier.updateRoundEnd(event);
+      ref.read(gameHistoryProvider.notifier).fetchGameHistory();
+      ref.read(myHistoryProvider.notifier).fetchMyHistory();
     });
 
     socket.onDisconnect((_) => log("❌ Card Jackpot Socket disconnected"));

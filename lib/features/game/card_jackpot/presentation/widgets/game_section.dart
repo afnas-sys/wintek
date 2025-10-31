@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/bottum_history_tab.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/cards_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/timer_section.dart';
-import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
-import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/history_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/time_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 import 'package:wintek/core/constants/app_icons.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -23,7 +25,9 @@ class _GameTabsState extends ConsumerState<GameTabs> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.watch(cardSocketProvider);
-
+      ref.watch(walletBalanceProvider);
+      ref.watch(gameHistoryProvider.notifier).fetchGameHistory();
+      ref.watch(myHistoryProvider.notifier).fetchMyHistory();
       ref.read(timerProvider.notifier).start();
     });
     super.initState();
@@ -31,7 +35,6 @@ class _GameTabsState extends ConsumerState<GameTabs> {
 
   @override
   Widget build(BuildContext context) {
-    // showFlushbar(context, ref);
     return Column(
       children: [
         // Tabs Container
@@ -62,9 +65,14 @@ class _GameTabsState extends ConsumerState<GameTabs> {
                     duration: Duration(milliseconds: 300),
                     padding: EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.cardPrimaryColor
-                          : Colors.transparent,
+                      color: !isSelected ? Colors.transparent : null,
+                      gradient: isSelected
+                          ? LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Color(0xFFB1A1FF), Color(0xFF5134E5)],
+                            )
+                          : null,
                       borderRadius: BorderRadius.circular(16),
                       border: isSelected
                           ? Border.all(
@@ -81,15 +89,15 @@ class _GameTabsState extends ConsumerState<GameTabs> {
                             padding: EdgeInsets.all(13),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? Colors.white
-                                  : Color(0x1A9E9E9E),
+                                  ? Color(0x33FFFFFF)
+                                  : Color(0x1AAA99FD),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               AppIcons.tabIcons[index],
                               color: isSelected
-                                  ? AppColors.cardPrimaryColor
-                                  : AppColors.cardUnfocusedColor,
+                                  ? Colors.white
+                                  : AppColors.gameTabContainerBorderColor,
                             ),
                           ),
                           SizedBox(height: 10),
@@ -100,8 +108,8 @@ class _GameTabsState extends ConsumerState<GameTabs> {
                                   ? FontWeight.bold
                                   : FontWeight.normal,
                               color: isSelected
-                                  ? Colors.black
-                                  : Colors.grey[700],
+                                  ? AppColors.cardSecondPrimaryColor
+                                  : AppColors.gameTabContainerBorderColor,
                             ),
                           ),
                         ],
@@ -145,18 +153,3 @@ class _GameTabsState extends ConsumerState<GameTabs> {
     );
   }
 }
-
-// void showFlushbar(BuildContext context, WidgetRef ref) {
-//   ref.listen<RoundEvent?>(cardRoundNotifierProvider, (previous, next) {
-//     // previous and next are of type RoundEvent?
-//     if (next?.state != null && next != previous) {
-//       Flushbar(
-//         message: "Game ${next?.state}",
-//         flushbarPosition: FlushbarPosition.TOP,
-//         duration: Duration(seconds: 3),
-//         borderRadius: BorderRadius.circular(10),
-//         backgroundColor: Colors.green,
-//       ).show(context);
-//     }
-//   });
-// }

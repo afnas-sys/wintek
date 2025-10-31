@@ -43,13 +43,13 @@ class _BottumHistoryTabState extends State<BottumHistoryTab> {
               children: [
                 AppText(
                   text: 'Period',
-                  // fontSize: 18,
                   fontWeight: FontWeight.w400,
+                  color: AppColors.cardSecondPrimaryColor,
                 ),
                 AppText(
                   text: 'Result',
-                  // fontSize: 18,
                   fontWeight: FontWeight.w400,
+                  color: AppColors.cardSecondPrimaryColor,
                 ),
               ],
             ),
@@ -83,7 +83,12 @@ class _BottumHistoryTabState extends State<BottumHistoryTab> {
           selectedIndex = index;
         });
       },
-      child: AppText(text: text, fontSize: 16, fontWeight: FontWeight.w500),
+      child: AppText(
+        text: text,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: isSelected ? AppColors.cardSecondPrimaryColor : null,
+      ),
     );
   }
 }

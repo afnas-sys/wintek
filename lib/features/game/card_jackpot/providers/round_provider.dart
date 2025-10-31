@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/bet_result_event.dart';
 import 'package:wintek/features/game/card_jackpot/domain/models/socket/event_model.dart';
@@ -11,7 +10,6 @@ class CardRoundNotifier extends StateNotifier<RoundEvent> {
   CardRoundNotifier() : super(RoundEvent());
 
   void updateRoundState(RoundStateEvent event) {
-    log('1️⃣ State Event Result: ${event.toJson()}');
     state = state.copyWith(
       roundId: event.roundId,
       state: event.state,
@@ -21,7 +19,6 @@ class CardRoundNotifier extends StateNotifier<RoundEvent> {
   }
 
   void updateRoundNew(RoundNewEvent event) {
-    log('2️⃣ New Event Result: ${event.toJson()}');
     state = state.copyWith(state: event.state, msRemaining: event.msRemaining);
   }
 
@@ -32,11 +29,9 @@ class CardRoundNotifier extends StateNotifier<RoundEvent> {
       winners: event.winners,
       msRemaining: 0,
     );
-    log('3️⃣ Result Event Result: ${event.toJson()}');
   }
 
   void updateRoundEnd(RoundEndEvent event) {
-    log('4️⃣ End Event Result: ${event.toJson()}');
     state = state.copyWith(
       state: event.state,
       winners: event.winners,
@@ -70,7 +65,7 @@ final cardRoundNotifierProvider =
 //
 final cardSocketProvider = Provider<CardSocketService>((ref) {
   final notifier = ref.read(cardRoundNotifierProvider.notifier);
-  final service = CardSocketService(notifier);
+  final service = CardSocketService(notifier, ref);
 
   service.connect();
   ref.onDispose(() => service.disconnect());
