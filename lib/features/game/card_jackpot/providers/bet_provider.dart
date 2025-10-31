@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/network/dio_provider.dart';
@@ -38,19 +36,21 @@ class BetNotifier extends StateNotifier<AsyncValue<Map<String, dynamic>?>> {
       );
 
       final result = await _betService.placeBet(betRequest);
-      if (result != null) {
+      if (result != null && !result.containsKey('error')) {
         state = AsyncValue.data(result);
-        log('Bet placed successfully');
-        // Refresh wallet balance after successful bet
+
         _ref.invalidate(walletBalanceProvider);
-        // Auto refresh history after successful bet
         _ref.invalidate(myHistoryProvider);
+      } else if (result != null && result['error'] == true) {
+        state = AsyncValue.error(
+          result['message'] ?? 'Failed to place bet',
+          StackTrace.current,
+        );
       } else {
         state = AsyncValue.error('Failed to place bet', StackTrace.current);
       }
     } catch (e, st) {
       state = AsyncValue.error(e, st);
-      log('Error placing bet: $e');
     }
   }
 
