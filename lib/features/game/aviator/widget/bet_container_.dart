@@ -5,12 +5,54 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
+import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 
 import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
 
+class AutoPlayState {
+  final AutoPlaySettings? settings;
+  final int roundsPlayed;
+  final double initialWallet;
+  final double lastWinAmount;
+
+  AutoPlayState({
+    this.settings,
+    this.roundsPlayed = 0,
+    this.initialWallet = 0.0,
+    this.lastWinAmount = 0.0,
+  });
+
+  AutoPlayState copyWith({
+    AutoPlaySettings? settings,
+    int? roundsPlayed,
+    double? initialWallet,
+    double? lastWinAmount,
+  }) {
+    return AutoPlayState(
+      settings: settings ?? this.settings,
+      roundsPlayed: roundsPlayed ?? this.roundsPlayed,
+      initialWallet: initialWallet ?? this.initialWallet,
+      lastWinAmount: lastWinAmount ?? this.lastWinAmount,
+    );
+  }
+}
+
 class BetContainer extends ConsumerStatefulWidget {
   final int index;
-  const BetContainer({super.key, required this.index});
+  final bool showAddButton;
+  final VoidCallback? onAddPressed;
+  final bool showRemoveButton;
+  final VoidCallback? onRemovePressed;
+
+  const BetContainer({
+    super.key,
+    required this.index,
+    this.showAddButton = false,
+    this.onAddPressed,
+    this.showRemoveButton = false,
+    this.onRemovePressed,
+  });
 
   @override
   ConsumerState<BetContainer> createState() => _BetContainerState();
@@ -23,6 +65,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
   final secureStorageService = SecureStorageService();
+
+  AutoPlayState _autoPlayState = AutoPlayState();
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
@@ -40,15 +84,87 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     });
   }
 
+  void _startAutoPlay(AutoPlaySettings settings) {
+    final user = ref.read(userProvider);
+    user.maybeWhen(
+      data: (userModel) {
+        if (userModel != null) {
+          setState(() {
+            _autoPlayState = AutoPlayState(
+              settings: settings,
+              roundsPlayed: 0,
+              initialWallet: userModel.data.wallet,
+              lastWinAmount: 0.0,
+            );
+          });
+          // Place the first bet immediately
+          _placeFirstAutoBet();
+        }
+      },
+      orElse: () {},
+    );
+  }
+
+  void _placeFirstAutoBet() {
+    // Trigger the first bet placement for autoplay
+    // This will be handled by the CustomBetButton's autoplay logic
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // The CustomBetButton will handle placing the first bet when autoplay starts
+    });
+  }
+
+  void _stopAutoPlay() {
+    setState(() {
+      _autoPlayState = AutoPlayState();
+    });
+  }
+
+  bool _shouldContinueAutoPlay(double currentWallet, double winAmount) {
+    if (_autoPlayState.settings == null) return false;
+
+    final settings = _autoPlayState.settings!;
+    final roundsPlayed = _autoPlayState.roundsPlayed;
+    final maxRounds = int.tryParse(settings.selectedRounds ?? '0') ?? 0;
+
+    // Check if max rounds reached
+    if (maxRounds > 0 && roundsPlayed >= maxRounds) return false;
+
+    // Check cash decrease condition
+    if (settings.stopIfCashDecreases) {
+      final decrease = _autoPlayState.initialWallet - currentWallet;
+      if (decrease >= settings.decrementAmount) return false;
+    }
+
+    // Check cash increase condition
+    if (settings.stopIfCashIncreases) {
+      final increase = currentWallet - _autoPlayState.initialWallet;
+      if (increase >= settings.incrementAmount) return false;
+    }
+
+    // Check single win exceeds condition
+    if (settings.stopIfSingleWinExceeds &&
+        winAmount >= settings.exceedsAmount) {
+      return false;
+    }
+
+    return true;
+  }
+
   void _increment() {
-    int value = int.tryParse(_amountController.text) ?? 0;
-    _amountController.text = (value + 1).toString();
+    TextEditingController controller = _selectedValue == 0
+        ? _amountController
+        : _autoAmountController;
+    int value = int.tryParse(controller.text) ?? 0;
+    controller.text = (value + 1).toString();
   }
 
   void _decrement() {
-    int value = int.tryParse(_amountController.text) ?? 0;
+    TextEditingController controller = _selectedValue == 0
+        ? _amountController
+        : _autoAmountController;
+    int value = int.tryParse(controller.text) ?? 0;
     if (value > 0) {
-      _amountController.text = (value - 1).toString();
+      controller.text = (value - 1).toString();
     }
   }
 
@@ -62,7 +178,6 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   @override
   Widget build(BuildContext context) {
     //!------BET CONTAINER------
-
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
       height: _selectedValue == 0 ? 210 : 258,
@@ -85,21 +200,38 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                 //! SWITCH
                 child: _buildSwitch(),
               ),
-              //! TOP RIGHT SIDED BUTTON '-'
-              CustomElevatedButton(
-                hasBorder: true,
-                borderColor: AppColors.aviatorFifteenthColor,
-                backgroundColor: AppColors.aviatorFourteenthColor,
-                padding: EdgeInsetsGeometry.all(2),
-                height: 22,
-                width: 22,
-                onPressed: () {},
-                child: Icon(
-                  Icons.remove,
-                  size: 18.33,
-                  color: AppColors.aviatorFifteenthColor,
-                ),
-              ),
+              if (widget.showRemoveButton)
+                CustomElevatedButton(
+                  hasBorder: true,
+                  borderColor: AppColors.aviatorFifteenthColor,
+                  backgroundColor: AppColors.aviatorFourteenthColor,
+                  padding: EdgeInsetsGeometry.all(2),
+                  height: 22,
+                  width: 22,
+                  onPressed: widget.onRemovePressed,
+                  child: Icon(
+                    Icons.remove,
+                    size: 18.33,
+                    color: AppColors.aviatorFifteenthColor,
+                  ),
+                )
+              else if (widget.showAddButton)
+                CustomElevatedButton(
+                  hasBorder: true,
+                  borderColor: AppColors.aviatorFifteenthColor,
+                  backgroundColor: AppColors.aviatorFourteenthColor,
+                  padding: EdgeInsetsGeometry.all(2),
+                  height: 22,
+                  width: 22,
+                  onPressed: widget.onAddPressed,
+                  child: Icon(
+                    Icons.add,
+                    size: 18.33,
+                    color: AppColors.aviatorFifteenthColor,
+                  ),
+                )
+              else
+                SizedBox(width: 22, height: 22),
             ],
           ),
           const SizedBox(height: 20),
@@ -210,7 +342,6 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                     ),
             ),
           ),
-
           SizedBox(height: 16),
           //! AUTOPLAY Button
           if (_selectedValue == 1)
@@ -281,7 +412,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
             vertical: 2,
             horizontal: 8,
           ),
-          hintText: "1.00",
+          // hintText: "1.00",
           hintStyle: Theme.of(context).textTheme.aviatorHeadlineSmall,
           filled: true,
           fillColor: AppColors.aviatorSixthColor,
@@ -341,17 +472,48 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   //!AUTOPLAY
   Widget _buildAutoplayButton(BuildContext context) {
+    final isAutoPlayActive = _autoPlayState.settings != null;
+    final maxRounds = _autoPlayState.settings?.selectedRounds != null
+        ? int.tryParse(_autoPlayState.settings!.selectedRounds!) ?? 0
+        : 0;
+    final currentRound = _autoPlayState.roundsPlayed;
+
     return Flexible(
       flex: 2,
       child: CustomElevatedButton(
-        onPressed: () {},
+        onPressed: () async {
+          if (isAutoPlayActive) {
+            // Stop autoplay
+            _stopAutoPlay();
+          } else {
+            // Start autoplay - show dialog with callback
+            await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AutoPlayWidget(
+                  onStart: (settings) {
+                    _startAutoPlay(settings);
+                  },
+                );
+              },
+            );
+          }
+        },
         padding: const EdgeInsets.symmetric(horizontal: 12),
         borderRadius: 52,
-        backgroundColor: AppColors.aviatorNineteenthColor,
+        backgroundColor: isAutoPlayActive
+            ? AppColors
+                  .aviatorSeventeenthColor // Red color for stop
+            : AppColors.aviatorTwentyNinthColor,
+        hasBorder: true,
         height: 28,
-        borderColor: AppColors.aviatorNineteenthColor,
+        borderColor: isAutoPlayActive
+            ? AppColors.aviatorEighteenthColor
+            : AppColors.aviatorNineteenthColor,
         child: Text(
-          'AUTOPLAY',
+          isAutoPlayActive
+              ? 'STOP (${currentRound}/${maxRounds > 0 ? maxRounds : '∞'})'
+              : 'AUTOPLAY',
           style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
           overflow: TextOverflow.ellipsis,
         ),
@@ -368,7 +530,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           // Label
           Expanded(
             child: Text(
-              'Auto Cash out',
+              'Auto Cash Out',
               style: Theme.of(context).textTheme.aviatorbodySmallThird,
             ),
           ),
@@ -436,6 +598,17 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       index: widget.index,
       amountController: _autoAmountController,
       switchController: _switchController,
+      autoPlayState: _autoPlayState,
+      onAutoPlayUpdate: (roundsPlayed, lastWinAmount) {
+        setState(() {
+          _autoPlayState = _autoPlayState.copyWith(
+            roundsPlayed: roundsPlayed,
+            lastWinAmount: lastWinAmount,
+          );
+        });
+      },
+      onAutoPlayStop: _stopAutoPlay,
+      shouldContinueAutoPlay: _shouldContinueAutoPlay,
     );
   }
 }

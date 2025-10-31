@@ -1,51 +1,85 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/core/constants/app_images.dart';
 
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 
-class BalanceContainer extends StatelessWidget {
+class BalanceContainer extends ConsumerStatefulWidget {
   const BalanceContainer({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(22),
-      width: 396,
-      height: 134,
-      decoration: BoxDecoration(
-        color: AppColors.aviatorSecondaryColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Available Balance: ₹0.00',
-            style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
-          ),
-          SizedBox(height: 19),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  //!Button for withdraw
-                  _withdrawButton(context),
-                  SizedBox(width: 20),
+  ConsumerState<BalanceContainer> createState() => _BalanceContainerState();
+}
 
-                  //!Button for deposit
-                  _depositButton(context),
-                ],
+class _BalanceContainerState extends ConsumerState<BalanceContainer> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userProvider.notifier).fetchUser();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userAsync = ref.watch(userProvider);
+
+    return userAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('Error: $error')),
+      data: (userModel) {
+        if (userModel == null) {
+          return const Center(child: Text('No data available'));
+        }
+        final user = userModel.data;
+        String formatNum(num? value) => value?.toStringAsFixed(2) ?? '0.00';
+        return Container(
+          padding: const EdgeInsets.all(22),
+          width: 396,
+          height: 134,
+          decoration: BoxDecoration(
+            color: AppColors.aviatorSecondaryColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
+                  children: [
+                    TextSpan(text: 'Available Balance: '),
+                    TextSpan(text: '₹${formatNum(user.wallet)}'),
+                  ],
+                ),
               ),
 
-              //! icon for Refresh
-              _refreshButton(),
+              SizedBox(height: 19),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      //!Button for withdraw
+                      _withdrawButton(context),
+                      SizedBox(width: 20),
+
+                      //!Button for deposit
+                      _depositButton(context),
+                    ],
+                  ),
+
+                  //! icon for Refresh
+                  _refreshButton(),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -93,12 +127,12 @@ class BalanceContainer extends StatelessWidget {
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          onPressed: () {},
-          child: Icon(
-            FontAwesomeIcons.rotate,
-            size: 20,
-            color: AppColors.aviatorTertiaryColor,
-            weight: 10,
+          onPressed: () {
+            ref.read(userProvider.notifier).fetchUser();
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Image.asset(AppImages.refresh, height: 20, width: 20),
           ),
         ),
       ],
