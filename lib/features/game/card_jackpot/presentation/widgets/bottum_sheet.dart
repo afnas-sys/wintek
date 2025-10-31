@@ -255,18 +255,44 @@ class BottumSheet extends ConsumerWidget {
                   // Bet Button
                   InkWell(
                     onTap: () async {
-                      Navigator.pop(context);
-                      await betNotifier.placeBet(
-                        cardName: cardName.toString(),
-                        amount: selection.totalAmount,
-                        sessionId: sessionId,
-                        roundId: roundEvent?.roundId ?? '',
-                        cardTypeIndex: cardTypeIndex,
-                      );
+                      try {
+                        await betNotifier.placeBet(
+                          cardName: cardName.toString(),
+                          amount: selection.totalAmount,
+                          sessionId: sessionId,
+                          roundId: roundEvent?.roundId ?? '',
+                          cardTypeIndex: cardTypeIndex,
+                        );
+                        // Check if bet was successful
+                        final betState = ref.read(betNotifierProvider);
+                        if (betState.hasError) {
+                          // Show error message from provider
+                          _showSnackBar(
+                            context,
+                            betState.error.toString(),
+                            Colors.red,
+                          );
+                        } else {
+                          // Show success snackbar
+                          _showSnackBar(
+                            context,
+                            'Bet placed successfully!',
+                            Colors.green,
+                          );
+                        }
+                      } catch (e) {
+                        // Show generic error snackbar
+                        _showSnackBar(
+                          context,
+                          'Failed to place bet. Please try again.',
+                          Colors.red,
+                        );
+                      }
                       // Reset amount selection after bet
                       selectionNotifier.selectWallet(10);
                       selectionNotifier.selectQuantity(1);
                       selectionNotifier.selectMultiplier(1);
+                      Navigator.pop(context);
                     },
                     child: Container(
                       width: width * 0.55,
@@ -287,6 +313,24 @@ class BottumSheet extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSnackBar(
+    BuildContext context,
+    String message,
+    Color backgroundColor,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+        duration: const Duration(seconds: 3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
     );
   }

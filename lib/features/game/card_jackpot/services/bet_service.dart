@@ -16,11 +16,19 @@ class BetService {
       );
       return res.data;
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout) {}
-      return null;
+      // Return error details for proper handling
+      return {
+        'error': true,
+        'message':
+            e.response?.data?['message'] ??
+            'Failed to place bet. Please try again.',
+        'statusCode': e.response?.statusCode ?? 0,
+      };
     } catch (e) {
-      return null;
+      return {
+        'error': true,
+        'message': 'An unexpected error occurred. Please try again.',
+      };
     }
   }
 }
