@@ -277,7 +277,7 @@ class BottumSheet extends ConsumerWidget {
                           _showSnackBar(
                             context,
                             'Bet placed successfully!',
-                            Colors.green,
+                            AppColors.cardPrimaryColor,
                           );
                         }
                       } catch (e) {
