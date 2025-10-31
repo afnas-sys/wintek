@@ -20,13 +20,13 @@ class RoundState {
 
   factory RoundState.fromJson(Map<String, dynamic> json) {
     return RoundState(
-      roundId: json['roundId'].toString(),
-      seq: json['seq'].toString(),
-      state: json['state']..toString(),
-      startedAt: json['startedAt'].toString(),
-      msRemaining: json['msRemaining'].toString(),
-      endedAt: json['endedAt'].toString(),
-      crashAt: json['crashAt'].toString(),
+      roundId: json['roundId']?.toString(),
+      seq: json['seq']?.toString(),
+      state: json['state']?.toString(),
+      startedAt: json['startedAt']?.toString(),
+      msRemaining: json['msRemaining']?.toString(),
+      endedAt: json['endedAt']?.toString(),
+      crashAt: json['crashAt']?.toString(),
     );
   }
 

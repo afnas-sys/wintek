@@ -35,7 +35,12 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
         error: (error, stack) => Center(child: Text('Error: $error')),
         data: (topBetsModel) {
           if (topBetsModel == null || topBetsModel.data.isEmpty) {
-            return const Center(child: Text('No data available'));
+            return Center(
+              child: Text(
+                'No data available',
+                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+              ),
+            );
           }
 
           // Filter bets to show only today's bets
@@ -73,16 +78,19 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
             },
             itemBuilder: (context, index) {
               final topBet = todaysBets[index];
+              String formatNum(num? value) =>
+                  value?.toStringAsFixed(2) ?? '0.00';
               return Container(
                 height: 71,
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
-                  vertical: 5,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.aviatorSixthColor,
                   borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.aviatorFifteenthColor),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,7 +179,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                               ),
                               child: Center(
                                 child: Text(
-                                  topBet.payout.toString(),
+                                  formatNum(topBet.payout),
                                   style: Theme.of(
                                     context,
                                   ).textTheme.aviatorbodySmallPrimary,

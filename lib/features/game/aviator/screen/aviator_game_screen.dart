@@ -21,6 +21,7 @@ class AviatorGameScreen extends ConsumerStatefulWidget {
 }
 
 class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
+  int _containerCount = 1;
   // late final AviatorSocketService _socketService;
   @override
   void initState() {
@@ -82,9 +83,16 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                 ListView.separated(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: 2,
+                  itemCount: _containerCount,
                   itemBuilder: (context, index) {
-                    return BetContainer(index: index + 1);
+                    return BetContainer(
+                      index: index + 1,
+                      showAddButton: index == _containerCount - 1,
+                      onAddPressed: () => setState(() => _containerCount++),
+                      showRemoveButton:
+                          _containerCount > 1 && index == _containerCount - 1,
+                      onRemovePressed: () => setState(() => _containerCount--),
+                    );
                   },
                   separatorBuilder: (context, index) {
                     return SizedBox(height: 16);

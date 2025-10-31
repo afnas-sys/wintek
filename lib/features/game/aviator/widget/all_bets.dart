@@ -1,28 +1,44 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 
-class AllBets extends StatefulWidget {
+class AllBets extends ConsumerStatefulWidget {
   const AllBets({super.key});
 
   @override
-  State<AllBets> createState() => _AllBetsState();
+  ConsumerState<AllBets> createState() => _AllBetsState();
 }
 
-class _AllBetsState extends State<AllBets> {
-  final List<Map<String, String>> data = [
-    {"user": "Alice", "bet": "₹50", "mult": "2x", "cashout": "\$100"},
-    {"user": "Bob", "bet": "₹30", "mult": "1.5x", "cashout": "\$45"},
-    {"user": "Charlie", "bet": "₹70", "mult": "3x", "cashout": "\$210"},
-    {"user": "Diana", "bet": "₹20", "mult": "1.2x", "cashout": "\$24"},
-    {"user": "Eve", "bet": "₹100", "mult": "2.5x", "cashout": "\$250"},
-    {"user": "Frank", "bet": "₹10", "mult": "1.1x", "cashout": "\$11"},
-  ];
+class _AllBetsState extends ConsumerState<AllBets> {
+  int _currentPage = 0;
+  static const int _itemsPerPage = 50;
+
+  void _showPreviousHand() {
+    setState(() {
+      _currentPage =
+          (_currentPage + 1) % ((_betsLength / _itemsPerPage).ceil());
+    });
+  }
+
+  int get _betsLength =>
+      ref.watch(aviatorBetsNotifierProvider)?.bets.length ?? 0;
+
+  List<dynamic> _getCurrentPageBets() {
+    final betsAsync = ref.watch(aviatorBetsNotifierProvider);
+    if (betsAsync == null || betsAsync.bets.isEmpty) return [];
+    final startIndex = _currentPage * _itemsPerPage;
+    final endIndex = min(startIndex + _itemsPerPage, betsAsync.bets.length);
+    return betsAsync.bets.sublist(startIndex, endIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final betsAsync = ref.watch(aviatorBetsNotifierProvider);
     return Container(
       // height: double.infinity,
       width: double.infinity,
@@ -30,6 +46,7 @@ class _AllBetsState extends State<AllBets> {
       decoration: BoxDecoration(
         color: AppColors.aviatorFourteenthColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
       child: Column(
         children: [
@@ -37,7 +54,7 @@ class _AllBetsState extends State<AllBets> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'TOTAL BETS: 517',
+                'TOTAL BETS: ${betsAsync?.count}',
                 style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
               //! Switch for PREVIOUS HAND
@@ -47,19 +64,21 @@ class _AllBetsState extends State<AllBets> {
                 padding: const EdgeInsets.only(
                   left: 7,
                   right: 7,
-                  top: 6,
-                  bottom: 6,
+                  top: 5,
+                  bottom: 4,
                 ),
                 borderRadius: 30,
-                backgroundColor: AppColors.aviatorFifteenthColor,
-                onPressed: () {},
+                backgroundColor: AppColors.aviatorTwentiethColor,
+                onPressed: _showPreviousHand,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(
-                      FontAwesomeIcons.clockRotateLeft,
-                      size: 16,
-                      color: AppColors.aviatorTertiaryColor,
+                    ClipRRect(
+                      child: Image.asset(
+                        AppImages.previousHand,
+                        height: 20,
+                        width: 20,
+                      ),
                     ),
                     Text(
                       'Previous hand',
@@ -127,20 +146,23 @@ class _AllBetsState extends State<AllBets> {
           ListView.separated(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: data.length,
+            itemCount: _getCurrentPageBets().length,
             separatorBuilder: (context, index) => SizedBox(height: 6),
             itemBuilder: (context, index) {
-              final item = data[index];
-              bool isHighlighted = index == 0 || index == 1;
+              //    final item = data[index];
+              bool isHighlighted =
+                  (_currentPage * _itemsPerPage + index) == 0 ||
+                  (_currentPage * _itemsPerPage + index) == 1;
               Color? bgColor = isHighlighted
                   ? AppColors.aviatorTwentyFirstColor
                   : AppColors.aviatorTwentySecondColor;
+              final bets = _getCurrentPageBets()[index];
 
               return Container(
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: bgColor, width: 1),
+                  border: Border.all(color: bgColor, width: 2),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -164,7 +186,7 @@ class _AllBetsState extends State<AllBets> {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          item['user'] ?? '',
+                          bets?.user.userName ?? '',
                           style: Theme.of(
                             context,
                           ).textTheme.aviatorBodyLargePrimary,
@@ -176,7 +198,7 @@ class _AllBetsState extends State<AllBets> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          item['bet'] ?? '',
+                          bets?.stake.toString() ?? '',
                           textAlign: TextAlign.center,
                           style: Theme.of(
                             context,
@@ -200,7 +222,7 @@ class _AllBetsState extends State<AllBets> {
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Text(
-                                  item['mult'] ?? '',
+                                  bets?.cashoutAt.toString() ?? '',
                                   style: Theme.of(
                                     context,
                                   ).textTheme.aviatorBodyLargePrimary,
@@ -216,7 +238,7 @@ class _AllBetsState extends State<AllBets> {
                             ? Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  item['cashout'] ?? '',
+                                  bets?.payout.toStringAsFixed(2) ?? '',
                                   style: Theme.of(
                                     context,
                                   ).textTheme.aviatorBodyLargePrimary,

@@ -1,0 +1,140 @@
+[33mde2fdb4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32maviator-logic[m[33m, [m[1;32mbackup-before-reset[m[33m)[m HEAD@{0}: pull origin aviator-logic --rebase (finish): returning to refs/heads/aviator-logic
+[33mde2fdb4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32maviator-logic[m[33m, [m[1;32mbackup-before-reset[m[33m)[m HEAD@{1}: pull origin aviator-logic --rebase (pick): aviator:- Autoplay ui updated
+[33m7f8f7d9[m[33m ([m[1;31morigin/aviator-logic[m[33m)[m HEAD@{2}: pull origin aviator-logic --rebase (start): checkout 7f8f7d9b17b0eb50bf9d39461a6ebf9e23f7df43
+[33m97582fa[m HEAD@{3}: commit: aviator:- Autoplay ui updated
+[33m261a820[m HEAD@{4}: checkout: moving from main to aviator-logic
+[33mb877a5b[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{5}: commit: card jackpot:- ui fixed card wallet
+[33mfdc91f6[m HEAD@{6}: pull origin main: Fast-forward
+[33m40e4ca9[m HEAD@{7}: checkout: moving from aviator-logic to main
+[33m261a820[m HEAD@{8}: checkout: moving from main to aviator-logic
+[33m40e4ca9[m HEAD@{9}: checkout: moving from aviator-logic to main
+[33m261a820[m HEAD@{10}: commit: Aviator:- Wallet api added, structured autoplay ui
+[33m7bba89b[m HEAD@{11}: checkout: moving from main to aviator-logic
+[33m40e4ca9[m HEAD@{12}: pull origin main: Fast-forward
+[33me43d210[m HEAD@{13}: checkout: moving from aviator-logic to main
+[33m7bba89b[m HEAD@{14}: commit: Aviator:- working on AutoPlay Button
+[33m68569e0[m HEAD@{15}: checkout: moving from carrom to aviator-logic
+[33m85eec2c[m[33m ([m[1;31morigin/carrom[m[33m, [m[1;32mcarrom[m[33m)[m HEAD@{16}: checkout: moving from main to carrom
+[33me43d210[m HEAD@{17}: pull origin main: Fast-forward
+[33ma567dad[m HEAD@{18}: checkout: moving from carrom to main
+[33m85eec2c[m[33m ([m[1;31morigin/carrom[m[33m, [m[1;32mcarrom[m[33m)[m HEAD@{19}: checkout: moving from main to carrom
+[33ma567dad[m HEAD@{20}: pull origin main: Fast-forward
+[33m3628d6f[m HEAD@{21}: checkout: moving from carrom to main
+[33m85eec2c[m[33m ([m[1;31morigin/carrom[m[33m, [m[1;32mcarrom[m[33m)[m HEAD@{22}: commit: bottom bar updated
+[33mb74d570[m HEAD@{23}: checkout: moving from main to carrom
+[33m3628d6f[m HEAD@{24}: pull origin main: Fast-forward
+[33mcf20d9b[m HEAD@{25}: checkout: moving from carrom to main
+[33mb74d570[m HEAD@{26}: commit: carroms:- ui updated v2
+[33maec9676[m HEAD@{27}: commit: initial ui commit
+[33m68569e0[m HEAD@{28}: checkout: moving from aviator-logic to carrom
+[33m68569e0[m HEAD@{29}: checkout: moving from main to aviator-logic
+[33mcf20d9b[m HEAD@{30}: pull origin main: Fast-forward
+[33m3f92c14[m HEAD@{31}: checkout: moving from aviator-logic to main
+[33m68569e0[m HEAD@{32}: commit: wallet ui bug fixed
+[33m9e0d7b8[m HEAD@{33}: checkout: moving from main to aviator-logic
+[33m3f92c14[m HEAD@{34}: checkout: moving from aviator-logic to main
+[33m9e0d7b8[m HEAD@{35}: checkout: moving from main to aviator-logic
+[33m3f92c14[m HEAD@{36}: pull origin main: Fast-forward
+[33m4550ebb[m HEAD@{37}: pull origin main: Fast-forward
+[33m8e317c1[m HEAD@{38}: pull origin main: Fast-forward
+[33m174b4ee[m HEAD@{39}: checkout: moving from aviator-logic to main
+[33m9e0d7b8[m HEAD@{40}: commit: aviator:- responsive bug fixed
+[33m7f6536a[m HEAD@{41}: checkout: moving from main to aviator-logic
+[33m174b4ee[m HEAD@{42}: pull origin main: Fast-forward
+[33m0d9a486[m HEAD@{43}: checkout: moving from aviator-logic to main
+[33m7f6536a[m HEAD@{44}: commit: Aviator:- Added Top bet api and My bet api
+[33m0295473[m HEAD@{45}: commit: added Getuser Api
+[33mae9b0bf[m HEAD@{46}: commit: code structured- 15-10-25
+[33m6a998a2[m HEAD@{47}: commit: aviator:- Animation of aviator changed
+[33mf3992fb[m HEAD@{48}: commit: aviator:- Animation of aviator changed
+[33m8c4eee4[m HEAD@{49}: checkout: moving from main to aviator-logic
+[33m0d9a486[m HEAD@{50}: checkout: moving from aviator-logic to main
+[33m8c4eee4[m HEAD@{51}: commit: aviator:- bug fixed, offers:- ui finished
+[33mcb98448[m HEAD@{52}: commit: aviator:- Added the aviator buttons and call the api for that and shows the actual values
+[33m2927693[m HEAD@{53}: checkout: moving from main to aviator-logic
+[33m0d9a486[m HEAD@{54}: pull origin main: Fast-forward
+[33mc98e454[m HEAD@{55}: checkout: moving from aviator-logic to main
+[33m2927693[m HEAD@{56}: checkout: moving from main to aviator-logic
+[33mc98e454[m HEAD@{57}: checkout: moving from aviator-logic to main
+[33m2927693[m HEAD@{58}: commit: auto cashout bug fixed and code standardized
+[33m31b6ead[m HEAD@{59}: commit: AutoCashout:- bug fixed
+[33m2a326f9[m HEAD@{60}: commit: auto cashout added
+[33m29d7ba0[m HEAD@{61}: checkout: moving from main to aviator-logic
+[33mc98e454[m HEAD@{62}: checkout: moving from aviator-logic to main
+[33m29d7ba0[m HEAD@{63}: commit: betcontainer- code structured
+[33m198d334[m HEAD@{64}: checkout: moving from main to aviator-logic
+[33mc98e454[m HEAD@{65}: checkout: moving from aviator-logic to main
+[33m198d334[m HEAD@{66}: checkout: moving from main to aviator-logic
+[33mc98e454[m HEAD@{67}: pull origin main: Fast-forward
+[33m00eba9c[m HEAD@{68}: checkout: moving from aviator-logic to main
+[33m198d334[m HEAD@{69}: checkout: moving from main to aviator-logic
+[33m00eba9c[m HEAD@{70}: pull origin main: Fast-forward
+[33mdec35ee[m HEAD@{71}: checkout: moving from aviator-logic to main
+[33m198d334[m HEAD@{72}: commit: bet-container structured
+[33m175aba5[m HEAD@{73}: checkout: moving from main to aviator-logic
+[33mdec35ee[m HEAD@{74}: pull origin main: Fast-forward
+[33m3caa9af[m HEAD@{75}: checkout: moving from aviator-logic to main
+[33m175aba5[m HEAD@{76}: commit: cashout manual part completed
+[33m243c6c7[m HEAD@{77}: checkout: moving from main to aviator-logic
+[33m3caa9af[m HEAD@{78}: checkout: moving from aviator-logic to main
+[33m243c6c7[m HEAD@{79}: checkout: moving from main to aviator-logic
+[33m3caa9af[m HEAD@{80}: pull origin main: Fast-forward
+[33mb20ed0e[m HEAD@{81}: checkout: moving from aviator-logic to main
+[33m243c6c7[m HEAD@{82}: commit: cashout api called
+[33m0b01fc3[m HEAD@{83}: checkout: moving from main to aviator-logic
+[33mb20ed0e[m HEAD@{84}: checkout: moving from aviator-logic to main
+[33m0b01fc3[m HEAD@{85}: checkout: moving from main to aviator-logic
+[33mb20ed0e[m HEAD@{86}: pull origin main: Fast-forward
+[33m9886a9b[m HEAD@{87}: pull origin main: Fast-forward
+[33m9fb84d1[m HEAD@{88}: checkout: moving from aviator-logic to main
+[33m0b01fc3[m HEAD@{89}: commit: working on cashout api
+[33md7c9166[m HEAD@{90}: commit: bet api bug fixed
+[33me9fb2eb[m HEAD@{91}: commit: place bet complted
+[33m8c7927f[m HEAD@{92}: checkout: moving from main to aviator-logic
+[33m9fb84d1[m HEAD@{93}: pull origin main: Fast-forward
+[33m7e59cf7[m HEAD@{94}: checkout: moving from aviator-logic to main
+[33m8c7927f[m HEAD@{95}: commit: aviator:- socket connected, bet api added
+[33m7e59cf7[m HEAD@{96}: merge main: Fast-forward
+[33mdffb149[m HEAD@{97}: checkout: moving from main to aviator-logic
+[33m7e59cf7[m HEAD@{98}: pull origin main: Fast-forward
+[33m3ee498d[m HEAD@{99}: checkout: moving from aviator-logic to main
+[33mdffb149[m HEAD@{100}: checkout: moving from main to aviator-logic
+[33m3ee498d[m HEAD@{101}: pull origin main: Fast-forward
+[33m509071a[m HEAD@{102}: checkout: moving from aviator-logic to main
+[33mdffb149[m HEAD@{103}: commit: auth:- authentication bug fixed
+[33m509071a[m HEAD@{104}: checkout: moving from main to aviator-logic
+[33m509071a[m HEAD@{105}: pull origin main: Fast-forward
+[33mb6f55c0[m HEAD@{106}: checkout: moving from auth-logic to main
+[33m2f3fadf[m[33m ([m[1;31morigin/auth-logic[m[33m, [m[1;32mauth-logic[m[33m)[m HEAD@{107}: commit: auth:- Logout added
+[33mbd1b044[m HEAD@{108}: commit: auth:- login, forgotten, register part is completed
+[33mb6f55c0[m HEAD@{109}: merge main: Fast-forward
+[33m528d057[m HEAD@{110}: checkout: moving from main to auth-logic
+[33mb6f55c0[m HEAD@{111}: pull origin main: Fast-forward
+[33md4a71f6[m HEAD@{112}: checkout: moving from auth-logic to main
+[33m528d057[m HEAD@{113}: commit: signup, forgot and login
+[33md4a71f6[m HEAD@{114}: checkout: moving from main to auth-logic
+[33md4a71f6[m HEAD@{115}: commit: dependencies added for api implementation
+[33me7dc7df[m HEAD@{116}: pull origin main: Fast-forward
+[33me4e1f6d[m HEAD@{117}: pull origin main: Fast-forward
+[33m2bca146[m HEAD@{118}: checkout: moving from utils to main
+[33m381852a[m[33m ([m[1;31morigin/utils[m[33m, [m[1;32mutils[m[33m)[m HEAD@{119}: commit: ui:- offer session 2
+[33ma37606f[m HEAD@{120}: commit: ui:- working on offer session
+[33mf82e029[m HEAD@{121}: commit: structured aviator screen with utils
+[33m2bca146[m HEAD@{122}: checkout: moving from main to utils
+[33m2bca146[m HEAD@{123}: checkout: moving from utils to main
+[33m2bca146[m HEAD@{124}: commit: Authentication screen updated with - utils code standardized
+[33md0871fd[m[33m ([m[1;31morigin/welcome_screen[m[33m, [m[1;32mwelcome_screen[m[33m)[m HEAD@{125}: checkout: moving from welcome_screen to utils
+[33md0871fd[m[33m ([m[1;31morigin/welcome_screen[m[33m, [m[1;32mwelcome_screen[m[33m)[m HEAD@{126}: commit: authentication utils updated
+[33mbecf663[m HEAD@{127}: commit: ui - completed
+[33m21932c9[m[33m ([m[1;31morigin/homeScreeb_ui[m[33m, [m[1;32mhomeScreeb_ui[m[33m)[m HEAD@{128}: checkout: moving from homeScreeb_ui to welcome_screen
+[33m21932c9[m[33m ([m[1;31morigin/homeScreeb_ui[m[33m, [m[1;32mhomeScreeb_ui[m[33m)[m HEAD@{129}: checkout: moving from feature-ui to homeScreeb_ui
+[33m78551a4[m[33m ([m[1;31morigin/feature-ui[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mhomescreen_ui[m[33m, [m[1;32mfeature-ui[m[33m)[m HEAD@{130}: checkout: moving from homeScreeb_ui to feature-ui
+[33m21932c9[m[33m ([m[1;31morigin/homeScreeb_ui[m[33m, [m[1;32mhomeScreeb_ui[m[33m)[m HEAD@{131}: commit (initial): aviator_ui; Home screen initial stage completed
+[33m78551a4[m[33m ([m[1;31morigin/feature-ui[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mhomescreen_ui[m[33m, [m[1;32mfeature-ui[m[33m)[m HEAD@{132}: checkout: moving from feature-ui to homeScreeb_ui
+[33m78551a4[m[33m ([m[1;31morigin/feature-ui[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mhomescreen_ui[m[33m, [m[1;32mfeature-ui[m[33m)[m HEAD@{133}: commit: aviator ui- fixed issues
+[33m7d86d61[m HEAD@{134}: commit: aviator - ui completed
+[33m4c90511[m HEAD@{135}: commit: adding functionality in the graph
+[33mee6c8cb[m HEAD@{136}: commit: ui - My bets Tab bar
+[33m53b7c86[m HEAD@{137}: commit: before rename application
+[33m895b002[m HEAD@{138}: commit: aviator screen ui work
+[33mb7ce2ac[m HEAD@{139}: commit (initial): Initial commit - ui_work
