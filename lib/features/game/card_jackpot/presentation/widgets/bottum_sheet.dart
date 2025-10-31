@@ -145,6 +145,7 @@ class BottumSheet extends ConsumerWidget {
                               text: '-',
                               fontSize: 22,
                               fontWeight: FontWeight.w300,
+                              color: AppColors.cardSecondPrimaryColor,
                             ),
                           ),
                         ),
@@ -181,6 +182,7 @@ class BottumSheet extends ConsumerWidget {
                               text: '+',
                               fontSize: 22,
                               fontWeight: FontWeight.w300,
+                              color: AppColors.cardSecondPrimaryColor,
                             ),
                           ),
                         ),
@@ -253,6 +255,7 @@ class BottumSheet extends ConsumerWidget {
                   // Bet Button
                   InkWell(
                     onTap: () async {
+                      Navigator.pop(context);
                       await betNotifier.placeBet(
                         cardName: cardName.toString(),
                         amount: selection.totalAmount,
@@ -264,12 +267,11 @@ class BottumSheet extends ConsumerWidget {
                       selectionNotifier.selectWallet(10);
                       selectionNotifier.selectQuantity(1);
                       selectionNotifier.selectMultiplier(1);
-                      Navigator.pop(context);
                     },
                     child: Container(
                       width: width * 0.55,
                       padding: const EdgeInsets.all(16),
-                      color: Colors.amber,
+                      color: AppColors.cardPrimaryColor,
                       child: Center(
                         child: AppText(
                           text: 'TOTAL AMOUNT : ${selection.totalAmount}',

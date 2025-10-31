@@ -14,7 +14,12 @@ class NumbersCards extends StatelessWidget {
       width: screenWidth,
       padding: EdgeInsets.symmetric(vertical: 19),
       decoration: BoxDecoration(
-        color: AppColors.cardPrimaryColor,
+        // color: AppColors.cardPrimaryColor,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFB1A1FF), AppColors.cardPrimaryColor],
+        ),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(

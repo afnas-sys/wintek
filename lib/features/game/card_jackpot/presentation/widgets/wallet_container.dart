@@ -29,6 +29,8 @@ class WalletContainer extends ConsumerWidget {
                   children: [
                     ClipRRect(
                       child: Image.asset(
+                        color: AppColors.cardPrimaryColor,
+
                         AppImages.wallet,
                         width: 40,
                         height: 40,
@@ -83,6 +85,7 @@ class WalletContainer extends ConsumerWidget {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            backgroundColor: AppColors.cardPrimaryColor,
                             content: Text(
                               wallet?.message ?? 'Fetched wallet successfully',
                             ),

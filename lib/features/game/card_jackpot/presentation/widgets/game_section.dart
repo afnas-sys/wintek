@@ -65,9 +65,14 @@ class _GameTabsState extends ConsumerState<GameTabs> {
                     duration: Duration(milliseconds: 300),
                     padding: EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.cardPrimaryColor
-                          : Colors.transparent,
+                      color: !isSelected ? Colors.transparent : null,
+                      gradient: isSelected
+                          ? LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Color(0xFFB1A1FF), Color(0xFF5134E5)],
+                            )
+                          : null,
                       borderRadius: BorderRadius.circular(16),
                       border: isSelected
                           ? Border.all(
@@ -84,15 +89,15 @@ class _GameTabsState extends ConsumerState<GameTabs> {
                             padding: EdgeInsets.all(13),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? Colors.white
-                                  : Color(0x1A9E9E9E),
+                                  ? Color(0x33FFFFFF)
+                                  : Color(0x1AAA99FD),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               AppIcons.tabIcons[index],
                               color: isSelected
-                                  ? AppColors.cardPrimaryColor
-                                  : AppColors.cardUnfocusedColor,
+                                  ? Colors.white
+                                  : AppColors.gameTabContainerBorderColor,
                             ),
                           ),
                           SizedBox(height: 10),
@@ -103,8 +108,8 @@ class _GameTabsState extends ConsumerState<GameTabs> {
                                   ? FontWeight.bold
                                   : FontWeight.normal,
                               color: isSelected
-                                  ? Colors.black
-                                  : Colors.grey[700],
+                                  ? AppColors.cardSecondPrimaryColor
+                                  : AppColors.gameTabContainerBorderColor,
                             ),
                           ),
                         ],

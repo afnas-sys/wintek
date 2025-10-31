@@ -37,22 +37,30 @@ class TimerSection extends ConsumerWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText(text: 'How to play', fontSize: 12),
+              AppText(
+                text: 'How to play',
+                fontSize: 12,
+                color: AppColors.cardSecondPrimaryColor,
+              ),
               SizedBox(height: 5),
               AppText(
                 text: currentBetId,
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.w500,
+                color: AppColors.cardSecondPrimaryColor,
               ),
             ],
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('Time Remaining'),
+              AppText(
+                text: 'Time Remaining',
+                color: AppColors.cardSecondPrimaryColor,
+              ),
               SizedBox(height: 5),
               Row(
-                spacing: 4,
+                spacing: 5,
                 children: [
                   buildBox(minute[0]),
                   buildBox(minute[1]),
@@ -75,7 +83,7 @@ Widget buildBox(String text) {
     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
     decoration: BoxDecoration(
       color: AppColors.timerContainerColor,
-      borderRadius: BorderRadius.circular(7),
+      borderRadius: BorderRadius.circular(4),
     ),
     child: Center(
       child: AppText(

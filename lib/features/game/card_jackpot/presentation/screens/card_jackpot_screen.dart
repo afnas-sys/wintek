@@ -9,25 +9,18 @@ class CardJackpotScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cardSecondPrimaryColor,
+      backgroundColor: AppColors.cardPrimaryColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: Stack(
-              children: [
-                // Background and Foreground Stacks
+        child: Stack(
+          children: [
+            // Background and Foreground Stacks
 
-                // 1. Background Stack
-                BackgroundStack(),
+            // 1. Background Stack
+            const BackgroundStack(),
 
-                // 2. Foreground Stack
-                ForegroundStack(),
-              ],
-            ),
-          ),
+            // 2. Foreground Stack
+            const ForegroundStack(),
+          ],
         ),
       ),
     );
