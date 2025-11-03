@@ -31,6 +31,7 @@ class _DepositScreenState extends State<DepositScreen> {
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
+
           child: SingleChildScrollView(
             child: Column(
               spacing: 20,

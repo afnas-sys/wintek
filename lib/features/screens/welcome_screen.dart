@@ -77,10 +77,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       // Image
                       Image.asset(
                         _screens[index]['image']!,
-                        height: 300,
+                        height: 250,
                         fit: BoxFit.contain,
                       ),
-                      const SizedBox(height: 80),
+                      const SizedBox(height: 40),
 
                       // Page Indicators
                       Row(
