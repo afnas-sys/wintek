@@ -62,6 +62,7 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_upi_india: ^1.0.1
   
+  shimmer: ^3.0.0
 
   
 

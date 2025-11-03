@@ -8,58 +8,56 @@ class NumbersCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        int firstRowLength = 5;
-        int secondRowLength = 4;
-        if (constraints.maxWidth < 350) {
-          firstRowLength = 4;
-          secondRowLength = 4;
-        }
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          decoration: BoxDecoration(
-            color: AppColors.cardPrimaryColor,
-            borderRadius: BorderRadius.circular(16),
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      width: screenWidth,
+      padding: EdgeInsets.symmetric(vertical: 19),
+      decoration: BoxDecoration(
+        // color: AppColors.cardPrimaryColor,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFB1A1FF), AppColors.cardPrimaryColor],
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(5, (index) {
+              int ind = 10 - index;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: CustomNumberCard(
+                  index: index,
+                  cardNameIndex: ind,
+                  selectedCardTypeIndex: selectedCardTypeIndex,
+                ),
+              );
+            }),
           ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(firstRowLength, (index) {
-                  int ind = 10 - index;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5,
-                    ), // only horizontal
-                    child: CustomNumberCard(
-                      index: index,
-                      cardNameIndex: ind,
-                      selectedCardTypeIndex: selectedCardTypeIndex,
-                    ),
-                  );
-                }),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(secondRowLength, (index) {
-                  int cardNameIndex = 5 - index;
-                  int numberPositionIndex = index + 5;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: CustomNumberCard(
-                      index: numberPositionIndex,
-                      cardNameIndex: cardNameIndex,
-                      selectedCardTypeIndex: selectedCardTypeIndex,
-                    ),
-                  );
-                }),
-              ),
-            ],
+          SizedBox(height: 19),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+
+            children: List.generate(4, (index) {
+              int cardNameIndex = 5 - index;
+              int numberPositionIndex = index + 5;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: CustomNumberCard(
+                  index: numberPositionIndex,
+                  cardNameIndex: cardNameIndex,
+                  selectedCardTypeIndex: selectedCardTypeIndex,
+                ),
+              );
+            }),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

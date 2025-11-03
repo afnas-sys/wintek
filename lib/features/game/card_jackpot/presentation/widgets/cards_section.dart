@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/card_numbers.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/main_cards.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/card_game_notifier.dart';
-import 'package:wintek/features/game/card_jackpot/providers/time/time_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/time_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
 class CardsSection extends ConsumerWidget {
@@ -17,32 +17,8 @@ class CardsSection extends ConsumerWidget {
     final round = ref.watch(cardRoundNotifierProvider);
     final timer = ref.watch(timerProvider);
 
-    String overlayText;
-    double fontSize = 130;
-
-    if (round == null) {
-      // 1️⃣ Initial load
-      overlayText = 'Loading...';
-      fontSize = 50;
-    } else if (round.state == 'PREPARE') {
-      // 2️⃣ Preparing
-      overlayText = 'Preparing';
-      fontSize = 50;
-    } else if (round.state == 'RUNNING') {
-      // 2️⃣ Running
-      overlayText = timer.inSeconds.toString();
-      fontSize = 130;
-    } else if (round.state == 'ENDED') {
-      // 3️⃣ Ended
-      overlayText = 'END';
-      fontSize = 50;
-    } else {
-      // Fallback for unknown states
-      overlayText = 'Loading...';
-      fontSize = 50;
-    }
-
-    // Show overlay if not running OR if still loading
+    // Determine overlay text and font size based on round state
+    final overlayData = _getOverlayData(round, timer);
     final showOverlay = round == null || round.state != 'RUNNING';
 
     return SizedBox(
@@ -56,11 +32,11 @@ class CardsSection extends ConsumerWidget {
               NumbersCards(selectedCardTypeIndex: selectedCardTypeIndex),
             ],
           ),
-          if (showOverlay && overlayText.isNotEmpty)
+          if (showOverlay && overlayData.text.isNotEmpty)
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: AppColors.cardUnfocusedColor,
@@ -69,9 +45,9 @@ class CardsSection extends ConsumerWidget {
                 ),
                 child: Center(
                   child: AppText(
-                    text: overlayText,
+                    text: overlayData.text,
                     color: Colors.white,
-                    fontSize: fontSize,
+                    fontSize: overlayData.fontSize,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -80,5 +56,22 @@ class CardsSection extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  ({String text, double fontSize}) _getOverlayData(
+    dynamic round,
+    Duration timer,
+  ) {
+    if (round == null) return (text: 'null', fontSize: 50.0);
+    switch (round.state) {
+      case 'PREPARE':
+        return (text: timer.inSeconds.toString(), fontSize: 130.0);
+      case 'RUNNING':
+        return (text: timer.inSeconds.toString(), fontSize: 130.0);
+      case 'ENDED':
+        return (text: 'ENDED', fontSize: 50.0);
+      default:
+        return (text: 'loading..', fontSize: 50.0);
+    }
   }
 }

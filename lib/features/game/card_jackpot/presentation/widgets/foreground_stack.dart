@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/game_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/wallet_container.dart';
 
@@ -9,16 +10,38 @@ class ForegroundStack extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 20, left: 20, top: 70),
-      child: Column(
-        spacing: 10,
-        children: [
-          // Wallet Container section
-          WalletContainer(),
+    double screenWidth = MediaQuery.of(context).size.width;
+    EdgeInsets padding = screenWidth < 400
+        ? const EdgeInsets.symmetric(horizontal: 10, vertical: 10)
+        : const EdgeInsets.symmetric(horizontal: 20, vertical: 10);
+    double screenHeight = MediaQuery.of(context).size.height;
 
-          // GameSection(),
-          GameTabs(),
+    double topHeight;
+    if (screenHeight < 700) {
+      topHeight = screenHeight * 0.28;
+    } else if (screenHeight < 900) {
+      topHeight = screenHeight * 0.32;
+    } else if (screenHeight < 450) {
+      topHeight = screenHeight * 0.20;
+    } else {
+      topHeight = screenHeight * 0.26;
+    }
+    return SingleChildScrollView(
+      child: Stack(
+        children: [
+          Container(color: AppColors.cardPrimaryColor, height: topHeight),
+
+          Padding(
+            padding: padding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                WalletContainer(),
+                SizedBox(height: 10),
+                GameTabs(),
+              ],
+            ),
+          ),
         ],
       ),
     );

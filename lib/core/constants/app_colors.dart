@@ -203,10 +203,10 @@ class AppColors {
   ).withOpacity(10 / 100);
 
   // vasil
-  // Card Jackpot Game App Colors
+  //! Card Jackpot Game App Colors
 
   // The main primary color of the app
-  static const Color cardPrimaryColor = Color(0xFFFFB518);
+  static const Color cardPrimaryColor = Color(0xFF271777);
   // Secondary color of the app .
   static const Color cardSecondPrimaryColor = Colors.white;
   // The unfocused color in the app
@@ -215,7 +215,7 @@ class AppColors {
 
   // On the timer section has small container for each numbers
   // this is the color used for add to that color
-  static const Color timerContainerColor = Color(0x33000000);
+  static const Color timerContainerColor = Color(0x1AFFFFFF);
   // On the my history section - there has sucess status and price
   //this is the color used for add to that status text and amount
   static const Color successTextColor = Colors.green;
@@ -233,7 +233,7 @@ class AppColors {
   static const Color depositButtonColor = Colors.green;
 
   // Game tab bar each tabs focused container border color
-  static const Color gameTabContainerBorderColor = Colors.yellow;
+  static const Color gameTabContainerBorderColor = Color(0xFFB1A1FF);
 
   // In this application there has 4 main cards .
   // This is the colors gradiant for that cards

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:wintek/core/constants/api_constants/api_constants.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/profile/model/update_user.dart';
 
 class ChangePasswordModel {
   final String oldPassword;
@@ -73,6 +74,36 @@ class ProfileServices {
       return res.data;
     } catch (e) {
       return {'status': 'error', 'message': 'Error occurred'};
+    }
+  }
+
+  /// Updates the user's profile data.
+  ///
+  /// This function sends a PUT request to the API with the updated profile data.
+  /// If the request is successful, it returns a [Map] containing the response from the API.
+  /// If the request fails, it returns a [Map] containing the error message from the API.
+  /// If an exception occurs while calling the API, it re-throws the exception.
+  Future<Map<String, dynamic>> updateProfile(UpdateProfile data) async {
+    final secureData = await SecureStorageService().readCredentials();
+    try {
+      final res = await dio.put(
+        ApiContants.updateProfileUrl,
+        data: data.toJson(),
+        options: Options(
+          headers: {'Authorization': 'Bearer ${secureData.token}'},
+        ),
+      );
+      return res.statusCode == 200 || res.statusCode == 201
+          ? {
+              'status': 'success',
+              'message': res.data['message'] ?? 'Profile updated successfully',
+            }
+          : {
+              'status': 'failure',
+              'message': res.data['message'] ?? 'Failed to update profile',
+            };
+    } catch (e) {
+      return {'status': 'error', 'message': 'Update profile failed'};
     }
   }
 }

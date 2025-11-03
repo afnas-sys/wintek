@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wintek/features/game/card_jackpot/presentation/widgets/history_list_section.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -42,40 +43,52 @@ class _BottumHistoryTabState extends State<BottumHistoryTab> {
               children: [
                 AppText(
                   text: 'Period',
-                  // fontSize: 18,
                   fontWeight: FontWeight.w400,
+                  color: AppColors.cardSecondPrimaryColor,
                 ),
                 AppText(
                   text: 'Result',
-                  // fontSize: 18,
                   fontWeight: FontWeight.w400,
+                  color: AppColors.cardSecondPrimaryColor,
                 ),
               ],
             ),
           ),
         // ListView changes based on button
-        // HistoryListSection(isGameHistory: selectedIndex == 0),
+        HistoryListSection(isGameHistory: selectedIndex == 0),
       ],
     );
   }
 
   Widget _buildButton(int index, String text) {
     final isSelected = selectedIndex == index;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    // Responsive padding based on screen width
+    final EdgeInsets padding = screenWidth < 400
+        ? const EdgeInsets.symmetric(horizontal: 15, vertical: 18)
+        : const EdgeInsets.symmetric(horizontal: 30, vertical: 18);
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 18),
+        padding: padding,
         backgroundColor: isSelected
             ? AppColors.cardPrimaryColor
             : Colors.grey[300],
         foregroundColor: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        minimumSize: Size.zero, // Allow button to shrink
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       onPressed: () {
         setState(() {
           selectedIndex = index;
         });
       },
-      child: AppText(text: text, fontSize: 16, fontWeight: FontWeight.w500),
+      child: AppText(
+        text: text,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: isSelected ? AppColors.cardSecondPrimaryColor : null,
+      ),
     );
   }
 }

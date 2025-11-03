@@ -33,6 +33,13 @@ class AppImages {
   static const String kingImage = 'assets/images/king.png';
   static const String rupeeImage = 'assets/images/rupee.png';
 
+  // Card Suit Images
+  static const String clubsImage = 'assets/images/clubs.png';
+  static const String spadesImage = 'assets/images/spades.png';
+  static const String heartImage = 'assets/images/heart.png';
+  static const String diamondImage = 'assets/images/diamond.png';
+
+  //
   static const String depositIcon = 'assets/images/deposit_icon.png';
   static const String withdrawIcon = 'assets/images/withdraw_icon.png';
   static const String linearSetting = 'assets/images/linear_setting.png';

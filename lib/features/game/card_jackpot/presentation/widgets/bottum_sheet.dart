@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/selection_container.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
-import 'package:wintek/features/game/card_jackpot/providers/checkout/amount_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/amount_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/bet_provider.dart';
+import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart';
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
@@ -24,13 +26,22 @@ class BottumSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selection = ref.watch(amountSelectProvider);
     final selectionNotifier = ref.read(amountSelectProvider.notifier);
+    final betNotifier = ref.read(betNotifierProvider.notifier);
+    final sessionId = ref.watch(currentBetIdProvider);
+    final roundEvent = ref.watch(cardRoundNotifierProvider);
     final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     final cardName = isMainCard
         ? AppStrings.mainCardNames[cardIndex]
         : cardIndex;
     final String title = isMainCard
         ? 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName'
         : 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName';
+
+    // Responsive padding for content
+    double horizontalPadding = width < 400 ? 15 : 30;
+    double verticalPadding = height < 600 ? 15 : 23;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cardSecondPrimaryColor,
@@ -60,34 +71,46 @@ class BottumSheet extends ConsumerWidget {
 
           // Content
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 23),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Balance Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const AppText(
                       text: 'Balance',
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
                     ),
-                    Row(
-                      children: List.generate(balanceValues.length, (index) {
-                        final val = balanceValues[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 15),
-                          child: SelectContainer(
-                            index: index,
-                            selectedIndex: balanceValues.indexOf(
-                              selection.walletValue,
-                            ),
-                            value: val.toString(),
-                            onTap: () => selectionNotifier.selectWallet(val),
-                          ),
-                        );
-                      }),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: List.generate(balanceValues.length, (
+                            index,
+                          ) {
+                            final val = balanceValues[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: SelectContainer(
+                                index: index,
+                                selectedIndex: balanceValues.indexOf(
+                                  selection.baseAmount,
+                                ),
+                                value: val.toString(),
+                                onTap: () =>
+                                    selectionNotifier.selectWallet(val),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -95,9 +118,9 @@ class BottumSheet extends ConsumerWidget {
                 const SizedBox(height: 15),
 
                 // Quantity Row
-                //
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const AppText(
                       text: 'Quantity',
@@ -122,6 +145,7 @@ class BottumSheet extends ConsumerWidget {
                               text: '-',
                               fontSize: 22,
                               fontWeight: FontWeight.w300,
+                              color: AppColors.cardSecondPrimaryColor,
                             ),
                           ),
                         ),
@@ -129,9 +153,9 @@ class BottumSheet extends ConsumerWidget {
                         // Quantity display container
                         // increase quantity based on user interaction
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 12),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: width < 400 ? 20 : 40,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
@@ -153,14 +177,12 @@ class BottumSheet extends ConsumerWidget {
                           },
                           child: Container(
                             color: AppColors.cardPrimaryColor,
-                            padding: const EdgeInsets.symmetric(
-                              // vertical: 2,
-                              horizontal: 12,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: const AppText(
                               text: '+',
                               fontSize: 22,
                               fontWeight: FontWeight.w300,
+                              color: AppColors.cardSecondPrimaryColor,
                             ),
                           ),
                         ),
@@ -175,21 +197,29 @@ class BottumSheet extends ConsumerWidget {
                 // while pressing the each multiplies button the amount will increase based on the selection
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: List.generate(multipleValues.length, (index) {
-                    final val = multipleValues[index];
-                    final selectedIndex = multipleValues.indexOf(
-                      selection.multiplier,
-                    );
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 13),
-                      child: SelectContainer(
-                        index: index,
-                        selectedIndex: selectedIndex,
-                        value: 'X$val',
-                        onTap: () => selectionNotifier.selectMultiplier(val),
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        spacing: 10,
+                        runSpacing: 8,
+                        children: List.generate(multipleValues.length, (index) {
+                          final val = multipleValues[index];
+                          final selectedIndex = multipleValues.indexOf(
+                            selection.multiplier,
+                          );
+                          return SelectContainer(
+                            index: index,
+                            selectedIndex: selectedIndex,
+                            value: 'X$val',
+                            onTap: () =>
+                                selectionNotifier.selectMultiplier(val),
+                          );
+                        }),
                       ),
-                    );
-                  }),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -222,21 +252,55 @@ class BottumSheet extends ConsumerWidget {
                   ),
 
                   // Confirmation button
+                  // Bet Button
                   InkWell(
-                    onTap: () {
-                      // betNotifier.addRound(
-                      //   cardName: cardName.toString(),
-                      //   amount: selection.total,
-                      // );
+                    onTap: () async {
+                      try {
+                        await betNotifier.placeBet(
+                          cardName: cardName.toString(),
+                          amount: selection.totalAmount,
+                          sessionId: sessionId,
+                          roundId: roundEvent?.roundId ?? '',
+                          cardTypeIndex: cardTypeIndex,
+                        );
+                        // Check if bet was successful
+                        final betState = ref.read(betNotifierProvider);
+                        if (betState.hasError) {
+                          // Show error message from provider
+                          _showSnackBar(
+                            context,
+                            betState.error.toString(),
+                            Colors.red,
+                          );
+                        } else {
+                          // Show success snackbar
+                          _showSnackBar(
+                            context,
+                            'Bet placed successfully!',
+                            AppColors.cardPrimaryColor,
+                          );
+                        }
+                      } catch (e) {
+                        // Show generic error snackbar
+                        _showSnackBar(
+                          context,
+                          'Failed to place bet. Please try again.',
+                          Colors.red,
+                        );
+                      }
+                      // Reset amount selection after bet
+                      selectionNotifier.selectWallet(10);
+                      selectionNotifier.selectQuantity(1);
+                      selectionNotifier.selectMultiplier(1);
                       Navigator.pop(context);
                     },
                     child: Container(
                       width: width * 0.55,
                       padding: const EdgeInsets.all(16),
-                      color: Colors.amber,
+                      color: AppColors.cardPrimaryColor,
                       child: Center(
                         child: AppText(
-                          text: 'TOTAL AMOUNT : ${selection.total}',
+                          text: 'TOTAL AMOUNT : ${selection.totalAmount}',
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           color: AppColors.cardSecondPrimaryColor,
@@ -249,6 +313,24 @@ class BottumSheet extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSnackBar(
+    BuildContext context,
+    String message,
+    Color backgroundColor,
+  ) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+        duration: const Duration(seconds: 3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
     );
   }
