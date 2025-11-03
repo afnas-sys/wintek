@@ -3,7 +3,9 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 
 class DepositAmountFieldWidget extends StatefulWidget {
-  const DepositAmountFieldWidget({super.key});
+  final TextEditingController controller;
+
+  const DepositAmountFieldWidget({super.key, required this.controller});
 
   @override
   State<DepositAmountFieldWidget> createState() =>
@@ -11,11 +13,8 @@ class DepositAmountFieldWidget extends StatefulWidget {
 }
 
 class _DepositAmountFieldWidgetState extends State<DepositAmountFieldWidget> {
-  final TextEditingController _amountController = TextEditingController();
-
   @override
   void dispose() {
-    _amountController.dispose();
     super.dispose();
   }
 
@@ -46,7 +45,7 @@ class _DepositAmountFieldWidgetState extends State<DepositAmountFieldWidget> {
                 const SizedBox(width: 14),
                 Expanded(
                   child: TextField(
-                    controller: _amountController,
+                    controller: widget.controller,
                     keyboardType: TextInputType.number,
                     style: Theme.of(context).textTheme.paymentSmallSecondary,
                     decoration: InputDecoration(
@@ -77,19 +76,19 @@ class _DepositAmountFieldWidgetState extends State<DepositAmountFieldWidget> {
         const SizedBox(height: 10),
         Row(
           children: [
+            _buildQuickAmountButton('₹ 100'),
+            const SizedBox(width: 20),
+            _buildQuickAmountButton('₹ 300'),
+            const SizedBox(width: 20),
             _buildQuickAmountButton('₹ 500'),
-            const SizedBox(width: 20),
-            _buildQuickAmountButton('₹ 1000'),
-            const SizedBox(width: 20),
-            _buildQuickAmountButton('₹ 2000'),
           ],
         ),
         const SizedBox(height: 20),
         Row(
           children: [
-            _buildQuickAmountButton('₹ 500'),
-            const SizedBox(width: 20),
             _buildQuickAmountButton('₹ 1000'),
+            const SizedBox(width: 20),
+            _buildQuickAmountButton('₹ 1500'),
             const SizedBox(width: 20),
             _buildQuickAmountButton('₹ 2000'),
           ],
@@ -103,7 +102,7 @@ class _DepositAmountFieldWidgetState extends State<DepositAmountFieldWidget> {
       child: GestureDetector(
         onTap: () {
           setState(() {
-            _amountController.text = amount.replaceAll('₹ ', '');
+            widget.controller.text = amount.replaceAll('₹ ', '');
           });
         },
         child: Container(

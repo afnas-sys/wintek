@@ -14,6 +14,14 @@ class DepositScreen extends StatefulWidget {
 }
 
 class _DepositScreenState extends State<DepositScreen> {
+  final TextEditingController _amountController = TextEditingController();
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,25 +37,43 @@ class _DepositScreenState extends State<DepositScreen> {
               children: [
                 const BalanceCardWidget(),
 
-                DepositAmountFieldWidget(),
+                DepositAmountFieldWidget(controller: _amountController),
 
-                DepositPaymentSectionWidget(),
+                DepositPaymentSectionWidget(controller: _amountController),
 
                 SizedBox(
-                  height: 348,
+                  //      height: 348,
                   child: Stack(
                     children: [
                       DepositNoteWidget(),
-                      Positioned(
-                        top: 55,
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 55),
                         child: DepositHistoryWidget(),
                       ),
                     ],
                   ),
                 ),
+                //    LayoutBuilder(
+                //   builder: (context, constraints) {
+                //     return Column(
+                //       children: [
+                //         Stack(
+                //           clipBehavior: Clip.none,
+                //           children: [
+                //             // DepositNoteWidget (acts as background or header)
+                //             DepositNoteWidget(),
+
+                //             // History list positioned below the note widget
+                //             Padding(
+                //               padding: const EdgeInsets.only(top: 55),
+                //               child: DepositHistoryWidget(),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     );
+                //   },
+                // ),
               ],
             ),
           ),

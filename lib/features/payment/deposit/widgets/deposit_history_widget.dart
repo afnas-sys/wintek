@@ -1,16 +1,34 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/payment/providers/user_transaction_provider.dart';
 
-class DepositHistoryWidget extends StatelessWidget {
+class DepositHistoryWidget extends ConsumerStatefulWidget {
   const DepositHistoryWidget({super.key});
+
+  @override
+  ConsumerState<DepositHistoryWidget> createState() =>
+      _DepositHistoryWidgetState();
+}
+
+class _DepositHistoryWidgetState extends ConsumerState<DepositHistoryWidget> {
+  String selectedStatus = 'All';
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userTransactionProvider.notifier).fetchUserTransactions(0, 10);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 348,
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 26),
       decoration: const BoxDecoration(
         color: AppColors.paymentFourteenthColor,
@@ -24,7 +42,7 @@ class DepositHistoryWidget extends StatelessWidget {
           const SizedBox(height: 16),
           _buildDashedDivider(),
           const SizedBox(height: 16),
-          Expanded(child: _buildHistoryList()),
+          _buildHistoryList(),
         ],
       ),
     );
@@ -39,16 +57,71 @@ class DepositHistoryWidget extends StatelessWidget {
             style: Theme.of(context).textTheme.paymentTitleMediumPrimary,
           ),
         ),
-        Container(
-          height: 44,
-          width: 44,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            border: Border.all(color: AppColors.paymentSixteenthColor),
-            image: DecorationImage(image: AssetImage(AppImages.linearSetting)),
+        PopupMenuButton<String>(
+          onSelected: (String value) {
+            setState(() {
+              selectedStatus = value;
+            });
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'All',
+              child: Text(
+                'All',
+                style: TextStyle(
+                  color: selectedStatus == 'All'
+                      ? AppColors.paymentPrimaryColor
+                      : AppColors.aviatorEleventhColor,
+                ),
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'pending',
+              child: Text(
+                'Pending',
+                style: TextStyle(
+                  color: selectedStatus == 'pending'
+                      ? AppColors.paymentPrimaryColor
+                      : AppColors.aviatorEleventhColor,
+                ),
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'success',
+              child: Text(
+                'Success',
+                style: TextStyle(
+                  color: selectedStatus == 'success'
+                      ? AppColors.paymentPrimaryColor
+                      : AppColors.aviatorEleventhColor,
+                ),
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'failed',
+              child: Text(
+                'Failed',
+                style: TextStyle(
+                  color: selectedStatus == 'failed'
+                      ? AppColors.paymentPrimaryColor
+                      : AppColors.aviatorEleventhColor,
+                ),
+              ),
+            ),
+          ],
+          child: Container(
+            height: 44,
+            width: 44,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(color: AppColors.paymentSixteenthColor),
+              image: DecorationImage(
+                image: AssetImage(AppImages.linearSetting),
+              ),
+            ),
+            // child: const Icon(Icons.tune, color: Colors.white, size: 16),
           ),
-          // child: const Icon(Icons.tune, color: Colors.white, size: 16),
         ),
       ],
     );
@@ -96,35 +169,56 @@ class DepositHistoryWidget extends StatelessWidget {
   }
 
   Widget _buildHistoryList() {
-    final List<Map<String, String>> history = [
-      {'amount': '₹3,000', 'date': '07 Jul, 11:30 AM', 'status': 'Pending'},
-      {'amount': '₹3,000', 'date': '04 Jul, 11:30 AM', 'status': 'Successful'},
-      {'amount': '₹3,000', 'date': '04 Jul, 11:30 AM', 'status': 'Failed'},
-      {'amount': '₹3,000', 'date': '04 Jul, 11:30 AM', 'status': 'Successful'},
-    ];
+    final trasactionState = ref.watch(userTransactionProvider);
 
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      itemCount: history.length,
-      separatorBuilder: (context, index) => Column(
-        children: [
-          const SizedBox(height: 20),
-          DottedLine(
-            dashColor: AppColors.paymentEighteenthColor,
-            dashLength: 8,
-            dashGapLength: 4,
-            lineThickness: 1,
+    return trasactionState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text(error.toString())),
+      data: (data) {
+        if (data == null || data.data.isEmpty) {
+          return const Center(child: Text('No history found'));
+        }
+        final filteredData = selectedStatus == 'All'
+            ? data.data
+            : data.data
+                  .where((transaction) => transaction.status == selectedStatus)
+                  .toList();
+        if (filteredData.isEmpty) {
+          return const Center(
+            child: Text('No history found for selected status'),
+          );
+        }
+        return ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          padding: EdgeInsets.zero,
+          itemCount: filteredData.length,
+          separatorBuilder: (context, index) => Column(
+            children: [
+              const SizedBox(height: 20),
+              DottedLine(
+                dashColor: AppColors.paymentEighteenthColor,
+                dashLength: 8,
+                dashGapLength: 4,
+                lineThickness: 1,
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
-          const SizedBox(height: 20),
-        ],
-      ),
-      itemBuilder: (context, index) {
-        final item = history[index];
-        return _buildHistoryItem(
-          item['amount']!,
-          item['date']!,
-          item['status']!,
-          context,
+          itemBuilder: (context, index) {
+            final transaction = filteredData[index];
+            return _buildHistoryItem(
+              transaction.amount.toStringAsFixed(2),
+
+              DateFormat('dd MMM, hh:mm a').format(
+                DateTime.parse(
+                  transaction.createdAt,
+                ).add(const Duration(hours: 5, minutes: 30)),
+              ),
+              transaction.status,
+              context,
+            );
+          },
         );
       },
     );
@@ -138,13 +232,13 @@ class DepositHistoryWidget extends StatelessWidget {
   ) {
     Color statusColor;
     switch (status) {
-      case 'Pending':
+      case 'pending':
         statusColor = AppColors.paymentNinteenthColor;
         break;
-      case 'Successful':
+      case 'success':
         statusColor = AppColors.paymentTwentythColor;
         break;
-      case 'Failed':
+      case 'failed':
         statusColor = AppColors.paymentTwentyfirstColor;
         break;
       default:
