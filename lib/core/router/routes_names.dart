@@ -23,4 +23,8 @@ class RoutesNames {
   static const String cardJackpot = '/cardJackpot';
   //wallet
   static const String wallet = '/walletDeposit';
+
+  //payment
+  static const String withdraw = '/withdraw';
+  static const String deposit = '/deposit';
 }

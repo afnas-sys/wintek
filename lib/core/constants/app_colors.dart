@@ -127,6 +127,31 @@ class AppColors {
   static const Color profileSecondaryColor = Color(0XFF271777);
   static const Color profileTextcolor = Colors.white;
 
+  //!_____________________________________Payment_______________________________________
+
+  static const Color paymentPrimaryColor = Color(0xFFA395EE);
+  static Color paymentSecondaryColor = Color(0xFFA395EE).withOpacity(0.2);
+  static const Color paymentThirdColor = Color(0x33A395EE);
+  static const Color paymentFourthColor = Color(0x80FFFFFF);
+  static const Color paymentFifthColor = Color(0xFF00AC7B);
+  static const Color paymentSixthColor = Color(0xFFFFA500);
+  static const Color paymentSeventhColor = Color(0x80FFA500);
+  static const Color paymentEighthColor = Color(0XFF000000);
+  static const Color paymentNinthColor = Color(0xFFB2FFD5);
+  static const Color paymentTenthColor = Color(0xFF010101);
+  static const Color paymentEleventhColor = Color(0xFFFFC0C0);
+  static const Color paymentTwelfthColor = Color(0xFFFF0000);
+  static const Color paymentThirteenthColor = Color(0xFF242424);
+  static const Color paymentFourteenthColor = Color(0xFF1C0F42);
+  static const Color paymentFifteenthColor = Color(0xFFFFFFFF);
+  static Color paymentSixteenthColor = Colors.white.withOpacity(0.2);
+  static Color paymentSeventeenthColor = Colors.white.withOpacity(0.5);
+  static Color paymentEighteenthColor = Color(0xFFE5E5E5).withOpacity(0.1);
+  static const Color paymentNinteenthColor = Color(0xFFF98500);
+  static const Color paymentTwentythColor = Color(0xFF18C07A);
+  static const Color paymentTwentyfirstColor = Color(0xFFEB644C);
+  static const Color paymentTwentysecondColor = Color(0xFF140A2D);
+
   //! -----------------------------------------------------------------------------------------------------------------------------
 
   //! text

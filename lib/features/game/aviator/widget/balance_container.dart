@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/core/router/routes_names.dart';
 
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
@@ -87,7 +88,9 @@ class _BalanceContainerState extends ConsumerState<BalanceContainer> {
   Widget _withdrawButton(BuildContext context) {
     return CustomElevatedButton(
       hasBorder: false,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pushNamed(context, RoutesNames.withdraw);
+      },
       backgroundColor: AppColors.aviatorFourthColor,
       borderRadius: 30,
       padding: EdgeInsets.only(left: 23, right: 23, top: 10, bottom: 10),
@@ -104,7 +107,9 @@ class _BalanceContainerState extends ConsumerState<BalanceContainer> {
   Widget _depositButton(BuildContext context) {
     return CustomElevatedButton(
       hasBorder: false,
-      onPressed: () {},
+      onPressed: () {
+        Navigator.pushNamed(context, RoutesNames.deposit);
+      },
       backgroundColor: AppColors.aviatorFifthColor,
       borderRadius: 30,
       padding: EdgeInsets.only(left: 23, right: 23, top: 10, bottom: 10),

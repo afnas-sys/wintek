@@ -512,7 +512,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
             : AppColors.aviatorNineteenthColor,
         child: Text(
           isAutoPlayActive
-              ? 'STOP (${currentRound}/${maxRounds > 0 ? maxRounds : '∞'})'
+              ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
               : 'AUTOPLAY',
           style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
           overflow: TextOverflow.ellipsis,
