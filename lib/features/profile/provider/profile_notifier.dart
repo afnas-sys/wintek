@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/network/dio_provider.dart';
-
+import 'package:wintek/features/profile/model/update_user.dart';
 import 'package:wintek/features/profile/services/profile_services.dart';
 
 final profileProvider = StateProvider<ProfileNotifier>((ref) {
@@ -36,6 +36,17 @@ class ProfileNotifier extends StateNotifier {
   /// If an exception occurs while calling the API, it re-throws the exception.
   Future<Map<String, dynamic>> fetchUserData() async {
     final res = await apiService.fetchUserData();
+    return res;
+  }
+
+  /// Updates the user's profile with the given [UpdateProfile] data.
+  /// Returns a [Map] containing the response from the API.
+  /// If the request is successful, it returns a [Map] containing
+  /// the response from the API.
+  /// If the request fails, it returns a [Map] containing the error
+  /// message from the API.
+  Future<Map<String, dynamic>> updateProfile(UpdateProfile data) async {
+    final res = await apiService.updateProfile(data);
     return res;
   }
 }

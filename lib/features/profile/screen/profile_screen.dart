@@ -56,7 +56,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       backgroundColor: AppColors.profilePrimaryColor,
       body: SafeArea(
         child: currentUser.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.profileSecondaryColor,
+            ),
+          ),
           error: (error, stack) => Center(
             child: Text(
               'Error loading profile: $error',
@@ -65,14 +69,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           data: (userData) {
             final Map<String, dynamic>? data = userData['data'];
-            log('from profile screeen user data is $data');
-            if (data == null) {
-              return const Center(
-                child: Text(
-                  'No user data available',
-                  style: TextStyle(color: Colors.white),
-                ),
-              );
+            if (data == null || data.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
             }
             return RefreshIndicator(
               onRefresh: () async {
@@ -149,7 +147,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       image: NetworkImage(
                                         data['picture'] == '-' ||
                                                 data['picture'] == null
-                                            ? 'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5'
+                                            ? 'https://cdn.vectorstock.com/i/preview-1x/63/42/avatar-photo-placeholder-icon-design-vector-30916342.jpg'
                                             : data['picture'],
                                       ),
                                       fit: BoxFit.cover,
@@ -351,6 +349,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
+
       ProfileSection(
         title: 'Legal',
         items: [
@@ -867,7 +866,6 @@ void _showLogoutConfirmation(
                           final isGoogleLogin =
                               prefs.getBool(AuthApiConstants.isGoogleLogin) ??
                               false;
-                          log('shre pref data is : $isGoogleLogin');
                           if (isGoogleLogin) {
                             final res = await googleAuthService.signOut();
 

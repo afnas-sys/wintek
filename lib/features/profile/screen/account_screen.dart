@@ -1,7 +1,13 @@
+// import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/features/auth/domain/constants/auth_api_constants.dart';
+import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/profile/model/update_user.dart';
 import 'package:wintek/features/profile/provider/profile_notifier.dart';
 
 class AccountScreen extends ConsumerStatefulWidget {
@@ -13,8 +19,54 @@ class AccountScreen extends ConsumerStatefulWidget {
 
 class _AccountScreenState extends ConsumerState<AccountScreen> {
   final _formKey = GlobalKey<FormState>();
-  DateTime? selectedDate;
+  String? selectedDate;
   String? selectedGender;
+  late TextEditingController nameController;
+
+  static const labelStyle = TextStyle(
+    color: Color(0xFFA395EE),
+    fontSize: 14,
+    fontFamily: 'Inter',
+    fontWeight: FontWeight.w400,
+    height: 1.3,
+  );
+  static const valueStyle = TextStyle(
+    color: Colors.white,
+    fontSize: 14,
+    fontFamily: 'Inter',
+    fontWeight: FontWeight.w400,
+    height: 1.57,
+  );
+  static const fieldPadding = EdgeInsets.symmetric(
+    horizontal: 24,
+    vertical: 18,
+  );
+  static final fieldBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(30),
+    borderSide: BorderSide(color: Color(0xFFA395EE).withOpacity(0.2)),
+  );
+  static final focusedFieldBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(30),
+    borderSide: BorderSide(color: Color(0xFFA395EE)),
+  );
+  static final fieldDecoration = BoxDecoration(
+    borderRadius: BorderRadius.circular(30),
+    border: Border.fromBorderSide(
+      BorderSide(color: Color(0xFFA395EE).withOpacity(0.2)),
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,17 +86,36 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
           data: (userData) => Builder(
             builder: (context) {
               final data = userData["data"];
-              selectedDate ?? 'date_of_birth';
-              selectedGender ?? 'gender';
-              return SingleChildScrollView(
-                child: Column(
-                  spacing: 40,
-                  children: [
-                    _buildHeader(context),
-                    _buildProfileImage(data['picture']),
-                    _buildForm(data),
-                  ],
-                ),
+              selectedDate ??= data['date_of_birth'] == '-'
+                  ? null
+                  : data['date_of_birth'];
+              selectedGender ??= data['gender'] == '-' ? null : data['gender'];
+              nameController.text = data['user_name'] ?? '';
+              return FutureBuilder<Widget>(
+                future: _buildForm(data),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    );
+                  } else {
+                    return SingleChildScrollView(
+                      child: Column(
+                        spacing: 40,
+                        children: [
+                          _buildHeader(context),
+                          _buildProfileImage(data['picture']),
+                          snapshot.data!,
+                        ],
+                      ),
+                    );
+                  }
+                },
               );
             },
           ),
@@ -53,30 +124,298 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     );
   }
 
+  //
+  //
+  //
+  // App bar section
+  //
+  //
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          // Back button
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: SizedBox(
+              width: 80,
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Title
+          const Expanded(
+            child: Text(
+              'My Profile',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Inter',
+              ),
+            ),
+          ),
+          // Edit button
+          GestureDetector(
+            onTap: () => _showEditConfirmationDialog(context),
+            child: Container(
+              width: 80,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.edit, color: Colors.white, size: 14),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontFamily: 'Roboto',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //
+  //
+  // Profile Image section
+  //
+  //
+  //
+
+  Widget _buildProfileImage(String? profileImage) {
+    final image = profileImage == "-" || profileImage == null
+        ? 'https://cdn.vectorstock.com/i/preview-1x/63/42/avatar-photo-placeholder-icon-design-vector-30916342.jpg'
+        : profileImage;
+    return Stack(
+      children: [
+        Container(
+          width: 140,
+          height: 140,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 2),
+            image: DecorationImage(
+              image: NetworkImage(image),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: Container(
+            padding: const EdgeInsets.all(2),
+            decoration: const BoxDecoration(
+              color: AppColors.profileSecondaryColor,
+              shape: BoxShape.circle,
+            ),
+            child: Image.asset(AppImages.cameraIcon),
+          ),
+        ),
+      ],
+    );
+  }
+  //
+  //
+
+  //
+  //
+  //
+  Future<Widget> _buildForm(Map<String, dynamic> userData) async {
+    final sharedPref = await SharedPreferences.getInstance();
+    final isGoogleLog =
+        sharedPref.getBool(AuthApiConstants.isGoogleLogin) ?? false;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          spacing: 20,
+          children: [
+            _buildFormField(
+              label: 'Full Name',
+              value: userData['user_name'] ?? 'Add name',
+              controller: nameController,
+              isEditable: true,
+            ),
+            if (isGoogleLog) ...[
+              _buildFormField(
+                label: 'Email',
+                value: userData['email'] ?? 'Add email',
+                isEditable: false,
+              ),
+            ],
+            if (!isGoogleLog) ...[
+              _buildFormField(
+                label: 'Phone',
+                value: userData['mobile'] ?? 'Add phone number',
+                isEditable: false,
+              ),
+            ],
+            _buildFormField(
+              label: 'Date of Birth',
+              value: selectedDate != null
+                  ? _formatDate(DateTime.tryParse(selectedDate!))
+                  : 'select',
+              onTap: () => _selectDate(context),
+              suffixIcon: const Icon(Icons.date_range, color: Colors.white54),
+            ),
+            _buildGenderField(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormField({
+    required String label,
+    required String value,
+    Widget? suffixIcon,
+    VoidCallback? onTap,
+    TextEditingController? controller,
+    bool isEditable = false,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: labelStyle),
+        const SizedBox(height: 10),
+        if (isEditable && controller != null)
+          TextFormField(
+            controller: controller,
+            style: valueStyle,
+            autovalidateMode: AutovalidateMode.always,
+            decoration: InputDecoration(
+              contentPadding: fieldPadding,
+              border: fieldBorder,
+              enabledBorder: fieldBorder,
+              focusedBorder: focusedFieldBorder,
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter $label';
+              }
+              return null;
+            },
+          )
+        else
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: fieldPadding,
+              decoration: fieldDecoration,
+              child: Row(
+                children: [
+                  Expanded(child: Text(value, style: valueStyle)),
+                  if (suffixIcon != null) ...[
+                    const SizedBox(width: 14),
+                    suffixIcon,
+                  ],
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  //
+
+  // Date Section
+
+  //
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
+      initialDate: selectedDate != null
+          ? DateTime.tryParse(selectedDate!) ?? DateTime.now()
+          : DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) => Theme(
-        data: Theme.of(
-          context,
-        ).copyWith(dialogBackgroundColor: Colors.transparent),
+        data: Theme.of(context).copyWith(
+          // Set dialog background to match profile primary color
+          dialogBackgroundColor: AppColors.profilePrimaryColor,
+
+          // Customize color scheme for the date picker
+          colorScheme: ColorScheme.dark(
+            primary: AppColors
+                .profileSecondaryColor, // Header and selected date color
+            onPrimary: AppColors.profileTextcolor, // Text on primary color
+            surface: AppColors.profilePrimaryColor, // Background of calendar
+            onSurface: AppColors.profileTextcolor, // Text color on surface
+          ),
+
+          // Customize text button colors
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white, // Button text color
+            ),
+          ),
+        ),
         child: child!,
       ),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null) {
       setState(() {
-        selectedDate = picked;
+        selectedDate = picked.toIso8601String().split('T').first;
       });
     }
+  }
+
+  Widget _buildGenderField() {
+    return GestureDetector(
+      onTap: () => _selectGender(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Gender', style: labelStyle),
+          const SizedBox(height: 10),
+          Container(
+            padding: fieldPadding,
+            decoration: fieldDecoration,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    selectedGender == null ? 'select' : '$selectedGender',
+                    style: valueStyle,
+                  ),
+                ),
+                const Icon(Icons.keyboard_arrow_down, color: Colors.white54),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _selectGender(BuildContext context) async {
     final result = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.profileSecondaryColor,
       builder: (context) => Container(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -113,142 +452,6 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     }
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          // Back button
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: SizedBox(
-              width: 80,
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // Title
-          const Expanded(
-            child: Text(
-              'My Profile',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Inter',
-              ),
-            ),
-          ),
-          // Edit button
-          Container(
-            width: 80,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Colors.white.withOpacity(0.2)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.edit, color: Colors.white, size: 14),
-                const SizedBox(width: 8),
-                const Text(
-                  'Edit',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileImage(String? profileImage) {
-    final image = profileImage == "-" || profileImage == null
-        ? 'https://api.builder.io/api/v1/image/assets/TEMP/2d9ca7e1c94e375f00e59a8525e451b4b93eaaa5'
-        : profileImage;
-    return Stack(
-      children: [
-        Container(
-          width: 140,
-          height: 140,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-            image: DecorationImage(
-              image: NetworkImage(image),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: Container(
-            padding: const EdgeInsets.all(2),
-            decoration: const BoxDecoration(
-              color: AppColors.profileSecondaryColor,
-              shape: BoxShape.circle,
-            ),
-            child: Image.asset(AppImages.cameraIcon),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildForm(Map<String, dynamic> userData) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildFormField(
-              label: 'Full Name',
-              value: userData['user_name'] ?? 'Add name',
-            ),
-            const SizedBox(height: 20),
-            _buildFormField(
-              label: 'Email',
-              value: userData['email'] ?? 'Add email',
-            ),
-            const SizedBox(height: 20),
-            _buildFormField(
-              label: 'Phone',
-              value: userData['mobile'] ?? 'Add phone number',
-            ),
-            const SizedBox(height: 20),
-            _buildFormField(
-              label: 'Date of Birth',
-              value: selectedDate != null
-                  ? _formatDate(selectedDate)
-                  : 'select',
-              onTap: () => _selectDate(context),
-              suffixIcon: Icon(Icons.date_range, color: Colors.white54),
-            ),
-            const SizedBox(height: 20),
-            _buildGenderField(),
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
-    );
-  }
-
   String _formatDate(DateTime? dob) {
     if (dob == null) return 'select';
     const months = [
@@ -268,105 +471,78 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
     return '${dob.day} ${months[dob.month - 1]} ${dob.year}';
   }
 
-  Widget _buildFormField({
-    required String label,
-    required String value,
-    Widget? suffixIcon,
-    VoidCallback? onTap,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Color(0xFFA395EE),
-            fontSize: 14,
-            fontFamily: 'Inter',
-            fontWeight: FontWeight.w400,
-            height: 1.3,
+  void _showEditConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.profilePrimaryColor,
+          title: const Text(
+            'Confirm Edit',
+            style: TextStyle(color: Colors.white),
           ),
-        ),
-        const SizedBox(height: 10),
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: const Color(0xFFA395EE).withOpacity(0.2),
+          content: const Text(
+            'Are you sure you want to edit your profile?',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white),
               ),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      height: 1.57,
-                    ),
-                  ),
-                ),
-                if (suffixIcon != null) ...[
-                  const SizedBox(width: 14),
-                  suffixIcon,
-                ],
-              ],
+            TextButton(
+              onPressed: () async {
+                if (_formKey.currentState?.validate() ?? false) {
+                  final userData = await SecureStorageService()
+                      .readCredentials();
+                  final updateData = UpdateProfile(
+                    id: userData.userId ?? '',
+                    userName: nameController.text,
+                    dateOfBirth: selectedDate,
+                    gender: selectedGender,
+                  );
+
+                  final result = await ref
+                      .read(profileProvider)
+                      .updateProfile(updateData);
+
+                  if (result['status'] == 'success') {
+                    // Refresh the user data
+                    ref.invalidate(currentUserDataProvider);
+                    _showSnackBar(result['message'], Colors.green);
+                  } else {
+                    _showSnackBar(result['message'], Colors.red);
+                  }
+
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                  }
+                }
+              },
+              child: const Text(
+                'Confirm',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildGenderField() {
-    return GestureDetector(
-      onTap: () => _selectGender(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Gender',
-            style: TextStyle(
-              color: Color(0xFFA395EE),
-              fontSize: 14,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              height: 1.3,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: const Color(0xFFA395EE).withOpacity(0.2),
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    selectedGender ?? 'select',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w400,
-                      height: 1.57,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+  void _showSnackBar(String message, Color backgroundColor) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: backgroundColor,
+        duration: const Duration(seconds: 3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
     );
   }
