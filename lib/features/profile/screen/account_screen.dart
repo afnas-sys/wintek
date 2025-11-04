@@ -236,9 +236,10 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
       ],
     );
   }
-  //
-  //
 
+  //
+  //
+  // Form section
   //
   //
   //
@@ -365,6 +366,16 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
             onPrimary: AppColors.profileTextcolor, // Text on primary color
             surface: AppColors.profilePrimaryColor, // Background of calendar
             onSurface: AppColors.profileTextcolor, // Text color on surface
+            onSurfaceVariant: Colors.white, // For secondary text
+          ),
+
+          // Customize text theme for all text in dialog
+          textTheme: Theme.of(context).textTheme.copyWith(
+            bodyLarge: const TextStyle(color: Colors.white),
+            bodyMedium: const TextStyle(color: Colors.white),
+            bodySmall: const TextStyle(color: Colors.white),
+            headlineSmall: const TextStyle(color: Colors.white),
+            titleLarge: const TextStyle(color: Colors.white),
           ),
 
           // Customize text button colors
@@ -372,6 +383,16 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
             style: TextButton.styleFrom(
               foregroundColor: Colors.white, // Button text color
             ),
+          ),
+
+          // Ensure input text is white for manual entry
+          inputDecorationTheme: const InputDecorationTheme(
+            hintStyle: TextStyle(color: Colors.white),
+            labelStyle: TextStyle(color: Colors.white),
+            helperStyle: TextStyle(color: Colors.white),
+            counterStyle: TextStyle(color: Colors.white),
+            prefixStyle: TextStyle(color: Colors.white),
+            suffixStyle: TextStyle(color: Colors.white),
           ),
         ),
         child: child!,
