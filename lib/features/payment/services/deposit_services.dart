@@ -3,17 +3,17 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/payment/domain/models/transfer_request_model.dart';
+import 'package:wintek/features/payment/domain/models/deposit_request_model.dart';
 import 'package:wintek/features/payment/domain/models/transfer_response_model.dart';
 import 'package:wintek/core/network/dio_provider.dart';
 
-class PaymentServices {
+class DepositServices {
   final Dio dio;
 
-  PaymentServices(this.dio);
+  DepositServices(this.dio);
 
   Future<TransferResponseModel> createTransaction(
-    TransferRequestModel request,
+    DepositRequestModel request,
   ) async {
     final userData = await SecureStorageService().readCredentials();
 
@@ -33,6 +33,6 @@ class PaymentServices {
   }
 }
 
-final paymentServicesProvider = Provider<PaymentServices>((ref) {
-  return PaymentServices(ref.read(dioProvider));
+final depositServicesProvider = Provider<DepositServices>((ref) {
+  return DepositServices(ref.read(dioProvider));
 });

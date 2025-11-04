@@ -1,4 +1,4 @@
-class TransferRequestModel {
+class DepositRequestModel {
   final String userId;
   final String transferType;
   final double amount;
@@ -8,7 +8,7 @@ class TransferRequestModel {
   final String taxId;
   final String refId;
 
-  TransferRequestModel({
+  DepositRequestModel({
     required this.userId,
     required this.transferType,
     required this.amount,
@@ -19,8 +19,8 @@ class TransferRequestModel {
     required this.refId,
   });
 
-  factory TransferRequestModel.fromJson(Map<String, dynamic> json) {
-    return TransferRequestModel(
+  factory DepositRequestModel.fromJson(Map<String, dynamic> json) {
+    return DepositRequestModel(
       userId: json['user_id'] ?? '',
       transferType: json['transfer_type'] ?? '',
       amount: (json['amount'] ?? 0).toDouble(),
