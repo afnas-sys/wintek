@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/features/profile/provider/profile_notifier.dart';
 import 'package:wintek/features/profile/services/profile_services.dart';
 
@@ -28,35 +29,6 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     _newPasswordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-
-  void _handleSave() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      // Handle password change logic here
-      final data = ChangePasswordModel(
-        mobileNumber: widget.mobile,
-        oldPassword: _currentPasswordController.text,
-        newPassword: _newPasswordController.text,
-      );
-      Color color = Colors.green;
-      String? content;
-      final Map<String, dynamic> res = await ref
-          .read(profileProvider)
-          .changePassword(data);
-      if (res['status'] == 'success') {
-        content = res['message'];
-        Navigator.pop(context);
-      } else if (res['status'] == 'failure') {
-        content = res['message'];
-        color = Colors.red;
-      } else if (res['status'] == 'error') {
-        content = res['message'] + ' Please try again';
-        color = Colors.orange;
-      }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(content!), backgroundColor: color));
-    }
   }
 
   @override
@@ -275,6 +247,91 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  void _handleSave() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_newPasswordController.text == _currentPasswordController.text) {
+        return samePasswordWarning();
+      }
+      // Handle password change logic here
+      final data = ChangePasswordModel(
+        mobileNumber: widget.mobile,
+        oldPassword: _currentPasswordController.text,
+        newPassword: _newPasswordController.text,
+      );
+      Color color = Colors.green;
+      String? content;
+      final Map<String, dynamic> res = await ref
+          .read(profileProvider)
+          .changePassword(data);
+      if (res['status'] == 'success') {
+        content = 'Password changed successfully';
+        Navigator.pop(context);
+      } else if (res['status'] == 'failure') {
+        content = res['message'];
+        color = Colors.red;
+      } else if (res['status'] == 'error') {
+        content = res['message'] + ' Please try again';
+        color = Colors.orange;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(content!), backgroundColor: color));
+    }
+  }
+
+  Future samePasswordWarning() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.profilePrimaryColor.withOpacity(0.95),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.lock_outline, color: Colors.amberAccent, size: 48),
+              SizedBox(height: 16),
+              Text(
+                'Old password cannot be the same as the new password.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 15,
+                  height: 1.4,
+                ),
+              ),
+              SizedBox(height: 10),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurpleAccent,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 10,
+                ),
+              ),
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'OK',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
