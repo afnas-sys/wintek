@@ -17,11 +17,12 @@ class DepositHistoryWidget extends ConsumerStatefulWidget {
 
 class _DepositHistoryWidgetState extends ConsumerState<DepositHistoryWidget> {
   String selectedStatus = 'All';
+  bool _showAll = false;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userTransactionProvider.notifier).fetchUserTransactions(0, 10);
+      ref.read(userTransactionProvider.notifier).fetchAllUserTransactions();
     });
     super.initState();
   }
@@ -49,11 +50,22 @@ class _DepositHistoryWidgetState extends ConsumerState<DepositHistoryWidget> {
   }
 
   Widget _buildHistoryHeader(BuildContext context) {
+    final trasactionState = ref.watch(userTransactionProvider);
+    String totalText = 'Deposit History';
+    trasactionState.when(
+      loading: () => totalText = 'Deposit History',
+      error: (error, stack) => totalText = 'Deposit History',
+      data: (data) {
+        if (data != null) {
+          totalText = 'Deposit History (${data.total})';
+        }
+      },
+    );
     return Row(
       children: [
         Expanded(
           child: Text(
-            'Deposit History',
+            totalText,
             style: Theme.of(context).textTheme.paymentTitleMediumPrimary,
           ),
         ),
@@ -188,37 +200,54 @@ class _DepositHistoryWidgetState extends ConsumerState<DepositHistoryWidget> {
             child: Text('No history found for selected status'),
           );
         }
-        return ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          padding: EdgeInsets.zero,
-          itemCount: filteredData.length,
-          separatorBuilder: (context, index) => Column(
-            children: [
-              const SizedBox(height: 20),
-              DottedLine(
-                dashColor: AppColors.paymentEighteenthColor,
-                dashLength: 8,
-                dashGapLength: 4,
-                lineThickness: 1,
+        final displayedData = _showAll
+            ? filteredData
+            : filteredData.take(10).toList();
+        return Column(
+          children: [
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              itemCount: displayedData.length,
+              separatorBuilder: (context, index) => Column(
+                children: [
+                  const SizedBox(height: 20),
+                  DottedLine(
+                    dashColor: AppColors.paymentEighteenthColor,
+                    dashLength: 8,
+                    dashGapLength: 4,
+                    lineThickness: 1,
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
-          itemBuilder: (context, index) {
-            final transaction = filteredData[index];
-            return _buildHistoryItem(
-              transaction.amount.toStringAsFixed(2),
-
-              DateFormat('dd MMM, hh:mm a').format(
-                DateTime.parse(
-                  transaction.createdAt,
-                ).add(const Duration(hours: 5, minutes: 30)),
+              itemBuilder: (context, index) {
+                final transaction = displayedData[index];
+                return _buildHistoryItem(
+                  transaction.amount.toStringAsFixed(2),
+                  DateFormat('dd MMM, hh:mm a').format(
+                    DateTime.parse(
+                      transaction.createdAt,
+                    ).add(const Duration(hours: 5, minutes: 30)),
+                  ),
+                  transaction.status,
+                  context,
+                );
+              },
+            ),
+            if (filteredData.length > 10 && !_showAll)
+              Center(
+                child: IconButton(
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  onPressed: () {
+                    setState(() {
+                      _showAll = true;
+                    });
+                  },
+                ),
               ),
-              transaction.status,
-              context,
-            );
-          },
+          ],
         );
       },
     );

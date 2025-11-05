@@ -3,45 +3,45 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/payment/domain/models/transfer_request_model.dart';
+import 'package:wintek/features/payment/deposit/domain/models/deposit_request_model.dart';
 import 'package:wintek/features/payment/domain/models/transfer_response_model.dart';
-import 'package:wintek/features/payment/services/payment_services.dart';
+import 'package:wintek/features/payment/deposit/services/deposit_services.dart';
 
-class PaymentState {
+class DepositState {
   final bool isLoading;
   final String? message;
 
-  PaymentState({this.isLoading = false, this.message});
+  DepositState({this.isLoading = false, this.message});
 
-  PaymentState copyWith({bool? isLoading, String? message}) {
-    return PaymentState(
+  DepositState copyWith({bool? isLoading, String? message}) {
+    return DepositState(
       isLoading: isLoading ?? this.isLoading,
       message: message ?? this.message,
     );
   }
 }
 
-class PaymentNotifier extends StateNotifier<PaymentState> {
-  final PaymentServices _paymentServices;
+class DepositNotifier extends StateNotifier<DepositState> {
+  final DepositServices _paymentServices;
   final SecureStorageService _storage;
 
-  PaymentNotifier(this._paymentServices, this._storage) : super(PaymentState());
+  DepositNotifier(this._paymentServices, this._storage) : super(DepositState());
 
   Future<TransferResponseModel?> createTransaction(
-    TransferRequestModel request,
+    DepositRequestModel request,
     BuildContext context,
   ) async {
-    state = PaymentState(isLoading: true, message: null);
+    state = DepositState(isLoading: true, message: null);
     try {
       final credentials = await _storage.readCredentials();
       if (credentials.token == null) {
-        state = PaymentState(isLoading: false, message: 'No token found');
+        state = DepositState(isLoading: false, message: 'No token found');
         return null;
       }
 
       final response = await _paymentServices.createTransaction(request);
 
-      state = PaymentState(isLoading: false, message: response.message);
+      state = DepositState(isLoading: false, message: response.message);
 
       // Show message in ScaffoldMessenger
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +58,7 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       final errorMessage = e is Map
           ? e['message'] ?? 'Unknown error'
           : e.toString();
-      state = PaymentState(isLoading: false, message: errorMessage);
+      state = DepositState(isLoading: false, message: errorMessage);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
@@ -70,10 +70,10 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
   }
 }
 
-final paymentNotifierProvider =
-    StateNotifierProvider<PaymentNotifier, PaymentState>((ref) {
-      return PaymentNotifier(
-        ref.read(paymentServicesProvider),
+final depositNotifierProvider =
+    StateNotifierProvider<DepositNotifier, DepositState>((ref) {
+      return DepositNotifier(
+        ref.read(depositServicesProvider),
         SecureStorageService(),
       );
     });

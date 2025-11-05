@@ -7,8 +7,8 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/payment/domain/models/transfer_request_model.dart';
-import 'package:wintek/features/payment/providers/payment_notifier.dart';
+import 'package:wintek/features/payment/deposit/domain/models/deposit_request_model.dart';
+import 'package:wintek/features/payment/deposit/providers/deposit_notifier.dart';
 
 class DepositPaymentSectionWidget extends ConsumerStatefulWidget {
   final TextEditingController controller;
@@ -58,16 +58,23 @@ class _DepositPaymentSectionWidgetState
 
     try {
       // ✅ Use flutter_upi_india package for all apps
-      await UpiPay.initiateTransaction(
+      final response = await UpiPay.initiateTransaction(
         app: upiApp,
         receiverUpiAddress: receiverUpiAddress,
         receiverName: receiverName,
         transactionRef: 'TR${DateTime.now().millisecondsSinceEpoch}',
         amount: widget.controller.text,
       );
-      _showSnack('$name opened successfully', Colors.green);
-      // Call API after opening payment app
-      await _callTransactionAPI();
+      if (response.status == UpiTransactionStatus.success) {
+        _showSnack('Payment successful via $name', Colors.green);
+
+        // call Api
+        await _callTransactionAPI('success');
+      } else {
+        _showSnack('Payment failed or cancelled', Colors.red);
+        // dont call api
+        await _callTransactionAPI('failure');
+      }
     } catch (e) {
       _showSnack('Error: $e', Colors.red);
     } finally {
@@ -78,7 +85,7 @@ class _DepositPaymentSectionWidgetState
     }
   }
 
-  Future<void> _callTransactionAPI() async {
+  Future<void> _callTransactionAPI(String status) async {
     try {
       final credentials = await _storage.readCredentials();
       final taxId = 'HDF${DateTime.now().millisecondsSinceEpoch}';
@@ -87,22 +94,27 @@ class _DepositPaymentSectionWidgetState
         _showSnack('User not logged in', Colors.red);
         return;
       }
-      final request = TransferRequestModel(
+      final request = DepositRequestModel(
         userId: credentials.userId!,
         transferType: 'upi',
         amount: double.parse(widget.controller.text),
         type: 'mobile',
         note: '',
-        status: 'success',
+        status: status,
         taxId: taxId,
         refId: refId,
       );
-      final paymentNotifier = ref.read(paymentNotifierProvider.notifier);
-      final response = await paymentNotifier.createTransaction(
-        request,
-        context,
-      );
-      log('Payment API response: ${response?.message}');
+
+      if (status == 'success') {
+        final paymentNotifier = ref.read(depositNotifierProvider.notifier);
+        final response = await paymentNotifier.createTransaction(
+          request,
+          context,
+        );
+        log('Payment API response: ${response?.message}');
+      } else {
+        log('Skipping API call: payment was not successful');
+      }
     } catch (e) {
       _showSnack('Failed to create transaction: $e', Colors.red);
     }
