@@ -29,7 +29,7 @@ class _AvailableBalanceContainerState
     return Container(
       padding: EdgeInsets.all(23),
       width: double.infinity,
-      // height: 165,
+      height: 165,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.walletFourthColor, width: 1),
