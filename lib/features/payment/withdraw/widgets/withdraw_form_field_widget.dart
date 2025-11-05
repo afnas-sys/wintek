@@ -1,21 +1,50 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
+import 'package:wintek/features/payment/withdraw/providers/withdraw_provider.dart';
+import 'package:wintek/features/payment/withdraw/domain/models/withdraw_request_model.dart';
+import 'package:wintek/features/profile/provider/profile_notifier.dart';
+import 'package:wintek/features/profile/model/update_user.dart';
 
-class WithdrawFormFieldWidget extends StatefulWidget {
+class WithdrawFormFieldWidget extends ConsumerStatefulWidget {
   const WithdrawFormFieldWidget({super.key});
 
   @override
-  State<WithdrawFormFieldWidget> createState() =>
+  ConsumerState<WithdrawFormFieldWidget> createState() =>
       _WithdrawFormFieldWidgetState();
 }
 
-class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
+class _WithdrawFormFieldWidgetState
+    extends ConsumerState<WithdrawFormFieldWidget> {
   final _upiController = TextEditingController();
   final _amountController = TextEditingController();
   bool _isFormValid = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _upiController.addListener(_validateForm);
+    _amountController.addListener(_validateForm);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeUpiId();
+    });
+  }
+
+  void _initializeUpiId() {
+    final userAsync = ref.read(userProvider);
+    userAsync.whenData((userModel) {
+      if (userModel != null && userModel.data.upiId.isNotEmpty) {
+        _upiController.text = userModel.data.upiId;
+      }
+    });
+  }
 
   bool isValidUpiFormat(String upi) {
     // Extensive list of valid UPI handles (as of 2025)
@@ -59,13 +88,6 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
     return validHandles.contains(handle);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _upiController.addListener(_validateForm);
-    _amountController.addListener(_validateForm);
-  }
-
   void _validateForm() {
     setState(() {
       _isFormValid =
@@ -74,30 +96,104 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
     });
   }
 
-  void _handleWithdraw() {
-    Flushbar(
-      // margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      flushbarPosition: FlushbarPosition.TOP,
-      backgroundColor: AppColors.paymentNinthColor,
-      duration: const Duration(seconds: 3),
-      messageText: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Withdrawal Request Submitted',
-            style: Theme.of(context).textTheme.paymentBodySmallPrimary,
+  Future<void> _handleWithdraw() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final userAsync = ref.read(userProvider);
+      var userModel = userAsync.value;
+      if (userModel == null) {
+        throw Exception('User not found');
+      }
+
+      final upiId = _upiController.text.trim();
+      final amount = double.tryParse(_amountController.text.trim());
+      if (amount == null || amount <= 0) {
+        throw Exception('Invalid amount');
+      }
+
+      // Check if UPI ID exists
+      log('Current user UPI ID: ${userModel.data.upiId}');
+      if (userModel.data.upiId.isEmpty || userModel.data.upiId == '-') {
+        // Update UPI ID in profile
+        final profileNotifier = ref.read(profileProvider);
+        final updateProfile = UpdateProfile(
+          id: userModel.data.id,
+          upiId: upiId,
+          upiNumber: upiId, // Use the entered UPI ID as the UPI number
+        );
+        final result = await profileNotifier.updateProfile(updateProfile);
+        log('Profile update result: $result');
+        if (result['status'] != 'success') {
+          throw Exception(result['message'] ?? 'Failed to update UPI ID');
+        }
+        // Refetch user data to update UPI ID
+        await ref.read(userProvider.notifier).fetchUser();
+        // Update the local userModel after refetch
+        final updatedUserAsync = ref.read(userProvider);
+        final updatedUserModel = updatedUserAsync.value;
+        log('Updated user UPI ID: ${updatedUserModel?.data.upiId}');
+        if (updatedUserModel != null) {
+          userModel = updatedUserModel;
+        }
+      }
+
+      // Create withdraw request
+      log('Creating withdraw request with UPI ID: ${userModel.data.upiId}');
+      final withdrawService = ref.read(withdrawServicesProvider);
+      final request = WithdrawRequestModel(
+        userId: userModel.data.id,
+        transferType: 'withdrawal', // Assuming transfer type
+        amount: amount,
+        type: 'mobile',
+        withdrawType: 'phonepe',
+        note: '',
+      );
+      final response = await withdrawService.createTransaction(request);
+
+      if (response.status == 'success') {
+        Flushbar(
+          flushbarPosition: FlushbarPosition.TOP,
+          backgroundColor: AppColors.paymentNinthColor,
+          duration: const Duration(seconds: 3),
+          messageText: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Withdrawal Request Submitted',
+                style: Theme.of(context).textTheme.paymentBodySmallPrimary,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '₹${_amountController.text} withdrawal is under review. It may take up to 24 hours.',
+                style: Theme.of(context).textTheme.paymentBodySmallPrimary,
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          Text(
-            '₹${_amountController.text} withdrawal is under review. It may take up to 24 hours.',
-            style: Theme.of(context).textTheme.paymentBodySmallPrimary,
-          ),
-        ],
-      ),
-    ).show(context);
-    _upiController.clear();
-    _amountController.clear();
+        ).show(context);
+        _upiController.clear();
+        _amountController.clear();
+      } else {
+        throw Exception(response.message);
+      }
+    } catch (e) {
+      Flushbar(
+        flushbarPosition: FlushbarPosition.TOP,
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+        messageText: Text(
+          'Error: ${e.toString()}',
+          style: const TextStyle(color: Colors.white),
+        ),
+      ).show(context);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -209,9 +305,9 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _isFormValid ? _handleWithdraw : null,
+        onPressed: (_isFormValid && !_isLoading) ? _handleWithdraw : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _isFormValid
+          backgroundColor: _isFormValid && !_isLoading
               ? AppColors.paymentSixthColor
               : AppColors.paymentSeventhColor,
           disabledBackgroundColor: AppColors.paymentSeventhColor,
@@ -221,10 +317,12 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
           ),
           elevation: 0,
         ),
-        child: Text(
-          'Withdraw Now',
-          style: Theme.of(context).textTheme.paymentBodyLargeSecondary,
-        ),
+        child: _isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                'Withdraw Now',
+                style: Theme.of(context).textTheme.paymentBodyLargeSecondary,
+              ),
       ),
     );
   }

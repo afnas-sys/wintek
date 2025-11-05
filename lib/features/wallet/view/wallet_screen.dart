@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/features/wallet/widget/available_balance_container.dart';
 import 'package:wintek/features/wallet/widget/transaction_history.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -29,12 +30,14 @@ class WalletScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CustomElevatedButton(
-                      backgroundColor: AppColors.walletFifthColor,
-                      borderColor: AppColors.walletFifthColor,
+                      backgroundColor: AppColors.walletSixthColor,
+                      borderColor: AppColors.walletSecondaryColor,
                       height: 50,
                       borderRadius: 50,
                       padding: const EdgeInsets.all(14),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, RoutesNames.deposit);
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -49,6 +52,7 @@ class WalletScreen extends StatelessWidget {
                             AppImages.depositIcon,
                             height: 22,
                             width: 22,
+                            color: AppColors.walletSecondaryColor,
                           ),
                         ],
                       ),
@@ -58,11 +62,13 @@ class WalletScreen extends StatelessWidget {
                   Expanded(
                     child: CustomElevatedButton(
                       backgroundColor: AppColors.walletSixthColor,
-                      borderColor: AppColors.walletNinthColor,
+                      borderColor: AppColors.walletSeventeenthColor,
                       height: 50,
                       borderRadius: 50,
                       padding: const EdgeInsets.all(14),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, RoutesNames.withdraw);
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -77,6 +83,7 @@ class WalletScreen extends StatelessWidget {
                             AppImages.withdrawIcon,
                             height: 22,
                             width: 22,
+                            color: AppColors.walletSeventeenthColor,
                           ),
                         ],
                       ),

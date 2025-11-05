@@ -221,12 +221,12 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
   TextStyle get walletSmallPrimary => GoogleFonts.roboto(
-    color: AppColors.walletEighthColor,
+    color: AppColors.walletSeventeenthColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
   TextStyle get walletSmallSecondary => GoogleFonts.roboto(
-    color: AppColors.walletSeventhColor,
+    color: AppColors.walletSecondaryColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
