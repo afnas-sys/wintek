@@ -44,6 +44,7 @@ class AppImages {
   static const String withdrawIcon = 'assets/images/withdraw_icon.png';
   static const String linearSetting = 'assets/images/linear_setting.png';
   static const String send = 'assets/images/send.png';
+  static const String receive = 'assets/images/received.png';
   static const String welcomeBonus = 'assets/images/welcome_bonus.png';
   static const String logout = 'assets/images/logout.png';
   static const String googleIcon = 'assets/images/google.png';

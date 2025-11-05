@@ -1,27 +1,31 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/payment/providers/user_transaction_provider.dart';
 
-class TransactionHistory extends StatefulWidget {
+class TransactionHistory extends ConsumerStatefulWidget {
   const TransactionHistory({super.key});
 
   @override
-  State<TransactionHistory> createState() => _TransactionHistoryState();
+  ConsumerState<TransactionHistory> createState() => _TransactionHistoryState();
 }
 
-class _TransactionHistoryState extends State<TransactionHistory> {
-  List<Map<String, dynamic>> data = [
-    {'title': 'withdrawal', 'date': '12/04/2023'},
-    {'title': 'withdr', 'date': '12/04/2026'},
-    {'title': 'withdrawal', 'date': '12/04/2023'},
-    {'title': 'withdr', 'date': '12/04/2026'},
-    {'title': 'withdrawal', 'date': '12/04/2023'},
-    {'title': 'withdr', 'date': '12/04/2026'},
-    {'title': 'withdrawal', 'date': '12/04/2023'},
-    {'title': 'withdr', 'date': '12/04/2026'},
-  ];
+class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
+  String selectedStatus = 'All';
+  final bool _showAll = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userTransactionProvider.notifier).fetchAllUserTransactions();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,9 +46,58 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                 style: Theme.of(context).textTheme.walletTitleMediumPrimary,
               ),
               Spacer(),
-              InkWell(
-                onTap: () {},
-                borderRadius: BorderRadius.circular(50),
+              PopupMenuButton<String>(
+                onSelected: (String value) {
+                  setState(() {
+                    selectedStatus = value;
+                  });
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem<String>(
+                    value: 'All',
+                    child: Text(
+                      'All',
+                      style: TextStyle(
+                        color: selectedStatus == 'All'
+                            ? AppColors.paymentPrimaryColor
+                            : AppColors.aviatorEleventhColor,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'pending',
+                    child: Text(
+                      'Pending',
+                      style: TextStyle(
+                        color: selectedStatus == 'pending'
+                            ? AppColors.paymentPrimaryColor
+                            : AppColors.aviatorEleventhColor,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'success',
+                    child: Text(
+                      'Success',
+                      style: TextStyle(
+                        color: selectedStatus == 'success'
+                            ? AppColors.paymentPrimaryColor
+                            : AppColors.aviatorEleventhColor,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'failed',
+                    child: Text(
+                      'Failed',
+                      style: TextStyle(
+                        color: selectedStatus == 'failed'
+                            ? AppColors.paymentPrimaryColor
+                            : AppColors.aviatorEleventhColor,
+                      ),
+                    ),
+                  ),
+                ],
                 child: Container(
                   height: 44,
                   width: 44,
@@ -69,60 +122,126 @@ class _TransactionHistoryState extends State<TransactionHistory> {
             dashLength: 4.0,
             dashColor: AppColors.walletFifteenthColor,
           ),
-          Expanded(
-            child: ListView.separated(
-              shrinkWrap: true,
-              //  physics: AlwaysScrollableScrollPhysics(),
-              physics: BouncingScrollPhysics(),
-              itemCount: data.length,
-              separatorBuilder: (context, index) {
-                return DottedLine(
-                  direction: Axis.horizontal,
-                  lineLength: double.infinity,
-                  lineThickness: 1.0,
-                  dashLength: 4.0,
-                  dashColor: AppColors.walletFifteenthColor,
-                );
-              },
-              itemBuilder: (context, index) {
-                final item = data[index];
-                return ListTile(
-                  leading: Container(
-                    height: 44,
-                    width: 44,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.walletSixteenthColor),
-                      borderRadius: BorderRadius.circular(50),
+          Consumer(
+            builder: (context, ref, child) {
+              final trasactionState = ref.watch(userTransactionProvider);
+              return trasactionState.when(
+                loading: () => const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (error, stack) =>
+                    Expanded(child: Center(child: Text(error.toString()))),
+                data: (data) {
+                  if (data == null || data.data.isEmpty) {
+                    return const Expanded(
+                      child: Center(child: Text('No history found')),
+                    );
+                  }
+                  final allTransactions = data.data
+                      .where(
+                        (transaction) =>
+                            transaction.transferType == 'upi' ||
+                            transaction.transferType == 'withdrawal',
+                      )
+                      .toList();
+                  final filteredData = selectedStatus == 'All'
+                      ? allTransactions
+                      : allTransactions
+                            .where(
+                              (transaction) =>
+                                  transaction.status == selectedStatus,
+                            )
+                            .toList();
+                  final displayedData = _showAll
+                      ? filteredData
+                      : filteredData.take(10).toList();
+                  return Expanded(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: displayedData.length,
+                      separatorBuilder: (context, index) {
+                        return DottedLine(
+                          direction: Axis.horizontal,
+                          lineLength: double.infinity,
+                          lineThickness: 1.0,
+                          dashLength: 4.0,
+                          dashColor: AppColors.walletFifteenthColor,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        final transaction = displayedData[index];
+                        final isDeposit = transaction.transferType == 'upi';
+
+                        final image = isDeposit
+                            ? AppImages.receive
+                            : AppImages.send;
+                        final amountColor = isDeposit
+                            ? AppColors.walletSecondaryColor
+                            : AppColors.walletSeventeenthColor;
+                        final borderColor = isDeposit
+                            ? AppColors.walletThirdColor
+                            : AppColors.walletSixteenthColor;
+                        final title = isDeposit ? 'Deposit' : 'Withdraw';
+                        final statusColor = transaction.status == 'success'
+                            ? AppColors.walletSecondaryColor
+                            : (transaction.status == 'pending'
+                                  ? AppColors.paymentNinteenthColor
+                                  : AppColors.walletSeventeenthColor);
+                        return ListTile(
+                          leading: Container(
+                            height: 44,
+                            width: 44,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: borderColor),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Image.asset(image, height: 16, width: 16),
+                          ),
+                          title: Text(
+                            title,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.walletBodyMediumPrimary,
+                          ),
+                          subtitle: Text(
+                            DateFormat('dd MMM, hh:mm a').format(
+                              DateTime.parse(
+                                transaction.createdAt,
+                              ).add(const Duration(hours: 5, minutes: 30)),
+                            ),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.walletBodySmallPrimary,
+                          ),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                '${isDeposit ? '+ ' : '- '}₹${transaction.amount.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  color: amountColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                transaction.status,
+                                style: TextStyle(
+                                  color: statusColor,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                    child: Image.asset(AppImages.send, height: 16, width: 16),
-                  ),
-                  title: Text(
-                    item['title'],
-                    style: Theme.of(context).textTheme.walletBodyMediumPrimary,
-                  ),
-                  subtitle: Text(
-                    item['date'],
-                    style: Theme.of(context).textTheme.walletBodySmallPrimary,
-                  ),
-                  trailing: Column(
-                    children: [
-                      Text(
-                        '₹ 5000',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.walletBodyMediumSecondary,
-                      ),
-                      Text(
-                        'Pending',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.walletBodySmallSecondary,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              );
+            },
           ),
         ],
       ),

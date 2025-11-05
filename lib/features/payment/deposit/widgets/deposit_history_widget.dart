@@ -57,7 +57,10 @@ class _DepositHistoryWidgetState extends ConsumerState<DepositHistoryWidget> {
       error: (error, stack) => totalText = 'Deposit History',
       data: (data) {
         if (data != null) {
-          totalText = 'Deposit History (${data.total})';
+          final filtered = data.data
+              .where((transaction) => transaction.transferType == 'upi')
+              .toList();
+          totalText = 'Deposit History (${filtered.length})';
         }
       },
     );
@@ -190,9 +193,12 @@ class _DepositHistoryWidgetState extends ConsumerState<DepositHistoryWidget> {
         if (data == null || data.data.isEmpty) {
           return const Center(child: Text('No history found'));
         }
+        final depositData = data.data
+            .where((transaction) => transaction.transferType == 'upi')
+            .toList();
         final filteredData = selectedStatus == 'All'
-            ? data.data
-            : data.data
+            ? depositData
+            : depositData
                   .where((transaction) => transaction.status == selectedStatus)
                   .toList();
         if (filteredData.isEmpty) {

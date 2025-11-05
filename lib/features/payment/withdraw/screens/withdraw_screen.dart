@@ -31,15 +31,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 WithdrawFormFieldWidget(),
 
                 SizedBox(
-                  height: 348,
+                  //   height: 348,
                   child: Stack(
                     children: [
                       WithdrawNoteWidget(),
-                      Positioned(
-                        top: 85,
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 55),
                         child: WithdrawHistoryWidget(),
                       ),
                     ],

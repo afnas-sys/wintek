@@ -28,59 +28,57 @@ class _BalanceContainerState extends ConsumerState<BalanceContainer> {
   Widget build(BuildContext context) {
     final userAsync = ref.watch(userProvider);
 
-    return userAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
-      data: (userModel) {
-        if (userModel == null) {
-          return const Center(child: Text('No data available'));
-        }
-        final user = userModel.data;
-        String formatNum(num? value) => value?.toStringAsFixed(2) ?? '0.00';
-        return Container(
-          padding: const EdgeInsets.all(22),
-          width: 396,
-          height: 134,
-          decoration: BoxDecoration(
-            color: AppColors.aviatorSecondaryColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
-                  children: [
-                    TextSpan(text: 'Available Balance: '),
-                    TextSpan(text: '₹${formatNum(user.wallet)}'),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 19),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      //!Button for withdraw
-                      _withdrawButton(context),
-                      SizedBox(width: 20),
-
-                      //!Button for deposit
-                      _depositButton(context),
-                    ],
+    String formatNum(num? value) => value?.toStringAsFixed(2) ?? '0.00';
+    return Container(
+      padding: const EdgeInsets.all(22),
+      width: 396,
+      height: 134,
+      decoration: BoxDecoration(
+        color: AppColors.aviatorSecondaryColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
+              children: [
+                TextSpan(text: 'Available Balance: '),
+                TextSpan(
+                  text: userAsync.maybeWhen(
+                    data: (userModel) => userModel != null
+                        ? '₹${formatNum(userModel.data.wallet)}'
+                        : 'No data',
+                    error: (error, stack) => 'Error: $error',
+                    orElse: () => 'Loading...',
                   ),
+                ),
+              ],
+            ),
+          ),
 
-                  //! icon for Refresh
-                  _refreshButton(),
+          SizedBox(height: 19),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  //!Button for withdraw
+                  _withdrawButton(context),
+                  SizedBox(width: 20),
+
+                  //!Button for deposit
+                  _depositButton(context),
                 ],
               ),
+
+              //! icon for Refresh
+              _refreshButton(),
             ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
