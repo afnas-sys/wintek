@@ -7,8 +7,8 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/payment/domain/models/deposit_request_model.dart';
-import 'package:wintek/features/payment/providers/payment_notifier.dart';
+import 'package:wintek/features/payment/deposit/domain/models/deposit_request_model.dart';
+import 'package:wintek/features/payment/deposit/providers/deposit_notifier.dart';
 
 class DepositPaymentSectionWidget extends ConsumerStatefulWidget {
   final TextEditingController controller;

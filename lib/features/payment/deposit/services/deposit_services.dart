@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/payment/domain/models/deposit_request_model.dart';
+import 'package:wintek/features/payment/deposit/domain/models/deposit_request_model.dart';
 import 'package:wintek/features/payment/domain/models/transfer_response_model.dart';
 import 'package:wintek/core/network/dio_provider.dart';
 

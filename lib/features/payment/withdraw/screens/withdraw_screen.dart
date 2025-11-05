@@ -20,30 +20,33 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       backgroundColor: AppColors.paymentTwentysecondColor,
       appBar: paymentAppBar(context, 'Withdraw'),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 20,
-            children: [
-              BalanceCardWidget(),
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 20,
+              children: [
+                BalanceCardWidget(),
 
-              WithdrawFormFieldWidget(),
+                WithdrawFormFieldWidget(),
 
-              SizedBox(
-                height: 348,
-                child: Stack(
-                  children: [
-                    WithdrawNoteWidget(),
-                    Positioned(
-                      top: 85,
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: WithdrawHistoryWidget(),
-                    ),
-                  ],
+                SizedBox(
+                  height: 348,
+                  child: Stack(
+                    children: [
+                      WithdrawNoteWidget(),
+                      Positioned(
+                        top: 85,
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: WithdrawHistoryWidget(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

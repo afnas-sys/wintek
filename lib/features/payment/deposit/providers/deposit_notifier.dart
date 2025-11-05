@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/payment/domain/models/deposit_request_model.dart';
+import 'package:wintek/features/payment/deposit/domain/models/deposit_request_model.dart';
 import 'package:wintek/features/payment/domain/models/transfer_response_model.dart';
-import 'package:wintek/features/payment/services/deposit_services.dart';
+import 'package:wintek/features/payment/deposit/services/deposit_services.dart';
 
 class DepositState {
   final bool isLoading;

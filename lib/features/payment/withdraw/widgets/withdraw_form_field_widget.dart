@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -16,6 +17,48 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
   final _amountController = TextEditingController();
   bool _isFormValid = false;
 
+  bool isValidUpiFormat(String upi) {
+    // Extensive list of valid UPI handles (as of 2025)
+    const validHandles = [
+      // 🔹 Popular Apps
+      'ybl', 'ibl', 'axl', 'okaxis', 'oksbi', 'okhdfcbank', 'okicici',
+      'okyesbank', 'paytm', 'apl', 'upi', 'airtel', 'jio', 'fc', 'ikwik',
+
+      // 🔹 Banks
+      'sbi', 'hdfcbank', 'icici', 'axisbank', 'kotak', 'pnb', 'barodampay',
+      'barodaupi', 'unionbank', 'indianbank', 'canarabank', 'idfcfirst',
+      'yesbank', 'indus', 'uco', 'boi', 'csb', 'aubank', 'dbs', 'rbl',
+      'federal', 'karurvysyabank', 'karnatakabank', 'uco', 'uco', 'nsdl',
+      'equitas', 'bandhan', 'suryoday', 'dcbbank', 'tmb', 'lvb', 'hdfc',
+      'idbi',
+      'obc',
+      'allahabadbank',
+      'vijayabank',
+      'andhrabank',
+      'corporationbank',
+
+      // 🔹 Payment Banks
+      'payzapp', 'freecharge', 'upi', 'nsdlbank', 'fino', 'digibank',
+      'esafsmallfinancebank', 'ujjivansmallfinancebank', 'janabanksfb',
+
+      // 🔹 Regional / Co-op Banks
+      'karurvysyabank', 'csb', 'saraswat', 'mahanagar', 'pmcbank', 'tjsb',
+      'cosmos', 'apmahesh', 'nkgsb', 'rajkotnagrik', 'citizencredit',
+
+      // 🔹 Others (Payment Apps / NBFCs)
+      'amazonpay', 'mobikwik', 'phonepe', 'bajaj', 'slice', 'onecard', 'fampay',
+    ];
+
+    // Regex for valid UPI ID format
+    final regex = RegExp(r'^[\w.\-_]{2,256}@([\w]{2,64})$');
+    final match = regex.firstMatch(upi.trim());
+
+    if (match == null) return false;
+
+    final handle = match.group(1)?.toLowerCase();
+    return validHandles.contains(handle);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -26,33 +69,33 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
   void _validateForm() {
     setState(() {
       _isFormValid =
-          _upiController.text.isNotEmpty && _amountController.text.isNotEmpty;
+          isValidUpiFormat(_upiController.text) &&
+          _amountController.text.isNotEmpty;
     });
   }
 
   void _handleWithdraw() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.paymentNinthColor,
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Withdrawal Request Submitted',
-              style: Theme.of(context).textTheme.paymentBodySmallPrimary,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              '₹${_amountController.text} withdrawal is under review. It may take up to 24 hours.',
-              style: Theme.of(context).textTheme.paymentBodySmallPrimary,
-            ),
-          ],
-        ),
-        duration: const Duration(seconds: 3),
+    Flushbar(
+      // margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      flushbarPosition: FlushbarPosition.TOP,
+      backgroundColor: AppColors.paymentNinthColor,
+      duration: const Duration(seconds: 3),
+      messageText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Withdrawal Request Submitted',
+            style: Theme.of(context).textTheme.paymentBodySmallPrimary,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '₹${_amountController.text} withdrawal is under review. It may take up to 24 hours.',
+            style: Theme.of(context).textTheme.paymentBodySmallPrimary,
+          ),
+        ],
       ),
-    );
+    ).show(context);
     _upiController.clear();
     _amountController.clear();
   }
@@ -121,7 +164,7 @@ class _WithdrawFormFieldWidgetState extends State<WithdrawFormFieldWidget> {
               ),
             ),
           ),
-          if (_upiController.text.isNotEmpty)
+          if (isValidUpiFormat(_upiController.text))
             const Icon(
               Icons.check_circle,
               color: AppColors.paymentFifthColor,
