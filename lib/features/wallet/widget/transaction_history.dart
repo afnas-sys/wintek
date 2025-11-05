@@ -126,16 +126,11 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
             builder: (context, ref, child) {
               final trasactionState = ref.watch(userTransactionProvider);
               return trasactionState.when(
-                loading: () => const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (error, stack) =>
-                    Expanded(child: Center(child: Text(error.toString()))),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text(error.toString())),
                 data: (data) {
                   if (data == null || data.data.isEmpty) {
-                    return const Expanded(
-                      child: Center(child: Text('No history found')),
-                    );
+                    return const Center(child: Text('No history found'));
                   }
                   final allTransactions = data.data
                       .where(
@@ -155,89 +150,87 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                   final displayedData = _showAll
                       ? filteredData
                       : filteredData.take(10).toList();
-                  return Expanded(
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: displayedData.length,
-                      separatorBuilder: (context, index) {
-                        return DottedLine(
-                          direction: Axis.horizontal,
-                          lineLength: double.infinity,
-                          lineThickness: 1.0,
-                          dashLength: 4.0,
-                          dashColor: AppColors.walletFifteenthColor,
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        final transaction = displayedData[index];
-                        final isDeposit = transaction.transferType == 'upi';
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: displayedData.length,
+                    separatorBuilder: (context, index) {
+                      return DottedLine(
+                        direction: Axis.horizontal,
+                        lineLength: double.infinity,
+                        lineThickness: 1.0,
+                        dashLength: 4.0,
+                        dashColor: AppColors.walletFifteenthColor,
+                      );
+                    },
+                    itemBuilder: (context, index) {
+                      final transaction = displayedData[index];
+                      final isDeposit = transaction.transferType == 'upi';
 
-                        final image = isDeposit
-                            ? AppImages.receive
-                            : AppImages.send;
-                        final amountColor = isDeposit
-                            ? AppColors.walletSecondaryColor
-                            : AppColors.walletSeventeenthColor;
-                        final borderColor = isDeposit
-                            ? AppColors.walletThirdColor
-                            : AppColors.walletSixteenthColor;
-                        final title = isDeposit ? 'Deposit' : 'Withdraw';
-                        final statusColor = transaction.status == 'success'
-                            ? AppColors.walletSecondaryColor
-                            : (transaction.status == 'pending'
-                                  ? AppColors.paymentNinteenthColor
-                                  : AppColors.walletSeventeenthColor);
-                        return ListTile(
-                          leading: Container(
-                            height: 44,
-                            width: 44,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: borderColor),
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Image.asset(image, height: 16, width: 16),
+                      final image = isDeposit
+                          ? AppImages.receive
+                          : AppImages.send;
+                      final amountColor = isDeposit
+                          ? AppColors.walletSecondaryColor
+                          : AppColors.walletSeventeenthColor;
+                      final borderColor = isDeposit
+                          ? AppColors.walletThirdColor
+                          : AppColors.walletSixteenthColor;
+                      final title = isDeposit ? 'Deposit' : 'Withdraw';
+                      final statusColor = transaction.status == 'success'
+                          ? AppColors.walletSecondaryColor
+                          : (transaction.status == 'pending'
+                                ? AppColors.paymentNinteenthColor
+                                : AppColors.walletSeventeenthColor);
+                      return ListTile(
+                        leading: Container(
+                          height: 44,
+                          width: 44,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: borderColor),
+                            borderRadius: BorderRadius.circular(50),
                           ),
-                          title: Text(
-                            title,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.walletBodyMediumPrimary,
+                          child: Image.asset(image, height: 16, width: 16),
+                        ),
+                        title: Text(
+                          title,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.walletBodyMediumPrimary,
+                        ),
+                        subtitle: Text(
+                          DateFormat('dd MMM, hh:mm a').format(
+                            DateTime.parse(
+                              transaction.createdAt,
+                            ).add(const Duration(hours: 5, minutes: 30)),
                           ),
-                          subtitle: Text(
-                            DateFormat('dd MMM, hh:mm a').format(
-                              DateTime.parse(
-                                transaction.createdAt,
-                              ).add(const Duration(hours: 5, minutes: 30)),
-                            ),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.walletBodySmallPrimary,
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                '${isDeposit ? '+ ' : '- '}₹${transaction.amount.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  color: amountColor,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.walletBodySmallPrimary,
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              '${isDeposit ? '+ ' : '- '}₹${transaction.amount.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: amountColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
-                              Text(
-                                transaction.status,
-                                style: TextStyle(
-                                  color: statusColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                            ),
+                            Text(
+                              transaction.status,
+                              style: TextStyle(
+                                color: statusColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
                               ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   );
                 },
               );
