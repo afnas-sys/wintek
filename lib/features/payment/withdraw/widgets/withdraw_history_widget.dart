@@ -123,6 +123,28 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
                 ),
               ),
             ),
+            PopupMenuItem<String>(
+              value: 'completed',
+              child: Text(
+                'Completed',
+                style: TextStyle(
+                  color: selectedStatus == 'completed'
+                      ? AppColors.paymentPrimaryColor
+                      : AppColors.aviatorEleventhColor,
+                ),
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'cancelled',
+              child: Text(
+                'Cancelled',
+                style: TextStyle(
+                  color: selectedStatus == 'cancelled'
+                      ? AppColors.paymentPrimaryColor
+                      : AppColors.aviatorEleventhColor,
+                ),
+              ),
+            ),
           ],
           child: Container(
             height: 44,
