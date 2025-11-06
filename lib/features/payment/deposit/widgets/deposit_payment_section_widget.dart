@@ -66,17 +66,23 @@ class _DepositPaymentSectionWidgetState
         amount: widget.controller.text,
       );
       if (response.status == UpiTransactionStatus.success) {
-        _showSnack('Payment successful via $name', Colors.green);
+        _showSnack(
+          'Payment successful via $name',
+          AppColors.paymentTwentythColor,
+        );
 
         // call Api
         await _callTransactionAPI('success');
       } else {
-        _showSnack('Payment failed or cancelled', Colors.red);
+        _showSnack(
+          'Payment failed or cancelled',
+          AppColors.paymentTwelfthColor,
+        );
         // dont call api
         await _callTransactionAPI('failure');
       }
     } catch (e) {
-      _showSnack('Error: $e', Colors.red);
+      _showSnack('Error: $e', AppColors.paymentTwelfthColor);
     } finally {
       setState(() {
         _loading = false;
@@ -91,7 +97,7 @@ class _DepositPaymentSectionWidgetState
       final taxId = 'HDF${DateTime.now().millisecondsSinceEpoch}';
       final refId = 'REF${DateTime.now().millisecondsSinceEpoch}';
       if (credentials.userId == null) {
-        _showSnack('User not logged in', Colors.red);
+        _showSnack('User not logged in', AppColors.paymentTwelfthColor);
         return;
       }
       final request = DepositRequestModel(
@@ -116,7 +122,10 @@ class _DepositPaymentSectionWidgetState
         log('Skipping API call: payment was not successful');
       }
     } catch (e) {
-      _showSnack('Failed to create transaction: $e', Colors.red);
+      _showSnack(
+        'Failed to create transaction: $e',
+        AppColors.paymentTwelfthColor,
+      );
     }
   }
 

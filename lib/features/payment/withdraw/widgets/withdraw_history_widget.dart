@@ -230,16 +230,7 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
               ),
               itemBuilder: (context, index) {
                 final transaction = displayedData[index];
-                return _buildHistoryItem(
-                  transaction.amount.toStringAsFixed(2),
-                  DateFormat('dd MMM, hh:mm a').format(
-                    DateTime.parse(
-                      transaction.createdAt,
-                    ).add(const Duration(hours: 5, minutes: 30)),
-                  ),
-                  transaction.status,
-                  context,
-                );
+                return _buildHistoryItem(transaction, context);
               },
             ),
             if (filteredData.length > 10 && !_showAll)
@@ -259,26 +250,34 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
     );
   }
 
-  Widget _buildHistoryItem(
-    String amount,
-    String date,
-    String status,
-    BuildContext context,
-  ) {
+  Widget _buildHistoryItem(dynamic transaction, BuildContext context) {
+    String displayAmount;
     Color statusColor;
-    switch (status) {
+    switch (transaction.status) {
       case 'pending':
         statusColor = AppColors.paymentNinteenthColor;
+        displayAmount = '${transaction.amount.abs().toStringAsFixed(2)}';
         break;
       case 'success':
+      case 'completed':
         statusColor = AppColors.paymentTwentythColor;
+        displayAmount = '${transaction.amount.abs().toStringAsFixed(2)}';
         break;
       case 'failed':
+      case 'cancelled':
         statusColor = AppColors.paymentTwentyfirstColor;
+        displayAmount = '${transaction.amount.abs().toStringAsFixed(2)}';
         break;
       default:
         statusColor = AppColors.paymentFifteenthColor;
+        displayAmount = '${transaction.amount.abs().toStringAsFixed(2)}';
     }
+
+    String date = DateFormat('dd MMM, hh:mm a').format(
+      DateTime.parse(
+        transaction.createdAt,
+      ).add(const Duration(hours: 5, minutes: 30)),
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -288,8 +287,12 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
           SizedBox(
             width: 90,
             child: Text(
-              amount,
-              style: Theme.of(context).textTheme.paymentSmallSecondary,
+              '₹$displayAmount',
+              style: TextStyle(
+                color: AppColors.paymentFifteenthColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
           SizedBox(
@@ -302,7 +305,7 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
           SizedBox(
             width: 74,
             child: Text(
-              status,
+              transaction.status,
               style: TextStyle(
                 color: statusColor,
                 fontSize: 14,

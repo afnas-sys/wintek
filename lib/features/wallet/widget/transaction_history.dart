@@ -170,18 +170,38 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                       final image = isDeposit
                           ? AppImages.receive
                           : AppImages.send;
-                      final amountColor = isDeposit
-                          ? AppColors.walletSecondaryColor
-                          : AppColors.walletSeventeenthColor;
                       final borderColor = isDeposit
                           ? AppColors.walletThirdColor
                           : AppColors.walletSixteenthColor;
                       final title = isDeposit ? 'Deposit' : 'Withdraw';
-                      final statusColor = transaction.status == 'success'
+                      final statusColor =
+                          (transaction.status == 'success' ||
+                              transaction.status == 'completed')
                           ? AppColors.walletSecondaryColor
                           : (transaction.status == 'pending'
                                 ? AppColors.paymentNinteenthColor
                                 : AppColors.walletSeventeenthColor);
+
+                      String amountPrefix;
+                      Color amountColor;
+                      if (transaction.status == 'pending') {
+                        amountColor = AppColors.walletSeventeenthColor;
+                        amountPrefix = isDeposit ? '+ ' : '- ';
+                      } else if (isDeposit) {
+                        amountPrefix = '+ ';
+                        amountColor = AppColors.walletSecondaryColor;
+                      } else {
+                        // Withdrawal
+                        if (transaction.status == 'failed' ||
+                            transaction.status == 'cancelled') {
+                          amountPrefix = '+ ';
+                          amountColor = AppColors.walletSeventeenthColor;
+                        } else {
+                          amountPrefix = '- ';
+                          amountColor = AppColors.walletSecondaryColor;
+                        }
+                      }
+
                       return ListTile(
                         leading: Container(
                           height: 44,
@@ -212,7 +232,7 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              '${isDeposit ? '+ ' : '- '}₹${transaction.amount.toStringAsFixed(2)}',
+                              '$amountPrefix₹${transaction.amount.toStringAsFixed(2)}',
                               style: TextStyle(
                                 color: amountColor,
                                 fontSize: 14,
