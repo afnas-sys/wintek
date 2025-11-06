@@ -66,6 +66,7 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                   ),
                   PopupMenuItem<String>(
                     value: 'pending',
+
                     child: Text(
                       'Pending',
                       style: TextStyle(
@@ -92,6 +93,28 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                       'Failed',
                       style: TextStyle(
                         color: selectedStatus == 'failed'
+                            ? AppColors.paymentPrimaryColor
+                            : AppColors.aviatorEleventhColor,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'completed',
+                    child: Text(
+                      'Completed',
+                      style: TextStyle(
+                        color: selectedStatus == 'completed'
+                            ? AppColors.paymentPrimaryColor
+                            : AppColors.aviatorEleventhColor,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'cancelled',
+                    child: Text(
+                      'Cancelled',
+                      style: TextStyle(
+                        color: selectedStatus == 'cancelled'
                             ? AppColors.paymentPrimaryColor
                             : AppColors.aviatorEleventhColor,
                       ),
