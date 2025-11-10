@@ -152,6 +152,40 @@ class AppColors {
   static const Color paymentTwentyfirstColor = Color(0xFFEB644C);
   static const Color paymentTwentysecondColor = Color(0xFF140A2D);
 
+  //!_____________________________________Crash_______________________________________
+  static const Color crashPrimaryColor = Color(0xFFFFFFFF);
+  static const Color crashSecondaryColor = Color(0xFF000000);
+  static const Color crashThirdColor = Colors.white24;
+  static const Color crashFourthColor = Colors.green;
+  static const Color crashFifthColor = Colors.grey;
+  static Color crashSixthColor = Color.fromARGB(
+    255,
+    128,
+    121,
+    121,
+  ).withOpacity(0.3);
+  static Color crashSeventhColor = Colors.green.withOpacity(0.2);
+  static const Color crashEighthColor = Color(0xFF415A77);
+  static const Color crashNinthColor = Color(0xFF6DA7F4);
+  static const Color crashTenthColor = Color(0xFFFFA82E);
+  static const Color crashEleventhColor = Color(0xFF191B1D);
+  static Color crashTwelfthColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
+  static Color crashThirteenthColor = Color(0xFFFFFFFF).withOpacity(50 / 100);
+  static const Color crashFourteenthColor = Color(0xFFCF7004);
+  static const Color crashFifteenthColor = Color(0xFF28A809);
+  static const Color crashSixteenthColor = Color(0xFF3DAEFF);
+  static const Color crashSeventeenthColor = Color(0XFF2d2d31);
+  static const Color crashEighteenthColor = Color(0XFFd8011f);
+  static const Color crashNinteenthColor = Color(0XFFb3021b);
+  static Color crashTwentythColor = Color(0xFFFFFFFF).withOpacity(10 / 100);
+  static const Color crashTwentyFirstColor = Colors.transparent;
+  static Color crashTwentySecondColor = Colors.grey.shade400;
+  static const Color crashTwentyThirdColor = Color(0XFF1a1c1c);
+  static const Color crashTwentyFourthColor = Color(0XFFcb011a);
+  static const Color crashTwentyFifthColor = Color(0XFF133206);
+  static const Color crashTwentySixthColor = Color(0xFF25323F);
+  static const Color crashTwentySeventhColor = Color(0xFF707a82);
+
   //! -----------------------------------------------------------------------------------------------------------------------------
 
   //! text
