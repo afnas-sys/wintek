@@ -304,6 +304,48 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
+  //!________________________________Crash___________________________________
+  TextStyle get crashHeadlineSmall => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  TextStyle get crashBodyTitleMdeium => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get crashBodyLargeSecondary => GoogleFonts.roboto(
+    color: AppColors.crashSecondaryColor,
+    fontSize: 15,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get crashBodyMediumPrimary => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get crashBodyMediumSecondary => GoogleFonts.roboto(
+    color: AppColors.crashThirteenthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get crashbodySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get crashbodySmallThird => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+  );
+
   /*
   !Use it for reference for Naming
    static const displayLarge = TextStyle(fontSize: 57, fontWeight: FontWeight.bold);
