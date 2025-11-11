@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/crash/widgets/crash_animation.dart';
-import 'package:wintek/features/game/crash/widgets/crash_balance_container.dart';
 import 'package:wintek/features/game/crash/widgets/crash_bet_container.dart';
 import 'package:wintek/features/game/crash/widgets/crash_buttons.dart'
     show CrashButtons;
+import 'package:wintek/features/game/widgets/wallet_container.dart';
 
 enum GameState { prepare, running, crashed }
 
@@ -26,7 +26,7 @@ class _CrashGameScreenState extends State<CrashGameScreen> {
             child: Column(
               spacing: 16,
               children: [
-                CrashBalanceContainer(),
+                WalletContainer(),
                 CrashButtons(),
                 CrashAnimation(),
                 ListView.separated(

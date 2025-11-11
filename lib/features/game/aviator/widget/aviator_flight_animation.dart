@@ -20,6 +20,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   late AnimationController _takeoffController;
   late AnimationController _waveController;
   late AnimationController _flyAwayController;
+  late AnimationController _enterController;
 
   late Animation<double> _takeoffAnimation;
   late Animation<double> _flyAwayAnimation;
@@ -86,6 +87,11 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       parent: _flyAwayController,
       curve: Curves.easeInOutCubic,
     );
+
+    _enterController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
   }
 
   @override
@@ -93,6 +99,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _takeoffController.dispose();
     _waveController.dispose();
     _flyAwayController.dispose();
+    _enterController.dispose();
     _prepareTimer?.cancel();
     super.dispose();
   }
@@ -112,11 +119,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         width: double.infinity,
         height: 294,
         decoration: const BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+          color: Color(0XFF271777),
+          borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -171,11 +175,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       width: double.infinity,
       height: 294,
       decoration: const BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+        color: Color(0XFF271777),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       child: Column(
         children: [
@@ -289,7 +290,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                         planeAngle = -pi / 6;
                       } else {
                         final t = _takeoffAnimation.value;
-                        final start = Offset(0, 0);
+                        final start = Offset(24, 24);
                         final control = Offset(width * 0.45, height * 0.1);
                         final end = Offset(width * 0.65, height * 0.5);
 
@@ -326,7 +327,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                           .clamp(0, height - 60)
                           .toDouble();
                       final currentPoint = Offset(
-                        x.clamp(0, width - 80),
+                        x.clamp(0, width - 70),
                         height - bottomPos,
                       );
                       _currentPlanePosition = currentPoint;
@@ -340,70 +341,67 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                         }
                       }
 
-                      return Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          CustomPaint(
-                            size: Size(width, height),
-                            painter: PathPainter(
-                              _pathPoints,
-                              height,
-                              _currentPlanePosition,
-                              _isWaving,
-                              _waveProgress,
-                              _waveAmplitude,
-                              _waveFrequency,
-                            ),
-                          ),
-                          Positioned(
-                            left: currentPoint.dx,
-                            bottom: bottomPos,
-                            child: Transform.rotate(
-                              angle: planeAngle,
-                              child: Image.asset(
-                                AppImages.graphContainerplaneImage,
-                                width: 70,
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Stack(
+                          clipBehavior: Clip.hardEdge,
+                          children: [
+                            CustomPaint(
+                              size: Size(width, height),
+                              painter: PathPainter(
+                                _pathPoints,
+                                height,
+                                _currentPlanePosition,
+                                _isWaving,
+                                _waveProgress,
+                                _waveAmplitude,
+                                _waveFrequency,
                               ),
                             ),
-                          ),
-                          if (round.state == 'RUNNING')
-                            Center(
-                              child: Text(
-                                "${currentValue.toStringAsFixed(2)}x",
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.aviatorDisplayLarge,
+                            Positioned(
+                              left: currentPoint.dx,
+                              bottom: bottomPos,
+                              child: Transform.rotate(
+                                angle: planeAngle,
+                                child: Image.asset(
+                                  AppImages.graphContainerplaneImage,
+                                  width: 70,
+                                ),
                               ),
                             ),
-                          if (round.state == 'CRASHED' &&
-                              _flyAwayController.isAnimating)
-                            Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "FLEW AWAY",
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.aviatorHeadlineSmall,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    "${round.crashAt.toString()}x",
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.aviatorDisplayLargeSecond,
-                                    // ),
-                                    // Text(
-                                    //   ' ${round.crashAt.toString()}',
-                                    //   style: Theme.of(
-                                    //     context,
-                                    //   ).textTheme.aviatorHeadlineSmall,
-                                  ),
-                                ],
+                            if (round.state == 'RUNNING')
+                              Center(
+                                child: Text(
+                                  "${currentValue.toStringAsFixed(2)}x",
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.aviatorDisplayLarge,
+                                ),
                               ),
-                            ),
-                        ],
+                            if (round.state == 'CRASHED' &&
+                                _flyAwayController.isAnimating)
+                              Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "FLEW AWAY",
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.aviatorHeadlineSmall,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      "${round.crashAt.toString()}x",
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.aviatorDisplayLargeSecond,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
                       );
                     },
                   );
@@ -519,9 +517,15 @@ class PathPainter extends CustomPainter {
 
     if (displayPoints.isEmpty) return;
 
-    final fillPaint = Paint()
-      ..color = const Color.fromARGB(255, 128, 121, 121).withOpacity(0.3)
-      ..style = PaintingStyle.fill;
+    // ----------------------------
+    // Clip region: prevent fill/path/area from drawing above the X-axis line
+    // (X-axis is located at y = height - 24)
+    // ----------------------------
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, height - 24));
+
+    // Fill gradient under curve
+    final fillPaint = Paint()..style = PaintingStyle.fill;
 
     final fillPath = Path()
       ..moveTo(displayPoints.first.dx, displayPoints.first.dy);
@@ -529,17 +533,26 @@ class PathPainter extends CustomPainter {
     fillPath.lineTo(displayPoints.last.dx, height);
     fillPath.lineTo(displayPoints.first.dx, height);
     fillPath.close();
+    final fillBounds = fillPath.getBounds();
+    final fillGradient = LinearGradient(
+      colors: [Colors.white, AppColors.aviatorGraphBarColor],
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+    ).createShader(fillBounds);
+    fillPaint.shader = fillGradient;
     canvas.drawPath(fillPath, fillPaint);
 
+    // Stroke path (curve)
     final pathPaint = Paint()
-      ..color = AppColors.aviatorGraphBarColor
       ..strokeWidth = 6.0
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke
+      ..color = AppColors.aviatorGraphBarColor;
 
     final path = Path()..moveTo(displayPoints.first.dx, displayPoints.first.dy);
     _drawSmoothCurve(path, displayPoints);
     canvas.drawPath(path, pathPaint);
 
+    // Area rectangles under the curve (xAxisPaint)
     final xAxisPaint = Paint()
       ..color = AppColors.aviatorGraphBarAreaColor2
       ..style = PaintingStyle.fill;
@@ -550,6 +563,54 @@ class PathPainter extends CustomPainter {
       final rect = Rect.fromLTRB(prev.dx, curr.dy, curr.dx, height);
       canvas.drawRect(rect, xAxisPaint);
     }
+
+    // restore so axes & dots can be drawn on top
+    // restore so axes & dots can be drawn on top
+    canvas.restore();
+
+    // ✅ Y-axis dots (exact same alignment, just 9 total)
+    final yAxisDotPaint = Paint()
+      ..color = AppColors.aviatorNineteenthColor
+      ..style = PaintingStyle.fill;
+
+    const yDotCount = 9;
+    final ySpacing = (height - 24 - 10) / (yDotCount - 1);
+    for (int i = 0; i < yDotCount; i++) {
+      final y = 10 + (ySpacing * i);
+      if (y >= height - 24) continue; // skip bottom overlap
+      canvas.drawCircle(Offset(10, y), 2, yAxisDotPaint);
+    }
+
+    // ✅ X-axis dots (same alignment, 9 total)
+    final xAxisDotPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    const xDotCount = 9;
+    final xSpacing = (size.width - 10 - 24) / (xDotCount - 1);
+    for (int i = 0; i < xDotCount; i++) {
+      final x = 10 + (xSpacing * i);
+      if (x <= 24) continue; // skip origin
+      canvas.drawCircle(Offset(x, height - 10), 2, xAxisDotPaint);
+    }
+
+    // ✅ Axis lines (keep same position)
+    final axisLinePaint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    // X-axis line
+    canvas.drawLine(
+      Offset(24, height - 24),
+      Offset(size.width, height - 24),
+      axisLinePaint,
+    );
+
+    // Y-axis line
+    canvas.drawLine(Offset(24, height - 24), Offset(24, 0), axisLinePaint);
+
+    // canvas.drawLine(Offset(24, height - 24), Offset(24, 0), axisLinePaint);
   }
 
   void _drawSmoothCurve(Path path, List<Offset> points) {

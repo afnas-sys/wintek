@@ -6,12 +6,12 @@ import 'package:wintek/features/game/aviator/providers/recent_rounds_provider.da
 import 'package:wintek/features/game/aviator/widget/all_bets.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_flight_animation.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
-import 'package:wintek/features/game/aviator/widget/balance_container.dart';
 import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
 import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/features/game/widgets/wallet_container.dart';
 
 class AviatorGameScreen extends ConsumerStatefulWidget {
   const AviatorGameScreen({super.key});
@@ -59,7 +59,8 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                BalanceContainer(),
+                // BalanceContainer(),
+                WalletContainer(),
                 SizedBox(height: 16),
                 AviatorButtons(),
                 SizedBox(height: 1),

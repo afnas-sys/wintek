@@ -33,7 +33,7 @@ class AppColors {
   static const Color aviatorTenthColor = Color(0xFF25323F);
   static const Color aviatorEleventhColor = Color(0xFF707a82);
   static const Color aviatorTwelfthColor = Color.fromARGB(255, 24, 24, 24);
-  static const Color aviatorThirteenthColor = Color(0xFFC4841C);
+  static const Color aviatorThirteenthColor = Color(0xFFAA99FD);
   static const Color aviatorFourteenthColor = Color(0xFF191B1D);
   static Color aviatorFifteenthColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
   static Color aviatorSixteenthColor = Color(0xFFFFFFFF).withOpacity(50 / 100);
@@ -61,6 +61,17 @@ class AppColors {
   static const Color aviatorThirtyTwoColor = Color(0XFFd8011f);
   static const Color aviatorThirtyThreeColor = Color(0XFFb3021b);
   static const Color aviatorThirtyFourColor = Color(0XFF2d2d31);
+  static const Color aviatorThirtyFiveColor = Color(0XFF271777);
+  static Color aviatorThirtySixColor = Color(0XFF271777).withOpacity(.2);
+  static Color aviatorThirtySevenColor = Color(
+    0x22222222,
+  ).withOpacity(50 / 100);
+  static Color aviatorThirtyEightColor = Color(
+    0x22222222,
+  ).withOpacity(20 / 100);
+  static Color aviatorThirtyNineColor = Color(0x22222222).withOpacity(10 / 100);
+  static const Color aviatorFourtyColor = Color(0XFFAA99FD);
+  static Color aviatorFourtyOneColor = Color(0xFF140A2D).withOpacity(50 / 100);
 
   //graph
   static const Color aviatorGraphYaxisColor = Color(0xFF2A94C7);

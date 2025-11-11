@@ -224,8 +224,11 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
                   .where((transaction) => transaction.status == selectedStatus)
                   .toList();
         if (filteredData.isEmpty) {
-          return const Center(
-            child: Text('No history found for selected status'),
+          return Center(
+            child: Text(
+              'No history found for selected status',
+              style: Theme.of(context).textTheme.paymentSmallSecondary,
+            ),
           );
         }
         final displayedData = _showAll

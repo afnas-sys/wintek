@@ -14,7 +14,6 @@ class _CustomHomeGridViewBuilderState extends State<CustomHomeGridViewBuilder> {
   final List<Map<String, dynamic>> gridItems = [
     {'image': AppImages.homeAviatorImage, 'screen': RoutesNames.aviatorGame},
     {'image': AppImages.homeCrashImage, 'screen': RoutesNames.crash},
-    {'image': AppImages.homeCarromImage, 'screen': RoutesNames.carrom},
     {'image': AppImages.homeSpinToWinImage, 'screen': RoutesNames.spinToWin},
     {
       'image': AppImages.homecardJackPotImage,

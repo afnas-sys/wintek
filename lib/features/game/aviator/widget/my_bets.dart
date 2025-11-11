@@ -83,7 +83,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
           decoration: BoxDecoration(
-            color: AppColors.aviatorFourteenthColor,
+            color: AppColors.aviatorTertiaryColor,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: AppColors.aviatorFifteenthColor,
@@ -109,7 +109,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                       top: 5,
                       bottom: 4,
                     ),
-                    borderColor: AppColors.aviatorFifteenthColor,
+                    borderColor: AppColors.aviatorThirtyEightColor,
                     borderRadius: 30,
                     backgroundColor: AppColors.aviatorTwentiethColor,
                     onPressed: () {
@@ -134,13 +134,14 @@ class _MyBetsState extends ConsumerState<MyBets> {
                             AppImages.previousHand,
                             height: 20,
                             width: 20,
+                            color: AppColors.aviatorSixthColor,
                           ),
                         ),
                         Text(
                           'Previous hand',
                           style: Theme.of(
                             context,
-                          ).textTheme.aviatorBodyMediumPrimary,
+                          ).textTheme.aviatorBodyMediumFourth,
                         ),
                       ],
                     ),
@@ -228,7 +229,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
 
                       bool isHighlighted = index == 0;
                       Color? bgColor = isHighlighted
-                          ? AppColors.aviatorTwentySecondColor
+                          ? AppColors.aviatorThirtyEightColor
                           : AppColors.aviatorTwentyFirstColor;
 
                       return Container(
@@ -272,7 +273,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                       ),
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.aviatorBodyMediumPrimary,
+                                      ).textTheme.aviatorBodyMediumFourth,
                                       //  overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),

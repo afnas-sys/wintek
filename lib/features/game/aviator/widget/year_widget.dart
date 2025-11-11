@@ -65,7 +65,7 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
             return Center(
               child: Text(
                 'No bets for this year',
-                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+                style: Theme.of(context).textTheme.aviatorBodyMediumFourth,
               ),
             );
           }
@@ -90,7 +90,7 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.aviatorSixthColor,
+                  color: AppColors.aviatorThirtyNineColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.aviatorFifteenthColor),
                 ),
@@ -105,7 +105,7 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.aviatorTertiaryColor,
+                            color: AppColors.aviatorThirtyNineColor,
                             borderRadius: BorderRadius.circular(100),
                           ),
                         ),
@@ -141,7 +141,7 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
                                 right: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.aviatorTwentyFifthColor,
+                                color: AppColors.aviatorThirtyFiveColor,
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: Center(
@@ -184,7 +184,7 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
                                   formatNum(topBet.payout),
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorbodySmallPrimary,
+                                  ).textTheme.aviatorbodySmallFourth,
                                 ),
                               ),
                             ),

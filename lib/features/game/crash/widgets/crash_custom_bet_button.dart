@@ -2,14 +2,11 @@
 
 import 'dart:developer';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
-import 'package:wintek/features/game/aviator/providers/bet_provider.dart';
 import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
 import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
@@ -37,7 +34,6 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   bool hasAutoCashedOut = false;
   String? lastRoundId;
   double? lastMultiplier;
-  bool _isPlacingBet = false; // Flag to prevent duplicate bet placement
 
   final secureStorageService = SecureStorageService();
 
@@ -58,89 +54,89 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   //   // No autoplay logic needed for now
   // }
 
-  Future<void> _placeBet() async {
-    // Prevent duplicate bet placement
-    if (_isPlacingBet || hasPlacedBet) return;
+  // Future<void> _placeBet() async {
+  //   // Prevent duplicate bet placement
+  //   if (_isPlacingBet || hasPlacedBet) return;
 
-    _isPlacingBet = true;
+  //   _isPlacingBet = true;
 
-    try {
-      final gameState = ref.read(crashGameProvider);
-      final betService = ref.read(betServiceProvider);
-      final userId = await getUserId();
+  //   try {
+  //     final gameState = ref.read(crashGameProvider);
+  //     final betService = ref.read(betServiceProvider);
+  //     final userId = await getUserId();
 
-      if (userId == null) return;
+  //     if (userId == null) return;
 
-      if (gameState.state == GameState.running) {
-        _customSnackBar(
-          context,
-          'You cannot place a bet while the game is running',
-        );
-        return;
-      }
+  //     if (gameState.state == GameState.running) {
+  //       _customSnackBar(
+  //         context,
+  //         'You cannot place a bet while the game is running',
+  //       );
+  //       return;
+  //     }
 
-      final amountText = widget.amountController.text.trim();
-      final autoCashoutText = widget.switchController?.text.trim() ?? '';
+  //     final amountText = widget.amountController.text.trim();
+  //     final autoCashoutText = widget.switchController?.text.trim() ?? '';
 
-      final autoCashoutValue = autoCashoutText.isNotEmpty
-          ? double.tryParse(autoCashoutText)
-          : null;
+  //     final autoCashoutValue = autoCashoutText.isNotEmpty
+  //         ? double.tryParse(autoCashoutText)
+  //         : null;
 
-      if (amountText.isEmpty) {
-        log('⚠️ Bet amount is empty');
-        return;
-      }
+  //     if (amountText.isEmpty) {
+  //       log('⚠️ Bet amount is empty');
+  //       return;
+  //     }
 
-      // Use current timestamp as roundId for crash game
-      final roundId = DateTime.now().millisecondsSinceEpoch.toString();
-      final seq = 1; // Simple sequence for crash
+  //     // Use current timestamp as roundId for crash game
+  //     final roundId = DateTime.now().millisecondsSinceEpoch.toString();
+  //     final seq = 1; // Simple sequence for crash
 
-      final newBet = await betService.placeBet(
-        BetRequest(
-          roundId: roundId,
-          userId: userId,
-          seq: seq,
-          stake: int.parse(amountText),
-          betIndex: widget.index,
-          autoCashout: autoCashoutValue,
-        ),
-      );
+  //     final newBet = await betService.placeBet(
+  //       BetRequest(
+  //         roundId: roundId,
+  //         userId: userId,
+  //         seq: seq,
+  //         stake: int.parse(amountText),
+  //         betIndex: widget.index,
+  //         autoCashout: autoCashoutValue,
+  //       ),
+  //     );
 
-      if (newBet != null) {
-        ref
-            .read(betResponseProvider.notifier)
-            .setBetResponse(widget.index, newBet);
-        ref.read(betStateProvider.notifier).placeBet(widget.index);
+  //     if (newBet != null) {
+  //       ref
+  //           .read(betResponseProvider.notifier)
+  //           .setBetResponse(widget.index, newBet);
+  //       ref.read(betStateProvider.notifier).placeBet(widget.index);
 
-        // Update wallet after placing bet
-        final currentUser = ref.read(userProvider);
-        currentUser.maybeWhen(
-          data: (userModel) {
-            if (userModel != null) {
-              final newWallet = userModel.data.wallet - newBet.stake;
-              ref.read(userProvider.notifier).updateWallet(newWallet);
-            }
-          },
-          orElse: () {},
-        );
+  //       // Update wallet after placing bet
+  //       final currentUser = ref.read(userProvider);
+  //       currentUser.maybeWhen(
+  //         data: (userModel) {
+  //           if (userModel != null) {
+  //             final newWallet = userModel.data.wallet - newBet.stake;
+  //             ref.read(userProvider.notifier).updateWallet(newWallet);
+  //           }
+  //         },
+  //         orElse: () {},
+  //       );
 
-        setState(() {
-          hasPlacedBet = true;
-        });
+  //       setState(() {
+  //         hasPlacedBet = true;
+  //       });
 
-        log('✅ Bet placed successfully: ${newBet.stake}');
-      }
-    } on DioException catch (e) {
-      final errorMsg = e.response?.data?['message'] ?? 'Bet failed';
-      log('❌ Error placing bet: $errorMsg');
-      _customSnackBar(context, errorMsg);
-    } catch (e) {
-      log('❌ Error placing bet: $e');
-      _customSnackBar(context, 'Something went wrong. Please try again.');
-    } finally {
-      _isPlacingBet = false;
-    }
-  }
+  //       log('✅ Bet placed successfully: ${newBet.stake}');
+  //     }
+  //   } on DioException catch (e) {
+  //     final errorMsg = e.response?.data?['message'] ?? 'Bet failed';
+  //     log('❌ Error placing bet: $errorMsg');
+  //     _customSnackBar(context, errorMsg);
+  //   } catch (e) {
+  //     log('❌ Error placing bet: $e');
+  //     _customSnackBar(context, 'Something went wrong. Please try again.');
+  //   } finally {
+  //     _isPlacingBet = false;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -241,7 +237,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
         ? "WAITING"
         : "BET";
 
-    final enabled = !hasPlacedBet || isCashoutButton;
+    // final enabled = !hasPlacedBet || isCashoutButton;
 
     return SizedBox(
       height: 108,
@@ -268,87 +264,90 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
 
-        onPressed: enabled
-            ? () async {
-                // Place Bet
-                if (!hasPlacedBet) {
-                  await _placeBet();
-                }
-                // Cashout
-                else if (isCashoutButton && bet != null) {
-                  final cashoutService = ref.read(cashoutServiceProvider);
-                  final multiplier = gameState.currentMultiplier;
-                  // Auto Cashout check
-                  if (!hasAutoCashedOut &&
-                      bet.autoCashout != null &&
-                      multiplier >= bet.autoCashout!) {
-                    hasAutoCashedOut = true; // mark as done
-                    //   final cashoutService = ref.read(cashoutServiceProvider);
+        onPressed: () {},
 
-                    // try {
-                    //   final response = await cashoutService.cashout(
-                    //     id: bet.id,
-                    //     cashOutAt: multiplier,
-                    //   );
-                    //   log(
-                    //     "✅ Auto Cashout triggered at ${response.cashoutAt} X",
-                    //   );
-                    //   setState(() {
-                    //     hasPlacedBet = false; // reset button if needed
-                    //   });
-                    // } catch (e) {
-                    //   log("❌ Auto Cashout failed: $e");
-                    // }
-                  }
+        // enabled
+        //     ? () async {
+        //         // Place Bet
+        //         // if (!hasPlacedBet) {
+        //         //   await _placeBet();
+        //         // }
+        //         // // Cashout
+        //         // else
+        //         if (isCashoutButton && bet != null) {
+        //           final cashoutService = ref.read(cashoutServiceProvider);
+        //           final multiplier = gameState.currentMultiplier;
+        //           // Auto Cashout check
+        //           if (!hasAutoCashedOut &&
+        //               bet.autoCashout != null &&
+        //               multiplier >= bet.autoCashout!) {
+        //             hasAutoCashedOut = true; // mark as done
+        //             //   final cashoutService = ref.read(cashoutServiceProvider);
 
-                  try {
-                    log(
-                      "📤 Cashout request: id=${bet.id}, cashOutAt=$multiplier",
-                    );
+        //             // try {
+        //             //   final response = await cashoutService.cashout(
+        //             //     id: bet.id,
+        //             //     cashOutAt: multiplier,
+        //             //   );
+        //             //   log(
+        //             //     "✅ Auto Cashout triggered at ${response.cashoutAt} X",
+        //             //   );
+        //             //   setState(() {
+        //             //     hasPlacedBet = false; // reset button if needed
+        //             //   });
+        //             // } catch (e) {
+        //             //   log("❌ Auto Cashout failed: $e");
+        //             // }
+        //           }
 
-                    // Small delay to ensure multiplier is stable
-                    //      await Future.delayed(const Duration(milliseconds: 50));
-                    final response = await cashoutService.cashout(
-                      id: bet.id,
-                      cashOutAt: multiplier,
-                    );
-                    if (mounted) {
-                      setState(() {
-                        hasPlacedBet = false;
-                      });
-                    }
-                    final cashoutAt = response.cashoutAt;
-                    log('✅ CashoutAt: $cashoutAt X');
+        //           try {
+        //             log(
+        //               "📤 Cashout request: id=${bet.id}, cashOutAt=$multiplier",
+        //             );
 
-                    // Update wallet after cashout
-                    final currentUser = ref.read(userProvider);
-                    currentUser.maybeWhen(
-                      data: (userModel) {
-                        if (userModel != null) {
-                          final winAmount = cashoutAt! * bet.stake;
-                          final newWallet = userModel.data.wallet + winAmount;
-                          ref
-                              .read(userProvider.notifier)
-                              .updateWallet(newWallet);
-                        }
-                      },
-                      orElse: () {},
-                    );
+        //             // Small delay to ensure multiplier is stable
+        //             //      await Future.delayed(const Duration(milliseconds: 50));
+        //             // final response = await cashoutService.cashout(
+        //             //   id: bet.id,
+        //             //   cashOutAt: multiplier,
+        //             // );
+        //             // if (mounted) {
+        //             //   setState(() {
+        //             //     hasPlacedBet = false;
+        //             //   });
+        //             // }
+        //             // final cashoutAt = response.cashoutAt;
+        //             // log('✅ CashoutAt: $cashoutAt X');
 
-                    // ✅ show Flushbar only if success
-                    _successFlushbar(
-                      context: context,
-                      message1: "You Have Crashed\nout!",
-                      multiplier: '\n$cashoutAt X',
-                      message2: "Win INR\n",
-                      winAmount: (cashoutAt! * bet.stake).toStringAsFixed(2),
-                    );
-                  } catch (e, st) {
-                    log("❌ Cashout error: $e\n$st");
-                  }
-                }
-              }
-            : null,
+        //             // Update wallet after cashout
+        //             //    final currentUser = ref.read(userProvider);
+        //             // currentUser.maybeWhen(
+        //             //   data: (userModel) {
+        //             //     if (userModel != null) {
+        //             //       final winAmount = cashoutAt! * bet.stake;
+        //             //       final newWallet = userModel.data.wallet + winAmount;
+        //             //       ref
+        //             //           .read(userProvider.notifier)
+        //             //           .updateWallet(newWallet);
+        //             //     }
+        //             //   },
+        //             //   orElse: () {},
+        //             // );
+
+        //             // ✅ show Flushbar only if success
+        //             // _successFlushbar(
+        //             //   context: context,
+        //             //   message1: "You Have Crashed\nout!",
+        //             //   multiplier: '\n$cashoutAt X',
+        //             //   message2: "Win INR\n",
+        //             //   winAmount: (cashoutAt! * bet.stake).toStringAsFixed(2),
+        //             // );
+        //           } catch (e, st) {
+        //             log("❌ Cashout error: $e\n$st");
+        //           }
+        //         }
+        //       }
+        //     : null,
         child: Text(
           buttonText,
           style: Theme.of(context).textTheme.crashHeadlineSmall,
@@ -446,16 +445,16 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   }
 
   // Custom SnackBar
-  void _customSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: AppColors.crashTwentyFourthColor,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+  // void _customSnackBar(BuildContext context, String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(
+  //         message,
+  //         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+  //       ),
+  //       backgroundColor: AppColors.crashTwentyFourthColor,
+  //       behavior: SnackBarBehavior.floating,
+  //     ),
+  //   );
+  // }
 }

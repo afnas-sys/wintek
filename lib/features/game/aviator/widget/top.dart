@@ -19,7 +19,7 @@ class _TopState extends State<Top> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.aviatorFourteenthColor,
+        color: AppColors.aviatorTertiaryColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
@@ -30,9 +30,9 @@ class _TopState extends State<Top> {
             backgroundColor: AppColors.aviatorTwentiethColor,
             borderRadius: 52,
             borderWidth: 1,
-            borderColor: AppColors.aviatorFifteenthColor,
-            selectedTabColor: AppColors.aviatorFifteenthColor,
-            unselectedTextColor: AppColors.aviatorTertiaryColor,
+            borderColor: AppColors.aviatorThirtySixColor,
+            selectedTabColor: AppColors.aviatorThirtyFiveColor,
+            unselectedTextColor: AppColors.aviatorSixthColor,
             tabViews: [DayWidget(), MonthWidget(), YearWidget()],
           ),
         ],

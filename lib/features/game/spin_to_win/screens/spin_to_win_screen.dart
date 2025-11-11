@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:wintek/features/game/widgets/wallet_container.dart';
 
 class SpinToWinScreen extends StatelessWidget {
   const SpinToWinScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(children: [WalletContainer()]),
+        ),
+      ),
+    );
   }
 }

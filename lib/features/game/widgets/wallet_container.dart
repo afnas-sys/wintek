@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/core/router/app_roouter.dart';
+import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -108,7 +110,9 @@ class WalletContainer extends ConsumerWidget {
                   ),
                   hasBorder: false,
                   text: 'Deposit',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, RoutesNames.deposit);
+                  },
                   backgroundColor: AppColors.depositButtonColor,
                   textColor: Colors.white,
                   fontSize: 14,
@@ -122,7 +126,9 @@ class WalletContainer extends ConsumerWidget {
                   ),
                   hasBorder: false,
                   text: 'Withdrawal',
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, RoutesNames.withdraw);
+                  },
                   backgroundColor: AppColors.withdrowalButtonColor,
                   textColor: Colors.white,
                   fontSize: 14,

@@ -44,7 +44,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.aviatorFourteenthColor,
+        color: AppColors.aviatorTertiaryColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
@@ -78,13 +78,14 @@ class _AllBetsState extends ConsumerState<AllBets> {
                         AppImages.previousHand,
                         height: 20,
                         width: 20,
+                        color: AppColors.aviatorSixthColor,
                       ),
                     ),
                     Text(
                       'Previous hand',
                       style: Theme.of(
                         context,
-                      ).textTheme.aviatorBodyMediumPrimary,
+                      ).textTheme.aviatorBodyMediumFourth,
                     ),
                   ],
                 ),
@@ -218,14 +219,14 @@ class _AllBetsState extends ConsumerState<AllBets> {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.aviatorTwentyFifthColor,
+                                  color: AppColors.aviatorThirtyFiveColor,
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Text(
                                   bets?.cashoutAt.toString() ?? '',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorBodyLargePrimary,
+                                  ).textTheme.aviatorBodyLargeThird,
                                 ),
                               )
                             : const SizedBox(),

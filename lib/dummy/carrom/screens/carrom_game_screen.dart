@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/core/constants/app_images.dart';
-import 'package:wintek/features/game/carrom/screens/carrom_match_fixing%20_screen.dart';
+import 'package:wintek/dummy/carrom/screens/carrom_match_fixing%20_screen.dart';
 
 class CarromGameScreen extends StatelessWidget {
   const CarromGameScreen({super.key});

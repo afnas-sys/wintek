@@ -62,7 +62,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
             return Center(
               child: Text(
                 'No bets for today',
-                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+                style: Theme.of(context).textTheme.aviatorBodyMediumFourth,
               ),
             );
           }
@@ -88,7 +88,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.aviatorSixthColor,
+                  color: AppColors.aviatorThirtyNineColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppColors.aviatorFifteenthColor),
                 ),
@@ -103,7 +103,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.aviatorTertiaryColor,
+                            color: AppColors.aviatorThirtyNineColor,
                             borderRadius: BorderRadius.circular(100),
                           ),
                         ),
@@ -139,7 +139,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                                 right: 8,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.aviatorTwentyFifthColor,
+                                color: AppColors.aviatorThirtyFiveColor,
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: Center(
@@ -182,7 +182,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                                   formatNum(topBet.payout),
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorbodySmallPrimary,
+                                  ).textTheme.aviatorbodySmallFourth,
                                 ),
                               ),
                             ),
