@@ -503,11 +503,11 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         backgroundColor: isAutoPlayActive
             ? AppColors
                   .crashFourteenthColor // Red color for stop
-            : AppColors.crashSixteenthColor,
+            : AppColors.crashFourteenthColor,
         hasBorder: true,
         height: 28,
         borderColor: isAutoPlayActive
-            ? AppColors.crashFourteenthColor
+            ? AppColors.crashFifteenthColor
             : AppColors.crashSixteenthColor,
         child: Text(
           isAutoPlayActive

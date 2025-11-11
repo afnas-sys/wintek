@@ -35,7 +35,7 @@ class _CrashBalanceContainerState extends ConsumerState<CrashBalanceContainer> {
       width: 396,
       height: 134,
       decoration: BoxDecoration(
-        color: AppColors.walletFourthColor,
+        color: AppColors.crashEighthColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -90,7 +90,7 @@ class _CrashBalanceContainerState extends ConsumerState<CrashBalanceContainer> {
       onPressed: () {
         Navigator.pushNamed(context, RoutesNames.withdraw);
       },
-      backgroundColor: const Color.fromARGB(255, 18, 209, 44),
+      backgroundColor: AppColors.crashNinthColor,
       borderRadius: 30,
       padding: EdgeInsets.only(left: 23, right: 23, top: 10, bottom: 10),
       height: 40,
@@ -109,7 +109,7 @@ class _CrashBalanceContainerState extends ConsumerState<CrashBalanceContainer> {
       onPressed: () {
         Navigator.pushNamed(context, RoutesNames.deposit);
       },
-      backgroundColor: const Color.fromARGB(255, 247, 45, 9),
+      backgroundColor: AppColors.crashTenthColor,
       borderRadius: 30,
       padding: EdgeInsets.only(left: 23, right: 23, top: 10, bottom: 10),
       height: 40,
