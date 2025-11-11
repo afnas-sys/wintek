@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -20,7 +19,7 @@ class WalletContainer extends ConsumerWidget {
         color: AppColors.cardSecondPrimaryColor,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
         child: Column(
           children: [
             Row(
@@ -50,7 +49,7 @@ class WalletContainer extends ConsumerWidget {
                         AppText(
                           text: 'Wallet balance',
                           fontSize: 12,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
                           color: AppColors.cardUnfocusedColor,
                         ),
                       ],
@@ -64,16 +63,12 @@ class WalletContainer extends ConsumerWidget {
                       data: (walletBalance) => AppText(
                         text:
                             '₹ ${walletBalance?.data.balance.toStringAsFixed(2) ?? '0.00'}',
-                        fontSize: MediaQuery.of(context).size.width < 375
-                            ? 18
-                            : 22,
+                        fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
                       error: (e, s) => AppText(
                         text: '₹ 0',
-                        fontSize: MediaQuery.of(context).size.width < 375
-                            ? 18
-                            : 22,
+                        fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
                       loading: () => SizedBox.shrink(),
@@ -113,9 +108,7 @@ class WalletContainer extends ConsumerWidget {
                   ),
                   hasBorder: false,
                   text: 'Deposit',
-                  onPressed: () {
-                    Navigator.pushNamed(context, RoutesNames.deposit);
-                  },
+                  onPressed: () {},
                   backgroundColor: AppColors.depositButtonColor,
                   textColor: Colors.white,
                   fontSize: 14,
@@ -129,9 +122,7 @@ class WalletContainer extends ConsumerWidget {
                   ),
                   hasBorder: false,
                   text: 'Withdrawal',
-                  onPressed: () {
-                    Navigator.pushNamed(context, RoutesNames.withdraw);
-                  },
+                  onPressed: () {},
                   backgroundColor: AppColors.withdrowalButtonColor,
                   textColor: Colors.white,
                   fontSize: 14,

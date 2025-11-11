@@ -16,7 +16,7 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
 
   // Hardcoded crash multipliers for demonstration
   final List<String> multipliers = [
-    '11.5x',
+    '1.2x',
     '3.5x',
     '1.8x',
     '7.2x',
@@ -37,11 +37,11 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
   Color _getColor(String text) {
     final value = double.tryParse(text.replaceAll("x", "")) ?? 0;
     if (value < 2) {
-      return AppColors.crashNinthColor;
+      return AppColors.aviatorSeventhColor;
     } else if (value < 10) {
-      return AppColors.crashFifteenthColor;
+      return AppColors.aviatorEighthColor;
     } else {
-      return AppColors.crashFourteenthColor;
+      return AppColors.aviatorNinthColor;
     }
   }
 
@@ -59,7 +59,7 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
       alignment: Alignment.center,
       child: Text(
         text,
-        style: Theme.of(context).textTheme.crashbodySmallPrimary,
+        style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
       ),
     );
   }
@@ -80,10 +80,10 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
               child: ElevatedButton(
                 onPressed: () => setState(() => showBalance = !showBalance),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.crashTwentySixthColor,
+                  backgroundColor: AppColors.aviatorTenthColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
-                    side: BorderSide(color: AppColors.crashTwentySeventhColor),
+                    side: BorderSide(color: AppColors.aviatorEleventhColor),
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 6,
@@ -98,7 +98,7 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
                     const Icon(
                       FontAwesomeIcons.clock,
                       size: 16,
-                      color: AppColors.crashPrimaryColor,
+                      color: AppColors.aviatorTertiaryColor,
                     ),
                     const SizedBox(width: 4),
                     Icon(
@@ -106,7 +106,7 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
                           ? FontAwesomeIcons.angleUp
                           : FontAwesomeIcons.angleDown,
                       size: 16,
-                      color: AppColors.crashPrimaryColor,
+                      color: AppColors.aviatorTertiaryColor,
                     ),
                   ],
                 ),

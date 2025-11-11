@@ -31,6 +31,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   final List<Offset> _pathPoints = [];
 
   double _waveProgress = 0.0;
+  double _forwardProgress = 0.0;
   final double _waveAmplitude = 15.0;
   final double _waveFrequency = 0.05;
 
@@ -64,8 +65,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
         lastWaveTick = now;
 
         const speed = 0.02;
+        const forwardSpeed = 0.005;
         setState(() {
           _waveProgress += delta * speed;
+          _forwardProgress += delta * forwardSpeed;
         });
       }
     });
@@ -238,11 +241,13 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     }
 
                                     double waveOffset = 0.0;
+                                    double forwardOffset = 0.0;
                                     if (_isWaving &&
                                         !_flyAwayController.isAnimating) {
                                       waveOffset =
                                           sin(_waveProgress * _waveFrequency) *
                                           _waveAmplitude;
+                                      forwardOffset = _forwardProgress * 20;
                                       final waveTangent =
                                           cos(_waveProgress * _waveFrequency) *
                                           _waveAmplitude *
@@ -254,7 +259,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         .clamp(0, height - 60)
                                         .toDouble();
                                     final currentPoint = Offset(
-                                      x.clamp(0, width - 80),
+                                      (x + forwardOffset).clamp(0, width - 80),
                                       height - bottomPos,
                                     );
 
@@ -387,6 +392,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _hasReachedWave = false;
       _isWaving = false;
       _waveProgress = 0.0;
+      _forwardProgress = 0.0;
       _pathPoints.clear();
     });
     _takeoffController.forward(from: 0);
@@ -407,6 +413,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _isAnimating = false;
       _hasReachedWave = false;
       _waveProgress = 0.0;
+      _forwardProgress = 0.0;
       _pathPoints.clear();
     });
     _takeoffController.reset();

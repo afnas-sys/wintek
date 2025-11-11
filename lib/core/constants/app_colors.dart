@@ -183,8 +183,6 @@ class AppColors {
   static const Color crashTwentyThirdColor = Color(0XFF1a1c1c);
   static const Color crashTwentyFourthColor = Color(0XFFcb011a);
   static const Color crashTwentyFifthColor = Color(0XFF133206);
-  static const Color crashTwentySixthColor = Color(0xFF25323F);
-  static const Color crashTwentySeventhColor = Color(0xFF707a82);
 
   //! -----------------------------------------------------------------------------------------------------------------------------
 
