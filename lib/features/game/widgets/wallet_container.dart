@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/core/router/app_roouter.dart';
 import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
 import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
