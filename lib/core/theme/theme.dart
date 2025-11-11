@@ -135,6 +135,11 @@ extension CustomTextStyle on TextTheme {
     fontSize: 24,
     fontWeight: FontWeight.w600,
   );
+  TextStyle get aviatorHeadlineSmallSecond => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+  );
 
   // TextStyle get aviatorHeadlineSmallSecond => GoogleFonts.roboto(
   //   color: AppColors.aviatorTwentyEighthColor,
@@ -149,7 +154,7 @@ extension CustomTextStyle on TextTheme {
   );
 
   TextStyle get aviatorBodyLargePrimary => GoogleFonts.roboto(
-    color: AppColors.textPrimaryColor,
+    color: AppColors.aviatorSixthColor,
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
@@ -160,6 +165,12 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
+  TextStyle get aviatorBodyLargeThird => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
   TextStyle get aviatorBodyMediumPrimary => GoogleFonts.roboto(
     color: AppColors.aviatorTertiaryColor,
     fontSize: 14,
@@ -167,7 +178,23 @@ extension CustomTextStyle on TextTheme {
   );
 
   TextStyle get aviatorBodyMediumSecondary => GoogleFonts.roboto(
-    color: AppColors.aviatorSixteenthColor,
+    color: AppColors.aviatorThirtySevenColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get aviatorBodyMediumThird => GoogleFonts.roboto(
+    color: AppColors.aviatorThirtyFiveColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get aviatorBodyMediumFourth => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get aviatorBodyMediumFifth => GoogleFonts.roboto(
+    color: AppColors.aviatorFourtyColor,
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
@@ -185,8 +212,14 @@ extension CustomTextStyle on TextTheme {
   );
 
   TextStyle get aviatorbodySmallThird => GoogleFonts.roboto(
-    color: AppColors.aviatorTertiaryColor,
+    color: AppColors.aviatorSixthColor,
     fontSize: 10,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get aviatorbodySmallFourth => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
   );
 

@@ -65,10 +65,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
         lastWaveTick = now;
 
         const speed = 0.02;
-        const forwardSpeed = 0.005;
         setState(() {
           _waveProgress += delta * speed;
-          _forwardProgress += delta * forwardSpeed;
         });
       }
     });

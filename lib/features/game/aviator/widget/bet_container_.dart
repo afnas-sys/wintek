@@ -184,7 +184,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.aviatorFourteenthColor,
+        color: AppColors.aviatorTwentiethColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
@@ -203,8 +203,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               if (widget.showRemoveButton)
                 CustomElevatedButton(
                   hasBorder: true,
-                  borderColor: AppColors.aviatorFifteenthColor,
-                  backgroundColor: AppColors.aviatorFourteenthColor,
+                  borderColor: AppColors.aviatorFourtyColor,
+                  backgroundColor: AppColors.aviatorTwentiethColor,
                   padding: EdgeInsetsGeometry.all(2),
                   height: 22,
                   width: 22,
@@ -212,14 +212,14 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                   child: Icon(
                     Icons.remove,
                     size: 18.33,
-                    color: AppColors.aviatorFifteenthColor,
+                    color: AppColors.aviatorFourtyColor,
                   ),
                 )
               else if (widget.showAddButton)
                 CustomElevatedButton(
                   hasBorder: true,
-                  borderColor: AppColors.aviatorFifteenthColor,
-                  backgroundColor: AppColors.aviatorFourteenthColor,
+                  borderColor: AppColors.aviatorFourtyColor,
+                  backgroundColor: AppColors.aviatorTwentiethColor,
                   padding: EdgeInsetsGeometry.all(2),
                   height: 22,
                   width: 22,
@@ -227,7 +227,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                   child: Icon(
                     Icons.add,
                     size: 18.33,
-                    color: AppColors.aviatorFifteenthColor,
+                    color: AppColors.aviatorFourtyColor,
                   ),
                 )
               else
@@ -376,7 +376,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
         ),
       },
       decoration: BoxDecoration(
-        color: AppColors.aviatorFourteenthColor,
+        color: AppColors.aviatorTwentiethColor,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
@@ -406,16 +406,16 @@ class _BetContainerState extends ConsumerState<BetContainer> {
         cursorColor: AppColors.aviatorSixteenthColor,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.aviatorHeadlineSmall,
+        style: Theme.of(context).textTheme.aviatorHeadlineSmallSecond,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 2,
             horizontal: 8,
           ),
           // hintText: "1.00",
-          hintStyle: Theme.of(context).textTheme.aviatorHeadlineSmall,
+          hintStyle: Theme.of(context).textTheme.aviatorHeadlineSmallSecond,
           filled: true,
-          fillColor: AppColors.aviatorSixthColor,
+          fillColor: AppColors.aviatorTertiaryColor,
           enabledBorder: _borderStyle(),
           disabledBorder: _borderStyle(),
           focusedBorder: _borderStyle(),
@@ -444,12 +444,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
     return CustomElevatedButton(
       hasBorder: false,
-      backgroundColor: AppColors.aviatorSixteenthColor,
+      backgroundColor: AppColors.aviatorFourtyOneColor,
       padding: const EdgeInsets.all(2),
       height: 22,
       width: 22,
       onPressed: onPressed,
-      child: Icon(icon, size: 18.33, color: AppColors.aviatorSixthColor),
+      child: Icon(icon, size: 18.33, color: AppColors.aviatorTertiaryColor),
     );
   }
 
@@ -458,14 +458,14 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     return CustomElevatedButton(
       onPressed: () => _setAmount(value),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      borderColor: AppColors.aviatorFifteenthColor,
-      backgroundColor: AppColors.aviatorFourteenthColor,
+      borderColor: Color(0XFFAA99FD).withOpacity(.2),
+      backgroundColor: Color(0XFF222222).withOpacity(.04),
       borderRadius: 30,
       height: 28,
       elevation: 0,
       child: Text(
         label,
-        style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+        style: Theme.of(context).textTheme.aviatorBodyMediumFifth,
       ),
     );
   }
@@ -531,7 +531,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           Expanded(
             child: Text(
               'Auto Cash Out',
-              style: Theme.of(context).textTheme.aviatorbodySmallThird,
+              style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
             ),
           ),
           // Switch

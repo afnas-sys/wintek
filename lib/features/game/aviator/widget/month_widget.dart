@@ -38,7 +38,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
             return Center(
               child: Text(
                 'No data available',
-                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+                style: Theme.of(context).textTheme.aviatorBodyMediumFourth,
               ),
             );
           }
@@ -65,7 +65,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
             return Center(
               child: Text(
                 'No bets for this month',
-                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+                style: Theme.of(context).textTheme.aviatorBodyMediumFourth,
               ),
             );
           }
@@ -90,10 +90,10 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.aviatorSixthColor,
+                  color: AppColors.aviatorThirtyNineColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.aviatorFifteenthColor,
+                    color: AppColors.aviatorThirtyEightColor,
                     width: 1,
                   ),
                 ),
@@ -108,7 +108,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: AppColors.aviatorTertiaryColor,
+                            color: AppColors.aviatorThirtyNineColor,
                             borderRadius: BorderRadius.circular(100),
                           ),
                         ),
@@ -144,7 +144,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                                 right: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.aviatorTwentyFifthColor,
+                                color: AppColors.aviatorThirtyFiveColor,
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: Center(
@@ -187,7 +187,7 @@ class _MonthWidgetState extends ConsumerState<MonthWidget> {
                                   formatNum(topBet.payout),
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorbodySmallPrimary,
+                                  ).textTheme.aviatorbodySmallFourth,
                                 ),
                               ),
                             ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/game_section.dart';
-import 'package:wintek/features/game/card_jackpot/presentation/widgets/wallet_container.dart';
+import 'package:wintek/features/game/widgets/wallet_container.dart';
 
 // A widget that displays a stack of foreground elements including a wallet container and game tabs.
 
