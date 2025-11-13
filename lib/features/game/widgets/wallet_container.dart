@@ -13,8 +13,9 @@ class WalletContainer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final futureWallet = ref.watch(walletBalanceProvider);
+    final width = MediaQuery.of(context).size.width;
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColors.cardSecondPrimaryColor,
@@ -64,7 +65,7 @@ class WalletContainer extends ConsumerWidget {
                       data: (walletBalance) => AppText(
                         text:
                             '₹ ${walletBalance?.data.balance.toStringAsFixed(2) ?? '0.00'}',
-                        fontSize: 22,
+                        fontSize: width > 400 ? 22 : 16,
                         fontWeight: FontWeight.w500,
                       ),
                       error: (e, s) => AppText(

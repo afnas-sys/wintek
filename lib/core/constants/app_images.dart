@@ -74,4 +74,15 @@ class AppImages {
   static const String phonepay = 'assets/images/phonepay.png';
   static const String paytm = 'assets/images/paytm.png';
   static const String upiIcon = 'assets/images/upi_icon.png';
+
+  //! Bottom Nav Bar Icons
+  static const String home = 'assets/images/home.png';
+  static const String walletIcon = 'assets/images/empty-wallet.png';
+  static const String offers = 'assets/images/discount-circle.png';
+  static const String profile = 'assets/images/user-square.png';
+
+  static const String homeFilled = 'assets/images/home_filled.png';
+  static const String walletFilled = 'assets/images/empty-wallet_filled.png';
+  static const String offersFilled = 'assets/images/discount-circle_filled.png';
+  static const String profileFilled = 'assets/images/user-square-filled.png';
 }

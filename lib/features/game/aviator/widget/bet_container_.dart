@@ -554,6 +554,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               width: 70,
               height: 28,
               child: TextField(
+                enableInteractiveSelection: false,
                 enabled: _isSwitched,
                 controller: _switchController,
                 keyboardType: const TextInputType.numberWithOptions(

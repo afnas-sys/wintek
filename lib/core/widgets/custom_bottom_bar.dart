@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/offers/view/offers_screen.dart';
 import 'package:wintek/features/profile/screen/profile_screen.dart';
@@ -43,6 +44,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                 elevation: 0,
                 selectedItemColor: AppColors.bottomBarSelectedColor,
                 unselectedItemColor: AppColors.bottomBarUnselectedColor,
+
                 iconSize: 24,
                 mouseCursor: MaterialStateMouseCursor.clickable,
                 currentIndex: _currentIndex,
@@ -58,47 +60,71 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
                 onTap: (i) => setState(() => _currentIndex = i),
                 items: [
                   BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/images/home.png',
-                      width: 24,
-                      height: 24,
-                      color: _currentIndex == 0
-                          ? AppColors.bottomBarSelectedColor
-                          : AppColors.bottomBarUnselectedColor,
-                    ),
+                    icon: _currentIndex == 0
+                        ? Image.asset(
+                            AppImages.homeFilled,
+                            width: 24,
+                            height: 24,
+                          )
+                        : Image.asset(
+                            AppImages.home,
+                            width: 24,
+                            height: 24,
+                            // color: _currentIndex == 0
+                            //     ? AppColors.bottomBarSelectedColor
+                            //     : AppColors.bottomBarUnselectedColor,
+                          ),
                     label: 'Home',
                   ),
                   BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/images/empty-wallet.png',
-                      width: 24,
-                      height: 24,
-                      color: _currentIndex == 1
-                          ? AppColors.bottomBarSelectedColor
-                          : AppColors.bottomBarUnselectedColor,
-                    ),
+                    icon: _currentIndex == 1
+                        ? Image.asset(
+                            AppImages.walletFilled,
+                            width: 24,
+                            height: 24,
+                          )
+                        : Image.asset(
+                            AppImages.walletIcon,
+                            width: 24,
+                            height: 24,
+                            // color: _currentIndex == 1
+                            //     ? AppColors.bottomBarSelectedColor
+                            //     : AppColors.bottomBarUnselectedColor,
+                          ),
                     label: 'Wallet',
                   ),
                   BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/images/discount-circle.png',
-                      width: 24,
-                      height: 24,
-                      color: _currentIndex == 2
-                          ? AppColors.bottomBarSelectedColor
-                          : AppColors.bottomBarUnselectedColor,
-                    ),
+                    icon: _currentIndex == 2
+                        ? Image.asset(
+                            AppImages.offersFilled,
+                            width: 24,
+                            height: 24,
+                          )
+                        : Image.asset(
+                            AppImages.offers,
+                            width: 24,
+                            height: 24,
+                            // color: _currentIndex == 2
+                            //     ? AppColors.bottomBarSelectedColor
+                            //     : AppColors.bottomBarUnselectedColor,
+                          ),
                     label: 'Offers',
                   ),
                   BottomNavigationBarItem(
-                    icon: Image.asset(
-                      'assets/images/user-square.png',
-                      width: 24,
-                      height: 24,
-                      color: _currentIndex == 3
-                          ? AppColors.bottomBarSelectedColor
-                          : AppColors.bottomBarUnselectedColor,
-                    ),
+                    icon: _currentIndex == 3
+                        ? Image.asset(
+                            AppImages.profileFilled,
+                            width: 24,
+                            height: 24,
+                          )
+                        : Image.asset(
+                            AppImages.profile,
+                            width: 24,
+                            height: 24,
+                            // color: _currentIndex == 3
+                            //     ? AppColors.bottomBarSelectedColor
+                            //     : AppColors.bottomBarUnselectedColor,
+                          ),
                     label: 'Profile',
                   ),
                   const BottomNavigationBarItem(

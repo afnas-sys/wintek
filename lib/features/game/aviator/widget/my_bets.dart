@@ -35,7 +35,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.aviatorFourteenthColor,
+          color: AppColors.aviatorTertiaryColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Center(
@@ -66,13 +66,13 @@ class _MyBetsState extends ConsumerState<MyBets> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
             decoration: BoxDecoration(
-              color: AppColors.aviatorFourteenthColor,
+              color: AppColors.aviatorTertiaryColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'No bets found',
-                style: TextStyle(color: Colors.white),
+                style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
             ),
           );

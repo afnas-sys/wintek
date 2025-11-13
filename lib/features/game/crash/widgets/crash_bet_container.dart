@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
+import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
+import 'package:wintek/features/game/crash/widgets/crash_auto_play_widget.dart';
 import 'package:wintek/features/game/crash/widgets/crash_custom_bet_button.dart';
 
 class CrashAutoPlaySettings {
@@ -59,94 +59,27 @@ class CrashBetContainer extends ConsumerStatefulWidget {
 
 class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   final _switchController = TextEditingController();
-  int _selectedValue = 0;
-  bool _isSwitched = false;
+  final int _selectedValue = 0;
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
   final secureStorageService = SecureStorageService();
-
-  CrashAutoPlaySettings _autoPlayState = CrashAutoPlaySettings();
+  bool _isUpdatingAmount = false;
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
     return creds.userId; // this will be null if nothing was saved
   }
 
-  void _setAmount(String value) {
-    setState(() {
-      TextEditingController controller = _selectedValue == 0
-          ? _amountController
-          : _autoAmountController;
-      int current = int.tryParse(controller.text) ?? 0;
-      int add = int.tryParse(value) ?? 0;
-      controller.text = (current + add).toString();
-    });
-  }
-
-  void _startAutoPlay(AutoPlaySettings settings) {
-    final user = ref.read(userProvider);
-    user.maybeWhen(
-      data: (userModel) {
-        if (userModel != null) {
-          setState(() {
-            _autoPlayState = CrashAutoPlaySettings(
-              settings: settings,
-              roundsPlayed: 0,
-              initialWallet: userModel.data.wallet,
-              lastWinAmount: 0.0,
-            );
-          });
-          // Place the first bet immediately
-          _placeFirstAutoBet();
-        }
-      },
-      orElse: () {},
-    );
-  }
-
-  void _placeFirstAutoBet() {
-    // Trigger the first bet placement for autoplay
-    // This will be handled by the CustomBetButton's autoplay logic
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // The CustomBetButton will handle placing the first bet when autoplay starts
-    });
-  }
-
-  void _stopAutoPlay() {
-    setState(() {
-      _autoPlayState = CrashAutoPlaySettings();
-    });
-  }
-
-  // bool _shouldContinueAutoPlay(double currentWallet, double winAmount) {
-  //   if (_autoPlayState.settings == null) return false;
-
-  //   final settings = _autoPlayState.settings!;
-  //   final roundsPlayed = _autoPlayState.roundsPlayed;
-  //   final maxRounds = int.tryParse(settings.selectedRounds ?? '0') ?? 0;
-
-  //   // Check if max rounds reached
-  //   if (maxRounds > 0 && roundsPlayed >= maxRounds) return false;
-
-  //   // Check cash decrease condition
-  //   if (settings.stopIfCashDecreases) {
-  //     final decrease = _autoPlayState.initialWallet - currentWallet;
-  //     if (decrease >= settings.decrementAmount) return false;
-  //   }
-
-  //   // Check cash increase condition
-  //   if (settings.stopIfCashIncreases) {
-  //     final increase = currentWallet - _autoPlayState.initialWallet;
-  //     if (increase >= settings.incrementAmount) return false;
-  //   }
-
-  //   // Check single win exceeds condition
-  //   if (settings.stopIfSingleWinExceeds &&
-  //       winAmount >= settings.exceedsAmount) {
-  //     return false;
-  //   }
-
-  //   return true;
+  // void _setAmount(String value) {
+  //   setState(() {
+  //     TextEditingController controller = _selectedValue == 0
+  //         ? _amountController
+  //         : _autoAmountController;
+  //     int newValue = int.tryParse(value) ?? 0;
+  //     if (newValue > 100) newValue = 100;
+  //     if (newValue < 0) newValue = 0;
+  //     controller.text = newValue.toString();
+  //   });
   // }
 
   void _increment() {
@@ -154,7 +87,9 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         ? _amountController
         : _autoAmountController;
     int value = int.tryParse(controller.text) ?? 0;
-    controller.text = (value + 1).toString();
+    if (value < 100) {
+      controller.text = (value + 1).toString();
+    }
   }
 
   void _decrement() {
@@ -171,7 +106,24 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   void initState() {
     _amountController.text = 1.toString();
     _autoAmountController.text = 1.toString();
+    _amountController.addListener(_enforceMaxValue);
+    _autoAmountController.addListener(_enforceMaxValue);
     super.initState();
+  }
+
+  void _enforceMaxValue() {
+    if (_isUpdatingAmount) return;
+    _isUpdatingAmount = true;
+    TextEditingController controller = _selectedValue == 0
+        ? _amountController
+        : _autoAmountController;
+    final numValue = double.tryParse(controller.text) ?? 0;
+    if (numValue > 100) {
+      controller.text = '100';
+    } else if (numValue < 0) {
+      controller.text = '0';
+    }
+    _isUpdatingAmount = false;
   }
 
   @override
@@ -179,7 +131,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     //!------BET CONTAINER------
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
-      height: _selectedValue == 0 ? 210 : 258,
+      //height: 210,
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -193,12 +145,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(child: SizedBox(width: 0, height: 0)),
-              SizedBox(
-                width: 191,
-                height: 28,
-                //! SWITCH
-                child: _buildSwitch(),
-              ),
+
               if (widget.showRemoveButton)
                 CustomElevatedButton(
                   hasBorder: true,
@@ -233,368 +180,579 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                 SizedBox(width: 22, height: 22),
             ],
           ),
-          const SizedBox(height: 20),
-          SizedBox(
-            child: Center(
-              child: _selectedValue == 0
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(height: 16),
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  //! container for Amount, + & - button
-                                  _buildAmountTextField(
-                                    context,
-                                    _amountController,
-                                  ),
-
-                                  SizedBox(height: 10),
-                                  //! BUTTON FOR ₹10 & ₹20
-                                  Row(
-                                    children: [
-                                      _quickAmountButton(context, '₹10', '10'),
-                                      const SizedBox(width: 6),
-                                      _quickAmountButton(context, '₹20', '20'),
-                                    ],
-                                  ),
-                                  SizedBox(height: 6),
-                                  //! BUTTON FOR ₹50 & ₹100
-                                  Row(
-                                    children: [
-                                      _quickAmountButton(context, '₹50', '50'),
-                                      const SizedBox(width: 6),
-                                      _quickAmountButton(
-                                        context,
-                                        '₹100',
-                                        '100',
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        //  SizedBox(width: 20),
-                        //! Manual BUTTON FOR BET
-                        Expanded(
-                          flex: 1,
-                          child: Row(
-                            children: [Expanded(child: _manualBetButton())],
-                          ),
-                        ),
-                      ],
-                    )
-                  //!      ----------------------  AUTO---------------------------------
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(height: 16),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  //! CONTAINER FOR AMOUNT, + & - button in AUTo
-                                  _buildAmountTextField(
-                                    context,
-                                    _autoAmountController,
-                                  ),
-
-                                  SizedBox(height: 10),
-                                  //!Auto BUTTON FOR AMOUNT 10 & 20
-                                  Row(
-                                    children: [
-                                      _quickAmountButton(context, '₹10', '10'),
-                                      const SizedBox(width: 6),
-                                      _quickAmountButton(context, '₹20', '20'),
-                                    ],
-                                  ),
-                                  SizedBox(height: 6),
-
-                                  //!Auto BUTTON FOR AMOUNT 50 &100
-                                  Row(
-                                    children: [
-                                      _quickAmountButton(context, '₹50', '50'),
-                                      const SizedBox(width: 6),
-                                      _quickAmountButton(
-                                        context,
-                                        '₹100',
-                                        '100',
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        //  SizedBox(width: 20),
-                        //!Auto BUTTON FOR BET---------------------------------------------------
-                        Expanded(child: _autoBetButton()),
-                      ],
-                    ),
-            ),
-          ),
-          SizedBox(height: 16),
-          //! AUTOPLAY Button
-          if (_selectedValue == 1)
-            Row(
+          // const SizedBox(height: 20),
+          Center(
+            child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                //! AUTOPLAY button
-                _buildAutoplayButton(context),
-                // const SizedBox(width: 16),
-                Spacer(),
+                SizedBox(height: 16),
+                _buildAmountTextField(
+                  context,
+                  _amountController,
+                  _decrement,
+                  _increment,
+                ),
+                SizedBox(height: 16),
 
-                //! section (Auto Cash Out + Switch + TextField)
-                _buildAutoCashOutRow(context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.crashTwentySixthColor,
+                      ),
+                      child: GestureDetector(
+                        onTap: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return CrashAutoPlay();
+                            },
+                          );
+                        },
+                        child: Center(
+                          child: Image.asset(
+                            AppImages.refresh,
+                            width: 20,
+                            height: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: SizedBox(
+                        height: 50,
+                        child: CrashCustomBetButton(
+                          index: widget.index,
+                          amountController: _amountController,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Expanded(
+                //   flex: 1,
+                //   child: Row(
+                //     children: [
+                //       Column(
+                //         children: [
+                //           //! container for Amount, + & - button
+                //           _buildAmountTextField(
+                //             context,
+                //             _amountController,
+                //             _decrement,
+                //             _increment,
+                //           ),
+
+                //           SizedBox(height: 10),
+                //           //! BUTTON FOR ₹10 & ₹20
+                //           Row(
+                //             children: [
+                //               _quickAmountButton(context, 'Min', '1'),
+                //               const SizedBox(width: 6),
+                //               _quickAmountButton(context, 'Max', '100'),
+                //             ],
+                //           ),
+
+                //           //! BUTTON FOR ₹50 & ₹100
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                //  SizedBox(width: 20),
+                //! Manual BUTTON FOR BET
+                // Expanded(child: _manualBetButton()),
               ],
             ),
+            //!      ----------------------  AUTO---------------------------------
+            //  Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       SizedBox(height: 16),
+            //       Expanded(
+            //         child: Row(
+            //           children: [
+            //             Column(
+            //               children: [
+            //                 //! CONTAINER FOR AMOUNT, + & - button in AUTo
+            //                 _buildAmountTextField(
+            //                   context,
+            //                   _autoAmountController,
+            //                   _decrement,
+            //                   _increment,
+            //                 ),
+
+            //                 SizedBox(height: 10),
+            //                 //!Auto BUTTON FOR AMOUNT 10 & 20
+            //                 Row(
+            //                   children: [
+            //                     _quickAmountButton(context, 'Min', '1'),
+            //                     const SizedBox(width: 6),
+            //                     _quickAmountButton(context, 'Max', '100'),
+            //                   ],
+            //                 ),
+
+            //                 //!Auto BUTTON FOR AMOUNT 50 &100
+            //               ],
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //       //  SizedBox(width: 20),
+            //       //!Auto BUTTON FOR BET---------------------------------------------------
+            //       Expanded(
+            //         flex: 1,
+            //         child: Stack(
+            //           alignment: Alignment.center,
+            //           children: [
+            //             // ConstrainedBox makes sure the child can expand but not force infinite
+            //             ConstrainedBox(
+            //               constraints: const BoxConstraints(
+            //                 minWidth: 0,
+            //                 maxWidth: double.infinity,
+            //               ),
+            //               child: SizedBox(
+            //                 width: double
+            //                     .infinity, // now safe because Expanded gives bounded width
+            //                 child:
+            //                     _manualBetButton(), // make sure this widget can accept full width
+            //               ),
+            //             ),
+
+            //             // Overlay label (centered — change to Positioned if you want top-right)
+            //             Positioned(
+            //               top: -1,
+            //               right: -2,
+            //               child: Container(
+            //                 width: 38,
+            //                 height: 38,
+            //                 decoration: BoxDecoration(
+            //                   border: Border.all(
+            //                     color: AppColors.crashEleventhColor,
+            //                     width: 5,
+            //                   ),
+            //                   shape: BoxShape.circle,
+            //                   color: AppColors.crashTwelfthColor,
+            //                 ),
+            //                 child: GestureDetector(
+            //                   onTap: () async {
+            //                     await showDialog(
+            //                       context: context,
+            //                       builder: (BuildContext context) {
+            //                         return CrashAutoPlay();
+            //                       },
+            //                     );
+            //                   },
+            //                   child: Center(
+            //                     child: Image.asset(
+            //                       AppImages.refresh,
+            //                       width: 16,
+            //                       height: 16,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+          ),
+          //SizedBox(height: 16),
+          //! AUTOPLAY Button
+          // if (_selectedValue == 1)
+          //   Row(
+          //     children: const [
+          //       Expanded(
+          //         child: Padding(
+          //           padding: EdgeInsets.symmetric(horizontal: 8.0),
+          //           child: CustomSlider(),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
         ],
       ),
     );
   }
 
   //!Switch
-  Widget _buildSwitch() {
-    return CustomSlidingSegmentedControl<int>(
-      initialValue: _selectedValue,
-      children: {
-        0: Text(
-          'Bet',
-          style: Theme.of(context).textTheme.crashBodyMediumPrimary,
-        ),
-        1: Text(
-          'Auto',
-          style: Theme.of(context).textTheme.crashBodyMediumPrimary,
-        ),
-      },
-      decoration: BoxDecoration(
-        color: AppColors.crashEleventhColor,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: AppColors.crashTwelfthColor, width: 1),
-      ),
-      thumbDecoration: BoxDecoration(
-        color: AppColors.crashTwelfthColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
+  // Widget _buildSwitch() {
+  //   return CustomSlidingSegmentedControl<int>(
+  //     initialValue: _selectedValue,
+  //     children: {
+  //       0: Text(
+  //         'Bet',
+  //         style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+  //       ),
+  //       1: Text(
+  //         'Auto',
+  //         style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+  //       ),
+  //     },
+  //     decoration: BoxDecoration(
+  //       color: AppColors.crashEleventhColor,
+  //       borderRadius: BorderRadius.circular(30),
+  //       border: Border.all(color: AppColors.crashTwelfthColor, width: 1),
+  //     ),
+  //     thumbDecoration: BoxDecoration(
+  //       color: AppColors.crashTwelfthColor,
+  //       borderRadius: BorderRadius.circular(30),
+  //     ),
 
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      onValueChanged: (v) {
-        setState(() => _selectedValue = v);
-      },
-    );
-  }
+  //     duration: const Duration(milliseconds: 200),
+  //     curve: Curves.easeInOut,
+  //     onValueChanged: (v) {
+  //       setState(() => _selectedValue = v);
+  //     },
+  //   );
+  // }
 
   //!Auto BUTTON FOR AMOUNT
   Widget _buildAmountTextField(
     BuildContext context,
     TextEditingController controller,
+    VoidCallback decrement,
+    VoidCallback increment,
   ) {
     return SizedBox(
-      width: 140,
-      height: 36,
+      width: double.infinity,
+      height: 56,
       child: TextField(
+        showCursor: false,
+        enableInteractiveSelection: false,
         controller: controller,
         cursorColor: AppColors.crashThirteenthColor,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.crashHeadlineSmall,
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 2,
-            horizontal: 8,
-          ),
-          // hintText: "1.00",
-          hintStyle: Theme.of(context).textTheme.crashHeadlineSmall,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
           filled: true,
-          fillColor: AppColors.crashSecondaryColor,
-          enabledBorder: _borderStyle(),
-          disabledBorder: _borderStyle(),
-          focusedBorder: _borderStyle(),
-          suffixIcon: Row(
+          fillColor: const Color.fromARGB(255, 54, 51, 51),
+          hintStyle: Theme.of(context).textTheme.crashHeadlineSmall,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: BorderSide(color: Theme.of(context).dividerColor),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 2,
+            ),
+          ),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 32,
+            minHeight: 32,
+          ),
+          suffixIconConstraints: const BoxConstraints(
+            minWidth: 32,
+            minHeight: 32,
+          ),
+          prefixIcon: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildIconButton(Icons.remove, _decrement),
-              const SizedBox(width: 4),
-              _buildIconButton(Icons.add, _increment),
-              const SizedBox(width: 4),
+              SizedBox(width: 5),
+              // MIN button
+              Container(
+                height: 30,
+                width: 40,
+                decoration: BoxDecoration(
+                  // shape: BoxShape.circle,
+                  color: const Color.fromARGB(255, 102, 97, 97),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: const Text(
+                    'Min',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  tooltip: 'Min (1)',
+                  onPressed: () {
+                    controller.text = '1';
+                  },
+                ),
+              ),
+              // DECREMENT button
+              Material(
+                type: MaterialType.transparency,
+                child: IconButton(
+                  splashRadius: 18,
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.remove_circle_outline, size: 30),
+                  onPressed: () {
+                    final value =
+                        int.tryParse(
+                          controller.text.isEmpty ? '1' : controller.text,
+                        ) ??
+                        1;
+                    if (value > 1) {
+                      controller.text = (value - 1).toString();
+                    } else {
+                      controller.text = '1';
+                    }
+                  },
+                  tooltip: 'Decrement',
+                ),
+              ),
+            ],
+          ),
+          suffixIcon: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // INCREMENT button
+              Material(
+                type: MaterialType.transparency,
+                child: IconButton(
+                  splashRadius: 18,
+                  padding: EdgeInsets.zero,
+                  icon: const Icon(Icons.add_circle_outline, size: 30),
+                  onPressed: () {
+                    final value =
+                        int.tryParse(
+                          controller.text.isEmpty ? '1' : controller.text,
+                        ) ??
+                        1;
+                    if (value < 100) {
+                      controller.text = (value + 1).toString();
+                    } else {
+                      controller.text = '100';
+                    }
+                  },
+                  tooltip: 'Increment',
+                ),
+              ),
+              // MAX button
+              Material(
+                type: MaterialType.transparency,
+                child: Container(
+                  height: 30,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    //    shape: BoxShape.circle,
+                    color: const Color.fromARGB(255, 102, 97, 97),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: IconButton(
+                    splashRadius: 18,
+                    padding: EdgeInsets.zero,
+                    icon: const Text(
+                      'Max',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    tooltip: 'Max (100)',
+                    onPressed: () {
+                      controller.text = '100';
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(width: 5),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  OutlineInputBorder _borderStyle() {
-    return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(52),
-      borderSide: BorderSide(color: AppColors.crashTwelfthColor),
-    );
-  }
-
-  //! IconButton
-  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
-    return CustomElevatedButton(
-      hasBorder: false,
-      backgroundColor: AppColors.crashThirteenthColor,
-      padding: const EdgeInsets.all(2),
-      height: 22,
-      width: 22,
-      onPressed: onPressed,
-      child: Icon(icon, size: 18.33, color: AppColors.crashSecondaryColor),
-    );
-  }
-
-  //!Quick Amount Button
-  Widget _quickAmountButton(BuildContext context, String label, String value) {
-    return CustomElevatedButton(
-      onPressed: () => _setAmount(value),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      borderColor: AppColors.crashTwelfthColor,
-      backgroundColor: AppColors.crashEleventhColor,
-      borderRadius: 30,
-      height: 28,
-      elevation: 0,
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.crashBodyMediumPrimary,
-      ),
-    );
-  }
-
-  //!AUTOPLAY
-  Widget _buildAutoplayButton(BuildContext context) {
-    final isAutoPlayActive = _autoPlayState.settings != null;
-    final maxRounds = _autoPlayState.settings?.selectedRounds != null
-        ? int.tryParse(_autoPlayState.settings!.selectedRounds!) ?? 0
-        : 0;
-    final currentRound = _autoPlayState.roundsPlayed;
-
-    return Flexible(
-      flex: 2,
-      child: CustomElevatedButton(
-        onPressed: () async {
-          if (isAutoPlayActive) {
-            // Stop autoplay
-            _stopAutoPlay();
-          } else {
-            // Start autoplay - show dialog with callback
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AutoPlayWidget(
-                  onStart: (settings) {
-                    _startAutoPlay(settings);
-                  },
-                );
-              },
+        onChanged: (value) {
+          if (_isUpdatingAmount) return;
+          _isUpdatingAmount = true;
+          final numValue = double.tryParse(value) ?? 0;
+          if (numValue > 100) {
+            controller.text = '100';
+            controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: 3),
+            );
+          } else if (numValue < 1) {
+            controller.text = '1';
+            controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: 1),
             );
           }
+          _isUpdatingAmount = false;
         },
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        borderRadius: 52,
-        backgroundColor: isAutoPlayActive
-            ? AppColors
-                  .crashFourteenthColor // Red color for stop
-            : AppColors.crashFourteenthColor,
-        hasBorder: true,
-        height: 28,
-        borderColor: isAutoPlayActive
-            ? AppColors.crashFifteenthColor
-            : AppColors.crashSixteenthColor,
-        child: Text(
-          isAutoPlayActive
-              ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
-              : 'AUTOPLAY',
-          style: Theme.of(context).textTheme.crashBodyMediumPrimary,
-          overflow: TextOverflow.ellipsis,
-        ),
       ),
     );
   }
+
+  // OutlineInputBorder _borderStyle() {
+  //   return OutlineInputBorder(
+  //     borderRadius: BorderRadius.circular(52),
+  //     borderSide: BorderSide(color: AppColors.crashTwelfthColor),
+  //   );
+  // }
+
+  //!Quick Amount Button
+  // Widget _quickAmountButton(BuildContext context, String label, String value) {
+  //   return CustomElevatedButton(
+  //     onPressed: () => _setAmount(value),
+  //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //     borderColor: AppColors.crashTwelfthColor,
+  //     backgroundColor: AppColors.crashEleventhColor,
+  //     borderRadius: 30,
+  //     height: 28,
+  //     elevation: 0,
+  //     child: Text(
+  //       label,
+  //       style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+  //     ),
+  //   );
+  // }
+
+  //!AUTOPLAY
+  // Widget _buildAutoplayButton(BuildContext context) {
+  //   final isAutoPlayActive = _autoPlayState.settings != null;
+  //   final maxRounds = _autoPlayState.settings?.selectedRounds != null
+  //       ? int.tryParse(_autoPlayState.settings!.selectedRounds!) ?? 0
+  //       : 0;
+  //   final currentRound = _autoPlayState.roundsPlayed;
+
+  //   return Flexible(
+  //     flex: 2,
+  //     child: CustomElevatedButton(
+  //       onPressed: () async {
+  //         if (isAutoPlayActive) {
+  //           // Stop autoplay
+  //           _stopAutoPlay();
+  //         } else {
+  //           // Start autoplay - show dialog with callback
+  //           await showDialog(
+  //             context: context,
+  //             builder: (BuildContext context) {
+  //               return AutoPlayWidget(
+  //                 onStart: (settings) {
+  //                   _startAutoPlay(settings);
+  //                 },
+  //               );
+  //             },
+  //           );
+  //         }
+  //       },
+  //       padding: const EdgeInsets.symmetric(horizontal: 12),
+  //       borderRadius: 52,
+  //       backgroundColor: isAutoPlayActive
+  //           ? AppColors
+  //                 .crashFourteenthColor // Red color for stop
+  //           : AppColors.crashFourteenthColor,
+  //       hasBorder: true,
+  //       height: 28,
+  //       borderColor: isAutoPlayActive
+  //           ? AppColors.crashFifteenthColor
+  //           : AppColors.crashSixteenthColor,
+  //       child: Text(
+  //         isAutoPlayActive
+  //             ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
+  //             : 'AUTOPLAY',
+  //         style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+  //         overflow: TextOverflow.ellipsis,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   //!AUTO CASH OUT
-  Widget _buildAutoCashOutRow(BuildContext context) {
-    return Expanded(
-      flex: 4,
-      child: Row(
-        children: [
-          // Label
-          Expanded(
-            child: Text(
-              'Auto Cash Out',
-              style: Theme.of(context).textTheme.crashbodySmallThird,
-            ),
-          ),
-          // Switch
-          Expanded(
-            child: Transform.scale(
-              scale: 0.65,
-              child: Switch(
-                value: _isSwitched,
-                activeColor: AppColors.crashPrimaryColor,
-                inactiveThumbColor: AppColors.crashPrimaryColor,
-                activeTrackColor: AppColors.crashFifteenthColor,
-                inactiveTrackColor: AppColors.crashEleventhColor,
-                onChanged: (value) => setState(() => _isSwitched = value),
-              ),
-            ),
-          ),
-          // TextField
-          Expanded(
-            child: SizedBox(
-              width: 70,
-              height: 28,
-              child: TextField(
-                enabled: _isSwitched,
-                controller: _switchController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.crashBodyMediumSecondary,
-                decoration: InputDecoration(
-                  suffixText: "x",
-                  suffixStyle: TextStyle(color: AppColors.crashThirteenthColor),
-                  hintText: "1.5",
-                  filled: true,
-                  fillColor: AppColors.crashSecondaryColor,
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 4,
-                    horizontal: 6,
-                  ),
-                  border: _borderStyle(),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildAutoCashOutRow(BuildContext context) {
+  //   return Expanded(
+  //     flex: 4,
+  //     child: Row(
+  //       children: [
+  //         // Label
+  //         Expanded(
+  //           child: Text(
+  //             'Auto Cash Out',
+  //             style: Theme.of(context).textTheme.crashbodySmallThird,
+  //           ),
+  //         ),
+  //         // Switch
+  //         Expanded(
+  //           child: Transform.scale(
+  //             scale: 0.65,
+
+  //             child: Switch(
+  //               value: _isSwitched,
+  //               activeColor: AppColors.crashPrimaryColor,
+  //               inactiveThumbColor: AppColors.crashPrimaryColor,
+  //               activeTrackColor: AppColors.crashFifteenthColor,
+  //               inactiveTrackColor: AppColors.crashEleventhColor,
+  //               onChanged: (value) => setState(() => _isSwitched = value),
+  //             ),
+  //           ),
+  //         ),
+  //         // TextField
+  //         Expanded(
+  //           child: SizedBox(
+  //             width: 70,
+  //             height: 28,
+  //             child: TextField(
+  //               enabled: _isSwitched,
+  //               controller: _switchController,
+  //               keyboardType: const TextInputType.numberWithOptions(
+  //                 decimal: true,
+  //               ),
+  //               textAlign: TextAlign.center,
+  //               style: Theme.of(context).textTheme.crashBodyMediumSecondary,
+  //               decoration: InputDecoration(
+  //                 suffixText: "x",
+  //                 suffixStyle: TextStyle(color: AppColors.crashThirteenthColor),
+  //                 hintText: "1.5",
+  //                 filled: true,
+  //                 fillColor: AppColors.crashSecondaryColor,
+  //                 contentPadding: const EdgeInsets.symmetric(
+  //                   vertical: 4,
+  //                   horizontal: 6,
+  //                 ),
+  //                 border: _borderStyle(),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   //! MANUAL BET
-  Widget _manualBetButton() {
-    return CrashCustomBetButton(
-      index: widget.index,
-      amountController: _amountController,
-      //   switchController: _switchController,
-    );
-  }
+  // Widget _manualBetButton() {
+  //   return CrashCustomBetButton(
+  //     index: widget.index,
+  //     amountController: _amountController,
+  //     switchController: _switchController,
+  //   );
+  // }
 
   //! AUTO BET
-  Widget _autoBetButton() {
-    return CrashCustomBetButton(
-      index: widget.index,
-      amountController: _autoAmountController,
-      switchController: _switchController,
-    );
+  // Widget _autoBetButton() {
+  //   return CrashCustomBetButton(
+  //     index: widget.index,
+  //     amountController: _autoAmountController,
+  //     switchController: _switchController,
+  //   );
+  // }
+
+  @override
+  void dispose() {
+    _amountController.removeListener(_enforceMaxValue);
+    _autoAmountController.removeListener(_enforceMaxValue);
+    _amountController.dispose();
+    _autoAmountController.dispose();
+    _switchController.dispose();
+    super.dispose();
   }
 }

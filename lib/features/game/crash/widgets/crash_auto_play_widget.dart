@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/game/crash/widgets/custom_slider.dart';
 
 class CrashAutoPlayWidget {
   final int selectedRounds;
@@ -15,72 +16,75 @@ class CrashAutoPlayWidget {
   });
 }
 
-class AutoPlayWidget extends StatefulWidget {
+class CrashAutoPlay extends StatefulWidget {
   final Function(CrashAutoPlayWidget)? onStart;
 
-  const AutoPlayWidget({super.key, this.onStart});
+  const CrashAutoPlay({super.key, this.onStart});
 
   @override
-  State<AutoPlayWidget> createState() => _CrashAutoPlayWidgetState();
+  State<CrashAutoPlay> createState() => _CrashAutoPlayState();
 }
 
-class _CrashAutoPlayWidgetState extends State<AutoPlayWidget> {
+class _CrashAutoPlayState extends State<CrashAutoPlay> {
   int selectedRounds = 10;
-  final _autoCashoutController = TextEditingController(text: '2.0');
+  final _autoCashoutController = TextEditingController(text: '1.0');
 
   // Validation error messages
   String? _roundsError;
   String? _autoCashoutError;
+  bool _isUpdatingAmount = false;
 
-  void _startAutoPlay() {
-    // Clear previous errors
-    setState(() {
-      _roundsError = null;
-      _autoCashoutError = null;
-    });
+  // void _startAutoPlay() {
+  //   // Clear previous errors
+  //   setState(() {
+  //     _roundsError = null;
+  //     _autoCashoutError = null;
+  //   });
 
-    bool hasErrors = false;
+  //   bool hasErrors = false;
 
-    // Validation: Check if auto cashout multiplier is valid
-    final autoCashoutValue =
-        double.tryParse(_autoCashoutController.text) ?? 0.0;
-    if (autoCashoutValue <= 1.0) {
-      setState(
-        () => _autoCashoutError = 'Auto cashout must be greater than 1.0x',
-      );
-      hasErrors = true;
-    }
+  //   // Validation: Check if auto cashout multiplier is valid
+  //   final autoCashoutValue =
+  //       double.tryParse(_autoCashoutController.text) ?? 0.0;
+  //   if (autoCashoutValue <= 1.0) {
+  //     setState(
+  //       () => _autoCashoutError = 'Auto cashout must be greater than 1.0x',
+  //     );
+  //     hasErrors = true;
+  //   }
 
-    if (hasErrors) return;
+  //   if (hasErrors) return;
 
-    final settings = CrashAutoPlayWidget(
-      selectedRounds: selectedRounds,
-      autoCashoutMultiplier: autoCashoutValue,
-    );
+  //   final settings = CrashAutoPlayWidget(
+  //     selectedRounds: selectedRounds,
+  //     autoCashoutMultiplier: autoCashoutValue,
+  //   );
 
-    // Call the callback if provided, otherwise pop with settings
-    if (widget.onStart != null) {
-      widget.onStart!(settings);
-      Navigator.of(context).pop();
-    } else {
-      Navigator.of(context).pop(settings);
-    }
-  }
+  //   // Call the callback if provided, otherwise pop with settings
+  //   if (widget.onStart != null) {
+  //     widget.onStart!(settings);
+  //     Navigator.of(context).pop();
+  //   } else {
+  //     Navigator.of(context).pop(settings);
+  //   }
+  // }
 
   void _increment(TextEditingController controller) {
-    final currentValue = double.tryParse(controller.text) ?? 0.0;
-    final newValue = currentValue + 1.0;
-    setState(() {
-      controller.text = newValue.toStringAsFixed(0);
-    });
+    int value = int.tryParse(controller.text) ?? 1;
+    if (value < 100) {
+      controller.text = (value + 1).toString();
+    } else {
+      controller.text = '100'; // clamp max
+    }
   }
 
   void _decrement(TextEditingController controller) {
-    final currentValue = double.tryParse(controller.text) ?? 0.0;
-    final newValue = (currentValue - 1.0).clamp(0.0, double.infinity);
-    setState(() {
-      controller.text = newValue.toStringAsFixed(0);
-    });
+    int value = int.tryParse(controller.text) ?? 1;
+    if (value > 1) {
+      controller.text = (value - 1).toString();
+    } else {
+      controller.text = '1'; // clamp min
+    }
   }
 
   void _resetAll() {
@@ -98,7 +102,7 @@ class _CrashAutoPlayWidgetState extends State<AutoPlayWidget> {
         backgroundColor: AppColors.crashTwentyThirdColor,
         contentPadding: const EdgeInsets.all(0),
         content: SizedBox(
-          height: 450,
+          height: 350,
           width: double.maxFinite,
           child: Container(
             decoration: BoxDecoration(
@@ -106,12 +110,12 @@ class _CrashAutoPlayWidgetState extends State<AutoPlayWidget> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
-              spacing: 2,
+              spacing: 16,
               children: [
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.crashSeventeenthColor,
+                    color: AppColors.crashTwentyFirstColor,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -120,11 +124,10 @@ class _CrashAutoPlayWidgetState extends State<AutoPlayWidget> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      SizedBox(),
                       Text(
-                        'Auto play options',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.crashBodyMediumPrimary,
+                        'Autoplay',
+                        style: Theme.of(context).textTheme.crashBodyTitleMdeium,
                       ),
                       GestureDetector(
                         onTap: () => Navigator.of(context).pop(),
@@ -137,181 +140,151 @@ class _CrashAutoPlayWidgetState extends State<AutoPlayWidget> {
                   ),
                 ),
 
-                // Rounds
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.crashSeventeenthColor,
-                      borderRadius: BorderRadius.circular(20),
-                      border: _roundsError != null
-                          ? Border.all(
-                              color: AppColors.crashEighteenthColor,
-                              width: 2,
-                            )
-                          : null,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      spacing: 6,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Number of rounds:',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.crashBodyMediumPrimary,
+                // Auto Cashout Multiplier
+                Container(
+                  //  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.crashTwentyFirstColor,
+                    //   borderRadius: BorderRadius.circular(0),
+                    border: _autoCashoutError != null
+                        ? Border.all(
+                            color: AppColors.crashNinteenthColor,
+                            width: 2,
+                          )
+                        : null,
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: _buildAmountTextField(
+                              context,
+                              _autoCashoutController,
+                              enabled: true,
                             ),
-                            if (_roundsError != null)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 4.0),
-                                child: Text(
-                                  _roundsError!,
-                                  style: const TextStyle(
-                                    color: AppColors.crashNinteenthColor,
-                                    fontSize: 12,
-                                  ),
+                          ),
+                        ],
+                      ),
+                      if (_autoCashoutError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            _autoCashoutError!,
+                            style: const TextStyle(
+                              color: AppColors.crashNinteenthColor,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+
+                // Slider
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: CustomSlider(),
+                ),
+
+                // Rounds
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.crashTwentyFirstColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: _roundsError != null
+                        ? Border.all(
+                            color: AppColors.crashEighteenthColor,
+                            width: 2,
+                          )
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    spacing: 6,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Number of rounds:',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.crashBodyMediumPrimary,
+                          ),
+                          SizedBox(height: 4),
+                          if (_roundsError != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                _roundsError!,
+                                style: const TextStyle(
+                                  color: AppColors.crashNinteenthColor,
+                                  fontSize: 12,
                                 ),
                               ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            _autoPlayButton(context, '10'),
-                            _autoPlayButton(context, '20'),
-                            _autoPlayButton(context, '50'),
-                            _autoPlayButton(context, '100'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Auto Cashout Multiplier
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: AppColors.crashSeventeenthColor,
-                      borderRadius: BorderRadius.circular(20),
-                      border: _autoCashoutError != null
-                          ? Border.all(
-                              color: AppColors.crashNinteenthColor,
-                              width: 2,
-                            )
-                          : null,
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Auto Cashout at',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.crashbodySmallPrimary,
-                              ),
                             ),
-                            Expanded(
-                              child: _buildAmountTextField(
-                                context,
-                                _autoCashoutController,
-                                enabled: true,
-                              ),
-                            ),
-                            SizedBox(width: 5),
-                            Text(
-                              'x',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.crashbodySmallPrimary,
-                            ),
-                          ],
-                        ),
-                        if (_autoCashoutError != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              _autoCashoutError!,
-                              style: const TextStyle(
-                                color: AppColors.crashNinteenthColor,
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.crashSeventeenthColor,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
+                        ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _autoPlayButton(context, '10'),
+                          _autoPlayButton(context, '20'),
+                          _autoPlayButton(context, '50'),
+                          _autoPlayButton(context, '100'),
+                          _autoPlayButton(context, '100'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                //  SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.crashTwentyFirstColor,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Flexible(
-                          child: CustomElevatedButton(
-                            borderRadius: 100,
-                            width: 100,
-                            hasBorder: true,
-                            borderColor: AppColors.crashFourteenthColor,
-                            backgroundColor: AppColors.crashFourteenthColor,
-                            onPressed: _resetAll,
-                            padding: EdgeInsets.only(
-                              left: 23,
-                              right: 23,
-                              top: 4,
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              'Reset',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.crashBodyTitleMdeium,
-                            ),
-                          ),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(100),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0XFF3acd9f), Color(0XFF1b9f31)],
                         ),
-                        Flexible(
-                          child: CustomElevatedButton(
-                            borderRadius: 100,
-                            width: 100,
-                            hasBorder: true,
-                            borderColor: AppColors.crashFifteenthColor,
-                            backgroundColor: AppColors.crashFifteenthColor,
-                            onPressed: _startAutoPlay,
-                            padding: EdgeInsets.only(
-                              left: 23,
-                              right: 23,
-                              top: 4,
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              'Start',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.crashBodyTitleMdeium,
-                            ),
-                          ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: CustomElevatedButton(
+                        height: 50,
+                        elevation: 0,
+                        borderRadius: 10,
+                        width: double.infinity,
+                        // hasBorder: true,
+                        // borderColor: AppColors.crashFifteenthColor,
+                        backgroundColor: Colors.transparent,
+                        onPressed: _resetAll,
+                        padding: EdgeInsets.only(
+                          left: 23,
+                          right: 23,
+                          top: 4,
+                          bottom: 4,
                         ),
-                      ],
+                        child: Text(
+                          'Start Autoplay',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.crashBodyTitleMdeium,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -445,62 +418,138 @@ class _CrashAutoPlayWidgetState extends State<AutoPlayWidget> {
     bool enabled = true,
   }) {
     return SizedBox(
-      width: 120,
+      width: double.infinity,
       height: 36,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: enabled
-              ? AppColors.crashSecondaryColor
-              : AppColors.crashSecondaryColor,
-          borderRadius: BorderRadius.circular(52),
+          color: AppColors.crashSecondaryColor,
+          //  borderRadius: BorderRadius.circular(52),
         ),
-        child: Row(
-          children: [
-            _buildIconButton(
-              Icons.remove,
-              enabled ? () => _decrement(controller) : () {},
-              enabled: enabled,
-            ),
-
-            Expanded(
-              child: TextField(
-                cursorHeight: 12,
-                controller: controller,
+        child: Center(
+          child: Row(
+            children: [
+              // 🔹 MIN button
+              _buildTextButton(
+                label: "MIN",
                 enabled: enabled,
-                textAlign: TextAlign.center,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                style: Theme.of(context).textTheme.crashBodyMediumPrimary
-                    .copyWith(
-                      color: enabled ? null : AppColors.crashFifthColor,
-                    ),
-                cursorColor: enabled
-                    ? AppColors.crashPrimaryColor
-                    : AppColors.crashTwentythColor,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.only(bottom: 10),
+                onTap: () {
+                  if (!enabled) return;
+                  controller.text = '1';
+                },
+              ),
 
-                  hintStyle: Theme.of(context).textTheme.crashbodySmallPrimary
+              // 🔹 Decrement button
+              _buildIconButton(
+                Icons.remove,
+                enabled ? () => _decrement(controller) : () {},
+                enabled: enabled,
+              ),
+
+              // 🔹 Center TextField
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  enabled: enabled,
+                  showCursor: true,
+                  enableInteractiveSelection: false, // hides selection handle
+                  cursorHeight: 12,
+                  textAlign: TextAlign.center,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  style: Theme.of(context).textTheme.crashBodyTitleMdeium
                       .copyWith(
                         color: enabled ? null : AppColors.crashFifthColor,
                       ),
-                  filled: true,
-                  fillColor: enabled
-                      ? AppColors.crashSecondaryColor
-                      : AppColors.crashSecondaryColor,
-                  border: InputBorder.none,
+                  cursorColor: enabled
+                      ? AppColors.crashPrimaryColor
+                      : AppColors.crashTwentythColor,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.only(bottom: 10),
+                    hintStyle: Theme.of(context).textTheme.crashbodySmallPrimary
+                        .copyWith(
+                          color: enabled ? null : AppColors.crashFifthColor,
+                        ),
+                    filled: true,
+                    fillColor: AppColors.crashSecondaryColor,
+                    border: InputBorder.none,
+                  ),
+
+                  // ✅ Restrict input between 1–100
+                  onChanged: (value) {
+                    if (_isUpdatingAmount) return;
+                    _isUpdatingAmount = true;
+
+                    final numValue = double.tryParse(value) ?? 1;
+
+                    if (numValue > 100) {
+                      controller.text = '100';
+                    } else if (numValue < 1) {
+                      controller.text = '1';
+                    }
+
+                    controller.selection = TextSelection.fromPosition(
+                      TextPosition(offset: controller.text.length),
+                    );
+
+                    _isUpdatingAmount = false;
+                  },
                 ),
               ),
-            ),
 
-            _buildIconButton(
-              Icons.add,
-              enabled ? () => _increment(controller) : () {},
-              enabled: enabled,
+              // 🔹 Increment button
+              _buildIconButton(
+                Icons.add,
+                enabled ? () => _increment(controller) : () {},
+                enabled: enabled,
+              ),
+
+              // 🔹 MAX button
+              _buildTextButton(
+                label: "MAX",
+                enabled: enabled,
+                onTap: () {
+                  if (!enabled) return;
+                  controller.text = '100';
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Helper for MIN / MAX buttons
+  Widget _buildTextButton({
+    required String label,
+    required VoidCallback onTap,
+    bool enabled = true,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(40),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+          decoration: BoxDecoration(
+            color: enabled
+                ? AppColors.crashPrimaryColor.withOpacity(0.1)
+                : Colors.grey.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 9,
+              fontWeight: FontWeight.bold,
+              color: enabled
+                  ? AppColors.crashPrimaryColor
+                  : AppColors.crashFifthColor,
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -173,6 +173,19 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                   final displayedData = _showAll
                       ? filteredData
                       : filteredData.take(10).toList();
+                  if (displayedData.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 210),
+                        child: Text(
+                          'No history found',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.walletBodyMediumPrimary,
+                        ),
+                      ),
+                    );
+                  }
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

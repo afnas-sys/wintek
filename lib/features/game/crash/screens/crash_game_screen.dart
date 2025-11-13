@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/crash/widgets/crash_animation.dart';
 import 'package:wintek/features/game/crash/widgets/crash_bet_container.dart';
+import 'package:wintek/features/game/crash/widgets/crash_bets.dart';
 import 'package:wintek/features/game/crash/widgets/crash_buttons.dart'
     show CrashButtons;
 import 'package:wintek/features/game/widgets/wallet_container.dart';
@@ -19,35 +20,40 @@ class _CrashGameScreenState extends State<CrashGameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              spacing: 16,
-              children: [
-                WalletContainer(),
-                CrashButtons(),
-                CrashAnimation(),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: _containerCount,
-                  itemBuilder: (context, index) {
-                    return CrashBetContainer(
-                      index: index + 1,
-                      showAddButton: index == _containerCount - 1,
-                      onAddPressed: () => setState(() => _containerCount++),
-                      showRemoveButton:
-                          _containerCount > 1 && index == _containerCount - 1,
-                      onRemovePressed: () => setState(() => _containerCount--),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 16);
-                  },
-                ),
-              ],
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                spacing: 16,
+                children: [
+                  WalletContainer(),
+                  CrashButtons(),
+                  CrashAnimation(),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: _containerCount,
+                    itemBuilder: (context, index) {
+                      return CrashBetContainer(
+                        index: index + 1,
+                        showAddButton: index == _containerCount - 1,
+                        onAddPressed: () => setState(() => _containerCount++),
+                        showRemoveButton:
+                            _containerCount > 1 && index == _containerCount - 1,
+                        onRemovePressed: () =>
+                            setState(() => _containerCount--),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 16);
+                    },
+                  ),
+                  CrashBets(),
+                ],
+              ),
             ),
           ),
         ),

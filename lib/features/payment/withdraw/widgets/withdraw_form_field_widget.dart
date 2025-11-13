@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -176,8 +177,23 @@ class _WithdrawFormFieldWidgetState
         ).show(context);
         _upiController.clear();
         _amountController.clear();
-      } else {
-        throw Exception(response.message);
+      } else if (response.status == 'failure') {
+        String errorMessage = response.message;
+        try {
+          final Map<String, dynamic> errorJson = jsonDecode(response.message);
+          errorMessage = errorJson['message'] ?? response.message;
+        } catch (e) {
+          // If not JSON, use as is
+        }
+        Flushbar(
+          flushbarPosition: FlushbarPosition.TOP,
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+          messageText: Text(
+            'Withdrawal Failed: $errorMessage',
+            style: const TextStyle(color: Colors.white),
+          ),
+        ).show(context);
       }
     } catch (e) {
       Flushbar(
@@ -185,7 +201,7 @@ class _WithdrawFormFieldWidgetState
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 3),
         messageText: Text(
-          'Error: ${e.toString()}',
+          'Withdrawal Failed: ${e.toString().split('message').last.split('}').first}',
           style: const TextStyle(color: Colors.white),
         ),
       ).show(context);
