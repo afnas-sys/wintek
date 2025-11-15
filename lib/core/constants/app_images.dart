@@ -85,4 +85,7 @@ class AppImages {
   static const String walletFilled = 'assets/images/empty-wallet_filled.png';
   static const String offersFilled = 'assets/images/discount-circle_filled.png';
   static const String profileFilled = 'assets/images/user-square-filled.png';
+
+  //! Wallet container
+  static const String walletBg = 'assets/images/wallet_bg.png';
 }
