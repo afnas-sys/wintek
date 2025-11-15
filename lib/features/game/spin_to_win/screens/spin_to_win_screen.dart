@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wintek/features/game/spin_to_win/widgets/slot.dart';
 import 'package:wintek/features/game/widgets/wallet_container.dart';
 
 class SpinToWinScreen extends StatelessWidget {
@@ -10,7 +11,10 @@ class SpinToWinScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(children: [WalletContainer()]),
+          child: Column(
+            spacing: 16,
+            children: [WalletContainer(), SlotGameOneDirection()],
+          ),
         ),
       ),
     );
