@@ -447,7 +447,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
     return CustomElevatedButton(
       hasBorder: false,
-      backgroundColor: AppColors.aviatorFourtyOneColor,
+      backgroundColor: AppColors.aviatorFifteenthColor,
       padding: const EdgeInsets.all(2),
       height: 22,
       width: 22,

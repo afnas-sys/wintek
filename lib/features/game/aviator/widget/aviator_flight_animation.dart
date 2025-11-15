@@ -187,7 +187,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     // Current multiplier from tick stream
     final currentValue = tick.when(
       data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
-      error: (_, __) => 0.0,
+      error: (_, _) => 0.0,
       loading: () => 0.0,
     );
 
@@ -424,7 +424,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                 (round == null && hasTickData))
                               Center(
                                 child: Text(
-                                  "${currentValue.toStringAsFixed(2)}x",
+                                  "${currentValue.toStringAsFixed(2)}X",
                                   style: Theme.of(
                                     context,
                                   ).textTheme.aviatorDisplayLarge,

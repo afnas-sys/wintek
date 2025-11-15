@@ -35,8 +35,8 @@ class AppColors {
   static const Color aviatorTwelfthColor = Color.fromARGB(255, 24, 24, 24);
   static const Color aviatorThirteenthColor = Color(0xFFAA99FD);
   static const Color aviatorFourteenthColor = Color(0xFF191B1D);
-  static Color aviatorFifteenthColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
   static Color aviatorSixteenthColor = Color(0xFFFFFFFF).withOpacity(50 / 100);
+  static Color aviatorFifteenthColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
   static const Color aviatorSeventeenthColor = Color(0xFFCF7004);
   static const Color aviatorEighteenthColor = Color(0xFF28A809);
   static const Color aviatorNineteenthColor = Color(0xFF3DAEFF);
@@ -127,6 +127,8 @@ class AppColors {
   ).withOpacity(20 / 100);
   static const Color walletSeventeenthColor = Color(0XFFFD0700);
   static const Color walletEighteenthColor = Color(0XFFF98500);
+  static const Color walletNineteenthColor = Color(0XFF00B03C);
+  static const Color walletTwentieththColor = Color(0XFFFF3030);
 
   //!_____________________________________Offers_______________________________________
 
