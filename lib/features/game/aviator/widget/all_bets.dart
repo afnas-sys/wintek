@@ -150,7 +150,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
                   alignment: Alignment.center,
                   child: Text(
                     'No bets yet',
-                    style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
+                    style: Theme.of(context).textTheme.aviatorBodyMediumFourth,
                   ),
                 )
               : ListView.separated(

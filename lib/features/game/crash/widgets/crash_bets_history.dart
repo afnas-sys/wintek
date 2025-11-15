@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -5,7 +7,6 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/game/aviator/providers/bet_history_provider.dart';
 
 class CrashBets extends ConsumerStatefulWidget {
   const CrashBets({super.key});
@@ -15,7 +16,6 @@ class CrashBets extends ConsumerStatefulWidget {
 }
 
 class _CrashBetsState extends ConsumerState<CrashBets> {
-  bool _isPreviousHand = false;
   List<Map<String, dynamic>> crashBets = [
     {
       'time': '12:30',
@@ -88,18 +88,19 @@ class _CrashBetsState extends ConsumerState<CrashBets> {
                 borderRadius: 30,
                 backgroundColor: AppColors.aviatorTwentiethColor,
                 onPressed: () {
-                  setState(() {
-                    _isPreviousHand = !_isPreviousHand;
-                  });
-                  if (_isPreviousHand) {
-                    ref
-                        .read(betHistoryProvider.notifier)
-                        .fetchBetHistory(page: 2);
-                  } else {
-                    ref
-                        .read(betHistoryProvider.notifier)
-                        .fetchBetHistory(page: 1);
-                  }
+                  log('CRASH Previous hand button pressed');
+                  // setState(() {
+                  //   _isPreviousHand = !_isPreviousHand;
+                  // });
+                  // if (_isPreviousHand) {
+                  //   ref
+                  //       .read(betHistoryProvider.notifier)
+                  //       .fetchBetHistory(page: 2);
+                  // } else {
+                  //   ref
+                  //       .read(betHistoryProvider.notifier)
+                  //       .fetchBetHistory(page: 1);
+                  // }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

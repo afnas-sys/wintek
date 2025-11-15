@@ -95,8 +95,8 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         //Container for avatar
                         Container(
@@ -107,8 +107,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                             borderRadius: BorderRadius.circular(100),
                           ),
                         ),
-                        SizedBox(height: 2),
-                        //User name
+                        SizedBox(width: 12),
                         Text(
                           topBet.userId?.userName ?? '',
                           style: Theme.of(

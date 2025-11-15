@@ -97,8 +97,8 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         //Container for avatar
                         Container(
@@ -109,7 +109,7 @@ class _YearWidgetState extends ConsumerState<YearWidget> {
                             borderRadius: BorderRadius.circular(100),
                           ),
                         ),
-                        SizedBox(height: 2),
+                        SizedBox(width: 12),
                         //User name
                         Text(
                           topBet.userId?.userName ?? '',

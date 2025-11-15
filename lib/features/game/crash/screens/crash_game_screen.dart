@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wintek/features/game/crash/widgets/crash_animation.dart';
 import 'package:wintek/features/game/crash/widgets/crash_bet_container.dart';
-import 'package:wintek/features/game/crash/widgets/crash_bets.dart';
+import 'package:wintek/features/game/crash/widgets/crash_bets_history.dart';
 import 'package:wintek/features/game/crash/widgets/crash_buttons.dart'
     show CrashButtons;
 import 'package:wintek/features/game/widgets/wallet_container.dart';

@@ -299,7 +299,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                 width: 50,
 
                                 decoration: BoxDecoration(
-                                  color: AppColors.aviatorTwentyThirdColor,
+                                  color: AppColors.aviatorThirtyFiveColor,
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Center(
@@ -307,7 +307,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                     bet.cashoutAt.toString(),
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.aviatorbodySmallSecondary,
+                                    ).textTheme.aviatorbodySmallPrimary,
                                   ),
                                 ),
                               ),
