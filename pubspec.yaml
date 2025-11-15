@@ -61,8 +61,8 @@ dependencies:
   flutter_spinkit: ^5.2.2
   shared_preferences: ^2.5.3
   flutter_upi_india: ^1.0.1
-  
   shimmer: ^3.0.0
+  syncfusion_flutter_sliders: ^31.2.5
 
   
 

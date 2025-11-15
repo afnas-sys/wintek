@@ -172,6 +172,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   void initState() {
     _amountController.text = 1.toString();
     _autoAmountController.text = 1.toString();
+    _switchController.text = 1.5.toString();
     super.initState();
   }
 
@@ -402,11 +403,13 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       width: 140,
       height: 36,
       child: TextField(
+        enableInteractiveSelection: false,
         controller: controller,
         cursorColor: AppColors.aviatorSixteenthColor,
+        cursorHeight: 20,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.aviatorHeadlineSmallSecond,
+        style: Theme.of(context).textTheme.aviatorHeadlineSmall,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 2,
@@ -415,7 +418,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           // hintText: "1.00",
           hintStyle: Theme.of(context).textTheme.aviatorHeadlineSmallSecond,
           filled: true,
-          fillColor: AppColors.aviatorTertiaryColor,
+          fillColor: AppColors.aviatorTwentiethColor,
           enabledBorder: _borderStyle(),
           disabledBorder: _borderStyle(),
           focusedBorder: _borderStyle(),
@@ -554,21 +557,25 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               width: 70,
               height: 28,
               child: TextField(
+                enableInteractiveSelection: false,
                 enabled: _isSwitched,
                 controller: _switchController,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.aviatorBodyMediumSecondary,
+                style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
                 decoration: InputDecoration(
                   suffixText: "x",
                   suffixStyle: TextStyle(
                     color: AppColors.aviatorSixteenthColor,
                   ),
-                  hintText: "1.5",
+                  // hintText: "1.5",
+                  // hintStyle: Theme.of(
+                  //   context,
+                  // ).textTheme.aviatorBodyMediumFourth,
                   filled: true,
-                  fillColor: AppColors.aviatorSixthColor,
+                  fillColor: AppColors.aviatorFifteenthColor,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 4,
                     horizontal: 6,

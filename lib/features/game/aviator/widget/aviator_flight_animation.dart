@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -33,6 +34,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
   final List<Offset> _pathPoints = [];
   Offset? _currentPlanePosition;
+  Offset? _flyAwayStartPosition;
 
   double _waveProgress = 0.0;
   final double _waveAmplitude = 15.0;
@@ -109,9 +111,12 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     final round = ref.watch(aviatorRoundNotifierProvider);
     final tick = ref.watch(aviatorTickProvider);
 
+    // Determine if we already have any tick data
+    final hasTickData = tick.maybeWhen(data: (_) => true, orElse: () => false);
+
     // 👇 Detect if socket is connecting (no data yet)
-    final isSocketConnecting =
-        round == null || tick.isLoading || tick.value == null;
+    // Consider it "connected" as soon as either round state or tick arrives
+    final isSocketConnecting = round == null && !hasTickData;
 
     if (isSocketConnecting) {
       // 🛫 Initial loader + plane
@@ -125,32 +130,51 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         child: Stack(
           alignment: Alignment.center,
           children: [
+            Lottie.asset(
+              'assets/images/aviator_loading.json',
+              width: 150,
+              height: 150,
+            ),
             // Plane at (0,0)
-            Positioned(
-              left: 0,
-              bottom: 0,
-              child: Image.asset(AppImages.graphContainerplaneImage, width: 70),
-            ),
 
-            // Circular progress indicator
-            const CircularProgressIndicator(
-              color: AppColors.aviatorTwentyEighthColor,
-              strokeWidth: 3,
-            ),
+            // Positioned(
+            //   left: 0,
+            //   bottom: 0,
+            //   child: Image.asset(AppImages.graphContainerplaneImage, width: 70),
+            // ),
+
+            // // Circular progress indicator
+            // const CircularProgressIndicator(
+            //   color: AppColors.aviatorTwentyEighthColor,
+            //   strokeWidth: 3,
+            // ),
           ],
         ),
       );
     }
 
     // PREPARE countdown logic
-    if (round.state == 'PREPARE') {
-      final msRemaining = int.tryParse(round.msRemaining ?? '0') ?? 0;
+    if (round?.state == 'PREPARE') {
+      final msRemaining = int.tryParse(round?.msRemaining ?? '0') ?? 0;
       final secondsRemaining = (msRemaining / 1000).ceil();
       if (_initialPrepareSeconds != secondsRemaining && secondsRemaining > 0) {
         _initialPrepareSeconds = secondsRemaining;
         _prepareSecondsLeft = secondsRemaining;
         _prepareProgress = 1.0;
         if (_prepareTimer == null) _startPrepareCountdown();
+      }
+
+      // When we enter PREPARE after a CRASHED round / fly-away,
+      // ensure all animation state is reset exactly once here,
+      // instead of from the fly-away controller callback. This
+      // avoids wiping the new round's path if a new takeoff starts
+      // before the previous fly-away animation completes.
+      if (_isAnimating ||
+          _hasFlownAway ||
+          _takeoffController.isAnimating ||
+          _flyAwayController.isAnimating ||
+          _waveController.isAnimating) {
+        _resetAnimation();
       }
     } else {
       _prepareTimer?.cancel();
@@ -160,16 +184,26 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       _prepareProgress = 1.0;
     }
 
-    // RUNNING and CRASHED triggers
-    if (round.state == 'RUNNING' && !_isAnimating) _startTakeoff();
-    if (round.state == 'CRASHED' && !_hasFlownAway) _startFlyAway();
-
-    // Current multiplier
+    // Current multiplier from tick stream
     final currentValue = tick.when(
       data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
-      error: (_, _) => 0.0,
+      error: (_, __) => 0.0,
       loading: () => 0.0,
     );
+
+    // Animation triggers
+    //
+    // Start takeoff when we actually receive a tick value from the server,
+    // instead of only relying on the round.state == 'RUNNING'. This keeps
+    // the plane animation in sync with the tick stream.
+    if (currentValue > 0 && !_isAnimating) {
+      _startTakeoff();
+    }
+
+    // Trigger fly-away when the round crashes.
+    if (round?.state == 'CRASHED' && !_hasFlownAway) {
+      _startFlyAway();
+    }
 
     return Container(
       width: double.infinity,
@@ -200,7 +234,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
           ),
 
           // PREPARE UI
-          if (round.state == 'PREPARE')
+          if (round?.state == 'PREPARE')
             Expanded(
               child: Center(
                 child: Stack(
@@ -276,9 +310,24 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
                       if (_flyAwayController.isAnimating) {
                         final t = _flyAwayAnimation.value;
-                        final start = Offset(width * 0.65, height * 0.5);
-                        final control = Offset(width * 0.85, height * 0.8);
-                        final end = Offset(width * 1.2, height + 150);
+
+                        // Define a baseline fly-away curve, then shift it so that
+                        // the plane starts flying away from its last animated position.
+                        final baselineStart = Offset(
+                          width * 0.65,
+                          height * 0.5,
+                        );
+                        final baselineControl = Offset(
+                          width * 0.85,
+                          height * 0.8,
+                        );
+                        final baselineEnd = Offset(width * 1.2, height + 150);
+
+                        final start = _flyAwayStartPosition ?? baselineStart;
+                        final delta = start - baselineStart;
+                        final control = baselineControl + delta;
+                        final end = baselineEnd + delta;
+
                         x =
                             (1 - t) * (1 - t) * start.dx +
                             2 * (1 - t) * t * control.dx +
@@ -332,9 +381,9 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                       );
                       _currentPlanePosition = currentPoint;
 
-                      if (_isAnimating &&
-                          !_flyAwayController.isAnimating &&
-                          !_isWaving) {
+                      // Always record the plane path while the animation is active,
+                      // including takeoff, waving, and fly-away segments.
+                      if (_isAnimating) {
                         if (_pathPoints.isEmpty ||
                             (_pathPoints.last - currentPoint).distance > 1) {
                           _pathPoints.add(currentPoint);
@@ -349,7 +398,9 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                             CustomPaint(
                               size: Size(width, height),
                               painter: PathPainter(
-                                _pathPoints,
+                                round?.state == 'CRASHED'
+                                    ? const <Offset>[]
+                                    : _pathPoints,
                                 height,
                                 _currentPlanePosition,
                                 _isWaving,
@@ -369,7 +420,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                 ),
                               ),
                             ),
-                            if (round.state == 'RUNNING')
+                            if ((round?.state == 'RUNNING') ||
+                                (round == null && hasTickData))
                               Center(
                                 child: Text(
                                   "${currentValue.toStringAsFixed(2)}x",
@@ -378,7 +430,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                   ).textTheme.aviatorDisplayLarge,
                                 ),
                               ),
-                            if (round.state == 'CRASHED' &&
+                            if (round?.state == 'CRASHED' &&
                                 _flyAwayController.isAnimating)
                               Center(
                                 child: Column(
@@ -392,7 +444,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      "${round.crashAt.toString()}x",
+                                      "${round?.crashAt?.toString() ?? ''}x",
                                       style: Theme.of(
                                         context,
                                       ).textTheme.aviatorDisplayLargeSecond,
@@ -449,9 +501,12 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _hasFlownAway = true;
     _isWaving = false;
     _waveController.stop();
-    _pathPoints.clear();
-    _currentPlanePosition = null;
-    _flyAwayController.forward(from: 0).whenComplete(() => _resetAnimation());
+    // Capture the plane's current position so the fly-away starts
+    // exactly from where the plane was when the round crashed.
+    _flyAwayStartPosition = _currentPlanePosition;
+    // Do NOT clear _pathPoints here; the path will be cleared in PREPARE via
+    // _resetAnimation(), before the next takeoff starts.
+    _flyAwayController.forward(from: 0);
   }
 
   void _resetAnimation() {
@@ -462,6 +517,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _waveProgress = 0.0;
     _pathPoints.clear();
     _currentPlanePosition = null;
+    _flyAwayStartPosition = null;
 
     _takeoffController.reset();
     _waveController.reset();
@@ -490,83 +546,88 @@ class PathPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (points.isEmpty) return;
+    // Do NOT return early when points are empty; we still want axes & dots.
+    List<Offset> displayPoints = [];
 
-    List<Offset> displayPoints;
+    // Build displayPoints only if we actually have path points
+    if (points.isNotEmpty) {
+      if (isWaving && currentPlanePosition != null) {
+        displayPoints = [...points];
 
-    if (isWaving && currentPlanePosition != null) {
-      displayPoints = [...points];
+        final startX = points.last.dx;
+        final endX = currentPlanePosition!.dx;
+        final baseY = points.last.dy;
 
-      final startX = points.last.dx;
-      final endX = currentPlanePosition!.dx;
-      final baseY = points.last.dy;
+        final distance = endX - startX;
+        final numWavePoints = max(20, (distance / 5).round());
 
-      final distance = endX - startX;
-      final numWavePoints = max(20, (distance / 5).round());
-
-      for (int i = 0; i <= numWavePoints; i++) {
-        final t = i / numWavePoints;
-        final x = startX + (distance * t);
-        final wavePhase = waveProgress - ((endX - x) / 5);
-        final waveY = sin(wavePhase * waveFrequency) * waveAmplitude;
-        displayPoints.add(Offset(x, baseY - waveY));
+        for (int i = 0; i <= numWavePoints; i++) {
+          final t = i / numWavePoints;
+          final x = startX + (distance * t);
+          final wavePhase = waveProgress - ((endX - x) / 5);
+          final waveY = sin(wavePhase * waveFrequency) * waveAmplitude;
+          displayPoints.add(Offset(x, baseY - waveY));
+        }
+      } else {
+        displayPoints = points;
       }
-    } else {
-      displayPoints = points;
     }
 
-    if (displayPoints.isEmpty) return;
+    // Only draw fill/path/area if there are points
+    if (displayPoints.isNotEmpty) {
+      // ----------------------------
+      // Clip region: prevent fill/path/area from drawing above the X-axis line
+      // (X-axis is located at y = height - 24)
+      // ----------------------------
+      canvas.save();
+      canvas.clipRect(Rect.fromLTWH(0, 0, size.width, height - 24));
 
-    // ----------------------------
-    // Clip region: prevent fill/path/area from drawing above the X-axis line
-    // (X-axis is located at y = height - 24)
-    // ----------------------------
-    canvas.save();
-    canvas.clipRect(Rect.fromLTWH(0, 0, size.width, height - 24));
+      // Fill gradient under curve
+      final fillPaint = Paint()..style = PaintingStyle.fill;
 
-    // Fill gradient under curve
-    final fillPaint = Paint()..style = PaintingStyle.fill;
+      final fillPath = Path()
+        ..moveTo(displayPoints.first.dx, displayPoints.first.dy);
+      _drawSmoothCurve(fillPath, displayPoints);
+      fillPath.lineTo(displayPoints.last.dx, height);
+      fillPath.lineTo(displayPoints.first.dx, height);
+      fillPath.close();
+      final fillBounds = fillPath.getBounds();
+      final fillGradient = LinearGradient(
+        colors: [Colors.white, AppColors.aviatorGraphBarColor],
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ).createShader(fillBounds);
+      fillPaint.shader = fillGradient;
+      canvas.drawPath(fillPath, fillPaint);
 
-    final fillPath = Path()
-      ..moveTo(displayPoints.first.dx, displayPoints.first.dy);
-    _drawSmoothCurve(fillPath, displayPoints);
-    fillPath.lineTo(displayPoints.last.dx, height);
-    fillPath.lineTo(displayPoints.first.dx, height);
-    fillPath.close();
-    final fillBounds = fillPath.getBounds();
-    final fillGradient = LinearGradient(
-      colors: [Colors.white, AppColors.aviatorGraphBarColor],
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-    ).createShader(fillBounds);
-    fillPaint.shader = fillGradient;
-    canvas.drawPath(fillPath, fillPaint);
+      // Stroke path (curve)
+      final pathPaint = Paint()
+        ..strokeWidth = 6.0
+        ..style = PaintingStyle.stroke
+        ..color = AppColors.aviatorGraphBarColor;
 
-    // Stroke path (curve)
-    final pathPaint = Paint()
-      ..strokeWidth = 6.0
-      ..style = PaintingStyle.stroke
-      ..color = AppColors.aviatorGraphBarColor;
+      final path = Path()
+        ..moveTo(displayPoints.first.dx, displayPoints.first.dy);
+      _drawSmoothCurve(path, displayPoints);
+      canvas.drawPath(path, pathPaint);
 
-    final path = Path()..moveTo(displayPoints.first.dx, displayPoints.first.dy);
-    _drawSmoothCurve(path, displayPoints);
-    canvas.drawPath(path, pathPaint);
+      // Area rectangles under the curve (xAxisPaint)
+      final xAxisPaint = Paint()
+        ..color = AppColors.aviatorGraphBarAreaColor2
+        ..style = PaintingStyle.fill;
 
-    // Area rectangles under the curve (xAxisPaint)
-    final xAxisPaint = Paint()
-      ..color = AppColors.aviatorGraphBarAreaColor2
-      ..style = PaintingStyle.fill;
+      for (int i = 1; i < displayPoints.length; i++) {
+        final prev = displayPoints[i - 1];
+        final curr = displayPoints[i];
+        final rect = Rect.fromLTRB(prev.dx, curr.dy, curr.dx, height);
+        canvas.drawRect(rect, xAxisPaint);
+      }
 
-    for (int i = 1; i < displayPoints.length; i++) {
-      final prev = displayPoints[i - 1];
-      final curr = displayPoints[i];
-      final rect = Rect.fromLTRB(prev.dx, curr.dy, curr.dx, height);
-      canvas.drawRect(rect, xAxisPaint);
+      // restore so axes & dots can be drawn on top
+      canvas.restore();
     }
 
-    // restore so axes & dots can be drawn on top
-    // restore so axes & dots can be drawn on top
-    canvas.restore();
+    // From here on, we ALWAYS draw dots and axes, even when there is no path.
 
     // ✅ Y-axis dots (exact same alignment, just 9 total)
     final yAxisDotPaint = Paint()
@@ -609,8 +670,6 @@ class PathPainter extends CustomPainter {
 
     // Y-axis line
     canvas.drawLine(Offset(24, height - 24), Offset(24, 0), axisLinePaint);
-
-    // canvas.drawLine(Offset(24, height - 24), Offset(24, 0), axisLinePaint);
   }
 
   void _drawSmoothCurve(Path path, List<Offset> points) {
@@ -635,9 +694,11 @@ class PathPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(PathPainter oldDelegate) =>
-      oldDelegate.points != points ||
-      oldDelegate.currentPlanePosition != currentPlanePosition ||
-      oldDelegate.isWaving != isWaving ||
-      oldDelegate.waveProgress != waveProgress;
+  bool shouldRepaint(covariant PathPainter oldDelegate) {
+    // Always repaint because the `points` list is mutated in place.
+    // Relying on `==` for lists only checks identity, not contents,
+    // which prevents the painter from updating when the path changes
+    // between rounds or frames.
+    return true;
+  }
 }

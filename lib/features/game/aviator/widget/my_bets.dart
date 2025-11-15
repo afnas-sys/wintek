@@ -35,7 +35,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.aviatorFourteenthColor,
+          color: AppColors.aviatorTertiaryColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Center(
@@ -66,13 +66,13 @@ class _MyBetsState extends ConsumerState<MyBets> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
             decoration: BoxDecoration(
-              color: AppColors.aviatorFourteenthColor,
+              color: AppColors.aviatorTertiaryColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 'No bets found',
-                style: TextStyle(color: Colors.white),
+                style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
             ),
           );
@@ -299,7 +299,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                 width: 50,
 
                                 decoration: BoxDecoration(
-                                  color: AppColors.aviatorTwentyThirdColor,
+                                  color: AppColors.aviatorThirtyFiveColor,
                                   borderRadius: BorderRadius.circular(30),
                                 ),
                                 child: Center(
@@ -307,7 +307,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                     bet.cashoutAt.toString(),
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.aviatorbodySmallSecondary,
+                                    ).textTheme.aviatorbodySmallPrimary,
                                   ),
                                 ),
                               ),

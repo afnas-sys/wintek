@@ -54,63 +54,67 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
     // final crashEvent = ref.watch(aviatorCrashProvider);
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // BalanceContainer(),
-                WalletContainer(),
-                SizedBox(height: 16),
-                AviatorButtons(),
-                SizedBox(height: 1),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Round Id: $roundId',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.aviatorbodySmallPrimary,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1),
-                AviatorFlightAnimation(),
-                // SizedBox(height: 10),
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // BalanceContainer(),
+                  WalletContainer(),
+                  SizedBox(height: 16),
+                  AviatorButtons(),
+                  SizedBox(height: 1),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Round Id: $roundId',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.aviatorbodySmallPrimary,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 1),
+                  AviatorFlightAnimation(),
+                  // SizedBox(height: 10),
 
-                // GraphContainer(),
-                SizedBox(height: 16),
-                ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: _containerCount,
-                  itemBuilder: (context, index) {
-                    return BetContainer(
-                      index: index + 1,
-                      showAddButton: index == _containerCount - 1,
-                      onAddPressed: () => setState(() => _containerCount++),
-                      showRemoveButton:
-                          _containerCount > 1 && index == _containerCount - 1,
-                      onRemovePressed: () => setState(() => _containerCount--),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 16);
-                  },
-                ),
-                SizedBox(height: 20),
-                CustomTabBar(
-                  tabs: ['All Bets', 'My Bets', 'Top'],
-                  backgroundColor: AppColors.aviatorTwentiethColor,
-                  borderRadius: 52,
-                  borderWidth: 1,
-                  borderColor: AppColors.aviatorFifteenthColor,
-                  selectedTabColor: AppColors.aviatorFifteenthColor,
-                  unselectedTextColor: AppColors.aviatorTertiaryColor,
-                  tabViews: [AllBets(), MyBets(), Top()],
-                ),
-              ],
+                  // GraphContainer(),
+                  SizedBox(height: 16),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: _containerCount,
+                    itemBuilder: (context, index) {
+                      return BetContainer(
+                        index: index + 1,
+                        showAddButton: index == _containerCount - 1,
+                        onAddPressed: () => setState(() => _containerCount++),
+                        showRemoveButton:
+                            _containerCount > 1 && index == _containerCount - 1,
+                        onRemovePressed: () =>
+                            setState(() => _containerCount--),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 16);
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  CustomTabBar(
+                    tabs: ['All Bets', 'My Bets', 'Top'],
+                    backgroundColor: AppColors.aviatorTwentiethColor,
+                    borderRadius: 52,
+                    borderWidth: 1,
+                    borderColor: AppColors.aviatorFifteenthColor,
+                    selectedTabColor: AppColors.aviatorFifteenthColor,
+                    unselectedTextColor: AppColors.aviatorTertiaryColor,
+                    tabViews: [AllBets(), MyBets(), Top()],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

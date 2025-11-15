@@ -16,7 +16,7 @@ class TransactionHistory extends ConsumerStatefulWidget {
 
 class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
   String selectedStatus = 'All';
-  final bool _showAll = false;
+  bool _showAll = false;
 
   @override
   void initState() {
@@ -173,107 +173,135 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                   final displayedData = _showAll
                       ? filteredData
                       : filteredData.take(10).toList();
-                  return ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: displayedData.length,
-                    separatorBuilder: (context, index) {
-                      return DottedLine(
-                        direction: Axis.horizontal,
-                        lineLength: double.infinity,
-                        lineThickness: 1.0,
-                        dashLength: 4.0,
-                        dashColor: AppColors.walletFifteenthColor,
-                      );
-                    },
-                    itemBuilder: (context, index) {
-                      final transaction = displayedData[index];
-                      final isDeposit = transaction.transferType == 'upi';
-
-                      final image = isDeposit
-                          ? AppImages.receive
-                          : AppImages.send;
-                      final borderColor = isDeposit
-                          ? AppColors.walletThirdColor
-                          : AppColors.walletSixteenthColor;
-                      final title = isDeposit ? 'Deposit' : 'Withdraw';
-                      final statusColor =
-                          (transaction.status == 'success' ||
-                              transaction.status == 'completed')
-                          ? AppColors.walletSecondaryColor
-                          : (transaction.status == 'pending'
-                                ? AppColors.paymentNinteenthColor
-                                : AppColors.walletSeventeenthColor);
-
-                      String amountPrefix;
-                      Color amountColor;
-                      if (transaction.status == 'pending') {
-                        amountColor = AppColors.walletSeventeenthColor;
-                        amountPrefix = isDeposit ? '+ ' : '- ';
-                      } else if (isDeposit) {
-                        amountPrefix = '+ ';
-                        amountColor = AppColors.walletSecondaryColor;
-                      } else {
-                        // Withdrawal
-                        if (transaction.status == 'failed' ||
-                            transaction.status == 'cancelled') {
-                          amountPrefix = '+ ';
-                          amountColor = AppColors.walletSeventeenthColor;
-                        } else {
-                          amountPrefix = '- ';
-                          amountColor = AppColors.walletSecondaryColor;
-                        }
-                      }
-
-                      return ListTile(
-                        leading: Container(
-                          height: 44,
-                          width: 44,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Image.asset(image, height: 16, width: 16),
-                        ),
-                        title: Text(
-                          title,
+                  if (displayedData.isEmpty) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 210),
+                        child: Text(
+                          'No history found',
                           style: Theme.of(
                             context,
                           ).textTheme.walletBodyMediumPrimary,
                         ),
-                        subtitle: Text(
-                          DateFormat('dd MMM, hh:mm a').format(
-                            DateTime.parse(
-                              transaction.createdAt,
-                            ).add(const Duration(hours: 5, minutes: 30)),
+                      ),
+                    );
+                  }
+                  return Column(
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: displayedData.length,
+                        separatorBuilder: (context, index) {
+                          return DottedLine(
+                            direction: Axis.horizontal,
+                            lineLength: double.infinity,
+                            lineThickness: 1.0,
+                            dashLength: 4.0,
+                            dashColor: AppColors.walletFifteenthColor,
+                          );
+                        },
+                        itemBuilder: (context, index) {
+                          final transaction = displayedData[index];
+                          final isDeposit = transaction.transferType == 'upi';
+
+                          final image = isDeposit
+                              ? AppImages.receive
+                              : AppImages.send;
+                          final borderColor = isDeposit
+                              ? AppColors.walletThirdColor
+                              : AppColors.walletSixteenthColor;
+                          final title = isDeposit ? 'Deposit' : 'Withdraw';
+                          final statusColor =
+                              (transaction.status == 'success' ||
+                                  transaction.status == 'completed')
+                              ? AppColors.walletSecondaryColor
+                              : (transaction.status == 'pending'
+                                    ? AppColors.paymentNinteenthColor
+                                    : AppColors.walletSeventeenthColor);
+
+                          String amountPrefix;
+                          Color amountColor;
+                          if (transaction.status == 'pending') {
+                            amountColor = AppColors.walletSeventeenthColor;
+                            amountPrefix = isDeposit ? '+ ' : '- ';
+                          } else if (isDeposit) {
+                            amountPrefix = '+ ';
+                            amountColor = AppColors.walletSecondaryColor;
+                          } else {
+                            // Withdrawal
+                            if (transaction.status == 'failed' ||
+                                transaction.status == 'cancelled') {
+                              amountPrefix = '+ ';
+                              amountColor = AppColors.walletSeventeenthColor;
+                            } else {
+                              amountPrefix = '- ';
+                              amountColor = AppColors.walletSecondaryColor;
+                            }
+                          }
+
+                          return ListTile(
+                            leading: Container(
+                              height: 44,
+                              width: 44,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: borderColor),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Image.asset(image, height: 16, width: 16),
+                            ),
+                            title: Text(
+                              title,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.walletBodyMediumPrimary,
+                            ),
+                            subtitle: Text(
+                              DateFormat('dd MMM, hh:mm a').format(
+                                DateTime.parse(
+                                  transaction.createdAt,
+                                ).add(const Duration(hours: 5, minutes: 30)),
+                              ),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.walletBodySmallPrimary,
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  '$amountPrefix₹${transaction.amount.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    color: amountColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  transaction.status,
+                                  style: TextStyle(
+                                    color: statusColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      if (filteredData.length > 10 && !_showAll)
+                        Center(
+                          child: IconButton(
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            onPressed: () {
+                              setState(() {
+                                _showAll = true;
+                              });
+                            },
                           ),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.walletBodySmallPrimary,
                         ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(
-                              '$amountPrefix₹${transaction.amount.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                color: amountColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              transaction.status,
-                              style: TextStyle(
-                                color: statusColor,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                    ],
                   );
                 },
               );
