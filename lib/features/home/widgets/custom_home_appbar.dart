@@ -1,20 +1,29 @@
-import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 
-class CustomHomeAppbar extends StatefulWidget {
+class CustomHomeAppbar extends ConsumerStatefulWidget {
   const CustomHomeAppbar({super.key});
 
   @override
-  State<CustomHomeAppbar> createState() => _CustomHomeAppbarState();
+  ConsumerState<CustomHomeAppbar> createState() => _CustomHomeAppbarState();
 }
 
-class _CustomHomeAppbarState extends State<CustomHomeAppbar> {
-  int _selectedValue = 0;
+class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userProvider.notifier).fetchUser();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final userAsync = ref.watch(userProvider);
     return Container(
       height: 56,
       width: double.infinity,
@@ -37,19 +46,14 @@ class _CustomHomeAppbarState extends State<CustomHomeAppbar> {
 
           Row(
             children: [
-              //! SWITCH
-              CustomSlidingSegmentedControl<int>(
-                initialValue: _selectedValue,
-                children: {
-                  0: Text(
-                    '₹ 5000',
-                    style: Theme.of(context).textTheme.homeSmallPrimary,
-                  ),
-                  1: Text(
-                    'Deposit',
-                    style: Theme.of(context).textTheme.homeSmallPrimary,
-                  ),
-                },
+              Container(
+                height: 36,
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  right: 4,
+                  top: 4,
+                  bottom: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.homeThirdColor,
                   borderRadius: BorderRadius.circular(30),
@@ -58,22 +62,80 @@ class _CustomHomeAppbarState extends State<CustomHomeAppbar> {
                     width: 1,
                   ),
                 ),
-                thumbDecoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.homeFivethColor,
-                      AppColors.homeSxithColor,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    userAsync.when(
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (error, stackTrace) =>
+                          Center(child: Text('Error: $error')),
+                      data: (userModel) {
+                        if (userModel == null) {
+                          return const Center(child: Text('No data available'));
+                        }
+                        final user = userModel.data;
+                        return Text(
+                          '₹ ${user.wallet.toStringAsFixed(2)}',
+                          style: Theme.of(context).textTheme.homeSmallPrimary,
+                        );
+                      },
+                    ),
+                    // Text(
+                    //   '₹ 5000',
+                    //   style: Theme.of(context).textTheme.homeSmallPrimary,
+                    // ),
+                    SizedBox(width: 8),
+                    Container(
+                      height: 28,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        // vertical: ,
+                      ),
 
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                onValueChanged: (v) {
-                  setState(() => _selectedValue = v);
-                },
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.homeFivethColor,
+                            AppColors.homeSxithColor,
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Deposit',
+                          style: Theme.of(context).textTheme.homeSmallPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+
+              // decoration: BoxDecoration(
+              //   color: AppColors.homeThirdColor,
+              //   borderRadius: BorderRadius.circular(30),
+              //   border: Border.all(
+              //     color: AppColors.homeFourththColor,
+              //     width: 1,
+              //   ),
+              // ),
+              // thumbDecoration: BoxDecoration(
+              //   gradient: LinearGradient(
+              //     colors: [
+              //       AppColors.homeFivethColor,
+              //       AppColors.homeSxithColor,
+              //     ],
+              //   ),
+              //   borderRadius: BorderRadius.circular(30),
+              // ),
+
+              //  duration: const Duration(milliseconds: 200),
+              //  curve: Curves.easeInOut,
+              // onValueChanged: (v) {
+              //   setState(() => _selectedValue = v);
+              // },
               SizedBox(width: 8),
               Container(
                 height: 36,
