@@ -31,7 +31,7 @@ class _OtpVarificationCodeScreenState
     (_) => TextEditingController(),
   );
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-  final _debouncer = Debouncer(seconds: 120);
+  static const int _resendDelaySeconds = 120;
   int _remainingSeconds = 0;
   Timer? _countdownTimer;
 
@@ -52,7 +52,7 @@ class _OtpVarificationCodeScreenState
   void _startCountdown() {
     _countdownTimer?.cancel();
     setState(() {
-      _remainingSeconds = _debouncer.seconds;
+      _remainingSeconds = _resendDelaySeconds;
     });
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -263,17 +263,16 @@ class _OtpVarificationCodeScreenState
               ? null
               : () {
                   _startCountdown();
-                  _debouncer.run(() {
-                    debugPrint("🔄 Resend tapped");
-                    ref
-                        .read(authNotifierProvider.notifier)
-                        .sendOtp(ref.read(userDraftProvider)!['mobile']);
-                    CustomSnackbar.show(
-                      backgroundColor: AppColors.snackbarSuccessValidateColor,
-                      context,
-                      message: 'OTP sent successfully',
-                    );
-                  });
+
+                  debugPrint("🔄 Resend tapped");
+                  ref
+                      .read(authNotifierProvider.notifier)
+                      .sendOtp(ref.read(userDraftProvider)!['mobile']);
+                  CustomSnackbar.show(
+                    backgroundColor: AppColors.snackbarSuccessValidateColor,
+                    context,
+                    message: 'OTP sent successfully',
+                  );
                 },
           child: Text(
             _remainingSeconds > 0 ? 'Resend in $_remainingSeconds s' : 'Resend',
