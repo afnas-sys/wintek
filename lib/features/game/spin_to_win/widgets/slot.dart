@@ -242,14 +242,17 @@ class _SlotGameOneDirectionState extends State<SlotGameOneDirection> {
                 ),
               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(columns, (i) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3.0),
-                  child: buildReel(i),
-                );
-              }),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(columns, (i) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                    child: buildReel(i),
+                  );
+                }),
+              ),
             ),
           ),
 

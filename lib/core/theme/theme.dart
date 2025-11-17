@@ -227,7 +227,7 @@ extension CustomTextStyle on TextTheme {
 
   TextStyle get homeSmallPrimary => GoogleFonts.roboto(
     color: AppColors.textPrimaryColor,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
   );
 
