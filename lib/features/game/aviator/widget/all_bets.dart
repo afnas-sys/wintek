@@ -40,7 +40,6 @@ class _AllBetsState extends ConsumerState<AllBets> {
   Widget build(BuildContext context) {
     final betsAsync = ref.watch(aviatorBetsNotifierProvider);
     return Container(
-      // height: double.infinity,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
       decoration: BoxDecoration(
@@ -159,7 +158,6 @@ class _AllBetsState extends ConsumerState<AllBets> {
                   itemCount: _getCurrentPageBets().length,
                   separatorBuilder: (context, index) => SizedBox(height: 6),
                   itemBuilder: (context, index) {
-                    //    final item = data[index];
                     bool isHighlighted =
                         (_currentPage * _itemsPerPage + index) == 0 ||
                         (_currentPage * _itemsPerPage + index) == 1;

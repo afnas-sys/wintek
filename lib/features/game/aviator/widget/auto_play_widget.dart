@@ -593,7 +593,6 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
         backgroundColor: enabled
             ? AppColors.aviatorFifteenthColor
             : AppColors.aviatorFifteenthColor,
-        //   padding: EdgeInsetsGeometry.all(24),
         padding: EdgeInsetsGeometry.only(left: 0, right: 0, top: 0, bottom: 0),
         onPressed: onPressed,
         height: 22,
