@@ -47,6 +47,11 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
   double? lastMultiplier;
   bool _isPlacingBet = false; // Flag to prevent duplicate bet placement
 
+  // Queued bet state when user taps during RUNNING
+  bool _hasQueuedBet = false;
+  String? _queuedAmountText;
+  double? _queuedAutoCashoutValue;
+
   final secureStorageService = SecureStorageService();
 
   Future<String?> getUserId() async {
@@ -117,7 +122,10 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
     }
   }
 
-  Future<void> _placeBet() async {
+  Future<void> _placeBet({
+    String? amountOverride,
+    double? autoCashoutOverride,
+  }) async {
     // Prevent duplicate bet placement
     if (_isPlacingBet || hasPlacedBet) return;
 
@@ -130,20 +138,28 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
       if (userId == null || round == null) return;
 
-      if (round.state == 'RUNNING') {
-        _customSnackBar(
-          context,
-          'You cannot place a bet while the game is running',
-        );
+      // Only place bet during PREPARE; queued bets will call this when the
+      // next round is in PREPARE state.
+      if (round.state != 'PREPARE') {
+        log('⚠️ Skipping bet placement, invalid round state: ${round.state}');
         return;
       }
 
-      final amountText = widget.amountController.text.trim();
-      final autoCashoutText = widget.switchController?.text.trim() ?? '';
+      // Determine stake / auto cashout source: queued override vs controllers
+      late final String amountText;
+      late final double? autoCashoutValue;
 
-      final autoCashoutValue = autoCashoutText.isNotEmpty
-          ? double.tryParse(autoCashoutText)
-          : null;
+      if (amountOverride != null || autoCashoutOverride != null) {
+        amountText = (amountOverride ?? '').trim();
+        autoCashoutValue = autoCashoutOverride;
+      } else {
+        final controllerAmountText = widget.amountController.text.trim();
+        final autoCashoutText = widget.switchController?.text.trim() ?? '';
+        amountText = controllerAmountText;
+        autoCashoutValue = autoCashoutText.isNotEmpty
+            ? double.tryParse(autoCashoutText)
+            : null;
+      }
 
       if (amountText.isEmpty) {
         log('⚠️ Bet amount is empty');
@@ -221,6 +237,24 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
       if (widget.autoPlayState != null &&
           widget.autoPlayState!.settings != null) {
         _handleAutoPlayContinuation();
+      }
+
+      // If user queued a bet while the previous round was RUNNING,
+      // automatically place it at the start of the next PREPARE phase.
+      if (_hasQueuedBet && round.state == 'PREPARE') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _placeBet(
+            amountOverride: _queuedAmountText,
+            autoCashoutOverride: _queuedAutoCashoutValue,
+          );
+          if (mounted) {
+            setState(() {
+              _hasQueuedBet = false;
+              _queuedAmountText = null;
+              _queuedAutoCashoutValue = null;
+            });
+          }
+        });
       }
     }
 
@@ -321,8 +355,10 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
       });
     }
 
+    final isQueuedBet = !hasPlacedBet && _hasQueuedBet;
+
     final buttonText = !hasPlacedBet
-        ? "BET"
+        ? (isQueuedBet ? "WAITING" : "BET")
         : isCashoutButton
         ? "CASHOUT"
         : isWaitingForRound
@@ -337,6 +373,10 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
             if (!hasPlacedBet) {
+              if (_hasQueuedBet) {
+                // queued bet uses the same color as WAITING state
+                return AppColors.aviatorTwentySixthColor;
+              }
               return AppColors.aviatorEighteenthColor; // initial Place Bet
             } else if (hasPlacedBet && round?.state == 'RUNNING') {
               return AppColors.aviatorSeventeenthColor; // CASHOUT
@@ -359,9 +399,47 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
         onPressed: enabled
             ? () async {
-                // Place Bet
+                // Place Bet or cancel queued bet
                 if (!hasPlacedBet && round != null) {
-                  await _placeBet();
+                  if (_hasQueuedBet) {
+                    // Cancel the queued bet
+                    setState(() {
+                      _hasQueuedBet = false;
+                      _queuedAmountText = null;
+                      _queuedAutoCashoutValue = null;
+                    });
+                    _customSnackBar(context, 'Pending bet cancelled.');
+                    return;
+                  }
+
+                  if (round.state == 'RUNNING') {
+                    // Queue bet for the next round instead of rejecting
+                    final amountText = widget.amountController.text.trim();
+                    final autoCashoutText =
+                        widget.switchController?.text.trim() ?? '';
+
+                    if (amountText.isEmpty) {
+                      _customSnackBar(context, 'Please enter an amount to bet');
+                      return;
+                    }
+
+                    final autoCashoutValue = autoCashoutText.isNotEmpty
+                        ? double.tryParse(autoCashoutText)
+                        : null;
+
+                    setState(() {
+                      _hasQueuedBet = true;
+                      _queuedAmountText = amountText;
+                      _queuedAutoCashoutValue = autoCashoutValue;
+                    });
+
+                    _customSnackBar(
+                      context,
+                      'Your bet has been added to the next round.',
+                    );
+                  } else {
+                    await _placeBet();
+                  }
                 }
                 // Cashout
                 else if (isCashoutButton && bet != null) {
@@ -448,10 +526,25 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                 }
               }
             : null,
-        child: Text(
-          buttonText,
-          style: Theme.of(context).textTheme.aviatorHeadlineSmall,
-        ),
+        child: isQueuedBet
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Cancel',
+                    style: Theme.of(context).textTheme.aviatorHeadlineSmall,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Wait for next round',
+                    style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+                  ),
+                ],
+              )
+            : Text(
+                buttonText,
+                style: Theme.of(context).textTheme.aviatorHeadlineSmall,
+              ),
       ),
     );
   }
