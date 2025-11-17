@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +31,9 @@ class _OtpVarificationCodeScreenState
     (_) => TextEditingController(),
   );
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  final _debouncer = Debouncer(seconds: 120);
+  int _remainingSeconds = 0;
+  Timer? _countdownTimer;
 
   @override
   void dispose() {
@@ -38,10 +43,31 @@ class _OtpVarificationCodeScreenState
     for (var focusNode in _focusNodes) {
       focusNode.dispose();
     }
+    _countdownTimer?.cancel();
     super.dispose();
   }
 
   String getOtp() => _controllers.map((c) => c.text).join();
+
+  void _startCountdown() {
+    _countdownTimer?.cancel();
+    setState(() {
+      _remainingSeconds = _debouncer.seconds;
+    });
+
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds <= 1) {
+        timer.cancel();
+        setState(() {
+          _remainingSeconds = 0;
+        });
+      } else {
+        setState(() {
+          _remainingSeconds--;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,52 +117,82 @@ class _OtpVarificationCodeScreenState
 
   //! Otp Field
   Widget _otpField() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: List.generate(6, (index) {
-        return SizedBox(
-          width: 60,
-          //   height: 66,
-          child: TextFormField(
-            controller: _controllers[index], // 👈 also bind controllers
-            cursorColor: AppColors.textTertiaryColor,
-            decoration: InputDecoration(
-              filled: true,
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide(color: AppColors.borderAuthTextField),
-              ),
-              fillColor: Colors.transparent,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide(color: AppColors.borderAuthTextField),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const fieldCount = 6;
+        const spacing = 8.0;
+
+        final totalSpacing = spacing * (fieldCount - 1);
+        final maxWidthPerField =
+            (constraints.maxWidth - totalSpacing) / fieldCount;
+        final fieldWidth = maxWidthPerField.clamp(40.0, 60.0).toDouble();
+
+        final List<Widget> children = [];
+
+        for (var index = 0; index < fieldCount; index++) {
+          children.add(
+            SizedBox(
+              width: fieldWidth,
+              child: TextFormField(
+                controller: _controllers[index],
+                cursorColor: AppColors.textTertiaryColor,
+                decoration: InputDecoration(
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide(
+                      color: AppColors.borderAuthTextField,
+                    ),
+                  ),
+                  fillColor: Colors.transparent,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide(
+                      color: AppColors.borderAuthTextField,
+                    ),
+                  ),
+                ),
+                focusNode: _focusNodes[index],
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.authTitleLarge,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(1),
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                onChanged: (value) {
+                  if (value.isNotEmpty) {
+                    if (index < _focusNodes.length - 1) {
+                      FocusScope.of(
+                        context,
+                      ).requestFocus(_focusNodes[index + 1]);
+                    } else {
+                      _focusNodes[index].unfocus();
+                      debugPrint("OTP (complete): ${getOtp()}");
+                    }
+                  } else {
+                    if (index > 0) {
+                      FocusScope.of(
+                        context,
+                      ).requestFocus(_focusNodes[index - 1]);
+                    }
+                  }
+                },
               ),
             ),
-            focusNode: _focusNodes[index],
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.authTitleLarge,
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(1),
-              FilteringTextInputFormatter.digitsOnly,
-            ],
-            onChanged: (value) {
-              if (value.isNotEmpty) {
-                if (index < _focusNodes.length - 1) {
-                  FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
-                } else {
-                  _focusNodes[index].unfocus();
-                  debugPrint("OTP (complete): ${getOtp()}");
-                }
-              } else {
-                if (index > 0) {
-                  FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
-                }
-              }
-            },
-          ),
+          );
+
+          // Add spacing between fields, but not after the last one
+          if (index != fieldCount - 1) {
+            children.add(const SizedBox(width: spacing));
+          }
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: children,
         );
-      }),
+      },
     );
   }
 
@@ -203,23 +259,43 @@ class _OtpVarificationCodeScreenState
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,
           ),
-          onPressed: () {
-            debugPrint("🔄 Resend tapped");
-            ref
-                .read(authNotifierProvider.notifier)
-                .sendOtp(ref.read(userDraftProvider)!['mobile']);
-            CustomSnackbar.show(
-              backgroundColor: AppColors.snackbarSuccessValidateColor,
-              context,
-              message: 'OTP sent successfully',
-            );
-          },
+          onPressed: _remainingSeconds > 0
+              ? null
+              : () {
+                  _startCountdown();
+                  _debouncer.run(() {
+                    debugPrint("🔄 Resend tapped");
+                    ref
+                        .read(authNotifierProvider.notifier)
+                        .sendOtp(ref.read(userDraftProvider)!['mobile']);
+                    CustomSnackbar.show(
+                      backgroundColor: AppColors.snackbarSuccessValidateColor,
+                      context,
+                      message: 'OTP sent successfully',
+                    );
+                  });
+                },
           child: Text(
-            'Resend',
+            _remainingSeconds > 0 ? 'Resend in $_remainingSeconds s' : 'Resend',
             style: Theme.of(context).textTheme.authBodyLargeFourth,
           ),
         ),
       ],
     );
+  }
+}
+
+class Debouncer {
+  final int seconds;
+  VoidCallback? action;
+  Timer? _timer;
+
+  Debouncer({required this.seconds});
+
+  void run(VoidCallback action) {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    _timer = Timer(Duration(seconds: seconds), action);
   }
 }
