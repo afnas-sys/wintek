@@ -41,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   //! Grid Items
                   CustomHomeGridViewBuilder(),
-                  //    CustomBetButton(),
                 ],
               ),
             ),

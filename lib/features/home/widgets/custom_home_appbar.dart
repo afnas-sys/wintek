@@ -43,7 +43,6 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
             ),
           ),
           Spacer(),
-
           Row(
             children: [
               Container(
@@ -81,17 +80,10 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                         );
                       },
                     ),
-                    // Text(
-                    //   '₹ 5000',
-                    //   style: Theme.of(context).textTheme.homeSmallPrimary,
-                    // ),
                     SizedBox(width: 8),
                     Container(
                       height: 28,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        // vertical: ,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
 
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -112,30 +104,6 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                   ],
                 ),
               ),
-
-              // decoration: BoxDecoration(
-              //   color: AppColors.homeThirdColor,
-              //   borderRadius: BorderRadius.circular(30),
-              //   border: Border.all(
-              //     color: AppColors.homeFourththColor,
-              //     width: 1,
-              //   ),
-              // ),
-              // thumbDecoration: BoxDecoration(
-              //   gradient: LinearGradient(
-              //     colors: [
-              //       AppColors.homeFivethColor,
-              //       AppColors.homeSxithColor,
-              //     ],
-              //   ),
-              //   borderRadius: BorderRadius.circular(30),
-              // ),
-
-              //  duration: const Duration(milliseconds: 200),
-              //  curve: Curves.easeInOut,
-              // onValueChanged: (v) {
-              //   setState(() => _selectedValue = v);
-              // },
               SizedBox(width: 8),
               Container(
                 height: 36,
