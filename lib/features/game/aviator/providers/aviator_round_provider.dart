@@ -5,22 +5,22 @@ import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/aviator/service/aviator_socket_service.dart';
 
-final aviatorRoundProvider = Provider<AviatorSocketService>((ref) {
+final aviatorRoundProvider = Provider.autoDispose<AviatorSocketService>((ref) {
   final service = AviatorSocketService();
   service.connect();
   ref.onDispose(() => service.disconnect());
   return service;
 });
 // //! Round State Provider
-final aviatorStateProvider = StreamProvider<RoundState>((ref) {
+final aviatorStateProvider = StreamProvider.autoDispose<RoundState>((ref) {
   final service = ref.watch(aviatorRoundProvider);
   return service.stateStream;
 });
 
 //! Round Tick Provider
-final aviatorTickProvider = StreamProvider<Tick>((ref) {
-  final servise = ref.watch(aviatorRoundProvider);
-  return servise.tickStream;
+final aviatorTickProvider = StreamProvider.autoDispose<Tick>((ref) {
+  final service = ref.watch(aviatorRoundProvider);
+  return service.tickStream;
 });
 //! Crash provider
 
@@ -50,7 +50,7 @@ class AviatorRoundNotifier extends StateNotifier<RoundState?> {
 }
 
 final aviatorRoundNotifierProvider =
-    StateNotifierProvider<AviatorRoundNotifier, RoundState?>((ref) {
+    StateNotifierProvider.autoDispose<AviatorRoundNotifier, RoundState?>((ref) {
       final service = ref.watch(aviatorRoundProvider);
       return AviatorRoundNotifier(service);
     });
@@ -74,7 +74,7 @@ class AviatorCrashNotifier extends StateNotifier<Crash?> {
 }
 
 final aviatorCrashNotifierProvider =
-    StateNotifierProvider<AviatorCrashNotifier, Crash?>((ref) {
+    StateNotifierProvider.autoDispose<AviatorCrashNotifier, Crash?>((ref) {
       final service = ref.watch(aviatorRoundProvider);
       return AviatorCrashNotifier(service);
     });
@@ -97,7 +97,9 @@ class AviatorBetsNotifier extends StateNotifier<AllBetsModel?> {
 }
 
 final aviatorBetsNotifierProvider =
-    StateNotifierProvider<AviatorBetsNotifier, AllBetsModel?>((ref) {
+    StateNotifierProvider.autoDispose<AviatorBetsNotifier, AllBetsModel?>((
+      ref,
+    ) {
       final service = ref.watch(aviatorRoundProvider);
       return AviatorBetsNotifier(service);
     });

@@ -61,86 +61,89 @@ class _RegisterPhoneScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authNotifier = ref.watch(authNotifierProvider.notifier);
 
-    return Scaffold(
-      appBar: CustomAppbar(
-        title: 'Register',
-        subtitle: 'Please register by phone number',
-        height: 200,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formkey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: CustomAppbar(
+          title: 'Register',
+          subtitle: 'Please register by phone number',
+          height: 200,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 10),
 
-                  /// Full Name
-                  _textWidget(text: 'Full Name'),
+                    /// Full Name
+                    _textWidget(text: 'Full Name'),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // field for Full name
-                  _fullNameField(),
+                    // field for Full name
+                    _fullNameField(),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  /// Phone Number
-                  _textWidget(text: 'Phone Number'),
+                    /// Phone Number
+                    _textWidget(text: 'Phone Number'),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // field for Phone number
-                  _phoneNumberfield(),
+                    // field for Phone number
+                    _phoneNumberfield(),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  /// Set Password
-                  _textWidget(text: 'Set Password'),
+                    /// Set Password
+                    _textWidget(text: 'Set Password'),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // field for Set Password
-                  _setPasswordField(),
+                    // field for Set Password
+                    _setPasswordField(),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  /// Confirm Password
-                  _textWidget(text: 'Confirm Password'),
+                    /// Confirm Password
+                    _textWidget(text: 'Confirm Password'),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // field for Confirm Password
-                  _confirmPasswordField(),
+                    // field for Confirm Password
+                    _confirmPasswordField(),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  /// Invite Code
-                  _textWidget(text: 'Invite Code'),
+                    /// Invite Code
+                    _textWidget(text: 'Invite Code'),
 
-                  const SizedBox(height: 10),
+                    const SizedBox(height: 10),
 
-                  // field for Invite Code
-                  _inviteCodeField(),
+                    // field for Invite Code
+                    _inviteCodeField(),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  /// Checkbox
-                  _privacyPolicy(),
+                    /// Checkbox
+                    _privacyPolicy(),
 
-                  const SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
-                  /// Register button
-                  _registerButton(authNotifier),
+                    /// Register button
+                    _registerButton(authNotifier),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  /// Login button
-                  _loginButton(),
-                ],
+                    /// Login button
+                    _loginButton(),
+                  ],
+                ),
               ),
             ),
           ),

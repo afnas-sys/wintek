@@ -74,40 +74,43 @@ class _OtpVarificationCodeScreenState
     final authState = ref.watch(authNotifierProvider);
     final newUserData = ref.watch(userDraftProvider);
 
-    return Scaffold(
-      appBar: CustomAppbar(
-        title: 'OTP Verification',
-        subtitle:
-            'Enter the verification cide we just sent on your mobile number. (+91 ${newUserData?['mobile'] ?? ''})',
-        height: 220,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 30),
-                Text(
-                  'Verify OTP',
-                  style: Theme.of(context).textTheme.authBodyLargeSecondary,
-                ),
-                const SizedBox(height: 10),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: CustomAppbar(
+          title: 'OTP Verification',
+          subtitle:
+              'Enter the verification cide we just sent on your mobile number. (+91 ${newUserData?['mobile'] ?? ''})',
+          height: 220,
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30),
+                  Text(
+                    'Verify OTP',
+                    style: Theme.of(context).textTheme.authBodyLargeSecondary,
+                  ),
+                  const SizedBox(height: 10),
 
-                //! OTP Field
-                _otpField(),
+                  //! OTP Field
+                  _otpField(),
 
-                const SizedBox(height: 40),
+                  const SizedBox(height: 40),
 
-                //! Verify Button
-                _verifyButton(authState),
+                  //! Verify Button
+                  _verifyButton(authState),
 
-                const SizedBox(height: 38),
+                  const SizedBox(height: 38),
 
-                //! Resend Button
-                _resendButton(),
-              ],
+                  //! Resend Button
+                  _resendButton(),
+                ],
+              ),
             ),
           ),
         ),

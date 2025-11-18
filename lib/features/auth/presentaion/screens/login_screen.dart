@@ -53,73 +53,76 @@ class _LoginPhoneScreenState extends ConsumerState<LoginScreen> {
     final authNotifier = ref.read(authNotifierProvider.notifier);
     return authState.isLoading
         ? const Center(child: CircularProgressIndicator())
-        : Scaffold(
-            appBar: CustomAppbar(
-              showBackButton: false,
-              title: 'Log in',
-              subtitle:
-                  'Please log in with your phone number\nIf you forget your password, contact costomer service',
-              height: 224,
-            ),
+        : GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Scaffold(
+              appBar: CustomAppbar(
+                showBackButton: false,
+                title: 'Log in',
+                subtitle:
+                    'Please log in with your phone number\nIf you forget your password, contact costomer service',
+                height: 224,
+              ),
 
-            body: SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formkey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 30),
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formkey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 30),
 
-                        _textWidget(text: 'Phone Number'),
+                          _textWidget(text: 'Phone Number'),
 
-                        SizedBox(height: 10),
+                          SizedBox(height: 10),
 
-                        //! field for Phone number
-                        _phoneNumberfield(),
+                          //! field for Phone number
+                          _phoneNumberfield(),
 
-                        SizedBox(height: 20),
+                          SizedBox(height: 20),
 
-                        _textWidget(text: 'Password'),
+                          _textWidget(text: 'Password'),
 
-                        SizedBox(height: 10),
+                          SizedBox(height: 10),
 
-                        _passwordField(),
+                          _passwordField(),
 
-                        SizedBox(height: 20),
+                          SizedBox(height: 20),
 
-                        //Remember pass and Forget pass
-                        _rememberAndForgetPass(),
+                          //Remember pass and Forget pass
+                          _rememberAndForgetPass(),
 
-                        SizedBox(height: 30),
+                          SizedBox(height: 30),
 
-                        //Login Button
-                        _loginButton(authNotifier),
+                          //Login Button
+                          _loginButton(authNotifier),
 
-                        SizedBox(height: 20),
+                          SizedBox(height: 20),
 
-                        //!Register
-                        _registerButton(),
+                          //!Register
+                          _registerButton(),
 
-                        SizedBox(height: 40),
+                          SizedBox(height: 40),
 
-                        Column(
-                          spacing: 10,
-                          children: [
-                            Text(
-                              'or login with',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.authBodyMediumThird,
-                            ),
+                          Column(
+                            spacing: 10,
+                            children: [
+                              Text(
+                                'or login with',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.authBodyMediumThird,
+                              ),
 
-                            //! Google field
-                            _googleButton(),
-                          ],
-                        ),
-                      ],
+                              //! Google field
+                              _googleButton(),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
