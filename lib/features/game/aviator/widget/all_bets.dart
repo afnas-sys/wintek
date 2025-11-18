@@ -19,9 +19,13 @@ class _AllBetsState extends ConsumerState<AllBets> {
   static const int _itemsPerPage = 50;
 
   void _showPreviousHand() {
+    final totalPages = (_betsLength / _itemsPerPage).ceil();
+    if (totalPages == 0) {
+      // No bets/pages yet, nothing to paginate
+      return;
+    }
     setState(() {
-      _currentPage =
-          (_currentPage + 1) % ((_betsLength / _itemsPerPage).ceil());
+      _currentPage = (_currentPage + 1) % totalPages;
     });
   }
 
