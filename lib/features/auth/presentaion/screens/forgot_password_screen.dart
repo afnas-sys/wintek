@@ -33,66 +33,69 @@ class _ForgotPasswordScreen extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final authNotifier = ref.read(authNotifierProvider.notifier);
 
-    return Scaffold(
-      appBar: CustomAppbar(
-        height: 224,
-        title: 'Forgot Password',
-        subtitle:
-            'Please retrieve/change your password through your mobile phone number or email',
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 14),
-                  _textWidget(text: 'Phone Number'),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: CustomAppbar(
+          height: 224,
+          title: 'Forgot Password',
+          subtitle:
+              'Please retrieve/change your password through your mobile phone number or email',
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 14),
+                    _textWidget(text: 'Phone Number'),
 
-                  SizedBox(height: 10),
+                    SizedBox(height: 10),
 
-                  // field for Phone number
-                  _phoneNumberfield(),
+                    // field for Phone number
+                    _phoneNumberfield(),
 
-                  SizedBox(height: 20),
-                  _textWidget(text: 'A New Password'),
+                    SizedBox(height: 20),
+                    _textWidget(text: 'A New Password'),
 
-                  SizedBox(height: 10),
+                    SizedBox(height: 10),
 
-                  //field for setting password
-                  _passwordField(),
+                    //field for setting password
+                    _passwordField(),
 
-                  SizedBox(height: 20),
+                    SizedBox(height: 20),
 
-                  _textWidget(text: 'Confirm New Password'),
+                    _textWidget(text: 'Confirm New Password'),
 
-                  SizedBox(height: 10),
+                    SizedBox(height: 10),
 
-                  //field for Confirm Password
-                  _confirmPasswordField(),
+                    //field for Confirm Password
+                    _confirmPasswordField(),
 
-                  SizedBox(height: 20),
+                    SizedBox(height: 20),
 
-                  _textWidget(text: 'Verification Code'),
+                    _textWidget(text: 'Verification Code'),
 
-                  SizedBox(height: 10),
+                    SizedBox(height: 10),
 
-                  //field for verification code
-                  _verificationCodeField(authNotifier),
+                    //field for verification code
+                    _verificationCodeField(authNotifier),
 
-                  SizedBox(height: 20),
+                    SizedBox(height: 20),
 
-                  // Privacy Policy
-                  _privacyPolicy(),
+                    // Privacy Policy
+                    _privacyPolicy(),
 
-                  SizedBox(height: 30),
+                    SizedBox(height: 30),
 
-                  //! Button for Reset
-                  _resetButton(authNotifier),
-                ],
+                    //! Button for Reset
+                    _resetButton(authNotifier),
+                  ],
+                ),
               ),
             ),
           ),
