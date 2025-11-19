@@ -1,21 +1,20 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 
-class CrashBets extends ConsumerStatefulWidget {
-  const CrashBets({super.key});
+class CrashMyBets extends StatefulWidget {
+  const CrashMyBets({super.key});
 
   @override
-  ConsumerState<CrashBets> createState() => _CrashBetsState();
+  State<CrashMyBets> createState() => _CrashBetsState();
 }
 
-class _CrashBetsState extends ConsumerState<CrashBets> {
+class _CrashBetsState extends State<CrashMyBets> {
   List<Map<String, dynamic>> crashBets = [
     {
       'time': '12:30',

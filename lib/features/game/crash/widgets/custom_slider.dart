@@ -28,78 +28,78 @@ class _CustomSliderState extends State<CustomSlider> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            children: [
-              // Multiplier text
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Auto Cash Out:',
-                    style: Theme.of(context).textTheme.crashBodyMediumSecondary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _displayValue < 3
-                        ? "x${_displayValue.toStringAsFixed(1)}"
-                        : "x${_displayValue.toInt()}",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.crashPrimaryColor,
-                    ),
-                  ),
-                ],
-              ),
-
-              // Slider takes full available width
-              SizedBox(
-                height: 10,
-                width: constraints.maxWidth, // ✅ Responsive width
-                child: SfSlider(
-                  min: 0,
-                  max: (_steps.length - 1).toDouble(),
-                  value: _sliderPosition,
-                  activeColor: AppColors.crashFifteenthColor,
-                  inactiveColor: AppColors.crashThirdColor,
-                  stepSize: 1,
-                  enableTooltip: false,
-                  showLabels: false,
-                  showTicks: false,
-                  onChanged: (value) {
-                    setState(() {
-                      _sliderPosition = value;
-                    });
-                  },
+        return Column(
+          children: [
+            // Multiplier text
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Auto Cash Out:',
+                  style: Theme.of(context).textTheme.crashBodyMediumSecondary,
                 ),
-              ),
+                const SizedBox(width: 8),
+                Text(
+                  _sliderPosition == 0
+                      ? 'OFF'
+                      : _displayValue < 3
+                      ? "x${_displayValue.toStringAsFixed(1)}"
+                      : "x${_displayValue.toInt()}",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.crashPrimaryColor,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 14),
 
-              // OFF / MAX Labels below slider
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'OFF',
-                    style: TextStyle(
-                      color: AppColors.crashFifthColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
+            // OFF - Slider - MAX in a single row
+            Row(
+              children: [
+                Text(
+                  'OFF',
+                  style: TextStyle(
+                    color: AppColors.crashFifthColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                // const SizedBox(width: 8),
+                Expanded(
+                  child: SizedBox(
+                    height: 10,
+                    child: SfSlider(
+                      min: 0,
+                      max: (_steps.length - 1).toDouble(),
+                      value: _sliderPosition,
+                      activeColor: AppColors.crashThirtySecondColor,
+                      inactiveColor: AppColors.crashPrimaryColor,
+                      stepSize: 1,
+                      enableTooltip: false,
+                      showLabels: false,
+                      showTicks: false,
+                      onChanged: (value) {
+                        setState(() {
+                          _sliderPosition = value;
+                        });
+                      },
                     ),
                   ),
-                  Text(
-                    'MAX',
-                    style: TextStyle(
-                      color: AppColors.crashFifthColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
+                ),
+                // const SizedBox(width: 8),
+                Text(
+                  'MAX',
+                  style: TextStyle(
+                    color: AppColors.crashFifthColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         );
       },
     );

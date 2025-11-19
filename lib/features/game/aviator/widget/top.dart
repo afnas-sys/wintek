@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
+import 'package:wintek/features/game/widgets/custom_tab_bar.dart';
 import 'package:wintek/features/game/aviator/widget/day_widget.dart';
 import 'package:wintek/features/game/aviator/widget/month_widget.dart';
 import 'package:wintek/features/game/aviator/widget/year_widget.dart';

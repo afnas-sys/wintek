@@ -193,6 +193,14 @@ class AppColors {
   static const Color crashTwentyFourthColor = Color(0XFFcb011a);
   static const Color crashTwentyFifthColor = Color(0XFF133206);
   static const Color crashTwentySixthColor = Color(0xFFA395EE);
+  static const Color crashTwentySeventhColor = Color(0xFF000026);
+  static const Color crashTwentyEigthColor = Color(0xFFAA99FD);
+  static Color crashTwentyNinethColor = Color(0xFFAA99FD).withOpacity(0.1);
+  static Color crashThirtythColor = Color(0xFFAA99FD).withOpacity(0.2);
+  static Color crashThirtyFirstColor = Color(0xFF00A9FF).withOpacity(0.8);
+  static const Color crashThirtySecondColor = Color(0xFF00A9FF);
+  static const Color crashThirtyThreeColor = Color(0xFF09B600);
+
   // static const LinearGradient crashTwentySeventhColor = LinearGradient(
   //   colors: [Color(0xFF28A809), Color(0xFF133206)],
   // );

@@ -62,7 +62,7 @@ class AppImages {
   //! Lottie Crash
   static const String crashBg = 'assets/images/shooting star.json';
   static const String crashRocket = 'assets/images/rocket (1).json';
-  static const String crashExplosion = 'assets/images/Big Bada Boom.json';
+  static const String crashExplosion = 'assets/images/bhoom.json';
 
   // ! Profile Screen
 

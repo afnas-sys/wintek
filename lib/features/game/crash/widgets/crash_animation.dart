@@ -93,37 +93,42 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   Widget build(BuildContext context) {
     final gameState = ref.watch(crashGameProvider);
 
-    // Listen to state changes to trigger animations
+    // Listen to state changes and trigger animations AFTER the current frame
     ref.listen(crashGameProvider, (previous, next) {
       if (previous?.state != next.state) {
-        switch (next.state) {
-          case GameState.running:
-            _startRunningAnimation();
-            break;
-          case GameState.crashed:
-            _startCrashAnimation();
-            break;
-          case GameState.prepare:
-            _resetAnimation();
-            break;
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          switch (next.state) {
+            case GameState.running:
+              _startRunningAnimation();
+              break;
+            case GameState.crashed:
+              _startCrashAnimation();
+              break;
+            case GameState.prepare:
+              _resetAnimation();
+              break;
+          }
+        });
       }
     });
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
+    // Use LayoutBuilder to get the constraints from the parent (we wrap this
+    // widget in a fixed-height SizedBox in the screen), and avoid using
+    // height: double.infinity which causes invalid constraints inside a Column.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // final width = constraints.maxWidth;
+        final height = constraints.maxHeight;
+
+        return Container(
           width: double.infinity,
-          height: 294,
+          height: height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.aviatorFifteenthColor,
-              width: 1,
-            ),
+            //  border: Border.all(width: 1),
             color: gameState.state == GameState.prepare
-                ? AppColors.crashSecondaryColor
+                ? AppColors.crashTwentyFirstColor
                 : null,
           ),
           child: Stack(
@@ -132,38 +137,34 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                   gameState.state == GameState.crashed)
                 Positioned.fill(
                   child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Lottie.asset(
-                        AppImages.crashBg,
-                        width: _planeWidth,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    //     color: Colors.red,
+                    // height: 800,
+                    // decoration: BoxDecoration(
+                    //   borderRadius: BorderRadius.circular(20),
+                    // ),
+                    // child: ClipRRect(
+                    //   borderRadius: BorderRadius.circular(20),
+                    //   child: Lottie.asset(
+                    //     AppImages.crashBg,
+                    //     width: _planeWidth,
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // ),
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(0),
                 child: Column(
                   children: [
-                    // Top bar
-
-                    // Game area
                     Expanded(
                       child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          final width = constraints.maxWidth;
-                          final height = constraints.maxHeight;
+                        builder: (context, innerConstraints) {
+                          final innerWidth = innerConstraints.maxWidth;
+                          final innerHeight = innerConstraints.maxHeight;
 
                           return Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              // Remove path painter - only show plane flying
-
-                              // Path drawing
                               if (gameState.state == GameState.running &&
                                   _pathPoints.isNotEmpty)
                                 CustomPaint(
@@ -171,10 +172,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     _pathPoints,
                                     gameState.currentMultiplier,
                                   ),
-                                  size: Size(width, height),
+                                  size: Size(innerWidth, innerHeight),
                                 ),
-
-                              // Plane animation
                               if (gameState.state == GameState.running)
                                 AnimatedBuilder(
                                   animation: Listenable.merge([
@@ -189,16 +188,16 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     if (_flyAwayController.isAnimating) {
                                       final t = _flyAwayAnimation.value;
                                       final start = Offset(
-                                        width * 0.65,
-                                        height * 0.5,
+                                        innerWidth * 0.65,
+                                        innerHeight * 0.5,
                                       );
                                       final control = Offset(
-                                        width * 0.85,
-                                        height * 0.8,
+                                        innerWidth * 0.85,
+                                        innerHeight * 0.8,
                                       );
                                       final end = Offset(
-                                        width * 1.2,
-                                        height + 150,
+                                        innerWidth * 1.2,
+                                        innerHeight + 150,
                                       );
                                       x =
                                           (1 - t) * (1 - t) * start.dx +
@@ -211,14 +210,14 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                       planeAngle = -pi / 6;
                                     } else {
                                       final t = _takeoffAnimation.value;
-                                      final start = Offset(0, 0);
+                                      final start = const Offset(0, 0);
                                       final control = Offset(
-                                        width * 0.45,
-                                        height * 0.1,
+                                        innerWidth * 0.45,
+                                        innerHeight * 0.1,
                                       );
                                       final end = Offset(
-                                        width * 0.65,
-                                        height * 0.5,
+                                        innerWidth * 0.65,
+                                        innerHeight * 0.5,
                                       );
 
                                       x =
@@ -254,11 +253,14 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     }
 
                                     final bottomPos = (y + waveOffset)
-                                        .clamp(0, height - 60)
+                                        .clamp(0, innerHeight - 60)
                                         .toDouble();
                                     final currentPoint = Offset(
-                                      (x + forwardOffset).clamp(0, width - 80),
-                                      height - bottomPos,
+                                      (x + forwardOffset).clamp(
+                                        0,
+                                        innerWidth - 80,
+                                      ),
+                                      innerHeight - bottomPos,
                                     );
 
                                     if (_isAnimating &&
@@ -280,15 +282,12 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         child: Lottie.asset(
                                           AppImages.crashRocket,
                                           width: _planeWidth,
-                                          //  height: _planeHeight,
                                           fit: BoxFit.contain,
                                         ),
                                       ),
                                     );
                                   },
                                 ),
-
-                              // Multiplier display
                               if (gameState.state == GameState.running)
                                 Center(
                                   child: Text(
@@ -300,8 +299,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     ),
                                   ),
                                 ),
-
-                              // Crash explosion at right side
                               if (gameState.state == GameState.crashed)
                                 Positioned(
                                   right: 50,
@@ -325,14 +322,11 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     ],
                                   ),
                                 ),
-
-                              // Prepare countdown
                               if (gameState.state == GameState.prepare)
                                 Center(
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      // Circular progress indicator
                                       SizedBox(
                                         width: 80,
                                         height: 80,
@@ -348,7 +342,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                               >(AppColors.crashFourthColor),
                                         ),
                                       ),
-                                      // Countdown text in center
                                       Text(
                                         "${gameState.prepareSecondsLeft}",
                                         style: Theme.of(
@@ -358,8 +351,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     ],
                                   ),
                                 ),
-
-                              // Initial plane position
                               if (gameState.state == GameState.prepare)
                                 Positioned(
                                   left: 0,
@@ -379,8 +370,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
               ),
             ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
