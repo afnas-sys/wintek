@@ -34,7 +34,18 @@ class HistoryService {
     try {
       final response = await _dio.get(CardApiConstants.recentRounds);
       if (response.statusCode == 200) {
-        return List<Map<String, dynamic>>.from(response.data['data'] ?? []);
+        final data = List<Map<String, dynamic>>.from(
+          response.data['data'] ?? [],
+        );
+        final filtered = data
+            .map(
+              (item) => {
+                'sessionId': item['sessionId'],
+                'winningCard': item['winningCard'],
+              },
+            )
+            .toList();
+        return filtered.take(20).toList();
       } else {
         throw Exception('Failed to fetch Game history');
       }
