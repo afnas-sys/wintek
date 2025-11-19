@@ -240,7 +240,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
     // final enabled = !hasPlacedBet || isCashoutButton;
 
     return SizedBox(
-      height: 108,
+      height: 200,
       child: ElevatedButton(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {

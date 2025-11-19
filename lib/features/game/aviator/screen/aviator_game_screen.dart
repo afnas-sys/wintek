@@ -7,7 +7,7 @@ import 'package:wintek/features/game/aviator/widget/all_bets.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_flight_animation.dart';
 import 'package:wintek/features/game/aviator/widget/aviator_buttons.dart';
 import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
-import 'package:wintek/features/game/aviator/widget/custom_tab_bar.dart';
+import 'package:wintek/features/game/widgets/custom_tab_bar.dart';
 import 'package:wintek/features/game/aviator/widget/my_bets.dart';
 import 'package:wintek/features/game/aviator/widget/top.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -22,36 +22,22 @@ class AviatorGameScreen extends ConsumerStatefulWidget {
 
 class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
   int _containerCount = 1;
-  // late final AviatorSocketService _socketService;
   @override
   void initState() {
     super.initState();
-    // Start listening to recent rounds
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(recentRoundsServiceProvider).startListening();
-
-      // _socketService = ref.read(aviatorRoundProvider); // get the service
-      // _socketService.connect(); // connect when screen loads
     });
   }
 
-  // @override
-  // void dispose() {
-  //   _socketService.disconnect(); // disconnect when leaving screen
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
-    //   final roundState = ref.watch(aviatorRoundNotifierProvider);
     final roundState = ref.watch(aviatorStateProvider);
     final roundId = roundState.when(
       data: (round) => round.roundId!,
       error: (error, st) => error.toString(),
       loading: () => '',
     );
-    // final tickEvent = ref.watch();
-    // final crashEvent = ref.watch(aviatorCrashProvider);
     return Scaffold(
       body: SafeArea(
         child: GestureDetector(
@@ -61,7 +47,6 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // BalanceContainer(),
                   WalletContainer(),
                   SizedBox(height: 16),
                   AviatorButtons(),
@@ -79,9 +64,6 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
                   ),
                   SizedBox(height: 1),
                   AviatorFlightAnimation(),
-                  // SizedBox(height: 10),
-
-                  // GraphContainer(),
                   SizedBox(height: 16),
                   ListView.separated(
                     shrinkWrap: true,
