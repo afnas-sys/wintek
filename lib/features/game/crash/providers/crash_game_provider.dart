@@ -80,7 +80,7 @@ class CrashGameNotifier extends StateNotifier<CrashGameState> {
 
     // Start multiplier increment
     _gameTimer?.cancel();
-    _gameTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+    _gameTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       final newMultiplier = state.currentMultiplier + 0.01;
       if (newMultiplier >= state.crashMultiplier) {
         _crashGame();

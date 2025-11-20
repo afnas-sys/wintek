@@ -45,10 +45,19 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   int _initialPrepareSeconds = 0;
   double _prepareProgress = 1.0;
   Timer? _prepareTimer;
+  late final AnimationController _controller;
+
+  // Your image size (must match actual image OR container you use)
+  final double imgWidth = 396;
+  final double imgHeight = 294;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 120),
+      vsync: this,
+    )..repeat(period: Duration(seconds: 12));
 
     _takeoffController = AnimationController(
       vsync: this,
@@ -83,7 +92,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
     _flyAwayController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 6),
+      duration: const Duration(seconds: 700),
     );
     _flyAwayAnimation = CurvedAnimation(
       parent: _flyAwayController,
@@ -212,254 +221,316 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         color: Color(0XFF271777),
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: Column(
+      child: Stack(
         children: [
-          // Top bar
-          Container(
-            height: 50,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.aviatorThirteenthColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Center(
-              child: Text(
-                'FUN MODE',
-                style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
-              ),
-            ),
+          Positioned(
+            left: -imgWidth / 2, // Move image center to bottom-left
+            bottom: -imgHeight / 2,
+            child: round?.state == 'RUNNING'
+                ? AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, child) {
+                      return Transform.rotate(
+                        angle: _controller.value * 2 * pi,
+                        alignment:
+                            Alignment.center, // rotate around the offset center
+                        child: Transform.scale(scale: 5, child: child),
+                      );
+                    },
+                    child: SizedBox(
+                      width: imgWidth,
+                      height: imgHeight,
+                      child: Image.asset(
+                        "assets/images/aviator_bg.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                : Transform.scale(
+                    scale: 5,
+                    child: SizedBox(
+                      width: imgWidth,
+                      height: imgHeight,
+                      child: Image.asset(
+                        "assets/images/aviator_bg.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
           ),
+          Column(
+            children: [
+              // Top bar
+              Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.aviatorThirteenthColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    'FUN MODE',
+                    style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
+                  ),
+                ),
+              ),
 
-          // PREPARE UI
-          if (round?.state == 'PREPARE')
-            Expanded(
-              child: Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0.0, end: _prepareProgress),
-                      duration: const Duration(milliseconds: 300),
-                      builder: (context, value, child) {
-                        return Container(
-                          width: 200, // adjust width as needed
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: Colors.white24, // background track
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.centerLeft,
-                            widthFactor: value, // controls fill percentage
-                            child: Container(
+              // PREPARE UI
+              if (round?.state == 'PREPARE')
+                Expanded(
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 0.0, end: _prepareProgress),
+                          duration: const Duration(milliseconds: 300),
+                          builder: (context, value, child) {
+                            return Container(
+                              width: 200, // adjust width as needed
+                              height: 8,
                               decoration: BoxDecoration(
-                                color: AppColors
-                                    .aviatorGraphBarColor, // active color
+                                color: Colors.white24, // background track
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                              child: FractionallySizedBox(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: value, // controls fill percentage
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors
+                                        .aviatorGraphBarColor, // active color
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
 
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: 50),
-                        //! 20s center text
-                        // Text(
-                        //   "$_prepareSecondsLeft",
-                        //   style: Theme.of(
-                        //     context,
-                        //   ).textTheme.aviatorDisplayLarge,
-                        // ),
-                        const SizedBox(height: 28),
-                        Text(
-                          "Next round starts",
-                          style: Theme.of(
-                            context,
-                          ).textTheme.aviatorBodyTitleMdeium,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(height: 50),
+                            //! 20s center text
+                            // Text(
+                            //   "$_prepareSecondsLeft",
+                            //   style: Theme.of(
+                            //     context,
+                            //   ).textTheme.aviatorDisplayLarge,
+                            // ),
+                            const SizedBox(height: 28),
+                            Text(
+                              "Next round starts",
+                              style: Theme.of(
+                                context,
+                              ).textTheme.aviatorBodyTitleMdeium,
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            )
-          else
-            // RUNNING / CRASHED UI
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final width = constraints.maxWidth;
-                  final height = constraints.maxHeight;
+                  ),
+                )
+              else
+                // RUNNING / CRASHED UI
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final width = constraints.maxWidth;
+                      final height = constraints.maxHeight;
 
-                  return AnimatedBuilder(
-                    animation: Listenable.merge([
-                      _takeoffController,
-                      _waveController,
-                      _flyAwayController,
-                    ]),
-                    builder: (context, _) {
-                      double x, y;
-                      double planeAngle = -pi / 12;
+                      return AnimatedBuilder(
+                        animation: Listenable.merge([
+                          _takeoffController,
+                          _waveController,
+                          _flyAwayController,
+                        ]),
+                        builder: (context, _) {
+                          double x, y;
+                          double planeAngle = -pi / 12;
 
-                      if (_flyAwayController.isAnimating) {
-                        final t = _flyAwayAnimation.value;
+                          if (_flyAwayController.isAnimating) {
+                            final t = _flyAwayAnimation.value;
 
-                        // Define a baseline fly-away curve, then shift it so that
-                        // the plane starts flying away from its last animated position.
-                        final baselineStart = Offset(
-                          width * 0.65,
-                          height * 0.5,
-                        );
-                        final baselineControl = Offset(
-                          width * 0.85,
-                          height * 0.8,
-                        );
-                        final baselineEnd = Offset(width * 1.2, height + 150);
+                            // Define a baseline fly-away curve, then shift it so that
+                            // the plane starts flying away from its last animated position.
+                            final baselineStart = Offset(
+                              width * 0.65,
+                              height * 0.5,
+                            );
+                            final baselineControl = Offset(
+                              width * 0.85,
+                              height * 0.8,
+                            );
+                            final baselineEnd = Offset(
+                              width * 1.2,
+                              height + 150,
+                            );
 
-                        final start = _flyAwayStartPosition ?? baselineStart;
-                        final delta = start - baselineStart;
-                        final control = baselineControl + delta;
-                        final end = baselineEnd + delta;
+                            final start =
+                                _flyAwayStartPosition ?? baselineStart;
+                            final delta = start - baselineStart;
+                            final control = baselineControl + delta;
+                            final end = baselineEnd + delta;
 
-                        x =
-                            (1 - t) * (1 - t) * start.dx +
-                            2 * (1 - t) * t * control.dx +
-                            t * t * end.dx;
-                        y =
-                            (1 - t) * (1 - t) * start.dy +
-                            2 * (1 - t) * t * control.dy +
-                            t * t * end.dy;
-                        planeAngle = -pi / 6;
-                      } else {
-                        final t = _takeoffAnimation.value;
-                        final start = Offset(24, 24);
-                        final control = Offset(width * 0.45, height * 0.1);
-                        final end = Offset(width * 0.65, height * 0.5);
+                            x =
+                                (1 - t) * (1 - t) * start.dx +
+                                2 * (1 - t) * t * control.dx +
+                                t * t * end.dx;
+                            y =
+                                (1 - t) * (1 - t) * start.dy +
+                                2 * (1 - t) * t * control.dy +
+                                t * t * end.dy;
+                            planeAngle = -pi / 6;
+                          } else {
+                            final t = _takeoffAnimation.value;
+                            final start = Offset(24, 24);
+                            final control = Offset(width * 0.45, height * 0.1);
+                            final end = Offset(width * 0.65, height * 0.5);
 
-                        x =
-                            (1 - t) * (1 - t) * start.dx +
-                            2 * (1 - t) * t * control.dx +
-                            t * t * end.dx;
-                        y =
-                            (1 - t) * (1 - t) * start.dy +
-                            2 * (1 - t) * t * control.dy +
-                            t * t * end.dy;
+                            x =
+                                (1 - t) * (1 - t) * start.dx +
+                                2 * (1 - t) * t * control.dx +
+                                t * t * end.dx;
+                            y =
+                                (1 - t) * (1 - t) * start.dy +
+                                2 * (1 - t) * t * control.dy +
+                                t * t * end.dy;
 
-                        if (!_hasReachedWave && t >= 1) {
-                          _hasReachedWave = true;
-                          _isWaving = true;
-                          _takeoffController.stop();
-                          _waveController.repeat();
-                        }
-                      }
+                            if (!_hasReachedWave && t >= 1) {
+                              _hasReachedWave = true;
+                              _isWaving = true;
+                              _takeoffController.stop();
+                              _waveController.repeat();
+                            }
+                          }
 
-                      double waveOffset = 0.0;
-                      if (_isWaving && !_flyAwayController.isAnimating) {
-                        waveOffset =
-                            sin(_waveProgress * _waveFrequency) *
-                            _waveAmplitude;
-                        final waveTangent =
-                            cos(_waveProgress * _waveFrequency) *
-                            _waveAmplitude *
-                            _waveFrequency;
-                        planeAngle = -atan(waveTangent / 5);
-                      }
+                          double waveOffset = 0.0;
+                          if (_isWaving && !_flyAwayController.isAnimating) {
+                            waveOffset =
+                                sin(_waveProgress * _waveFrequency) *
+                                _waveAmplitude;
+                            final waveTangent =
+                                cos(_waveProgress * _waveFrequency) *
+                                _waveAmplitude *
+                                _waveFrequency;
+                            planeAngle = -atan(waveTangent / 5);
+                          }
 
-                      final bottomPos = (y + waveOffset)
-                          .clamp(0, height - 60)
-                          .toDouble();
-                      final currentPoint = Offset(
-                        x.clamp(0, width - 70),
-                        height - bottomPos,
-                      );
-                      _currentPlanePosition = currentPoint;
+                          final bottomPos = (y + waveOffset)
+                              .clamp(0, height - 60)
+                              .toDouble();
+                          final currentPoint = Offset(
+                            x.clamp(0, width - 70),
+                            height - bottomPos,
+                          );
+                          _currentPlanePosition = currentPoint;
 
-                      // Always record the plane path while the animation is active,
-                      // including takeoff, waving, and fly-away segments.
-                      if (_isAnimating) {
-                        if (_pathPoints.isEmpty ||
-                            (_pathPoints.last - currentPoint).distance > 1) {
-                          _pathPoints.add(currentPoint);
-                        }
-                      }
+                          // Always record the plane path while the animation is active,
+                          // including takeoff, waving, and fly-away segments.
+                          if (_isAnimating) {
+                            if (_pathPoints.isEmpty ||
+                                (_pathPoints.last - currentPoint).distance >
+                                    1) {
+                              _pathPoints.add(currentPoint);
+                            }
+                          }
 
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Stack(
-                          clipBehavior: Clip.hardEdge,
-                          children: [
-                            CustomPaint(
-                              size: Size(width, height),
-                              painter: PathPainter(
-                                round?.state == 'CRASHED'
-                                    ? const <Offset>[]
-                                    : _pathPoints,
-                                height,
-                                _currentPlanePosition,
-                                _isWaving,
-                                _waveProgress,
-                                _waveAmplitude,
-                                _waveFrequency,
-                              ),
-                            ),
-                            Positioned(
-                              left: currentPoint.dx,
-                              bottom: bottomPos,
-                              child: Transform.rotate(
-                                angle: planeAngle,
-                                child: Image.asset(
-                                  AppImages.graphContainerplaneImage,
-                                  width: 70,
+                          return ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Stack(
+                              clipBehavior: Clip.hardEdge,
+                              children: [
+                                CustomPaint(
+                                  size: Size(width, height),
+                                  painter: PathPainter(
+                                    round?.state == 'CRASHED'
+                                        ? const <Offset>[]
+                                        : _pathPoints,
+                                    height,
+                                    _currentPlanePosition,
+                                    _isWaving,
+                                    _waveProgress,
+                                    _waveAmplitude,
+                                    _waveFrequency,
+                                  ),
                                 ),
-                              ),
-                            ),
-                            if ((round?.state == 'RUNNING') ||
-                                (round == null && hasTickData))
-                              Center(
-                                child: Text(
-                                  "${currentValue.toStringAsFixed(2)}X",
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.aviatorDisplayLarge,
-                                ),
-                              ),
-                            if (round?.state == 'CRASHED' &&
-                                _flyAwayController.isAnimating)
-                              Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "FLEW AWAY",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.aviatorHeadlineSmall,
+                                Positioned(
+                                  left: currentPoint.dx,
+                                  bottom: bottomPos,
+                                  child: Transform.rotate(
+                                    angle: planeAngle,
+                                    child: Image.asset(
+                                      AppImages.graphContainerplaneImage,
+                                      width: 70,
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      "${round?.crashAt?.toString() ?? ''}x",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.aviatorDisplayLargeSecond,
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                          ],
-                        ),
+                                if ((round?.state == 'RUNNING') ||
+                                    (round == null && hasTickData))
+                                  Center(
+                                    child: Container(
+                                      width: 390,
+                                      //  height: 62,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                            currentValue >= 10
+                                                ? 'assets/images/spreadclr1.png'
+                                                : currentValue >= 2
+                                                ? 'assets/images/spreadclr2.png'
+                                                : 'assets/images/spreadclr1.png',
+                                          ),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "${currentValue.toStringAsFixed(2)}X",
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.aviatorDisplayLarge,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                if (round?.state == 'CRASHED' &&
+                                    _flyAwayController.isAnimating)
+                                  Center(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "FLEW AWAY",
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.aviatorHeadlineSmall,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          "${round?.crashAt?.toString() ?? ''}x",
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.aviatorDisplayLargeSecond,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
-            ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );

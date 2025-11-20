@@ -19,7 +19,7 @@ class _CrashButtonsState extends ConsumerState<CrashButtons> {
     '1.2x',
     '3.5x',
     '1.8x',
-    '7.2x',
+    '17.2x',
     '2.1x',
     '4.8x',
     '1.5x',

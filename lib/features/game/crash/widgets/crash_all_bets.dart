@@ -32,41 +32,16 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
       ref.watch(aviatorBetsNotifierProvider)?.bets.length ?? 0;
 
   List<Map<String, dynamic>> crashAllBets = [
-    {
-      'time': '12:35',
-      'date': '01/01/2023',
-      'betINR': '100',
-      'x': '2.5',
-      'cashoutINR': '250',
-    },
-    {
-      'time': '12:30',
-      'date': '01/01/2023',
-      'betINR': '150',
-      'x': ' 3.0',
-      'cashoutINR': '450',
-    },
-    {
-      'time': '12:30',
-      'date': '01/01/2023',
-      'betINR': '200',
-      'x': ' 1.8',
-      'cashoutINR': '360',
-    },
-    {
-      'time': '12:30',
-      'date': '01/01/2023',
-      'betINR': '250',
-      'x': '4.0',
-      'cashoutINR': '1000',
-    },
-    {
-      'time': '12:30',
-      'date': '01/01/2023',
-      'betINR': '300',
-      'x': '2.0',
-      'cashoutINR': '600',
-    },
+    {'name': 'Ab', 'bet': '₹100', 'mult': '2.5x', 'cashoutINR': '250'},
+    {'name': 'Cd', 'bet': '₹200', 'mult': '3.0x', 'cashoutINR': '600'},
+    {'name': 'Ef', 'bet': '₹150', 'mult': '1.8x', 'cashoutINR': '270'},
+    {'name': 'Gh', 'bet': '₹300', 'mult': '4.0x', 'cashoutINR': '1200'},
+    {'name': 'Ij', 'bet': '₹250', 'mult': '2.2x', 'cashoutINR': '550'},
+    {'name': 'Kl', 'bet': '₹400', 'mult': '5.0x', 'cashoutINR': '2000'},
+    {'name': 'Mn', 'bet': '₹350', 'mult': '3.5x', 'cashoutINR': '1225'},
+    {'name': 'Op', 'bet': '₹450', 'mult': '4.5x', 'cashoutINR': '2025'},
+    {'name': 'Qr', 'bet': '₹500', 'mult': '6.0x', 'cashoutINR': '3000'},
+    {'name': 'St', 'bet': '₹600', 'mult': '2.8x', 'cashoutINR': '1680'},
   ];
 
   @override
@@ -195,7 +170,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                         (_currentPage * _itemsPerPage + index) == 1;
                     Color? bgColor = isHighlighted
                         ? AppColors.aviatorTwentyFirstColor
-                        : AppColors.aviatorTwentySecondColor;
+                        : Color(0XFF222222).withOpacity(0.1);
                     final bets = crashAllBets.toList()[index];
 
                     return Container(
@@ -226,7 +201,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                bets['date'] ?? '',
+                                bets['name'] ?? '',
                                 style: Theme.of(
                                   context,
                                 ).textTheme.aviatorBodyLargePrimary,
@@ -238,7 +213,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                             Expanded(
                               flex: 1,
                               child: Text(
-                                bets['betINR'] ?? '',
+                                bets['bet'] ?? '',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
@@ -249,42 +224,38 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                             // 📌 Mult
                             Expanded(
                               flex: 1,
-                              child: isHighlighted
-                                  ? Container(
-                                      height: 32,
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.aviatorThirtyFiveColor,
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      child: Text(
-                                        bets['x'] ?? '',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.aviatorBodyLargeThird,
-                                      ),
-                                    )
-                                  : const SizedBox(),
+                              child: Container(
+                                height: 32,
+                                alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.aviatorThirtyFiveColor,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Text(
+                                  bets['mult'] ?? '',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.aviatorBodyLargeThird,
+                                ),
+                              ),
                             ),
 
                             // 📌 Cashout
                             Expanded(
                               flex: 1,
-                              child: isHighlighted
-                                  ? Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        bets['cashoutINR'] ?? '',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.aviatorBodyLargePrimary,
-                                      ),
-                                    )
-                                  : const SizedBox(),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  bets['cashoutINR'] ?? '',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.aviatorBodyLargePrimary,
+                                ),
+                              ),
                             ),
                           ],
                         ),

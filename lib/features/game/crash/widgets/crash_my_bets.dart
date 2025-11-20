@@ -274,7 +274,7 @@ class _CrashBetsState extends State<CrashMyBets> {
                             width: 50,
 
                             decoration: BoxDecoration(
-                              color: AppColors.aviatorTwentyThirdColor,
+                              color: Color(0XFF271777),
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Center(
@@ -284,7 +284,7 @@ class _CrashBetsState extends State<CrashMyBets> {
                                 // bet.cashoutAt.toString(),
                                 style: Theme.of(
                                   context,
-                                ).textTheme.aviatorbodySmallSecondary,
+                                ).textTheme.aviatorbodySmallPrimary,
                               ),
                             ),
                           ),

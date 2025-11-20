@@ -270,49 +270,44 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
     return SizedBox(
       width: double.infinity,
       height: 54,
-      child: Center(
-        child: Row(
-          children: [
-            // 🔹 TextField
-            Expanded(
-              child: TextField(
-                controller: controller,
-                enabled: enabled,
-                showCursor: false,
-                enableInteractiveSelection: false, // hides selection handle
-                textAlign: TextAlign.center,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                style: Theme.of(context).textTheme.crashBodyTitleMdeium,
-                cursorColor: AppColors.crashPrimaryColor,
+      child: TextField(
+        controller: controller,
+        enabled: enabled,
+        showCursor: false,
+        enableInteractiveSelection: false, // hides selection handle
+        textAlign: TextAlign.center,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        style: Theme.of(context).textTheme.crashBodyTitleMdeium,
+        cursorColor: AppColors.crashPrimaryColor,
 
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.only(bottom: 10),
-                  hintStyle: Theme.of(context).textTheme.crashbodySmallPrimary,
-                  filled: true,
-                  fillColor: AppColors.crashTwentyNinethColor,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(52),
-                    borderSide: BorderSide.none,
-                  ),
-                  prefix: // 🔹 Decrement button
-                  _buildIconButton(
-                    Icons.remove,
-                    enabled ? () => _decrement(controller) : () {},
-                    enabled: enabled,
-                  ),
-
-                  suffix: // 🔹 Increment button
-                  _buildIconButton(
-                    Icons.add,
-                    enabled ? () => _increment(controller) : () {},
-                    enabled: enabled,
-                  ),
-                ),
-              ),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.only(bottom: 10),
+          hintStyle: Theme.of(context).textTheme.crashbodySmallPrimary,
+          filled: true,
+          fillColor: AppColors.crashTwentyNinethColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(52),
+            borderSide: BorderSide.none,
+          ),
+          prefix: // 🔹 Decrement button
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: _buildIconButton(
+              Icons.remove,
+              enabled ? () => _decrement(controller) : () {},
+              enabled: enabled,
             ),
-          ],
+          ),
+
+          suffix: // 🔹 Increment button
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: _buildIconButton(
+              Icons.add,
+              enabled ? () => _increment(controller) : () {},
+              enabled: enabled,
+            ),
+          ),
         ),
       ),
     );
