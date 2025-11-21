@@ -241,10 +241,11 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
       width: double.infinity,
       height: 56,
       child: TextField(
-        showCursor: false,
+        showCursor: true,
+        cursorColor: AppColors.crashTwentyEigthColor,
+        cursorHeight: 18,
         enableInteractiveSelection: false,
         controller: controller,
-        cursorColor: AppColors.crashThirteenthColor,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.crashHeadlineSmall,

@@ -210,6 +210,11 @@ class _OtpVarificationCodeScreenState
         final otp = getOtp();
 
         if (otp.length != 6) {
+          CustomSnackbar.show(
+            backgroundColor: AppColors.snackbarValidateColor,
+            context,
+            message: 'Please enter the complete 6-digit OTP.',
+          );
           return;
         }
 
