@@ -46,6 +46,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   double _prepareProgress = 1.0;
   Timer? _prepareTimer;
   late final AnimationController _controller;
+  bool _isControllerRepeating = false;
 
   // Your image size (must match actual image OR container you use)
   final double imgWidth = 396;
@@ -57,7 +58,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _controller = AnimationController(
       duration: const Duration(seconds: 120),
       vsync: this,
-    )..repeat(period: Duration(seconds: 12));
+    );
 
     _takeoffController = AnimationController(
       vsync: this,
@@ -123,6 +124,15 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     // Determine if we already have any tick data
     final hasTickData = tick.maybeWhen(data: (_) => true, orElse: () => false);
 
+    // Control the background animation controller based on tick data
+    if (hasTickData && !_isControllerRepeating) {
+      _controller.repeat(period: const Duration(seconds: 12));
+      _isControllerRepeating = true;
+    } else if (!hasTickData && _isControllerRepeating) {
+      _controller.stop();
+      _isControllerRepeating = false;
+    }
+
     // 👇 Detect if socket is connecting (no data yet)
     // Consider it "connected" as soon as either round state or tick arrives
     final isSocketConnecting = round == null && !hasTickData;
@@ -185,6 +195,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
           _waveController.isAnimating) {
         _resetAnimation();
       }
+
+      // Stop the background animation in PREPARE state
+      _controller.stop();
+      _isControllerRepeating = false;
     } else {
       _prepareTimer?.cancel();
       _prepareTimer = null;
@@ -214,6 +228,12 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       _startFlyAway();
     }
 
+    // Stop the background animation in CRASHED state
+    if (round?.state == 'CRASHED') {
+      _controller.stop();
+      _isControllerRepeating = false;
+    }
+
     return Container(
       width: double.infinity,
       height: 294,
@@ -226,7 +246,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
           Positioned(
             left: -imgWidth / 2, // Move image center to bottom-left
             bottom: -imgHeight / 2,
-            child: round?.state == 'RUNNING'
+            child: hasTickData || round?.state == 'RUNNING'
                 ? AnimatedBuilder(
                     animation: _controller,
                     builder: (context, child) {
@@ -241,7 +261,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                       width: imgWidth,
                       height: imgHeight,
                       child: Image.asset(
-                        "assets/images/aviator_bg.png",
+                        AppImages.aviatorbg,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -252,7 +272,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                       width: imgWidth,
                       height: imgHeight,
                       child: Image.asset(
-                        "assets/images/aviator_bg.png",
+                        AppImages.aviatorbg,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -481,10 +501,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                         image: DecorationImage(
                                           image: AssetImage(
                                             currentValue >= 10
-                                                ? 'assets/images/spreadclr1.png'
+                                                ? AppImages.spreadclr3
                                                 : currentValue >= 2
-                                                ? 'assets/images/spreadclr2.png'
-                                                : 'assets/images/spreadclr1.png',
+                                                ? AppImages.spreadclr2
+                                                : AppImages.spreadclr1,
                                           ),
                                           fit: BoxFit.cover,
                                         ),
