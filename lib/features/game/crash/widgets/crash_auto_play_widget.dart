@@ -257,6 +257,7 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
   }
 
   //!TextField for Amount Input
+
   Widget _buildAmountTextField(
     BuildContext context,
     TextEditingController controller, {

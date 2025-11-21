@@ -19,9 +19,11 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   late AnimationController _takeoffController;
   late AnimationController _waveController;
   late AnimationController _flyAwayController;
+  late AnimationController _textController;
 
   late Animation<double> _takeoffAnimation;
   late Animation<double> _flyAwayAnimation;
+  late Animation<Offset> _textAnimation;
 
   bool _isWaving = false;
   bool _isAnimating = false;
@@ -35,6 +37,23 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   final double _waveFrequency = 0.05;
 
   final double _planeWidth = 70;
+
+  double _innerWidth = 0.0;
+  double _innerHeight = 0.0;
+  Offset? _crashPosition;
+
+  String _currentLabel = '';
+  String _previousLabel = '';
+
+  final Map<String, List<Color>> _labelColors = {
+    'NOT BAD': [Color(0XFF11FED7), Color(0XFFF7FEFD)],
+    'NICE': [Color(0XFF0050F2), Color(0XFF00F4E0)],
+    'AWESOME': [Color(0XFFF45FFF), Color(0XFF4447FF)],
+    'WICKED': [Color(0XFFCD015E), Color(0XFF9600FF)],
+    'GODLIKE': [Color(0XFFEB8256), Color(0XFFE73C5D)],
+    'LEGENDARY': [Color(0XFFF4F564), Color(0XFFFA7F00)],
+    'CRASH': [Colors.white, Colors.white],
+  };
 
   @override
   void initState() {
@@ -78,6 +97,15 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       parent: _flyAwayController,
       curve: Curves.easeInOutCubic,
     );
+
+    _textController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _textAnimation = Tween<Offset>(
+      begin: const Offset(-1.0, 0.0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeOut));
   }
 
   @override
@@ -85,6 +113,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     _takeoffController.dispose();
     _waveController.dispose();
     _flyAwayController.dispose();
+    _textController.dispose();
     super.dispose();
   }
 
@@ -111,6 +140,36 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       }
     });
 
+    // Calculate multiplier label
+    String newLabel = '';
+    if (gameState.state == GameState.running) {
+      double m = gameState.currentMultiplier;
+      if (m > 30) {
+        newLabel = 'LEGENDARY';
+      } else {
+        switch (m) {
+          case >= 10:
+            newLabel = 'GODLIKE';
+          case >= 7:
+            newLabel = 'WICKED';
+          case >= 5:
+            newLabel = 'AWESOME';
+          case >= 3:
+            newLabel = 'NICE';
+          case > 2:
+            newLabel = 'NOT BAD';
+        }
+      }
+    } else if (gameState.state == GameState.crashed) {
+      newLabel = 'CRASH';
+    }
+
+    if (newLabel != _previousLabel) {
+      _previousLabel = newLabel;
+      _currentLabel = newLabel;
+      _textController.forward(from: 0);
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
@@ -135,6 +194,18 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                         builder: (context, innerConstraints) {
                           final innerWidth = innerConstraints.maxWidth;
                           final innerHeight = innerConstraints.maxHeight;
+
+                          if (_innerWidth != innerWidth ||
+                              _innerHeight != innerHeight) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (mounted) {
+                                setState(() {
+                                  _innerWidth = innerWidth;
+                                  _innerHeight = innerHeight;
+                                });
+                              }
+                            });
+                          }
 
                           return Stack(
                             clipBehavior: Clip.none,
@@ -283,13 +354,80 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               if (gameState.state == GameState.running)
                                 Center(
-                                  child: Text(
-                                    "${gameState.currentMultiplier.toStringAsFixed(2)}x",
-                                    style: const TextStyle(
-                                      color: AppColors.crashPrimaryColor,
-                                      fontSize: 48,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (_currentLabel.isNotEmpty)
+                                        SlideTransition(
+                                          position: _textAnimation,
+                                          child: ShaderMask(
+                                            shaderCallback: (Rect bounds) {
+                                              return LinearGradient(
+                                                colors:
+                                                    _labelColors[_currentLabel] ??
+                                                    [
+                                                      Colors.white,
+                                                      Colors.white,
+                                                    ],
+                                              ).createShader(bounds);
+                                            },
+                                            child: Text(
+                                              _currentLabel,
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      RichText(
+                                        text: TextSpan(
+                                          text:
+                                              "${gameState.currentMultiplier.toStringAsFixed(2)}",
+                                          style: const TextStyle(
+                                            color: AppColors.crashPrimaryColor,
+                                            fontSize: 48,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: "x",
+                                              style: TextStyle(
+                                                fontSize: 48,
+                                                foreground: Paint()
+                                                  ..shader =
+                                                      const LinearGradient(
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                        colors: [
+                                                          Color(0XFF0C7D9A),
+                                                          Color(0XFF0AD69F),
+                                                        ],
+                                                      ).createShader(
+                                                        Rect.fromLTWH(
+                                                          0,
+                                                          0,
+                                                          200,
+                                                          40,
+                                                        ),
+                                                      ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // Text(
+                                      //   "${gameState.currentMultiplier.toStringAsFixed(2)}x",
+                                      //   style: const TextStyle(
+                                      //     color: AppColors.crashPrimaryColor,
+                                      //     fontSize: 48,
+                                      //     fontWeight: FontWeight.bold,
+                                      //   ),
+                                      // ),
+                                    ],
                                   ),
                                 ),
 
@@ -297,24 +435,54 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// CRASH STATE
                               /// -------------------------
                               if (gameState.state == GameState.crashed)
-                                Positioned(
-                                  right: 50,
-                                  top: 50,
-                                  child: Row(
+                                Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      if (_currentLabel.isNotEmpty)
+                                        SlideTransition(
+                                          position: _textAnimation,
+                                          child: ShaderMask(
+                                            shaderCallback: (Rect bounds) {
+                                              return LinearGradient(
+                                                colors:
+                                                    _labelColors[_currentLabel] ??
+                                                    [
+                                                      Colors.white,
+                                                      Colors.white,
+                                                    ],
+                                              ).createShader(bounds);
+                                            },
+                                            child: Text(
+                                              _currentLabel,
+                                              style: const TextStyle(
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       Text(
                                         "${gameState.crashMultiplier.toStringAsFixed(2)}x",
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.crashHeadlineSmall,
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Lottie.asset(
-                                        AppImages.crashExplosion,
-                                        width: 150,
-                                        height: 150,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .crashHeadlineSmall
+                                            .copyWith(fontSize: 48),
                                       ),
                                     ],
+                                  ),
+                                ),
+                              if (gameState.state == GameState.crashed &&
+                                  _crashPosition != null)
+                                Positioned(
+                                  left: _crashPosition!.dx - 40,
+                                  bottom:
+                                      (_innerHeight - _crashPosition!.dy) - 40,
+                                  child: Lottie.asset(
+                                    AppImages.crashExplosion,
+                                    width: 150,
+                                    height: 150,
                                   ),
                                 ),
 
@@ -415,6 +583,35 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     });
     _waveController.stop();
     _pathPoints.clear();
+
+    // Calculate rocket position at crash time
+    final t = _takeoffAnimation.value;
+    final start = const Offset(0, 0);
+    final control = Offset(_innerWidth * 0.45, _innerHeight * 0.1);
+    final end = Offset(_innerWidth * 0.65, _innerHeight * 0.5);
+
+    double x =
+        (1 - t) * (1 - t) * start.dx +
+        2 * (1 - t) * t * control.dx +
+        t * t * end.dx;
+    double y =
+        (1 - t) * (1 - t) * start.dy +
+        2 * (1 - t) * t * control.dy +
+        t * t * end.dy;
+
+    double waveOffset = 0.0;
+    double forwardOffset = 0.0;
+    if (_isWaving) {
+      waveOffset = sin(_waveProgress * _waveFrequency) * _waveAmplitude;
+      forwardOffset = _forwardProgress * 20;
+    }
+
+    double bottomPos = (y + waveOffset).clamp(0, _innerHeight - 60);
+    _crashPosition = Offset(
+      (x + forwardOffset).clamp(0, _innerWidth - 80),
+      _innerHeight - bottomPos,
+    );
+
     _flyAwayController.forward(from: 0);
   }
 
@@ -426,11 +623,15 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _waveProgress = 0.0;
       _forwardProgress = 0.0;
       _pathPoints.clear();
+      _crashPosition = null;
+      _currentLabel = '';
+      _previousLabel = '';
     });
 
     _takeoffController.reset();
     _waveController.stop();
     _flyAwayController.reset();
+    _textController.reset();
   }
 }
 
