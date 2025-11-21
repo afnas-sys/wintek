@@ -14,9 +14,13 @@ class AppImages {
   static const String homeSpinToWinImage = 'assets/images/Spin_to_win.png';
   static const String homecardJackPotImage = 'assets/images/Card_Jackpot.png';
 
-  //aviator
+  //! aviator
   static const String previousHand = 'assets/images/previousHand.png';
   static const String refresh = 'assets/images/refresh.png';
+  static const String aviatorbg = 'assets/images/aviator_bg.png';
+  static const String spreadclr1 = 'assets/images/spreadclr1.png';
+  static const String spreadclr2 = 'assets/images/spreadclr2.png';
+  static const String spreadclr3 = 'assets/images/spreadclr3.png';
 
   //Home appBar
   static const String homeAppBarImage = 'assets/images/home_appbarImage.png';

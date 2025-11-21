@@ -167,7 +167,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
                         (_currentPage * _itemsPerPage + index) == 1;
                     Color? bgColor = isHighlighted
                         ? AppColors.aviatorTwentyFirstColor
-                        : AppColors.aviatorTwentySecondColor;
+                        : AppColors.aviatorThirtyNineColor;
                     final bets = _getCurrentPageBets()[index];
 
                     return Container(
@@ -221,42 +221,25 @@ class _AllBetsState extends ConsumerState<AllBets> {
                             // 📌 Mult
                             Expanded(
                               flex: 1,
-                              child: isHighlighted
-                                  ? Container(
-                                      height: 32,
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.aviatorThirtyFiveColor,
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      child: Text(
-                                        bets?.cashoutAt.toString() ?? '',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.aviatorBodyLargeThird,
-                                      ),
-                                    )
-                                  : const SizedBox(),
+                              child: Text(
+                                bets?.cashoutAt.toString() ?? '',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.aviatorBodyLargePrimary,
+                              ),
                             ),
 
                             // 📌 Cashout
                             Expanded(
                               flex: 1,
-                              child: isHighlighted
-                                  ? Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        bets?.payout.toStringAsFixed(2) ?? '',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.aviatorBodyLargePrimary,
-                                      ),
-                                    )
-                                  : const SizedBox(),
+                              child: Text(
+                                bets?.payout.toStringAsFixed(2) ?? '',
+                                textAlign: TextAlign.end,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.aviatorBodyLargePrimary,
+                              ),
                             ),
                           ],
                         ),

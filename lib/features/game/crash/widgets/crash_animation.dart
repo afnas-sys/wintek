@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
@@ -43,7 +42,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
 
     _takeoffController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 16),
     );
     _takeoffAnimation = CurvedAnimation(
       parent: _takeoffController,
@@ -93,7 +92,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   Widget build(BuildContext context) {
     final gameState = ref.watch(crashGameProvider);
 
-    // Listen to state changes and trigger animations AFTER the current frame
     ref.listen(crashGameProvider, (previous, next) {
       if (previous?.state != next.state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -113,12 +111,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       }
     });
 
-    // Use LayoutBuilder to get the constraints from the parent (we wrap this
-    // widget in a fixed-height SizedBox in the screen), and avoid using
-    // height: double.infinity which causes invalid constraints inside a Column.
     return LayoutBuilder(
       builder: (context, constraints) {
-        // final width = constraints.maxWidth;
         final height = constraints.maxHeight;
 
         return Container(
@@ -126,32 +120,12 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
           height: height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            //  border: Border.all(width: 1),
             color: gameState.state == GameState.prepare
                 ? AppColors.crashTwentyFirstColor
                 : null,
           ),
           child: Stack(
             children: [
-              if (gameState.state == GameState.running ||
-                  gameState.state == GameState.crashed)
-                Positioned.fill(
-                  child: Container(
-                    //     color: Colors.red,
-                    // height: 800,
-                    // decoration: BoxDecoration(
-                    //   borderRadius: BorderRadius.circular(20),
-                    // ),
-                    // child: ClipRRect(
-                    //   borderRadius: BorderRadius.circular(20),
-                    //   child: Lottie.asset(
-                    //     AppImages.crashBg,
-                    //     width: _planeWidth,
-                    //     fit: BoxFit.cover,
-                    //   ),
-                    // ),
-                  ),
-                ),
               Padding(
                 padding: const EdgeInsets.all(0),
                 child: Column(
@@ -165,6 +139,9 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                           return Stack(
                             clipBehavior: Clip.none,
                             children: [
+                              /// -------------------------
+                              /// BACKGROUND PATH DRAW
+                              /// -------------------------
                               if (gameState.state == GameState.running &&
                                   _pathPoints.isNotEmpty)
                                 CustomPaint(
@@ -174,6 +151,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                   ),
                                   size: Size(innerWidth, innerHeight),
                                 ),
+
+                              /// -------------------------
+                              /// ROCKET ANIMATION
+                              /// -------------------------
                               if (gameState.state == GameState.running)
                                 AnimatedBuilder(
                                   animation: Listenable.merge([
@@ -199,14 +180,17 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         innerWidth * 1.2,
                                         innerHeight + 150,
                                       );
+
                                       x =
                                           (1 - t) * (1 - t) * start.dx +
                                           2 * (1 - t) * t * control.dx +
                                           t * t * end.dx;
+
                                       y =
                                           (1 - t) * (1 - t) * start.dy +
                                           2 * (1 - t) * t * control.dy +
                                           t * t * end.dy;
+
                                       planeAngle = -pi / 6;
                                     } else {
                                       final t = _takeoffAnimation.value;
@@ -224,6 +208,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                           (1 - t) * (1 - t) * start.dx +
                                           2 * (1 - t) * t * control.dx +
                                           t * t * end.dx;
+
                                       y =
                                           (1 - t) * (1 - t) * start.dy +
                                           2 * (1 - t) * t * control.dy +
@@ -244,17 +229,21 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                       waveOffset =
                                           sin(_waveProgress * _waveFrequency) *
                                           _waveAmplitude;
+
                                       forwardOffset = _forwardProgress * 20;
+
                                       final waveTangent =
                                           cos(_waveProgress * _waveFrequency) *
                                           _waveAmplitude *
                                           _waveFrequency;
+
                                       planeAngle = -atan(waveTangent / 5);
                                     }
 
                                     final bottomPos = (y + waveOffset)
                                         .clamp(0, innerHeight - 60)
                                         .toDouble();
+
                                     final currentPoint = Offset(
                                       (x + forwardOffset).clamp(
                                         0,
@@ -288,6 +277,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     );
                                   },
                                 ),
+
+                              /// -------------------------
+                              /// MULTIPLIER TEXT
+                              /// -------------------------
                               if (gameState.state == GameState.running)
                                 Center(
                                   child: Text(
@@ -299,12 +292,15 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     ),
                                   ),
                                 ),
+
+                              /// -------------------------
+                              /// CRASH STATE
+                              /// -------------------------
                               if (gameState.state == GameState.crashed)
                                 Positioned(
                                   right: 50,
                                   top: 50,
                                   child: Row(
-                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
                                         "${gameState.crashMultiplier.toStringAsFixed(2)}x",
@@ -317,11 +313,14 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         AppImages.crashExplosion,
                                         width: 150,
                                         height: 150,
-                                        fit: BoxFit.contain,
                                       ),
                                     ],
                                   ),
                                 ),
+
+                              /// -------------------------
+                              /// PREPARE COUNTDOWN
+                              /// -------------------------
                               if (gameState.state == GameState.prepare)
                                 Center(
                                   child: Stack(
@@ -351,6 +350,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     ],
                                   ),
                                 ),
+
+                              /// -------------------------
+                              /// PREPARE ROCKET (STATIC)
+                              /// -------------------------
                               if (gameState.state == GameState.prepare)
                                 Positioned(
                                   left: 0,
@@ -360,6 +363,24 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     width: 70,
                                   ),
                                 ),
+
+                              /// ---------------------------------------------------
+                              ///   >>> RIGHT SIDE DOTS ANIMATION (OPTION A)
+                              /// ---------------------------------------------------
+                              Positioned(
+                                right: 10,
+                                top: 0,
+                                bottom: 0,
+                                width: 22,
+                                child: SideDotsAnimation(
+                                  isCrashed:
+                                      gameState.state == GameState.crashed,
+                                  multiplier: gameState.currentMultiplier,
+                                  // multiplier: gameState.currentMultiplier,
+                                  // isRunning:
+                                  //     gameState.state == GameState.running,
+                                ),
+                              ),
                             ],
                           );
                         },
@@ -384,6 +405,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _forwardProgress = 0.0;
       _pathPoints.clear();
     });
+
     _takeoffController.forward(from: 0);
   }
 
@@ -405,12 +427,16 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _forwardProgress = 0.0;
       _pathPoints.clear();
     });
+
     _takeoffController.reset();
     _waveController.stop();
     _flyAwayController.reset();
   }
 }
 
+///////////////////////////////
+///  PATH LINE PAINTER
+///////////////////////////////
 class CrashPathPainter extends CustomPainter {
   final List<Offset> pathPoints;
   final double multiplier;
@@ -423,6 +449,7 @@ class CrashPathPainter extends CustomPainter {
 
     final path = Path();
     path.moveTo(pathPoints.first.dx, pathPoints.first.dy);
+
     for (int i = 1; i < pathPoints.length; i++) {
       path.lineTo(pathPoints[i].dx, pathPoints[i].dy);
     }
@@ -453,4 +480,138 @@ class CrashPathPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+///////////////////////////////
+///  RIGHT SIDE DOTS ANIMATION (UPDATED)
+///////////////////////////////
+class SideDotsAnimation extends StatefulWidget {
+  final double multiplier;
+  final bool isCrashed;
+
+  const SideDotsAnimation({
+    super.key,
+    required this.multiplier,
+    required this.isCrashed,
+  });
+
+  @override
+  State<SideDotsAnimation> createState() => _SideDotsAnimationState();
+}
+
+class _SideDotsAnimationState extends State<SideDotsAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  final int dotCount = 12; // total possible dots
+  final double dotSize = 4; // reduced dot size
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6), // slow animation
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant SideDotsAnimation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Hide everything when crashed
+    if (widget.isCrashed) {
+      _controller.stop();
+      return;
+    }
+
+    // Static dots until 3x
+    if (widget.multiplier < 3) {
+      _controller.stop();
+      return;
+    }
+
+    // Start animation at >=3x
+    if (!_controller.isAnimating) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Color getDotColor() {
+    final m = widget.multiplier;
+
+    if (m < 2) return Color(0XFF53987f); // static dot color
+    if (m < 5) return Color(0XFF53987f);
+    if (m < 10) return Colors.yellowAccent;
+    if (m < 20) return Colors.orangeAccent;
+
+    return Colors.redAccent;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Hide dots when crashed
+    if (widget.isCrashed) {
+      return const SizedBox.shrink();
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight;
+        final spacing = height / dotCount;
+        final dotColor = getDotColor();
+
+        return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Stack(
+              children: List.generate(dotCount, (index) {
+                // Remove 2nd, 4th, 6th... positions (even index)
+                if (index % 2 == 1) return const SizedBox.shrink();
+
+                // Static dot position (before multiplier reaches 2)
+                if (widget.multiplier < 2) {
+                  return Positioned(
+                    right: 5,
+                    top: index * spacing,
+                    child: Container(
+                      width: dotSize,
+                      height: dotSize,
+                      decoration: BoxDecoration(
+                        color: dotColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  );
+                }
+
+                // Animated dot position after 2x
+                double pos =
+                    ((_controller.value * height) + (index * spacing)) % height;
+
+                return Positioned(
+                  right: 5,
+                  top: pos,
+                  child: Container(
+                    width: dotSize,
+                    height: dotSize,
+                    decoration: BoxDecoration(
+                      color: dotColor,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                );
+              }),
+            );
+          },
+        );
+      },
+    );
+  }
 }
