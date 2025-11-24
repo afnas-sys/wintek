@@ -376,14 +376,24 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
         ),
       },
+
       decoration: BoxDecoration(
         color: AppColors.aviatorTwentiethColor,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
+
       thumbDecoration: BoxDecoration(
         color: AppColors.aviatorFifteenthColor,
         borderRadius: BorderRadius.circular(30),
+      ),
+
+      // ⭐ CONTROL SHAPE & EFFECT HERE ⭐
+      customSegmentSettings: CustomSegmentSettings(
+        borderRadius: BorderRadius.circular(30), // shape of ripple
+        splashColor: Colors.transparent, // remove ripple color
+        highlightColor: Colors.transparent, // remove highlight
+        overlayColor: MaterialStateProperty.all(Colors.transparent),
       ),
 
       duration: const Duration(milliseconds: 200),
