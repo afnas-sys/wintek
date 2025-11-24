@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/features/home/screens/home_screen.dart';
 import 'package:wintek/features/offers/view/offers_screen.dart';
@@ -25,7 +26,10 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async {
+        SystemNavigator.pop();
+        return false;
+      },
       child: Scaffold(
         body: bodys[_currentIndex],
         bottomNavigationBar: Theme(
