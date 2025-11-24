@@ -10,7 +10,6 @@ class ResponsibleGamingScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildStatusBar(),
             const SizedBox(height: 16),
             _buildHeader(context),
             const SizedBox(height: 30),
@@ -34,93 +33,6 @@ class ResponsibleGamingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBar() {
-    return SizedBox(
-      height: 50,
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '9:41',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'SF Pro Text',
-              ),
-            ),
-            Row(
-              children: [
-                Row(
-                  children: List.generate(
-                    4,
-                    (index) => Container(
-                      margin: const EdgeInsets.only(right: 2),
-                      width: 3,
-                      height: 4 + (index * 2).toDouble(),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Icon(Icons.wifi, color: Colors.white, size: 16),
-                const SizedBox(width: 4),
-                SizedBox(
-                  width: 28,
-                  height: 13,
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 25,
-                        height: 13,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.35),
-                          ),
-                          borderRadius: BorderRadius.circular(2.5),
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 4,
-                        child: Container(
-                          width: 2,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 2,
-                        top: 2,
-                        child: Container(
-                          width: 21,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(1.5),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -130,11 +42,7 @@ class ResponsibleGamingScreen extends StatelessWidget {
             onTap: () => Navigator.pop(context),
             child: const SizedBox(
               width: 48,
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: Colors.white,
-                size: 24,
-              ),
+              child: Icon(Icons.arrow_back_ios, color: Colors.white, size: 24),
             ),
           ),
           const Expanded(
@@ -243,19 +151,21 @@ class ResponsibleGamingScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        ...guidelines.map((guideline) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Text(
-            '✅ $guideline',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
-              fontSize: 14,
-              fontFamily: 'Inter',
-              fontWeight: FontWeight.w400,
-              height: 1.5,
+        ...guidelines.map(
+          (guideline) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              '✅ $guideline',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.6),
+                fontSize: 14,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w400,
+                height: 1.5,
+              ),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
