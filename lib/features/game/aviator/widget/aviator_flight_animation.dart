@@ -93,7 +93,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
     _flyAwayController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 700),
+      duration: const Duration(milliseconds: 2500),
     );
     _flyAwayAnimation = CurvedAnimation(
       parent: _flyAwayController,
@@ -442,11 +442,21 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                             planeAngle = -atan(waveTangent / 5);
                           }
 
-                          final bottomPos = (y + waveOffset)
-                              .clamp(0, height - 60)
-                              .toDouble();
+                          final unclampedBottomPos = y + waveOffset;
+                          final bottomPos = _flyAwayController.isAnimating
+                              ? unclampedBottomPos
+                                    .clamp(0, double.infinity)
+                                    .toDouble()
+                              : unclampedBottomPos
+                                    .clamp(0, height - 60)
+                                    .toDouble();
+                          final clampedX =
+                              (_flyAwayController.isAnimating
+                                      ? x
+                                      : x.clamp(0, width - 70))
+                                  .toDouble();
                           final currentPoint = Offset(
-                            x.clamp(0, width - 70),
+                            clampedX,
                             height - bottomPos,
                           );
                           _currentPlanePosition = currentPoint;
