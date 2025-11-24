@@ -5,6 +5,7 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 
 class AllBets extends ConsumerStatefulWidget {
@@ -17,6 +18,7 @@ class AllBets extends ConsumerStatefulWidget {
 class _AllBetsState extends ConsumerState<AllBets> {
   int _currentPage = 0;
   static const int _itemsPerPage = 50;
+  AllBetsModel? _bets;
 
   void _showPreviousHand() {
     final totalPages = (_betsLength / _itemsPerPage).ceil();
@@ -29,11 +31,10 @@ class _AllBetsState extends ConsumerState<AllBets> {
     });
   }
 
-  int get _betsLength =>
-      ref.watch(aviatorBetsNotifierProvider)?.bets.length ?? 0;
+  int get _betsLength => _bets?.bets.length ?? 0;
 
   List<dynamic> _getCurrentPageBets() {
-    final betsAsync = ref.watch(aviatorBetsNotifierProvider);
+    final betsAsync = _bets;
     if (betsAsync == null || betsAsync.bets.isEmpty) return [];
     final startIndex = _currentPage * _itemsPerPage;
     final endIndex = min(startIndex + _itemsPerPage, betsAsync.bets.length);
@@ -43,6 +44,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
   @override
   Widget build(BuildContext context) {
     final betsAsync = ref.watch(aviatorBetsNotifierProvider);
+    _bets = betsAsync;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),

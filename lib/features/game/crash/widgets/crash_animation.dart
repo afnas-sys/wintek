@@ -383,8 +383,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         ),
                                       RichText(
                                         text: TextSpan(
-                                          text:
-                                              "${gameState.currentMultiplier.toStringAsFixed(2)}",
+                                          text: gameState.currentMultiplier
+                                              .toStringAsFixed(2),
                                           style: const TextStyle(
                                             color: AppColors.crashPrimaryColor,
                                             fontSize: 48,
