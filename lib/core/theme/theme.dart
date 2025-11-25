@@ -263,6 +263,7 @@ extension CustomTextStyle on TextTheme {
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
+
   TextStyle get walletBodySmallPrimary => GoogleFonts.roboto(
     color: AppColors.walletTwelfthColor,
     fontSize: 12,
@@ -381,7 +382,73 @@ extension CustomTextStyle on TextTheme {
   TextStyle get crashbodySmallThird => GoogleFonts.roboto(
     color: AppColors.crashPrimaryColor,
     fontSize: 10,
+    fontWeight: FontWeight.w500,
+  );
+
+  //!________________________________SpinToWin___________________________________
+
+  TextStyle get spinHeadlineSmall => GoogleFonts.roboto(
+    color: AppColors.spinToWinSecondaryColor,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  TextStyle get spinBodyTitleMdeium => GoogleFonts.roboto(
+    color: AppColors.spinToWinSecondaryColor,
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get spinBodyTitleSmall => GoogleFonts.roboto(
+    color: AppColors.spinToWinSecondaryColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+  TextStyle get spinBodyTitleSmallSecondary => GoogleFonts.roboto(
+    color: AppColors.crashThirtySecondColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get spinBodyMediumPrimary => GoogleFonts.inter(
+    color: AppColors.spinToWinSecondaryColor,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get spinBodyMediumSecondary => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+  );
+
+  TextStyle get spinBodyMediumThird => GoogleFonts.roboto(
+    color: AppColors.spinToWinThirTeenthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get spinBodyMediumFourth => GoogleFonts.roboto(
+    color: AppColors.spinToWinSixteenthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get spinBodyMediumFifth => GoogleFonts.roboto(
+    color: AppColors.spinToWinTwelfthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get spinbodySmallPrimary => GoogleFonts.roboto(
+    color: AppColors.spinToWinSecondaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get spinbodySmallSecondary => GoogleFonts.roboto(
+    color: AppColors.spinToWinSixteenthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w500,
   );
 
   /*
