@@ -67,6 +67,41 @@ class _SpinHistoryState extends ConsumerState<SpinHistory> {
       'win/loss': '₹100',
       'net': '+150',
     },
+    {
+      'time': '14:33',
+      'result': '42556',
+      'bet': '₹50',
+      'win/loss': '₹100',
+      'net': '+150',
+    },
+    {
+      'time': '12:24',
+      'result': '425578',
+      'bet': '₹60',
+      'win/loss': '₹150',
+      'net': '+150',
+    },
+    {
+      'time': '11:33',
+      'result': '42556',
+      'bet': '₹50',
+      'win/loss': '₹100',
+      'net': '+150',
+    },
+    {
+      'time': '14:33',
+      'result': '42556',
+      'bet': '₹50',
+      'win/loss': '₹100',
+      'net': '+150',
+    },
+    {
+      'time': '14:33',
+      'result': '42556',
+      'bet': '₹50',
+      'win/loss': '₹100',
+      'net': '+150',
+    },
   ];
 
   @override

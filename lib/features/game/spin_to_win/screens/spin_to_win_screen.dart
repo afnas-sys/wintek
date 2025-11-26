@@ -24,13 +24,14 @@ class _SpinToWinScreenState extends State<SpinToWinScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            spacing: 16,
+            spacing: 10,
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
                 child: WalletContainer(),
               ),
               Container(
+                height: 294,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   image: const DecorationImage(
@@ -38,7 +39,7 @@ class _SpinToWinScreenState extends State<SpinToWinScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                child: SpinToWinGame(key: _slotKey),
+                child: Center(child: SpinToWinGame(key: _slotKey)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),

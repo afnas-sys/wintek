@@ -405,7 +405,12 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w500,
   );
   TextStyle get spinBodyTitleSmallSecondary => GoogleFonts.roboto(
-    color: AppColors.crashThirtySecondColor,
+    color: AppColors.spinToWinSeventhColor,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
+  TextStyle get spinBodyTitleSmallTertiary => GoogleFonts.roboto(
+    color: AppColors.spinToWinTwelfthColor,
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
