@@ -84,7 +84,6 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                     Container(
                       height: 28,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [

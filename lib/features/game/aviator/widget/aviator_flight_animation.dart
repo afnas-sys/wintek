@@ -108,6 +108,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
   @override
   void dispose() {
+    _controller.dispose();
     _takeoffController.dispose();
     _waveController.dispose();
     _flyAwayController.dispose();

@@ -83,14 +83,18 @@ final aviatorCrashNotifierProvider =
 class AviatorBetsNotifier extends StateNotifier<AllBetsModel?> {
   final AviatorSocketService _service;
   late final StreamSubscription _sub;
+  bool _isDisposed = false;
 
   AviatorBetsNotifier(this._service) : super(null) {
     _sub = _service.betsStream.listen((bets) {
-      state = bets;
+      if (!_isDisposed) {
+        state = bets;
+      }
     });
   }
   @override
   void dispose() {
+    _isDisposed = true;
     _sub.cancel();
     super.dispose();
   }

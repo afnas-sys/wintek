@@ -201,9 +201,26 @@ class AppColors {
   static const Color crashThirtySecondColor = Color(0xFF00A9FF);
   static const Color crashThirtyThreeColor = Color(0xFF09B600);
 
-  // static const LinearGradient crashTwentySeventhColor = LinearGradient(
-  //   colors: [Color(0xFF28A809), Color(0xFF133206)],
-  // );
+  //!_____________________________________SpinToWin_______________________________________
+  static const Color spinToWinPrimaryColor = Color(0Xff160A31);
+  static const Color spinToWinSecondaryColor = Color(0Xffffffff);
+  static Color spinToWinTertiaryColor = Color(0Xffffffff).withOpacity(0.1);
+  static const Color spinToWinFourthColor = Color(0XffAA99FD);
+  static Color spinToWinFifthColor = Color(0XFFAA99FD).withOpacity(0.1);
+  static Color spinSixthColor = Color(0xFFAA99FD).withOpacity(0.2);
+  static const Color spinToWinSeventhColor = Color(0xFF00A9FF);
+  // static const Color spinToWinEighthColor = Color(0xFF28A809);
+  static Color spinToWinNinthColor = Color(0xFFFFFFFF).withOpacity(20 / 100);
+  static const Color spinToWinTenthColor = Colors.transparent;
+  static const Color spinToWinEleventhColor = Color(0xFF000026);
+  static Color spinToWinTwelfthColor = Color(0xFFFFFFFF).withOpacity(50 / 100);
+  static const Color spinToWinThirteenthColor = Color(0XFFb3021b);
+  static const Color spinToWinFourteenthColor = Color(0XFFd8011f);
+  static const Color spinToWinFifteenthColor = Color(0xFF09B600);
+  static const Color spinToWinSixteenthColor = Color(0xFF000000);
+  static Color spinToWinThirTeenthColor = Color(
+    0xFF222222,
+  ).withOpacity(50 / 100);
 
   //! -----------------------------------------------------------------------------------------------------------------------------
 

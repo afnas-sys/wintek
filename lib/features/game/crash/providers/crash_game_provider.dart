@@ -70,7 +70,7 @@ class CrashGameNotifier extends StateNotifier<CrashGameState> {
 
   void _startGame() {
     // Generate random crash multiplier between 1.1 and 10.0
-    final crashMultiplier = 1.1 + Random().nextDouble() * 8.9;
+    final crashMultiplier = 1.1 + Random().nextDouble() * 15.9;
 
     state = state.copyWith(
       state: GameState.running,
