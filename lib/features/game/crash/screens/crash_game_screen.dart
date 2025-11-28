@@ -4,8 +4,8 @@ import 'package:wintek/features/game/crash/widgets/crash_all_bets.dart';
 import 'package:wintek/features/game/crash/widgets/crash_animation.dart';
 import 'package:wintek/features/game/crash/widgets/crash_bet_container.dart';
 import 'package:wintek/features/game/crash/widgets/crash_my_bets.dart';
-import 'package:wintek/features/game/crash/widgets/crash_buttons.dart'
-    show CrashButtons;
+import 'package:wintek/features/game/crash/widgets/crash_recent_rounds.dart'
+    show CrashRecentRoundsWidget;
 import 'package:wintek/features/game/widgets/custom_tab_bar.dart';
 import 'package:wintek/features/game/widgets/wallet_container.dart';
 
@@ -72,7 +72,7 @@ class _CrashGameScreenState extends State<CrashGameScreen>
                     children: [
                       const WalletContainer(),
                       const SizedBox(height: 16),
-                      const CrashButtons(),
+                      const CrashRecentRoundsWidget(),
                       const SizedBox(height: 16),
                       SizedBox(height: 420, child: const CrashAnimation()),
                       const SizedBox(height: 16),

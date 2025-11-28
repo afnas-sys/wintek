@@ -32,13 +32,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
 
   final List<Offset> _pathPoints = [];
 
-  double _waveProgress = 0.0;
-  double _forwardProgress = 0.0;
-  final double _waveAmplitude = 15.0;
-  final double _waveFrequency = 0.05;
-
-  late Offset _waveDirection;
-
   final double _planeWidth = 70;
 
   double _innerWidth = 0.0;
@@ -52,7 +45,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   // 👈 PREPARE state countdown variables
   int _prepareSecondsLeft = 0;
   int _initialPrepareSeconds = 0;
-  double _prepareProgress = 1.0;
   Timer? _prepareTimer;
 
   final Map<String, List<Color>> _labelColors = {
@@ -83,19 +75,9 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       duration: const Duration(milliseconds: 50),
     );
 
-    double lastWaveTick = 0.0;
     _waveController.addListener(() {
       if (_isWaving) {
-        final now =
-            _waveController.lastElapsedDuration?.inMilliseconds.toDouble() ??
-            0.0;
-        final delta = now - lastWaveTick;
-        lastWaveTick = now;
-
-        const speed = 0.02;
-        setState(() {
-          _waveProgress += delta * speed;
-        });
+        setState(() {});
       }
     });
 
@@ -156,7 +138,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     });
 
     ref.listen(crashTickProvider, (previous, next) {
-      if (next != null && !_isAnimating) {
+      if (!_isAnimating) {
         final multiplier = next.maybeWhen(
           data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
           orElse: () => 0.0,
@@ -174,7 +156,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       if (_initialPrepareSeconds != secondsRemaining && secondsRemaining > 0) {
         _initialPrepareSeconds = secondsRemaining;
         _prepareSecondsLeft = secondsRemaining;
-        _prepareProgress = 1.0;
         if (_prepareTimer == null) _startPrepareCountdown();
       }
 
@@ -195,7 +176,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _prepareTimer = null;
       _prepareSecondsLeft = 0;
       _initialPrepareSeconds = 0;
-      _prepareProgress = 1.0;
     }
 
     // Current multiplier from tick stream
@@ -620,8 +600,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _isAnimating = true;
       _hasReachedWave = false;
       _isWaving = false;
-      _waveProgress = 0.0;
-      _forwardProgress = 0.0;
       _pathPoints.clear();
       _currentLabel = '';
       _previousLabel = '';
@@ -672,12 +650,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
         _prepareTimer = null;
         setState(() {
           _prepareSecondsLeft = 0;
-          _prepareProgress = 0.0;
         });
       } else {
         setState(() {
           _prepareSecondsLeft--;
-          _prepareProgress = _prepareSecondsLeft / _initialPrepareSeconds;
         });
       }
     });
@@ -688,8 +664,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _isWaving = false;
       _isAnimating = false;
       _hasReachedWave = false;
-      _waveProgress = 0.0;
-      _forwardProgress = 0.0;
       _pathPoints.clear();
       _crashPosition = null;
       _currentLabel = '';
