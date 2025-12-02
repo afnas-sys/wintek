@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_round_model.dart';
 import 'package:wintek/features/game/crash/service/crash_socket_service.dart';
 
 final crashRoundProvider = Provider.autoDispose<CrashSocketService>((ref) {
@@ -12,13 +12,13 @@ final crashRoundProvider = Provider.autoDispose<CrashSocketService>((ref) {
   return service;
 });
 // //! Round State Provider
-final crashStateProvider = StreamProvider.autoDispose<RoundState>((ref) {
+final crashStateProvider = StreamProvider.autoDispose<CrashRoundState>((ref) {
   final service = ref.watch(crashRoundProvider);
   return service.stateStream;
 });
 
 //! Round Tick Provider
-final crashTickProvider = StreamProvider.autoDispose<Tick>((ref) {
+final crashTickProvider = StreamProvider.autoDispose<CrashTick>((ref) {
   final service = ref.watch(crashRoundProvider);
   return service.tickStream;
 });
@@ -31,7 +31,7 @@ final crashTickProvider = StreamProvider.autoDispose<Tick>((ref) {
 
 //! --- State Notifier ---
 
-class CrashRoundNotifier extends StateNotifier<RoundState?> {
+class CrashRoundNotifier extends StateNotifier<CrashRoundState?> {
   final CrashSocketService _service;
   late final StreamSubscription _sub;
 
@@ -50,13 +50,15 @@ class CrashRoundNotifier extends StateNotifier<RoundState?> {
 }
 
 final crashRoundNotifierProvider =
-    StateNotifierProvider.autoDispose<CrashRoundNotifier, RoundState?>((ref) {
+    StateNotifierProvider.autoDispose<CrashRoundNotifier, CrashRoundState?>((
+      ref,
+    ) {
       final service = ref.watch(crashRoundProvider);
       return CrashRoundNotifier(service);
     });
 
 //! --- Crash Notifier ---
-class CrashCrashNotifier extends StateNotifier<Crash?> {
+class CrashCrashNotifier extends StateNotifier<CrashRoundCrash?> {
   final CrashSocketService _service;
   late final StreamSubscription _sub;
 
@@ -74,7 +76,9 @@ class CrashCrashNotifier extends StateNotifier<Crash?> {
 }
 
 final crashCrashNotifierProvider =
-    StateNotifierProvider.autoDispose<CrashCrashNotifier, Crash?>((ref) {
+    StateNotifierProvider.autoDispose<CrashCrashNotifier, CrashRoundCrash?>((
+      ref,
+    ) {
       final service = ref.watch(crashRoundProvider);
       return CrashCrashNotifier(service);
     });

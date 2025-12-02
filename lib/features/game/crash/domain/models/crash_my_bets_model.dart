@@ -1,15 +1,65 @@
 class CrashMyBetsModel {
   // final bool success;
   final List<MyBetsData> data;
+  final int total;
+  final int currentPage;
+  final int totalPages;
+  final int limit;
 
-  CrashMyBetsModel({required this.data});
+  CrashMyBetsModel({
+    required this.data,
+    required this.total,
+    required this.currentPage,
+    required this.totalPages,
+    required this.limit,
+  });
 
   factory CrashMyBetsModel.fromJson(Map<String, dynamic> json) {
+    final dataList = (json['data'] as List)
+        .map((item) => MyBetsData.fromJson(item))
+        .toList();
+
+    // Helper to parse int safely
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    // If API doesn't provide pagination metadata, use fallback values
+    final limit = parseInt(json['limit']) > 0 ? parseInt(json['limit']) : 50;
+    final currentPage = parseInt(json['currentPage'] ?? json['page']) > 0
+        ? parseInt(json['currentPage'] ?? json['page'])
+        : 1;
+
+    int total = parseInt(json['total'] ?? json['totalCount']);
+
+    // If total is 0 but we have data, use data length at minimum
+    if (total == 0 && dataList.isNotEmpty) {
+      total = dataList.length;
+    }
+
+    // Calculate total pages
+    int totalPages = parseInt(json['totalPages']);
+    if (totalPages == 0) {
+      // If we have a full page, assume there's at least one more page
+      if (dataList.length >= limit) {
+        totalPages = currentPage + 1;
+      } else {
+        totalPages = (total / limit).ceil();
+      }
+    }
+
+    if (totalPages < currentPage) totalPages = currentPage;
+    if (totalPages < 1) totalPages = 1;
+
     return CrashMyBetsModel(
       //success: json['success'],
-      data: (json['data'] as List)
-          .map((item) => MyBetsData.fromJson(item))
-          .toList(),
+      data: dataList,
+      total: total,
+      currentPage: currentPage,
+      totalPages: totalPages,
+      limit: limit,
     );
   }
 
@@ -17,6 +67,10 @@ class CrashMyBetsModel {
     return {
       //'success': success,
       'data': data.map((item) => item.toJson()).toList(),
+      'total': total,
+      'currentPage': currentPage,
+      'totalPages': totalPages,
+      'limit': limit,
     };
   }
 }

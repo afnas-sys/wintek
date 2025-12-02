@@ -3,21 +3,21 @@ import 'dart:developer';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:wintek/core/constants/socket_constants/socket_constants.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/crash/domain/constants/crash_socket_constants.dart';
 import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_round_model.dart';
 
 class CrashSocketService {
-  final _stateController = StreamController<RoundState>.broadcast();
-  final _tickController = StreamController<Tick>.broadcast();
-  final _crashController = StreamController<Crash>.broadcast();
+  final _stateController = StreamController<CrashRoundState>.broadcast();
+  final _tickController = StreamController<CrashTick>.broadcast();
+  final _crashController = StreamController<CrashRoundCrash>.broadcast();
   final _betsController = StreamController<CrashAllBetsModel>.broadcast();
   final _betResultController = StreamController<CrashAllBetsModel>.broadcast();
   final secureStorageService = SecureStorageService();
 
-  Stream<RoundState> get stateStream => _stateController.stream;
-  Stream<Tick> get tickStream => _tickController.stream;
-  Stream<Crash> get crashStream => _crashController.stream;
+  Stream<CrashRoundState> get stateStream => _stateController.stream;
+  Stream<CrashTick> get tickStream => _tickController.stream;
+  Stream<CrashRoundCrash> get crashStream => _crashController.stream;
   Stream<CrashAllBetsModel> get betsStream => _betsController.stream;
   Stream<CrashAllBetsModel> get betResultStream => _betResultController.stream;
   IO.Socket? socket;
@@ -45,7 +45,7 @@ class CrashSocketService {
     socket!.on(CrashSocketConstants.roundState, (data) {
       // log('Round State: $data');
       try {
-        final state = RoundState.fromJson(data);
+        final state = CrashRoundState.fromJson(data);
         _stateController.add(state);
         //    log('😎😎😎 Round State Success: ${state.toJson()}');
       } catch (e) {
@@ -57,7 +57,7 @@ class CrashSocketService {
     socket!.on(CrashSocketConstants.roundTick, (data) {
       //log('Round Tick: $data');
       try {
-        final tick = Tick.fromJson(data);
+        final tick = CrashTick.fromJson(data);
         _tickController.add(tick);
         //   log('😎😎😎 Round Tick Success: ${tick.toJson()}');
       } catch (e) {
@@ -69,7 +69,7 @@ class CrashSocketService {
     socket!.on(CrashSocketConstants.roundCrashAt, (data) {
       // log('Round Crash: $data');
       try {
-        final crash = Crash.fromJson(data);
+        final crash = CrashRoundCrash.fromJson(data);
         _crashController.add(crash);
         // log('😎😎😎 Round Crash Success: ${crash.toJson()}');
       } catch (e) {

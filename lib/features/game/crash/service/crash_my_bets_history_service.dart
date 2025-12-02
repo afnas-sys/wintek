@@ -21,7 +21,21 @@ class CrashMyBetsHistoryService {
 
       log('✅ Crash User API success: ${response.data}');
 
-      return CrashMyBetsModel.fromJson(response.data);
+      // Check for total count in headers
+      final totalFromHeader =
+          response.headers.value('x-total-count') ??
+          response.headers.value('total-count') ??
+          response.headers.value('X-Total-Count');
+
+      final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+        response.data,
+      );
+
+      if (totalFromHeader != null) {
+        responseData['total'] = int.tryParse(totalFromHeader);
+      }
+
+      return CrashMyBetsModel.fromJson(responseData);
     } on DioException catch (e) {
       log('❌ DioException: ${e.message}');
       log('👉 Request path: ${e.requestOptions.path}');
