@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
-import 'package:wintek/features/game/crash/providers/crash_game_provider.dart';
+import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
 
 class CrashAnimation extends ConsumerStatefulWidget {
   const CrashAnimation({super.key});
@@ -31,11 +32,6 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
 
   final List<Offset> _pathPoints = [];
 
-  double _waveProgress = 0.0;
-  double _forwardProgress = 0.0;
-  final double _waveAmplitude = 15.0;
-  final double _waveFrequency = 0.05;
-
   final double _planeWidth = 70;
 
   double _innerWidth = 0.0;
@@ -44,6 +40,12 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
 
   String _currentLabel = '';
   String _previousLabel = '';
+  bool _isFirstRunning = false;
+
+  // 👈 PREPARE state countdown variables
+  int _prepareSecondsLeft = 0;
+  int _initialPrepareSeconds = 0;
+  Timer? _prepareTimer;
 
   final Map<String, List<Color>> _labelColors = {
     'NOT BAD': [Color(0XFF11FED7), Color(0XFFF7FEFD)],
@@ -61,7 +63,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
 
     _takeoffController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 16),
+      duration: const Duration(seconds: 4),
     );
     _takeoffAnimation = CurvedAnimation(
       parent: _takeoffController,
@@ -73,19 +75,9 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       duration: const Duration(milliseconds: 50),
     );
 
-    double lastWaveTick = 0.0;
     _waveController.addListener(() {
       if (_isWaving) {
-        final now =
-            _waveController.lastElapsedDuration?.inMilliseconds.toDouble() ??
-            0.0;
-        final delta = now - lastWaveTick;
-        lastWaveTick = now;
-
-        const speed = 0.02;
-        setState(() {
-          _waveProgress += delta * speed;
-        });
+        setState(() {});
       }
     });
 
@@ -114,25 +106,30 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     _waveController.dispose();
     _flyAwayController.dispose();
     _textController.dispose();
+    _prepareTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final gameState = ref.watch(crashGameProvider);
+    final round = ref.watch(crashRoundNotifierProvider);
+    final tick = ref.watch(crashTickProvider);
 
-    ref.listen(crashGameProvider, (previous, next) {
-      if (previous?.state != next.state) {
+    // Determine if we already have any tick data
+    final hasTickData = tick.maybeWhen(data: (_) => true, orElse: () => false);
+
+    ref.listen(crashRoundNotifierProvider, (previous, next) {
+      if (previous?.state != next?.state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
-          switch (next.state) {
-            case GameState.running:
-              _startRunningAnimation();
+          switch (next?.state) {
+            case 'RUNNING':
+              // Animation will be triggered by tick event
               break;
-            case GameState.crashed:
+            case 'CRASHED':
               _startCrashAnimation();
               break;
-            case GameState.prepare:
+            case 'PREPARE':
               _resetAnimation();
               break;
           }
@@ -140,10 +137,68 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       }
     });
 
+    ref.listen(crashTickProvider, (previous, next) {
+      if (!_isAnimating) {
+        final multiplier = next.maybeWhen(
+          data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
+          orElse: () => 0.0,
+        );
+        if (multiplier > 0) {
+          _startRunningAnimation();
+        }
+      }
+    });
+
+    // PREPARE countdown logic
+    if (round?.state == 'PREPARE') {
+      final msRemaining = int.tryParse(round?.msRemaining ?? '0') ?? 0;
+      final secondsRemaining = (msRemaining / 1000).ceil();
+      if (_initialPrepareSeconds != secondsRemaining && secondsRemaining > 0) {
+        _initialPrepareSeconds = secondsRemaining;
+        _prepareSecondsLeft = secondsRemaining;
+        if (_prepareTimer == null) _startPrepareCountdown();
+      }
+
+      // When we enter PREPARE after a CRASHED round,
+      // ensure all animation state is reset exactly once here,
+      // instead of from the fly-away controller callback. This
+      // avoids wiping the new round's path if a new takeoff starts
+      // before the previous fly-away animation completes.
+      if (_isAnimating ||
+          _hasReachedWave ||
+          _takeoffController.isAnimating ||
+          _flyAwayController.isAnimating ||
+          _waveController.isAnimating) {
+        _resetAnimation();
+      }
+    } else {
+      _prepareTimer?.cancel();
+      _prepareTimer = null;
+      _prepareSecondsLeft = 0;
+      _initialPrepareSeconds = 0;
+    }
+
+    // Current multiplier from tick stream
+    final currentValue = tick.when(
+      data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
+      error: (_, _) => 0.0,
+      loading: () => 0.0,
+    );
+
+    // Animation triggers
+    if (currentValue > 0 && !_isAnimating) {
+      _startRunningAnimation();
+    }
+
+    // Trigger crash when the round crashes.
+    if (round?.state == 'CRASHED') {
+      _startCrashAnimation();
+    }
+
     // Calculate multiplier label
     String newLabel = '';
-    if (gameState.state == GameState.running) {
-      double m = gameState.currentMultiplier;
+    if (round?.state == 'RUNNING') {
+      double m = currentValue;
       if (m > 30) {
         newLabel = 'LEGENDARY';
       } else {
@@ -160,14 +215,17 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
             newLabel = 'NOT BAD';
         }
       }
-    } else if (gameState.state == GameState.crashed) {
+    } else if (round?.state == 'CRASHED') {
       newLabel = 'CRASH';
     }
 
     if (newLabel != _previousLabel) {
       _previousLabel = newLabel;
-      _currentLabel = newLabel;
-      _textController.forward(from: 0);
+      if (!_isFirstRunning) {
+        _currentLabel = newLabel;
+        _textController.forward(from: 0);
+      }
+      _isFirstRunning = false;
     }
 
     return LayoutBuilder(
@@ -179,7 +237,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
           height: height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: gameState.state == GameState.prepare
+            // color: Colors.red,
+            color: round?.state == 'PREPARE'
                 ? AppColors.crashTwentyFirstColor
                 : null,
           ),
@@ -213,12 +272,13 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               /// BACKGROUND PATH DRAW
                               /// -------------------------
-                              if (gameState.state == GameState.running &&
+                              if ((round?.state == 'RUNNING' ||
+                                      (round == null && hasTickData)) &&
                                   _pathPoints.isNotEmpty)
                                 CustomPaint(
                                   painter: CrashPathPainter(
                                     _pathPoints,
-                                    gameState.currentMultiplier,
+                                    currentValue,
                                   ),
                                   size: Size(innerWidth, innerHeight),
                                 ),
@@ -226,7 +286,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               /// ROCKET ANIMATION
                               /// -------------------------
-                              if (gameState.state == GameState.running)
+                              if (round?.state == 'RUNNING' ||
+                                  (round == null && hasTickData))
                                 AnimatedBuilder(
                                   animation: Listenable.merge([
                                     _takeoffController,
@@ -271,8 +332,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         innerHeight * 0.1,
                                       );
                                       final end = Offset(
-                                        innerWidth * 0.65,
-                                        innerHeight * 0.5,
+                                        innerWidth * 0.7,
+                                        innerHeight * 0.7,
                                       );
 
                                       x =
@@ -284,52 +345,23 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                           (1 - t) * (1 - t) * start.dy +
                                           2 * (1 - t) * t * control.dy +
                                           t * t * end.dy;
-
-                                      if (!_hasReachedWave && t >= 1) {
-                                        _hasReachedWave = true;
-                                        _isWaving = true;
-                                        _takeoffController.stop();
-                                        _waveController.repeat();
-                                      }
                                     }
 
-                                    double waveOffset = 0.0;
-                                    double forwardOffset = 0.0;
-                                    if (_isWaving &&
-                                        !_flyAwayController.isAnimating) {
-                                      waveOffset =
-                                          sin(_waveProgress * _waveFrequency) *
-                                          _waveAmplitude;
-
-                                      forwardOffset = _forwardProgress * 20;
-
-                                      final waveTangent =
-                                          cos(_waveProgress * _waveFrequency) *
-                                          _waveAmplitude *
-                                          _waveFrequency;
-
-                                      planeAngle = -atan(waveTangent / 5);
-                                    }
-
-                                    final bottomPos = (y + waveOffset)
+                                    final bottomPos = y
                                         .clamp(0, innerHeight - 60)
                                         .toDouble();
 
                                     final currentPoint = Offset(
-                                      (x + forwardOffset).clamp(
-                                        0,
-                                        innerWidth - 80,
-                                      ),
+                                      x.clamp(0, innerWidth - 80),
                                       innerHeight - bottomPos,
                                     );
 
                                     if (_isAnimating &&
-                                        !_flyAwayController.isAnimating &&
-                                        !_isWaving) {
+                                        !_flyAwayController.isAnimating) {
                                       if (_pathPoints.isEmpty ||
                                           (_pathPoints.last - currentPoint)
                                                   .distance >
-                                              1) {
+                                              0.5) {
                                         _pathPoints.add(currentPoint);
                                       }
                                     }
@@ -352,7 +384,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               /// MULTIPLIER TEXT
                               /// -------------------------
-                              if (gameState.state == GameState.running)
+                              if (round?.state == 'RUNNING' ||
+                                  (round == null && hasTickData))
                                 Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -383,8 +416,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         ),
                                       RichText(
                                         text: TextSpan(
-                                          text: gameState.currentMultiplier
-                                              .toStringAsFixed(2),
+                                          text: currentValue.toStringAsFixed(2),
                                           style: const TextStyle(
                                             color: AppColors.crashPrimaryColor,
                                             fontSize: 48,
@@ -434,7 +466,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               /// CRASH STATE
                               /// -------------------------
-                              if (gameState.state == GameState.crashed)
+                              if (round?.state == 'CRASHED')
                                 Center(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
@@ -464,7 +496,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                           ),
                                         ),
                                       Text(
-                                        "${gameState.crashMultiplier.toStringAsFixed(2)}x",
+                                        "${double.tryParse(round?.crashAt ?? '0')?.toStringAsFixed(2) ?? '0.00'}x",
                                         style: Theme.of(context)
                                             .textTheme
                                             .crashHeadlineSmall
@@ -473,7 +505,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     ],
                                   ),
                                 ),
-                              if (gameState.state == GameState.crashed &&
+                              if (round?.state == 'CRASHED' &&
                                   _crashPosition != null)
                                 Positioned(
                                   left: _crashPosition!.dx - 40,
@@ -489,7 +521,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               /// PREPARE COUNTDOWN
                               /// -------------------------
-                              if (gameState.state == GameState.prepare)
+                              if (round?.state == 'PREPARE')
                                 Center(
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -498,8 +530,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         width: 80,
                                         height: 80,
                                         child: CircularProgressIndicator(
-                                          value:
-                                              gameState.prepareSecondsLeft / 10,
+                                          value: _prepareSecondsLeft / 10.0,
                                           strokeWidth: 8,
                                           backgroundColor:
                                               AppColors.crashThirdColor,
@@ -510,7 +541,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         ),
                                       ),
                                       Text(
-                                        "${gameState.prepareSecondsLeft}",
+                                        "$_prepareSecondsLeft",
                                         style: Theme.of(
                                           context,
                                         ).textTheme.crashHeadlineSmall,
@@ -522,7 +553,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               /// PREPARE ROCKET (STATIC)
                               /// -------------------------
-                              if (gameState.state == GameState.prepare)
+                              if (round?.state == 'PREPARE')
                                 Positioned(
                                   left: 0,
                                   bottom: 0,
@@ -541,9 +572,9 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                 bottom: 0,
                                 width: 22,
                                 child: SideDotsAnimation(
-                                  isCrashed:
-                                      gameState.state == GameState.crashed,
-                                  multiplier: gameState.currentMultiplier,
+                                  isCrashed: round?.state == 'CRASHED',
+                                  isRunning: round?.state == 'RUNNING',
+                                  multiplier: currentValue,
                                   // multiplier: gameState.currentMultiplier,
                                   // isRunning:
                                   //     gameState.state == GameState.running,
@@ -569,9 +600,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _isAnimating = true;
       _hasReachedWave = false;
       _isWaving = false;
-      _waveProgress = 0.0;
-      _forwardProgress = 0.0;
       _pathPoints.clear();
+      _currentLabel = '';
+      _previousLabel = '';
+      _isFirstRunning = true;
     });
 
     _takeoffController.forward(from: 0);
@@ -588,7 +620,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     final t = _takeoffAnimation.value;
     final start = const Offset(0, 0);
     final control = Offset(_innerWidth * 0.45, _innerHeight * 0.1);
-    final end = Offset(_innerWidth * 0.65, _innerHeight * 0.5);
+    final end = Offset(_innerWidth * 0.7, _innerHeight * 0.7);
 
     double x =
         (1 - t) * (1 - t) * start.dx +
@@ -599,20 +631,32 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
         2 * (1 - t) * t * control.dy +
         t * t * end.dy;
 
-    double waveOffset = 0.0;
-    double forwardOffset = 0.0;
-    if (_isWaving) {
-      waveOffset = sin(_waveProgress * _waveFrequency) * _waveAmplitude;
-      forwardOffset = _forwardProgress * 20;
-    }
-
-    double bottomPos = (y + waveOffset).clamp(0, _innerHeight - 60);
+    double bottomPos = y.clamp(0, _innerHeight - 60);
     _crashPosition = Offset(
-      (x + forwardOffset).clamp(0, _innerWidth - 80),
+      x.clamp(0, _innerWidth - 80),
       _innerHeight - bottomPos,
     );
 
     _flyAwayController.forward(from: 0);
+  }
+
+  // PREPARE countdown
+  void _startPrepareCountdown() {
+    _prepareTimer?.cancel();
+
+    _prepareTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_prepareSecondsLeft <= 1) {
+        timer.cancel();
+        _prepareTimer = null;
+        setState(() {
+          _prepareSecondsLeft = 0;
+        });
+      } else {
+        setState(() {
+          _prepareSecondsLeft--;
+        });
+      }
+    });
   }
 
   void _resetAnimation() {
@@ -620,12 +664,11 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _isWaving = false;
       _isAnimating = false;
       _hasReachedWave = false;
-      _waveProgress = 0.0;
-      _forwardProgress = 0.0;
       _pathPoints.clear();
       _crashPosition = null;
       _currentLabel = '';
       _previousLabel = '';
+      _isFirstRunning = false;
     });
 
     _takeoffController.reset();
@@ -689,11 +732,13 @@ class CrashPathPainter extends CustomPainter {
 class SideDotsAnimation extends StatefulWidget {
   final double multiplier;
   final bool isCrashed;
+  final bool isRunning;
 
   const SideDotsAnimation({
     super.key,
     required this.multiplier,
     required this.isCrashed,
+    required this.isRunning,
   });
 
   @override
@@ -720,8 +765,8 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
   void didUpdateWidget(covariant SideDotsAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Hide everything when crashed
-    if (widget.isCrashed) {
+    // Stop animation when not running or crashed
+    if (!widget.isRunning || widget.isCrashed) {
       _controller.stop();
       return;
     }

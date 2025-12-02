@@ -3,18 +3,36 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
-import 'package:wintek/features/game/aviator/providers/recent_rounds_provider.dart';
-import 'package:wintek/features/game/aviator/domain/models/rounds.dart';
+import 'package:wintek/features/game/crash/providers/recent_rounds_provider.dart';
+import 'package:wintek/features/game/crash/service/crash_recent_rounds_service.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_recent_round_model.dart';
 
-class AviatorButtons extends ConsumerStatefulWidget {
-  const AviatorButtons({super.key});
+class CrashRecentRoundsWidget extends ConsumerStatefulWidget {
+  const CrashRecentRoundsWidget({super.key});
 
   @override
-  ConsumerState<AviatorButtons> createState() => _AviatorButtonsState();
+  ConsumerState<CrashRecentRoundsWidget> createState() =>
+      _CrashRecentRoundsWidgetState();
 }
 
-class _AviatorButtonsState extends ConsumerState<AviatorButtons> {
+class _CrashRecentRoundsWidgetState
+    extends ConsumerState<CrashRecentRoundsWidget> {
   bool showBalance = false;
+  late final CrashRecentRoundsService recentRoundsService;
+
+  @override
+  void initState() {
+    super.initState();
+    recentRoundsService = ref.read(crashRecentRoundsServiceProvider);
+    recentRoundsService.startListening();
+  }
+
+  @override
+  void dispose() {
+    recentRoundsService.stopListening();
+    super.dispose();
+  }
+
   // colors
   Color _getColor(String text) {
     final value = double.tryParse(text.replaceAll("x", "")) ?? 0;
@@ -48,8 +66,8 @@ class _AviatorButtonsState extends ConsumerState<AviatorButtons> {
 
   @override
   Widget build(BuildContext context) {
-    final recentRoundsService = ref.watch(recentRoundsServiceProvider);
-    return StreamBuilder<List<Rounds>>(
+    final recentRoundsService = ref.watch(crashRecentRoundsServiceProvider);
+    return StreamBuilder<List<CrashRecentRounds>>(
       stream: recentRoundsService.roundsStream,
       builder: (context, snapshot) {
         List<String> multipliers = [];
@@ -59,10 +77,9 @@ class _AviatorButtonsState extends ConsumerState<AviatorButtons> {
               .toList();
           multipliers = crashedRounds
               .take(16)
-              .map((round) => "${round.crashAt}x")
+              .map((round) => "${round.crashAt!}x")
               .toList();
         }
-        // If no data, use empty or default, but for now empty
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -72,7 +89,7 @@ class _AviatorButtonsState extends ConsumerState<AviatorButtons> {
               children: [
                 for (int i = 0; i < 4 && i < multipliers.length; i++)
                   Expanded(child: _chip(multipliers[i], context)),
-                // Button for showing Balance history of the multplier
+                // Button for showing Balance history of the multiplier
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => setState(() => showBalance = !showBalance),

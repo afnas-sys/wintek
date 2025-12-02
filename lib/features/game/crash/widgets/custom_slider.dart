@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/features/game/crash/providers/crash_auto_cashout_provider.dart';
 
-class CustomSlider extends StatefulWidget {
-  const CustomSlider({super.key});
+class CustomSlider extends ConsumerStatefulWidget {
+  final int index;
+  const CustomSlider({super.key, this.index = 0});
 
   @override
-  State<CustomSlider> createState() => _CustomSliderState();
+  ConsumerState<CustomSlider> createState() => _CustomSliderState();
 }
 
-class _CustomSliderState extends State<CustomSlider> {
+class _CustomSliderState extends ConsumerState<CustomSlider> {
   final List<double> _steps = [
     for (double i = 1.0; i <= 1.9; i += 0.1) double.parse(i.toStringAsFixed(1)),
     2.5,
@@ -23,6 +26,18 @@ class _CustomSliderState extends State<CustomSlider> {
   double _sliderPosition = 0;
 
   double get _displayValue => _steps[_sliderPosition.round()];
+
+  @override
+  void initState() {
+    super.initState();
+    final currentValue = ref.read(crashAutoCashoutProvider)[widget.index];
+    if (currentValue != null) {
+      final index = _steps.indexWhere((step) => step == currentValue);
+      if (index != -1) {
+        _sliderPosition = index.toDouble();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +99,12 @@ class _CustomSliderState extends State<CustomSlider> {
                         setState(() {
                           _sliderPosition = value;
                         });
+                        final autoCashoutValue = _sliderPosition == 0
+                            ? null
+                            : _displayValue;
+                        ref
+                            .read(crashAutoCashoutProvider.notifier)
+                            .setAutoCashout(widget.index, autoCashoutValue);
                       },
                     ),
                   ),

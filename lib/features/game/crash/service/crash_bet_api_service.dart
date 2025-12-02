@@ -2,29 +2,29 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/domain/constants/aviator_api_constants.dart';
-import 'package:wintek/features/game/aviator/domain/models/bet_request.dart';
-import 'package:wintek/features/game/aviator/domain/models/bet_response.dart';
+import 'package:wintek/features/game/crash/domain/constants/crash_api_constants.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_bet_request_model.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_bet_response_model.dart';
 
-class BetApiService {
+class CrashBetApiService {
   final Dio dio;
   final SecureStorageService storageService = SecureStorageService();
 
-  BetApiService(this.dio);
+  CrashBetApiService(this.dio);
 
-  Future<BetResponse?> placeBet(BetRequest request) async {
+  Future<CrashBetResponseModel?> placeBet(CrashBetRequestModel request) async {
     try {
       final credentials = await storageService.readCredentials();
       final token = credentials.token;
       final response = await dio.post(
-        AviatorApiConstants.bet,
+        CrashApiConstants.bet,
         data: request.toJson(),
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
-      log('✅ Bet API success: ${(response.data)}');
+      log('✅ Crash Bet API success: ${(response.data)}');
 
-      return BetResponse.fromJson(response.data['bet']);
+      return CrashBetResponseModel.fromJson(response.data['bet']);
     } on DioException catch (e) {
       log('❌ DioException: ${e.message}');
       log('👉 Request path: ${e.requestOptions.path}');

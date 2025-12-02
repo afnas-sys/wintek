@@ -25,7 +25,7 @@ class RecentRoundsService {
 
   Future<void> fetchRecentRounds() async {
     try {
-      final response = await dio.get('app/aviator/rounds/recent?limit=15');
+      final response = await dio.get('app/aviator/rounds/recent?limit=50');
       final data = response.data;
       List<dynamic> roundsData;
       if (data is List) {

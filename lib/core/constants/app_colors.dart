@@ -200,6 +200,12 @@ class AppColors {
   static Color crashThirtyFirstColor = Color(0xFF00A9FF).withOpacity(0.8);
   static const Color crashThirtySecondColor = Color(0xFF00A9FF);
   static const Color crashThirtyThreeColor = Color(0xFF09B600);
+  static const Color crashThirtyFourColor = Color(0XFFE30538);
+  static Color crashThirtyFivethColor = Color(0x22222222).withOpacity(50 / 100);
+  static Color crashThirtySixthColor = Color(0x22222222).withOpacity(20 / 100);
+  static Color crashThirtySeventhColor = Color(
+    0xFF28A809,
+  ).withOpacity(30 / 100);
 
   //!_____________________________________SpinToWin_______________________________________
   static const Color spinToWinPrimaryColor = Color(0Xff160A31);
