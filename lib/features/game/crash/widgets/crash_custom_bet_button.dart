@@ -1,27 +1,68 @@
-// ignore_for_file: file_names
-
 import 'dart:developer';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
-import 'package:wintek/features/game/aviator/providers/bet_reponse_provider.dart';
-import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_bet_request_model.dart';
+import 'package:wintek/features/game/crash/providers/crash_bet_provider.dart';
+import 'package:wintek/features/game/crash/providers/crash_auto_cashout_provider.dart';
+import 'package:wintek/features/game/crash/providers/crash_bet_response_provider.dart';
+import 'package:wintek/features/game/crash/providers/crash_cashout_provider.dart';
+import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
+import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
+import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 import 'package:wintek/features/game/crash/providers/crash_game_provider.dart';
+
+class AutoPlayState {
+  final AutoPlaySettings? settings;
+  final int roundsPlayed;
+  final double initialWallet;
+  final double lastWinAmount;
+
+  AutoPlayState({
+    this.settings,
+    this.roundsPlayed = 0,
+    this.initialWallet = 0.0,
+    this.lastWinAmount = 0.0,
+  });
+
+  AutoPlayState copyWith({
+    AutoPlaySettings? settings,
+    int? roundsPlayed,
+    double? initialWallet,
+    double? lastWinAmount,
+  }) {
+    return AutoPlayState(
+      settings: settings ?? this.settings,
+      roundsPlayed: roundsPlayed ?? this.roundsPlayed,
+      initialWallet: initialWallet ?? this.initialWallet,
+      lastWinAmount: lastWinAmount ?? this.lastWinAmount,
+    );
+  }
+}
 
 class CrashCustomBetButton extends ConsumerStatefulWidget {
   final int index;
   final TextEditingController amountController;
   final TextEditingController? switchController;
+  final AutoPlayState? autoPlayState;
+  final Function(int, double)? onAutoPlayUpdate;
+  final VoidCallback? onAutoPlayStop;
+  final bool Function(double, double)? shouldContinueAutoPlay;
 
   const CrashCustomBetButton({
     super.key,
     required this.index,
     required this.amountController,
     this.switchController,
+    this.autoPlayState,
+    this.onAutoPlayUpdate,
+    this.onAutoPlayStop,
+    this.shouldContinueAutoPlay,
   });
 
   @override
@@ -34,6 +75,14 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   bool hasAutoCashedOut = false;
   String? lastRoundId;
   double? lastMultiplier;
+  bool _isPlacingBet = false; // Flag to prevent duplicate bet placement
+  bool _betParticipatedInRound =
+      false; // Tracks if we had a bet in the last round
+
+  // Queued bet state when user taps during RUNNING
+  bool _hasQueuedBet = false;
+  String? _queuedAmountText;
+  double? _queuedAutoCashoutValue;
 
   final secureStorageService = SecureStorageService();
 
@@ -42,202 +91,321 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
     return creds.userId;
   }
 
-  void _handleRoundCrash() {
-    // Handle crash - no autoplay logic needed for now
+  void _evaluateAutoPlayAndMaybeBet(RoundState? round) {
+    if (widget.autoPlayState == null ||
+        widget.autoPlayState!.settings == null ||
+        widget.shouldContinueAutoPlay == null ||
+        round == null ||
+        round.state != 'PREPARE' ||
+        hasPlacedBet ||
+        _isPlacingBet) {
+      return;
+    }
+
+    final user = ref.read(userProvider);
+    user.maybeWhen(
+      data: (userModel) {
+        if (userModel == null) return;
+        final currentWallet = userModel.data.wallet;
+        final lastWinAmount = widget.autoPlayState!.lastWinAmount;
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          final shouldContinue = widget.shouldContinueAutoPlay!(
+            currentWallet,
+            lastWinAmount,
+          );
+
+          if (!shouldContinue) {
+            widget.onAutoPlayStop?.call();
+            return;
+          }
+
+          final latestRound = ref.read(crashRoundNotifierProvider);
+          if (latestRound?.state != 'PREPARE') return;
+          if (hasPlacedBet || _isPlacingBet) return;
+          _placeBet();
+        });
+      },
+      orElse: () {},
+    );
   }
 
-  void _handleAutoPlayContinuation() {
-    // No autoplay logic needed for now
+  Future<void> _placeBet({
+    String? amountOverride,
+    double? autoCashoutOverride,
+  }) async {
+    log(
+      "🎲 _placeBet called - amountOverride: $amountOverride, autoCashoutOverride: $autoCashoutOverride",
+    );
+    // Prevent duplicate bet placement
+    if (_isPlacingBet || hasPlacedBet) return;
+
+    _isPlacingBet = true;
+
+    try {
+      final round = ref.watch(crashRoundNotifierProvider);
+      final betService = ref.read(crashBetServiceProvider);
+      final userId = await getUserId();
+
+      if (userId == null ||
+          round == null ||
+          round.roundId == null ||
+          round.seq == null) {
+        return;
+      }
+
+      // Only place bet during PREPARE; queued bets will call this when the
+      // next round is in PREPARE state.
+      if (round.state != 'PREPARE') {
+        log('⚠️ Skipping bet placement, invalid round state: ${round.state}');
+        return;
+      }
+
+      // Determine stake / auto cashout source: queued override vs controllers
+      late final String amountText;
+      late final double? autoCashoutValue;
+
+      if (amountOverride != null || autoCashoutOverride != null) {
+        amountText = (amountOverride ?? '').trim();
+        autoCashoutValue = autoCashoutOverride;
+      } else {
+        final controllerAmountText = widget.amountController.text.trim();
+        amountText = controllerAmountText;
+        autoCashoutValue = ref.read(crashAutoCashoutProvider)[widget.index];
+        log(
+          "💰 Reading auto-cashout for bet index ${widget.index}: $autoCashoutValue",
+        );
+        log("💰 Full provider state: ${ref.read(crashAutoCashoutProvider)}");
+      }
+
+      if (amountText.isEmpty) {
+        log('⚠️ Bet amount is empty');
+        return;
+      }
+
+      final roundId = round.roundId;
+      final seq = round.seq;
+
+      final newBet = await betService.placeBet(
+        CrashBetRequestModel(
+          roundId: roundId!,
+          userId: userId,
+          seq: int.parse(seq.toString()),
+          stake: int.parse(amountText),
+          betIndex: widget.index,
+          autoCashout: autoCashoutValue,
+        ),
+      );
+
+      if (newBet != null) {
+        ref
+            .read(crashBetResponseProvider.notifier)
+            .setBetResponse(widget.index, newBet);
+        ref.read(crashBetStateProvider.notifier).placeBet(widget.index);
+
+        // Update wallet after placing bet
+        final currentUser = ref.read(userProvider);
+        currentUser.maybeWhen(
+          data: (userModel) {
+            if (userModel != null && newBet.stake != null) {
+              final newWallet = userModel.data.wallet - newBet.stake!;
+              ref.read(userProvider.notifier).updateWallet(newWallet);
+            }
+          },
+          orElse: () {},
+        );
+
+        setState(() {
+          hasPlacedBet = true;
+          _betParticipatedInRound = true;
+        });
+
+        log('✅ Bet placed successfully: ${newBet.stake}');
+      }
+    } on DioException catch (e) {
+      final errorMsg = e.response?.data?['message'] ?? 'Bet failed';
+      log('❌ Error placing bet: $errorMsg');
+      _customSnackBar(context, errorMsg);
+    } catch (e) {
+      log('❌ Error placing bet: $e');
+      _customSnackBar(context, 'Something went wrong. Please try again.');
+    } finally {
+      _isPlacingBet = false;
+    }
   }
-
-  // void _startAutoPlayBetting() {
-  //   // No autoplay logic needed for now
-  // }
-
-  // Future<void> _placeBet() async {
-  //   // Prevent duplicate bet placement
-  //   if (_isPlacingBet || hasPlacedBet) return;
-
-  //   _isPlacingBet = true;
-
-  //   try {
-  //     final gameState = ref.read(crashGameProvider);
-  //     final betService = ref.read(betServiceProvider);
-  //     final userId = await getUserId();
-
-  //     if (userId == null) return;
-
-  //     if (gameState.state == GameState.running) {
-  //       _customSnackBar(
-  //         context,
-  //         'You cannot place a bet while the game is running',
-  //       );
-  //       return;
-  //     }
-
-  //     final amountText = widget.amountController.text.trim();
-  //     final autoCashoutText = widget.switchController?.text.trim() ?? '';
-
-  //     final autoCashoutValue = autoCashoutText.isNotEmpty
-  //         ? double.tryParse(autoCashoutText)
-  //         : null;
-
-  //     if (amountText.isEmpty) {
-  //       log('⚠️ Bet amount is empty');
-  //       return;
-  //     }
-
-  //     // Use current timestamp as roundId for crash game
-  //     final roundId = DateTime.now().millisecondsSinceEpoch.toString();
-  //     final seq = 1; // Simple sequence for crash
-
-  //     final newBet = await betService.placeBet(
-  //       BetRequest(
-  //         roundId: roundId,
-  //         userId: userId,
-  //         seq: seq,
-  //         stake: int.parse(amountText),
-  //         betIndex: widget.index,
-  //         autoCashout: autoCashoutValue,
-  //       ),
-  //     );
-
-  //     if (newBet != null) {
-  //       ref
-  //           .read(betResponseProvider.notifier)
-  //           .setBetResponse(widget.index, newBet);
-  //       ref.read(betStateProvider.notifier).placeBet(widget.index);
-
-  //       // Update wallet after placing bet
-  //       final currentUser = ref.read(userProvider);
-  //       currentUser.maybeWhen(
-  //         data: (userModel) {
-  //           if (userModel != null) {
-  //             final newWallet = userModel.data.wallet - newBet.stake;
-  //             ref.read(userProvider.notifier).updateWallet(newWallet);
-  //           }
-  //         },
-  //         orElse: () {},
-  //       );
-
-  //       setState(() {
-  //         hasPlacedBet = true;
-  //       });
-
-  //       log('✅ Bet placed successfully: ${newBet.stake}');
-  //     }
-  //   } on DioException catch (e) {
-  //     final errorMsg = e.response?.data?['message'] ?? 'Bet failed';
-  //     log('❌ Error placing bet: $errorMsg');
-  //     _customSnackBar(context, errorMsg);
-  //   } catch (e) {
-  //     log('❌ Error placing bet: $e');
-  //     _customSnackBar(context, 'Something went wrong. Please try again.');
-  //   } finally {
-  //     _isPlacingBet = false;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
-    final gameState = ref.watch(crashGameProvider);
+    final round = ref.watch(crashRoundNotifierProvider);
+    final tick = ref.watch(crashTickProvider);
+    ref.watch(crashGameProvider);
 
     // Reset hasPlacedBet if a new round starts
-    if (gameState.state == GameState.prepare && lastRoundId != 'prepare') {
+    if (round != null && round.roundId != lastRoundId) {
+      final participatedInPreviousRound = _betParticipatedInRound;
+
       hasPlacedBet = false;
       hasAutoCashedOut = false;
+      _betParticipatedInRound = false;
       lastMultiplier = null;
-      lastRoundId = 'prepare';
+      lastRoundId = round.roundId;
 
-      // Handle crash - if we had a bet placed and round crashed
-      if (lastRoundId != null && gameState.state == GameState.crashed) {
-        _handleRoundCrash();
-      }
+      // Clear the bet for the new round
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref
+            .read(crashBetResponseProvider.notifier)
+            .setBetResponse(widget.index, null);
+      });
 
-      // Handle continuation after round reset
-      _handleAutoPlayContinuation();
-    }
-
-    final bet = ref.watch(betResponseProvider)[widget.index];
-
-    // Handle waiting state between placing bet and running
-    final isWaitingForRound =
-        hasPlacedBet && gameState.state == GameState.prepare;
-    final isCashoutButton =
-        hasPlacedBet && gameState.state == GameState.running;
-
-    // Auto Cashout logic
-    if (isCashoutButton && bet != null && bet.autoCashout != null) {
-      final multiplier = gameState.currentMultiplier;
-
-      // Only trigger cashout once when crossing the threshold
-      if (!hasAutoCashedOut &&
-          multiplier > bet.autoCashout! &&
-          (lastMultiplier == null || lastMultiplier! <= bet.autoCashout!)) {
-        lastMultiplier = multiplier;
-        hasAutoCashedOut = true;
-
-        // Trigger auto cashout asynchronously
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          try {
-            // Small delay to ensure multiplier is stable
-            await Future.delayed(const Duration(milliseconds: 50));
-
-            final cashoutService = ref.read(cashoutServiceProvider);
-            final cashout = await cashoutService.cashout(
-              id: bet.id,
-              cashOutAt: bet.autoCashout!,
-            );
-            final autoCashoutAt = cashout.cashoutAt;
-
-            log("✅ Auto Cashout triggered at $autoCashoutAt X");
-
-            // Update wallet after auto cashout
-            final currentUser = ref.read(userProvider);
-            currentUser.maybeWhen(
-              data: (userModel) {
-                if (userModel != null) {
-                  final winAmount = autoCashoutAt! * bet.stake;
-                  final newWallet = userModel.data.wallet + winAmount;
-                  ref.read(userProvider.notifier).updateWallet(newWallet);
-                }
-              },
-              orElse: () {},
-            );
-
-            if (mounted) {
-              setState(() {
-                hasPlacedBet = false;
-              });
-            }
-
-            // Show Flushbar
-            _successFlushbar(
-              context: context,
-              message1: "Auto Cashout at!\n",
-              multiplier: '$autoCashoutAt X',
-              message2: 'Win INR\n',
-              winAmount: (autoCashoutAt! * bet.stake).toStringAsFixed(2),
-            );
-          } catch (e) {
-            log("❌ Auto Cashout failed: $e");
-            hasAutoCashedOut = false; // Reset if fails
-          }
+      // If we had a bet in the previous round and autoplay is active,
+      // increment the round counter regardless of win/loss
+      if (participatedInPreviousRound &&
+          widget.autoPlayState != null &&
+          widget.autoPlayState!.settings != null) {
+        final nextRoundCount = (widget.autoPlayState?.roundsPlayed ?? 0) + 1;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.onAutoPlayUpdate?.call(
+            nextRoundCount,
+            widget.autoPlayState?.lastWinAmount ?? 0.0,
+          );
         });
       }
 
-      lastMultiplier = multiplier;
+      // If user queued a bet while the previous round was RUNNING,
+      // automatically place it at the start of the next PREPARE phase.
+      if (_hasQueuedBet && round.state == 'PREPARE') {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _placeBet(
+            amountOverride: _queuedAmountText,
+            autoCashoutOverride: _queuedAutoCashoutValue,
+          );
+          if (mounted) {
+            setState(() {
+              _hasQueuedBet = false;
+              _queuedAmountText = null;
+              _queuedAutoCashoutValue = null;
+            });
+          }
+        });
+      }
     }
 
+    _evaluateAutoPlayAndMaybeBet(round);
+
+    final bet = ref.watch(crashBetResponseProvider)[widget.index];
+
+    // Handle waiting state between placing bet and running
+    final isWaitingForRound = hasPlacedBet && round?.state == 'PREPARE';
+    final isCashoutButton = hasPlacedBet && round?.state == 'RUNNING';
+
+    // Auto Cashout logic
+    if (isCashoutButton && bet != null && bet.autoCashout != null) {
+      log("🎯 Auto cashout enabled: ${bet.autoCashout}x");
+      tick.whenData((tickData) async {
+        final multiplier =
+            double.tryParse(tickData.multiplier.toString()) ?? 0.0;
+
+        // Only trigger cashout once when crossing the threshold
+        // Use > instead of >= to ensure server multiplier is past the target
+        if (!hasAutoCashedOut &&
+            multiplier > bet.autoCashout! &&
+            (lastMultiplier == null || lastMultiplier! <= bet.autoCashout!)) {
+          log(
+            "🚀 Auto cashout condition met! Multiplier: $multiplier, Target: ${bet.autoCashout}",
+          );
+          lastMultiplier = multiplier;
+          hasAutoCashedOut = true;
+
+          int retryCount = 0;
+          const maxRetries = 10;
+
+          while (retryCount < maxRetries) {
+            try {
+              // Longer delay on first attempt to ensure server catches up
+              // Shorter delays on retries
+              final delayMs = retryCount == 0 ? 200 : 100;
+              await Future.delayed(Duration(milliseconds: delayMs));
+
+              final cashoutService = ref.read(crashCashoutServiceProvider);
+              final response = await cashoutService.cashout(
+                id: bet.id!,
+                cashOutAt: bet.autoCashout!,
+              );
+              final cashoutAt = response.cashoutAt;
+
+              if (cashoutAt != null) {
+                log("✅ Auto Cashout triggered at $cashoutAt X");
+
+                // Update wallet
+                final currentUser = ref.read(userProvider);
+                currentUser.maybeWhen(
+                  data: (userModel) {
+                    if (userModel != null) {
+                      final winAmount = cashoutAt * bet.stake!;
+                      final newWallet = userModel.data.wallet + winAmount;
+                      ref.read(userProvider.notifier).updateWallet(newWallet);
+
+                      // Note: Round counting is now handled at round start,
+                      // not here, to ensure every round is counted regardless of outcome
+                    }
+                  },
+                  orElse: () {},
+                );
+
+                if (mounted) {
+                  setState(() {
+                    hasPlacedBet = false;
+                  });
+                }
+
+                // Show flushbar
+                _successFlushbar(
+                  context: context,
+                  message1: "Auto Cashout at!\n",
+                  multiplier: '$cashoutAt X',
+                  message2: 'Win INR\n',
+                  winAmount: (cashoutAt * bet.stake!).toStringAsFixed(2),
+                );
+                break; // Success, exit loop
+              }
+            } catch (e) {
+              retryCount++;
+              if (retryCount >= maxRetries) {
+                log("❌ Auto Cashout failed after $maxRetries attempts: $e");
+                hasAutoCashedOut = false; // Reset only after all retries fail
+              } else if (retryCount == 1) {
+                // Only log the first retry to avoid spamming
+                log("⚠️ Auto Cashout syncing with server...");
+              }
+            }
+          }
+        }
+        lastMultiplier = multiplier;
+      });
+    }
+
+    // Auto Cashout logic - implement later
+    // if (isCashoutButton && bet != null && bet.autoCashout != null) {
+    //   tick.whenData((tickData) async {
+
+    //     ...
+    //   });
+    // }
+
+    final isQueuedBet =
+        !hasPlacedBet && _hasQueuedBet && round?.state == 'RUNNING';
+
     final buttonText = !hasPlacedBet
-        ? "BET"
+        ? (isQueuedBet ? "WAITING" : "BET")
         : isCashoutButton
         ? "CASHOUT"
         : isWaitingForRound
         ? "WAITING"
         : "BET";
 
-    // final enabled = !hasPlacedBet || isCashoutButton;
+    final enabled = !hasPlacedBet || isCashoutButton;
 
     return SizedBox(
       height: 200,
@@ -245,10 +413,14 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
             if (!hasPlacedBet) {
+              if (_hasQueuedBet) {
+                // queued bet uses the same color as CASHOUT state
+                return AppColors.crashTwentyFourthColor;
+              }
               return AppColors.crashFifteenthColor; // initial Place Bet
-            } else if (hasPlacedBet && gameState.state == GameState.running) {
+            } else if (hasPlacedBet && round?.state == 'RUNNING') {
               return AppColors.crashFourteenthColor; // CASHOUT
-            } else if (gameState.state == GameState.crashed) {
+            } else if (round?.state == 'CRASHED') {
               return AppColors.crashFourteenthColor;
             } else {
               return AppColors.crashTwentyFourthColor; // Bet placed but waiting
@@ -264,94 +436,135 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
 
-        onPressed: () {},
+        onPressed: enabled
+            ? () async {
+                // Place Bet or cancel queued bet
+                if (!hasPlacedBet && round != null) {
+                  if (_hasQueuedBet && round.state == 'RUNNING') {
+                    // Cancel the queued bet
+                    setState(() {
+                      _hasQueuedBet = false;
+                      _queuedAmountText = null;
+                      _queuedAutoCashoutValue = null;
+                    });
+                    _customSnackBar(context, 'Pending bet cancelled.');
+                    return;
+                  }
 
-        // enabled
-        //     ? () async {
-        //         // Place Bet
-        //         // if (!hasPlacedBet) {
-        //         //   await _placeBet();
-        //         // }
-        //         // // Cashout
-        //         // else
-        //         if (isCashoutButton && bet != null) {
-        //           final cashoutService = ref.read(cashoutServiceProvider);
-        //           final multiplier = gameState.currentMultiplier;
-        //           // Auto Cashout check
-        //           if (!hasAutoCashedOut &&
-        //               bet.autoCashout != null &&
-        //               multiplier >= bet.autoCashout!) {
-        //             hasAutoCashedOut = true; // mark as done
-        //             //   final cashoutService = ref.read(cashoutServiceProvider);
+                  if (round.state == 'RUNNING') {
+                    // Queue bet for the next round instead of rejecting
+                    final amountText = widget.amountController.text.trim();
+                    // Read auto-cashout from the provider, not from a switch controller
+                    final autoCashoutValue = ref.read(
+                      crashAutoCashoutProvider,
+                    )[widget.index];
 
-        //             // try {
-        //             //   final response = await cashoutService.cashout(
-        //             //     id: bet.id,
-        //             //     cashOutAt: multiplier,
-        //             //   );
-        //             //   log(
-        //             //     "✅ Auto Cashout triggered at ${response.cashoutAt} X",
-        //             //   );
-        //             //   setState(() {
-        //             //     hasPlacedBet = false; // reset button if needed
-        //             //   });
-        //             // } catch (e) {
-        //             //   log("❌ Auto Cashout failed: $e");
-        //             // }
-        //           }
+                    if (amountText.isEmpty) {
+                      _customSnackBar(context, 'Please enter an amount to bet');
+                      return;
+                    }
 
-        //           try {
-        //             log(
-        //               "📤 Cashout request: id=${bet.id}, cashOutAt=$multiplier",
-        //             );
+                    setState(() {
+                      _hasQueuedBet = true;
+                      _queuedAmountText = amountText;
+                      _queuedAutoCashoutValue = autoCashoutValue;
+                    });
 
-        //             // Small delay to ensure multiplier is stable
-        //             //      await Future.delayed(const Duration(milliseconds: 50));
-        //             // final response = await cashoutService.cashout(
-        //             //   id: bet.id,
-        //             //   cashOutAt: multiplier,
-        //             // );
-        //             // if (mounted) {
-        //             //   setState(() {
-        //             //     hasPlacedBet = false;
-        //             //   });
-        //             // }
-        //             // final cashoutAt = response.cashoutAt;
-        //             // log('✅ CashoutAt: $cashoutAt X');
+                    _customSnackBar(
+                      context,
+                      'Your bet has been added to the next round.',
+                    );
+                  } else {
+                    await _placeBet();
+                  }
+                }
+                // Cashout
+                else if (isCashoutButton &&
+                    bet != null &&
+                    bet.id != null &&
+                    bet.stake != null) {
+                  final cashoutService = ref.read(crashCashoutServiceProvider);
+                  final multiplier = tick.maybeWhen(
+                    data: (tickData) {
+                      final value = tickData.multiplier;
+                      if (value is num) {
+                        return double.tryParse(value.toString()) ?? 0.0;
+                      }
+                      if (value is String) return double.tryParse(value) ?? 0.0;
+                      return 0.0;
+                    },
+                    orElse: () => 0.0,
+                  );
+                  final roundedMultiplier = (multiplier * 100).round() / 100.0;
 
-        //             // Update wallet after cashout
-        //             //    final currentUser = ref.read(userProvider);
-        //             // currentUser.maybeWhen(
-        //             //   data: (userModel) {
-        //             //     if (userModel != null) {
-        //             //       final winAmount = cashoutAt! * bet.stake;
-        //             //       final newWallet = userModel.data.wallet + winAmount;
-        //             //       ref
-        //             //           .read(userProvider.notifier)
-        //             //           .updateWallet(newWallet);
-        //             //     }
-        //             //   },
-        //             //   orElse: () {},
-        //             // );
+                  try {
+                    log(
+                      "📤 Cashout request: id=${bet.id}, cashOutAt=$roundedMultiplier",
+                    );
 
-        //             // ✅ show Flushbar only if success
-        //             // _successFlushbar(
-        //             //   context: context,
-        //             //   message1: "You Have Crashed\nout!",
-        //             //   multiplier: '\n$cashoutAt X',
-        //             //   message2: "Win INR\n",
-        //             //   winAmount: (cashoutAt! * bet.stake).toStringAsFixed(2),
-        //             // );
-        //           } catch (e, st) {
-        //             log("❌ Cashout error: $e\n$st");
-        //           }
-        //         }
-        //       }
-        //     : null,
-        child: Text(
-          buttonText,
-          style: Theme.of(context).textTheme.crashHeadlineSmall,
-        ),
+                    // Small delay to ensure multiplier is stable
+                    //      await Future.delayed(const Duration(milliseconds: 50));
+                    final response = await cashoutService.cashout(
+                      id: bet.id!,
+                      cashOutAt: roundedMultiplier,
+                    );
+                    if (mounted) {
+                      setState(() {
+                        hasPlacedBet = false;
+                      });
+                    }
+                    final cashoutAt = response.cashoutAt;
+                    if (cashoutAt == null) return;
+                    log('✅ CashoutAt: $cashoutAt X');
+
+                    // Update wallet after cashout
+                    final currentUser = ref.read(userProvider);
+                    currentUser.maybeWhen(
+                      data: (userModel) {
+                        if (userModel != null) {
+                          final winAmount = cashoutAt * bet.stake!;
+                          final newWallet = userModel.data.wallet + winAmount;
+                          ref
+                              .read(userProvider.notifier)
+                              .updateWallet(newWallet);
+                        }
+                      },
+                      orElse: () {},
+                    );
+
+                    // ✅ show Flushbar only if success
+                    _successFlushbar(
+                      context: context,
+                      message1: "You Have Cashed\nOut!",
+                      multiplier: '\n$cashoutAt X',
+                      message2: "Win INR\n",
+                      winAmount: (cashoutAt * bet.stake!).toStringAsFixed(2),
+                    );
+                  } catch (e, st) {
+                    log("❌ Cashout error: $e\n$st");
+                  }
+                }
+              }
+            : null,
+        child: isQueuedBet
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Cancel',
+                    style: Theme.of(context).textTheme.crashHeadlineSmall,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Wait for next round',
+                    style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+                  ),
+                ],
+              )
+            : Text(
+                buttonText,
+                style: Theme.of(context).textTheme.crashHeadlineSmall,
+              ),
       ),
     );
   }
@@ -445,16 +658,16 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   }
 
   // Custom SnackBar
-  // void _customSnackBar(BuildContext context, String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(
-  //       content: Text(
-  //         message,
-  //         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-  //       ),
-  //       backgroundColor: AppColors.crashTwentyFourthColor,
-  //       behavior: SnackBarBehavior.floating,
-  //     ),
-  //   );
-  // }
+  void _customSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: AppColors.crashTwentyFourthColor,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
 }

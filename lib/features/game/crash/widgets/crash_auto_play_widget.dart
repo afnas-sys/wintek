@@ -1,49 +1,81 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/game/crash/widgets/custom_slider.dart';
 
-class CrashAutoPlayWidget {
+class CrashAutoPlaySettings {
   final int selectedRounds;
-  final double autoCashoutMultiplier;
+  final String betAmount;
 
-  CrashAutoPlayWidget({
+  CrashAutoPlaySettings({
     required this.selectedRounds,
-    required this.autoCashoutMultiplier,
+    required this.betAmount,
   });
 }
 
-class CrashAutoPlay extends StatefulWidget {
-  final Function(CrashAutoPlayWidget)? onStart;
+class CrashAutoPlay extends ConsumerStatefulWidget {
+  final int index;
+  final String initialBetAmount;
 
-  const CrashAutoPlay({super.key, this.onStart});
+  const CrashAutoPlay({
+    super.key,
+    required this.index,
+    required this.initialBetAmount,
+  });
 
   @override
-  State<CrashAutoPlay> createState() => _CrashAutoPlayState();
+  ConsumerState<CrashAutoPlay> createState() => _CrashAutoPlayState();
 }
 
-class _CrashAutoPlayState extends State<CrashAutoPlay> {
-  int selectedRounds = 0;
-  final _autoCashoutController = TextEditingController(text: '0.0');
-
+class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
+  int? selectedRounds;
+  late TextEditingController _betAmountController;
   String? _roundsError;
-  String? _autoCashoutError;
+
+  @override
+  void initState() {
+    super.initState();
+    _betAmountController = TextEditingController(text: widget.initialBetAmount);
+  }
+
+  @override
+  void dispose() {
+    _betAmountController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoPlay() {
+    setState(() {
+      _roundsError = null;
+    });
+
+    if (selectedRounds == null) {
+      setState(() => _roundsError = 'Please, set number of rounds');
+      return;
+    }
+
+    final settings = CrashAutoPlaySettings(
+      selectedRounds: selectedRounds!,
+      betAmount: _betAmountController.text,
+    );
+
+    Navigator.of(context).pop(settings);
+  }
 
   void _increment(TextEditingController controller) {
-    int value = int.tryParse(controller.text) ?? 0;
-    controller.text = (value + 1).toString();
+    final currentValue = double.tryParse(controller.text) ?? 0.0;
+    final newValue = currentValue + 1.0;
+    controller.text = newValue.toStringAsFixed(0);
   }
 
   void _decrement(TextEditingController controller) {
-    int value = int.tryParse(controller.text) ?? 1;
-    if (value > 1) {
-      controller.text = (value - 1).toString();
-    } else {
-      controller.text = '1';
-    }
+    final currentValue = double.tryParse(controller.text) ?? 0.0;
+    final newValue = (currentValue - 1.0).clamp(0.0, double.infinity);
+    controller.text = newValue.toStringAsFixed(0);
   }
 
   @override
@@ -96,25 +128,12 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
 
                 _buildAmountTextField(
                   context,
-                  _autoCashoutController,
+                  _betAmountController,
                   enabled: true,
                 ),
-
-                if (_autoCashoutError != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      _autoCashoutError!,
-                      style: const TextStyle(
-                        color: AppColors.crashNinteenthColor,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
                 SizedBox(height: 30),
                 // Slider
-                CustomSlider(),
+                CustomSlider(index: widget.index),
 
                 SizedBox(height: 30),
 
@@ -183,8 +202,8 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      ((int.tryParse(_autoCashoutController.text) ?? 0) *
-                              selectedRounds)
+                      ((double.tryParse(_betAmountController.text) ?? 0) *
+                              (selectedRounds ?? 0))
                           .toString(),
                       style: const TextStyle(
                         fontSize: 20,
@@ -209,9 +228,7 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
                     borderRadius: 10,
                     width: double.infinity,
                     backgroundColor: AppColors.crashThirtyThreeColor,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                    onPressed: _startAutoPlay,
                     padding: EdgeInsets.only(
                       left: 23,
                       right: 23,
@@ -219,7 +236,7 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
                       bottom: 4,
                     ),
                     child: Text(
-                      'Bet',
+                      'Start',
                       style: Theme.of(context).textTheme.crashBodyTitleMdeium,
                     ),
                   ),
@@ -255,8 +272,6 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
       ),
     );
   }
-
-  //!TextField for Amount Input
 
   Widget _buildAmountTextField(
     BuildContext context,
@@ -310,7 +325,6 @@ class _CrashAutoPlayState extends State<CrashAutoPlay> {
     );
   }
 
-  //! IconButton
   Widget _buildIconButton(
     IconData icon,
     VoidCallback onPressed, {

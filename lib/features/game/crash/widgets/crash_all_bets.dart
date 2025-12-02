@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -5,6 +7,8 @@ import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
+import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
 
 class CrashAllBets extends ConsumerStatefulWidget {
   const CrashAllBets({super.key});
@@ -16,6 +20,7 @@ class CrashAllBets extends ConsumerStatefulWidget {
 class _AllBetsState extends ConsumerState<CrashAllBets> {
   int _currentPage = 0;
   static const int _itemsPerPage = 50;
+  CrashAllBetsModel? _bets;
 
   void _showPreviousHand() {
     final totalPages = (_betsLength / _itemsPerPage).ceil();
@@ -28,24 +33,20 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
     });
   }
 
-  int get _betsLength =>
-      ref.watch(aviatorBetsNotifierProvider)?.bets.length ?? 0;
+  int get _betsLength => _bets?.bets.length ?? 0;
 
-  List<Map<String, dynamic>> crashAllBets = [
-    {'name': 'Ab', 'bet': '₹100', 'mult': '2.5x', 'cashoutINR': '250'},
-    {'name': 'Cd', 'bet': '₹200', 'mult': '3.0x', 'cashoutINR': '600'},
-    {'name': 'Ef', 'bet': '₹150', 'mult': '1.8x', 'cashoutINR': '270'},
-    {'name': 'Gh', 'bet': '₹300', 'mult': '4.0x', 'cashoutINR': '1200'},
-    {'name': 'Ij', 'bet': '₹250', 'mult': '2.2x', 'cashoutINR': '550'},
-    {'name': 'Kl', 'bet': '₹400', 'mult': '5.0x', 'cashoutINR': '2000'},
-    {'name': 'Mn', 'bet': '₹350', 'mult': '3.5x', 'cashoutINR': '1225'},
-    {'name': 'Op', 'bet': '₹450', 'mult': '4.5x', 'cashoutINR': '2025'},
-    {'name': 'Qr', 'bet': '₹500', 'mult': '6.0x', 'cashoutINR': '3000'},
-    {'name': 'St', 'bet': '₹600', 'mult': '2.8x', 'cashoutINR': '1680'},
-  ];
+  List<dynamic> _getCurrentPageBets() {
+    final betAsync = _bets;
+    if (betAsync == null || betAsync.bets.isEmpty) return [];
+    final startIndex = _currentPage * _itemsPerPage;
+    final endIndex = min(startIndex + _itemsPerPage, betAsync.bets.length);
+    return betAsync.bets.sublist(startIndex, endIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final betsAsync = ref.watch(crashBetsNotifierProvider);
+    _bets = betsAsync;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
@@ -60,7 +61,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'TOTAL BETS: ${crashAllBets.length}',
+                'TOTAL BETS: ${betsAsync?.count}',
                 style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
               //! Switch for PREVIOUS HAND
@@ -150,7 +151,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
 
           SizedBox(height: 8),
 
-          crashAllBets.isEmpty || crashAllBets.toString().isEmpty
+          _getCurrentPageBets().isEmpty
               ? Container(
                   height: 200,
                   alignment: Alignment.center,
@@ -162,7 +163,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
               : ListView.separated(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
-                  itemCount: crashAllBets.length,
+                  itemCount: _getCurrentPageBets().length,
                   separatorBuilder: (context, index) => SizedBox(height: 6),
                   itemBuilder: (context, index) {
                     bool isHighlighted =
@@ -171,7 +172,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                     Color? bgColor = isHighlighted
                         ? AppColors.aviatorTwentyFirstColor
                         : Color(0XFF222222).withOpacity(0.1);
-                    final bets = crashAllBets.toList()[index];
+                    final bets = _getCurrentPageBets()[index];
 
                     return Container(
                       decoration: BoxDecoration(
@@ -201,7 +202,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                bets['name'] ?? '',
+                                bets?.user.userName ?? '',
                                 style: Theme.of(
                                   context,
                                 ).textTheme.aviatorBodyLargePrimary,
@@ -213,7 +214,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                             Expanded(
                               flex: 1,
                               child: Text(
-                                bets['bet'] ?? '',
+                                bets?.stake.toString() ?? '',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
@@ -224,23 +225,11 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                             // 📌 Mult
                             Expanded(
                               flex: 1,
-                              child: Container(
-                                height: 32,
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.aviatorThirtyFiveColor,
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Text(
-                                  bets['mult'] ?? '',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.aviatorBodyLargeThird,
-                                ),
+                              child: Text(
+                                bets?.cashoutAt.toString() ?? '',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.aviatorBodyLargePrimary,
                               ),
                             ),
 
@@ -250,7 +239,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                               child: Align(
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  bets['cashoutINR'] ?? '',
+                                  bets?.payout.toStringAsFixed(2) ?? '',
                                   style: Theme.of(
                                     context,
                                   ).textTheme.aviatorBodyLargePrimary,

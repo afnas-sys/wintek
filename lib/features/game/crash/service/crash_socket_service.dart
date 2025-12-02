@@ -3,24 +3,25 @@ import 'dart:developer';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:wintek/core/constants/socket_constants/socket_constants.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
+import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/crash/domain/constants/crash_socket_constants.dart';
 import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
-import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
-import 'package:wintek/features/game/card_jackpot/domain/models/socket/bet_result_event.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_bet_result_event.dart';
 
 class CrashSocketService {
   final _stateController = StreamController<RoundState>.broadcast();
   final _tickController = StreamController<Tick>.broadcast();
   final _crashController = StreamController<Crash>.broadcast();
-  final _betsController = StreamController<AllBetsModel>.broadcast();
-  final _betResultController = StreamController<BetResultEvent>.broadcast();
+  final _betsController = StreamController<CrashAllBetsModel>.broadcast();
+  final _betResultController = StreamController<CrashAllBetsModel>.broadcast();
   final secureStorageService = SecureStorageService();
 
   Stream<RoundState> get stateStream => _stateController.stream;
   Stream<Tick> get tickStream => _tickController.stream;
   Stream<Crash> get crashStream => _crashController.stream;
-  Stream<AllBetsModel> get betsStream => _betsController.stream;
-  Stream<BetResultEvent> get betResultStream => _betResultController.stream;
+  Stream<CrashAllBetsModel> get betsStream => _betsController.stream;
+  Stream<CrashAllBetsModel> get betResultStream => _betResultController.stream;
   IO.Socket? socket;
 
   void connect() async {
@@ -81,7 +82,7 @@ class CrashSocketService {
     //! Bets data
     socket!.on(CrashSocketConstants.roundBetsData, (data) {
       try {
-        final bets = AllBetsModel.fromJson(data);
+        final bets = CrashAllBetsModel.fromJson(data);
         _betsController.add(bets);
       } catch (e) {
         log('😴😴😴Error: $e');
@@ -91,7 +92,7 @@ class CrashSocketService {
     //! Bet result
     socket!.on(CrashSocketConstants.betResult, (data) {
       try {
-        final betResult = BetResultEvent.fromJson(data);
+        final betResult = CrashAllBetsModel.fromJson(data);
         _betResultController.add(betResult);
       } catch (e) {
         log('😴😴😴Error: $e');

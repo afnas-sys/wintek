@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
-import 'package:wintek/features/game/card_jackpot/domain/models/socket/bet_result_event.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_bet_result_event.dart';
 import 'package:wintek/features/game/crash/service/crash_socket_service.dart';
 
 final crashRoundProvider = Provider.autoDispose<CrashSocketService>((ref) {
@@ -81,7 +82,7 @@ final crashCrashNotifierProvider =
     });
 
 //! Bets Notifier
-class CrashBetsNotifier extends StateNotifier<AllBetsModel?> {
+class CrashBetsNotifier extends StateNotifier<CrashAllBetsModel?> {
   final CrashSocketService _service;
   late final StreamSubscription _sub;
   bool _isDisposed = false;
@@ -102,13 +103,15 @@ class CrashBetsNotifier extends StateNotifier<AllBetsModel?> {
 }
 
 final crashBetsNotifierProvider =
-    StateNotifierProvider.autoDispose<CrashBetsNotifier, AllBetsModel?>((ref) {
+    StateNotifierProvider.autoDispose<CrashBetsNotifier, CrashAllBetsModel?>((
+      ref,
+    ) {
       final service = ref.watch(crashRoundProvider);
       return CrashBetsNotifier(service);
     });
 
 //! Bet Result Notifier
-class CrashBetResultNotifier extends StateNotifier<BetResultEvent?> {
+class CrashBetResultNotifier extends StateNotifier<CrashAllBetsModel?> {
   final CrashSocketService _service;
   late final StreamSubscription _sub;
   bool _isDisposed = false;
@@ -129,9 +132,10 @@ class CrashBetResultNotifier extends StateNotifier<BetResultEvent?> {
 }
 
 final crashBetResultNotifierProvider =
-    StateNotifierProvider.autoDispose<CrashBetResultNotifier, BetResultEvent?>((
-      ref,
-    ) {
+    StateNotifierProvider.autoDispose<
+      CrashBetResultNotifier,
+      CrashAllBetsModel?
+    >((ref) {
       final service = ref.watch(crashRoundProvider);
       return CrashBetResultNotifier(service);
     });

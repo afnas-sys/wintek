@@ -5,37 +5,10 @@ import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
+import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/crash/widgets/crash_auto_play_widget.dart';
 import 'package:wintek/features/game/crash/widgets/crash_custom_bet_button.dart';
 import 'package:wintek/features/game/crash/widgets/custom_slider.dart';
-
-class CrashAutoPlaySettings {
-  final AutoPlaySettings? settings;
-  final int roundsPlayed;
-  final double initialWallet;
-  final double lastWinAmount;
-
-  CrashAutoPlaySettings({
-    this.settings,
-    this.roundsPlayed = 0,
-    this.initialWallet = 0.0,
-    this.lastWinAmount = 0.0,
-  });
-
-  CrashAutoPlaySettings copyWith({
-    AutoPlaySettings? settings,
-    int? roundsPlayed,
-    double? initialWallet,
-    double? lastWinAmount,
-  }) {
-    return CrashAutoPlaySettings(
-      settings: settings ?? this.settings,
-      roundsPlayed: roundsPlayed ?? this.roundsPlayed,
-      initialWallet: initialWallet ?? this.initialWallet,
-      lastWinAmount: lastWinAmount ?? this.lastWinAmount,
-    );
-  }
-}
 
 class CrashBetContainer extends ConsumerStatefulWidget {
   final int index;
@@ -64,6 +37,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   final _autoAmountController = TextEditingController();
   final secureStorageService = SecureStorageService();
   int selectedRounds = 10;
+  AutoPlayState? autoPlaySettings;
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
@@ -86,6 +60,30 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     if (value > 0) {
       controller.text = (value - 1).toString();
     }
+  }
+
+  void _onAutoPlayUpdate(int rounds, double winAmount) {
+    setState(() {
+      autoPlaySettings = autoPlaySettings?.copyWith(
+        roundsPlayed: rounds,
+        lastWinAmount: winAmount,
+      );
+    });
+  }
+
+  void _onAutoPlayStop() {
+    setState(() {
+      autoPlaySettings = null;
+    });
+  }
+
+  bool _shouldContinueAutoPlay(double currentWallet, double lastWinAmount) {
+    final settings = autoPlaySettings?.settings;
+    if (settings == null) return false;
+    if (autoPlaySettings!.roundsPlayed >= int.parse(settings.selectedRounds!)) {
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -156,6 +154,10 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                   child: CrashCustomBetButton(
                     index: widget.index,
                     amountController: _amountController,
+                    autoPlayState: autoPlaySettings,
+                    onAutoPlayUpdate: _onAutoPlayUpdate,
+                    onAutoPlayStop: _onAutoPlayStop,
+                    shouldContinueAutoPlay: _shouldContinueAutoPlay,
                   ),
                 ),
               ),
@@ -166,36 +168,13 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(flex: 2, child: CustomSlider()),
+              Expanded(flex: 2, child: CustomSlider(index: widget.index)),
               const SizedBox(width: 10),
               Expanded(
                 flex: 1,
                 child: SizedBox(
                   height: 42,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.crashThirtyFirstColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: AppColors.crashThirtySecondColor,
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    onPressed: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return CrashAutoPlay();
-                        },
-                      );
-                    },
-                    child: Text(
-                      'Autoplay',
-                      style: Theme.of(context).textTheme.crashBodyMediumPrimary,
-                    ),
-                  ),
+                  child: _buildAutoplayButton(context),
                 ),
               ),
             ],
@@ -324,6 +303,79 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAutoplayButton(BuildContext context) {
+    final isAutoPlayActive = autoPlaySettings != null;
+    final maxRounds = autoPlaySettings?.settings?.selectedRounds != null
+        ? int.tryParse(autoPlaySettings!.settings!.selectedRounds!) ?? 0
+        : 0;
+    final currentRound = autoPlaySettings?.roundsPlayed ?? 0;
+
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isAutoPlayActive
+            ? AppColors.crashTwentyFourthColor
+            : AppColors.crashThirtyFirstColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: isAutoPlayActive
+                ? AppColors.crashTwentyFourthColor
+                : AppColors.crashThirtySecondColor,
+            width: 1,
+          ),
+        ),
+      ),
+      onPressed: () async {
+        if (isAutoPlayActive) {
+          _onAutoPlayStop();
+        } else {
+          final result = await showDialog<CrashAutoPlaySettings>(
+            context: context,
+            builder: (BuildContext context) {
+              return CrashAutoPlay(
+                index: widget.index,
+                initialBetAmount: _amountController.text,
+              );
+            },
+          );
+          if (result != null) {
+            // Update bet amount from autoplay settings
+            _amountController.text = result.betAmount;
+
+            final user = ref.read(userProvider);
+            user.maybeWhen(
+              data: (userModel) {
+                if (userModel != null) {
+                  setState(() {
+                    autoPlaySettings = AutoPlayState(
+                      settings: AutoPlaySettings(
+                        selectedRounds: result.selectedRounds.toString(),
+                        stopIfCashDecreases: false,
+                        decrementAmount: 0.0,
+                        stopIfCashIncreases: false,
+                        incrementAmount: 0.0,
+                        stopIfSingleWinExceeds: false,
+                        exceedsAmount: 0.0,
+                      ),
+                      initialWallet: userModel.data.wallet,
+                    );
+                  });
+                }
+              },
+              orElse: () {},
+            );
+          }
+        }
+      },
+      child: Text(
+        isAutoPlayActive
+            ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
+            : 'Autoplay',
+        style: Theme.of(context).textTheme.crashBodyMediumPrimary,
       ),
     );
   }

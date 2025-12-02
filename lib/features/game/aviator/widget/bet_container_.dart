@@ -516,12 +516,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
         borderRadius: 52,
         backgroundColor: isAutoPlayActive
             ? AppColors
-                  .aviatorSeventeenthColor // Red color for stop
+                  .aviatorTwentySixthColor // Red color for stop
             : AppColors.aviatorTwentyNinthColor,
         hasBorder: true,
         height: 28,
         borderColor: isAutoPlayActive
-            ? AppColors.aviatorEighteenthColor
+            ? AppColors.aviatorTwentySixthColor
             : AppColors.aviatorNineteenthColor,
         child: Text(
           isAutoPlayActive
