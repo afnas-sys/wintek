@@ -112,7 +112,7 @@ class _CrashRecentRoundsWidgetState
                         const Icon(
                           FontAwesomeIcons.clock,
                           size: 16,
-                          color: AppColors.aviatorTertiaryColor,
+                          color: AppColors.crashPrimaryColor,
                         ),
                         const SizedBox(width: 4),
                         Icon(
@@ -120,7 +120,7 @@ class _CrashRecentRoundsWidgetState
                               ? FontAwesomeIcons.angleUp
                               : FontAwesomeIcons.angleDown,
                           size: 16,
-                          color: AppColors.aviatorTertiaryColor,
+                          color: AppColors.crashPrimaryColor,
                         ),
                       ],
                     ),

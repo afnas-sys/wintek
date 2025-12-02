@@ -358,7 +358,7 @@ extension CustomTextStyle on TextTheme {
   TextStyle get crashBodyTitleSmallSecondary => GoogleFonts.roboto(
     color: AppColors.crashSecondaryColor,
     fontSize: 16,
-    fontWeight: FontWeight.w400,
+    fontWeight: FontWeight.w500,
   );
 
   TextStyle get crashBodyLargeSecondary => GoogleFonts.roboto(

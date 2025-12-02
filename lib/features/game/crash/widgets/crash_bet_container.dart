@@ -38,6 +38,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   final secureStorageService = SecureStorageService();
   int selectedRounds = 10;
   AutoPlayState? autoPlaySettings;
+  bool hasPlacedManualBet = false;
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
@@ -77,6 +78,12 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     });
   }
 
+  void _onManualBetPlaced(bool placed) {
+    setState(() {
+      hasPlacedManualBet = placed;
+    });
+  }
+
   bool _shouldContinueAutoPlay(double currentWallet, double lastWinAmount) {
     final settings = autoPlaySettings?.settings;
     if (settings == null) return false;
@@ -88,7 +95,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
 
   @override
   void initState() {
-    _amountController.text = 1.toString();
+    _amountController.text = 10.toString();
     _autoAmountController.text = 1.toString();
 
     super.initState();
@@ -158,6 +165,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                     onAutoPlayUpdate: _onAutoPlayUpdate,
                     onAutoPlayStop: _onAutoPlayStop,
                     shouldContinueAutoPlay: _shouldContinueAutoPlay,
+                    onManualBetPlaced: _onManualBetPlaced,
                   ),
                 ),
               ),
@@ -329,48 +337,51 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
           ),
         ),
       ),
-      onPressed: () async {
-        if (isAutoPlayActive) {
-          _onAutoPlayStop();
-        } else {
-          final result = await showDialog<CrashAutoPlaySettings>(
-            context: context,
-            builder: (BuildContext context) {
-              return CrashAutoPlay(
-                index: widget.index,
-                initialBetAmount: _amountController.text,
-              );
-            },
-          );
-          if (result != null) {
-            // Update bet amount from autoplay settings
-            _amountController.text = result.betAmount;
-
-            final user = ref.read(userProvider);
-            user.maybeWhen(
-              data: (userModel) {
-                if (userModel != null) {
-                  setState(() {
-                    autoPlaySettings = AutoPlayState(
-                      settings: AutoPlaySettings(
-                        selectedRounds: result.selectedRounds.toString(),
-                        stopIfCashDecreases: false,
-                        decrementAmount: 0.0,
-                        stopIfCashIncreases: false,
-                        incrementAmount: 0.0,
-                        stopIfSingleWinExceeds: false,
-                        exceedsAmount: 0.0,
-                      ),
-                      initialWallet: userModel.data.wallet,
+      onPressed: hasPlacedManualBet
+          ? null
+          : () async {
+              if (isAutoPlayActive) {
+                _onAutoPlayStop();
+              } else {
+                final result = await showDialog<CrashAutoPlaySettings>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return CrashAutoPlay(
+                      index: widget.index,
+                      initialBetAmount: _amountController.text,
                     );
-                  });
+                  },
+                );
+                if (result != null) {
+                  // Update bet amount from autoplay settings
+                  _amountController.text = result.betAmount;
+
+                  final user = ref.read(userProvider);
+                  user.maybeWhen(
+                    data: (userModel) {
+                      if (userModel != null) {
+                        setState(() {
+                          autoPlaySettings = AutoPlayState(
+                            settings: AutoPlaySettings(
+                              selectedRounds: result.selectedRounds.toString(),
+                              stopIfCashDecreases: false,
+                              decrementAmount: 0.0,
+                              stopIfCashIncreases: false,
+                              incrementAmount: 0.0,
+                              stopIfSingleWinExceeds: false,
+                              exceedsAmount: 0.0,
+                              autoCashout: result.autoCashout,
+                            ),
+                            initialWallet: userModel.data.wallet,
+                          );
+                        });
+                      }
+                    },
+                    orElse: () {},
+                  );
                 }
-              },
-              orElse: () {},
-            );
-          }
-        }
-      },
+              }
+            },
       child: Text(
         isAutoPlayActive
             ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'

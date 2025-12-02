@@ -13,6 +13,7 @@ class AutoPlaySettings {
   final double incrementAmount;
   final bool stopIfSingleWinExceeds;
   final double exceedsAmount;
+  final double? autoCashout;
 
   AutoPlaySettings({
     required this.selectedRounds,
@@ -22,6 +23,7 @@ class AutoPlaySettings {
     required this.incrementAmount,
     required this.stopIfSingleWinExceeds,
     required this.exceedsAmount,
+    this.autoCashout,
   });
 }
 

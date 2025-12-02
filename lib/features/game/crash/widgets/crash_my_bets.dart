@@ -84,12 +84,9 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
           decoration: BoxDecoration(
-            color: AppColors.aviatorTertiaryColor,
+            color: AppColors.crashPrimaryColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.aviatorFifteenthColor,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.crashTwelfthColor, width: 1),
           ),
           child: Column(
             children: [
@@ -98,7 +95,9 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                 children: [
                   Text(
                     'TOTAL BETS: ${betHistory.data.length}',
-                    style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.crashBodyTitleSmallSecondary,
                   ),
                   //! Switch for PREVIOUS HAND
                   CustomElevatedButton(
@@ -110,9 +109,9 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                       top: 5,
                       bottom: 4,
                     ),
-                    borderColor: AppColors.aviatorThirtyEightColor,
+                    borderColor: AppColors.crashThirtySixthColor,
                     borderRadius: 30,
-                    backgroundColor: AppColors.aviatorTwentiethColor,
+                    backgroundColor: AppColors.crashTwentyFirstColor,
                     onPressed: () {
                       log('CRASH Previous hand button pressed');
                       setState(() {
@@ -136,7 +135,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                             AppImages.previousHand,
                             height: 20,
                             width: 20,
-                            color: AppColors.aviatorSixthColor,
+                            color: AppColors.crashSecondaryColor,
                           ),
                         ),
                         Text(
@@ -227,8 +226,8 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                       String formatNum(num? value) =>
                           value?.toStringAsFixed(2) ?? '0.00';
 
-                      bool isHighlighted = index == 0;
-                      Color? bgColor = isHighlighted
+                      Color? bgColor =
+                          (bet.payout == 0.0 && bet.cashoutAt == 0.0)
                           ? AppColors.crashThirtySixthColor
                           : AppColors.crashThirtySeventhColor;
 
@@ -251,7 +250,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                               Expanded(
                                 flex: 1,
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
                                       DateFormat('HH:mm').format(
@@ -325,7 +324,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                   textAlign: TextAlign.center,
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorBodyLargePrimary,
+                                  ).textTheme.crashBodyTitleSmallSecondary,
                                 ),
                               ),
                               Expanded(
@@ -342,7 +341,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                     Icon(
                                       FontAwesomeIcons.comment,
                                       size: 20,
-                                      color: AppColors.aviatorSixteenthColor,
+                                      color: AppColors.crashThirtyFivethColor,
                                     ),
                                   ],
                                 ),

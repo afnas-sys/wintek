@@ -5,15 +5,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
+import 'package:wintek/features/game/crash/providers/crash_auto_cashout_provider.dart';
 import 'package:wintek/features/game/crash/widgets/custom_slider.dart';
 
 class CrashAutoPlaySettings {
   final int selectedRounds;
   final String betAmount;
+  final double? autoCashout;
 
   CrashAutoPlaySettings({
     required this.selectedRounds,
     required this.betAmount,
+    this.autoCashout,
   });
 }
 
@@ -39,6 +42,7 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
   @override
   void initState() {
     super.initState();
+    selectedRounds = 5;
     _betAmountController = TextEditingController(text: widget.initialBetAmount);
   }
 
@@ -58,9 +62,12 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
       return;
     }
 
+    final autoCashout = ref.read(crashAutoCashoutProvider)[widget.index + 10];
+
     final settings = CrashAutoPlaySettings(
       selectedRounds: selectedRounds!,
       betAmount: _betAmountController.text,
+      autoCashout: autoCashout,
     );
 
     Navigator.of(context).pop(settings);
@@ -133,7 +140,7 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
                 ),
                 SizedBox(height: 30),
                 // Slider
-                CustomSlider(index: widget.index),
+                CustomSlider(index: widget.index + 10),
 
                 SizedBox(height: 30),
 

@@ -6,13 +6,17 @@ import 'package:wintek/features/game/crash/service/crash_my_bets_history_service
 
 class CrashMyBetsNotifier extends StateNotifier<AsyncValue<CrashMyBetsModel?>> {
   final CrashMyBetsHistoryService _myBetsHistoryService;
+  int _currentPage = 1;
 
   CrashMyBetsNotifier(this._myBetsHistoryService)
     : super(const AsyncValue.loading());
 
+  int get currentPage => _currentPage;
+
   Future<void> fetchMyBetsHistory({int limit = 50, int page = 1}) async {
     state = const AsyncValue.loading();
     try {
+      _currentPage = page;
       final result = await _myBetsHistoryService.fetchUser(
         limit: limit,
         page: page,

@@ -7,12 +7,12 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/crash/domain/models/crash_bet_request_model.dart';
+import 'package:wintek/features/game/crash/domain/models/crash_round_model.dart';
 import 'package:wintek/features/game/crash/providers/crash_bet_provider.dart';
 import 'package:wintek/features/game/crash/providers/crash_auto_cashout_provider.dart';
 import 'package:wintek/features/game/crash/providers/crash_bet_response_provider.dart';
 import 'package:wintek/features/game/crash/providers/crash_cashout_provider.dart';
 import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
-import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 import 'package:wintek/features/game/crash/providers/crash_game_provider.dart';
@@ -53,6 +53,7 @@ class CrashCustomBetButton extends ConsumerStatefulWidget {
   final Function(int, double)? onAutoPlayUpdate;
   final VoidCallback? onAutoPlayStop;
   final bool Function(double, double)? shouldContinueAutoPlay;
+  final ValueChanged<bool>? onManualBetPlaced;
 
   const CrashCustomBetButton({
     super.key,
@@ -63,6 +64,7 @@ class CrashCustomBetButton extends ConsumerStatefulWidget {
     this.onAutoPlayUpdate,
     this.onAutoPlayStop,
     this.shouldContinueAutoPlay,
+    this.onManualBetPlaced,
   });
 
   @override
@@ -91,7 +93,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
     return creds.userId;
   }
 
-  void _evaluateAutoPlayAndMaybeBet(RoundState? round) {
+  void _evaluateAutoPlayAndMaybeBet(CrashRoundState? round) {
     if (widget.autoPlayState == null ||
         widget.autoPlayState!.settings == null ||
         widget.shouldContinueAutoPlay == null ||
@@ -124,7 +126,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
           final latestRound = ref.read(crashRoundNotifierProvider);
           if (latestRound?.state != 'PREPARE') return;
           if (hasPlacedBet || _isPlacingBet) return;
-          _placeBet();
+          _placeBet(isAutoPlay: true);
         });
       },
       orElse: () {},
@@ -134,6 +136,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   Future<void> _placeBet({
     String? amountOverride,
     double? autoCashoutOverride,
+    bool isAutoPlay = false,
   }) async {
     log(
       "🎲 _placeBet called - amountOverride: $amountOverride, autoCashoutOverride: $autoCashoutOverride",
@@ -172,7 +175,11 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
       } else {
         final controllerAmountText = widget.amountController.text.trim();
         amountText = controllerAmountText;
-        autoCashoutValue = ref.read(crashAutoCashoutProvider)[widget.index];
+        if (isAutoPlay) {
+          autoCashoutValue = widget.autoPlayState?.settings?.autoCashout;
+        } else {
+          autoCashoutValue = ref.read(crashAutoCashoutProvider)[widget.index];
+        }
         log(
           "💰 Reading auto-cashout for bet index ${widget.index}: $autoCashoutValue",
         );
@@ -221,6 +228,10 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
           _betParticipatedInRound = true;
         });
 
+        if (!isAutoPlay) {
+          widget.onManualBetPlaced?.call(true);
+        }
+
         log('✅ Bet placed successfully: ${newBet.stake}');
       }
     } on DioException catch (e) {
@@ -251,6 +262,10 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
       lastMultiplier = null;
       lastRoundId = round.roundId;
 
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onManualBetPlaced?.call(false);
+      });
+
       // Clear the bet for the new round
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -280,6 +295,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
           _placeBet(
             amountOverride: _queuedAmountText,
             autoCashoutOverride: _queuedAutoCashoutValue,
+            isAutoPlay: false,
           );
           if (mounted) {
             setState(() {
@@ -358,6 +374,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                   setState(() {
                     hasPlacedBet = false;
                   });
+                  widget.onManualBetPlaced?.call(false);
                 }
 
                 // Show flushbar
@@ -475,7 +492,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                       'Your bet has been added to the next round.',
                     );
                   } else {
-                    await _placeBet();
+                    await _placeBet(isAutoPlay: false);
                   }
                 }
                 // Cashout
@@ -512,6 +529,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                       setState(() {
                         hasPlacedBet = false;
                       });
+                      widget.onManualBetPlaced?.call(false);
                     }
                     final cashoutAt = response.cashoutAt;
                     if (cashoutAt == null) return;
@@ -557,7 +575,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                   const SizedBox(height: 2),
                   Text(
                     'Wait for next round',
-                    style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+                    style: Theme.of(context).textTheme.crashbodySmallThird,
                   ),
                 ],
               )
