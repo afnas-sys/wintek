@@ -6,7 +6,6 @@ import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/widgets/custom_elevated_button.dart';
-import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
 import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
 

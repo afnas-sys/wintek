@@ -5,9 +5,7 @@ import 'package:wintek/core/constants/socket_constants/socket_constants.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/crash/domain/constants/crash_socket_constants.dart';
-import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
-import 'package:wintek/features/game/crash/domain/models/crash_bet_result_event.dart';
 
 class CrashSocketService {
   final _stateController = StreamController<RoundState>.broadcast();

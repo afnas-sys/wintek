@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/crash/domain/models/crash_all_bets_model.dart';
-import 'package:wintek/features/game/crash/domain/models/crash_bet_result_event.dart';
 import 'package:wintek/features/game/crash/service/crash_socket_service.dart';
 
 final crashRoundProvider = Provider.autoDispose<CrashSocketService>((ref) {
