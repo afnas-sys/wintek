@@ -67,6 +67,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   final secureStorageService = SecureStorageService();
 
   AutoPlayState _autoPlayState = AutoPlayState();
+  bool _manualBetActive = false;
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
@@ -114,8 +115,10 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   }
 
   void _stopAutoPlay() {
-    setState(() {
-      _autoPlayState = AutoPlayState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _autoPlayState = AutoPlayState();
+      });
     });
   }
 
@@ -172,7 +175,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   void initState() {
     _amountController.text = 1.toString();
     _autoAmountController.text = 1.toString();
-    _switchController.text = 1.5.toString();
+    // _switchController.text = 1.toString();
     super.initState();
   }
 
@@ -364,43 +367,52 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   //!Switch
   Widget _buildSwitch() {
-    return CustomSlidingSegmentedControl<int>(
-      initialValue: _selectedValue,
-      children: {
-        0: Text(
-          'Bet',
-          style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+    return IgnorePointer(
+      ignoring: _manualBetActive,
+      child: Opacity(
+        opacity: _manualBetActive ? 0.5 : 1.0,
+        child: CustomSlidingSegmentedControl<int>(
+          initialValue: _selectedValue,
+          children: {
+            0: Text(
+              'Bet',
+              style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+            ),
+            1: Text(
+              'Auto',
+              style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
+            ),
+          },
+
+          decoration: BoxDecoration(
+            color: AppColors.aviatorTwentiethColor,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: AppColors.aviatorFifteenthColor,
+              width: 1,
+            ),
+          ),
+
+          thumbDecoration: BoxDecoration(
+            color: AppColors.aviatorFifteenthColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+
+          // ⭐ CONTROL SHAPE & EFFECT HERE ⭐
+          customSegmentSettings: CustomSegmentSettings(
+            borderRadius: BorderRadius.circular(30), // shape of ripple
+            splashColor: Colors.transparent, // remove ripple color
+            highlightColor: Colors.transparent, // remove highlight
+            overlayColor: MaterialStateProperty.all(Colors.transparent),
+          ),
+
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          onValueChanged: (v) {
+            setState(() => _selectedValue = v);
+          },
         ),
-        1: Text(
-          'Auto',
-          style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
-        ),
-      },
-
-      decoration: BoxDecoration(
-        color: AppColors.aviatorTwentiethColor,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: AppColors.aviatorFifteenthColor, width: 1),
       ),
-
-      thumbDecoration: BoxDecoration(
-        color: AppColors.aviatorFifteenthColor,
-        borderRadius: BorderRadius.circular(30),
-      ),
-
-      // ⭐ CONTROL SHAPE & EFFECT HERE ⭐
-      customSegmentSettings: CustomSegmentSettings(
-        borderRadius: BorderRadius.circular(30), // shape of ripple
-        splashColor: Colors.transparent, // remove ripple color
-        highlightColor: Colors.transparent, // remove highlight
-        overlayColor: MaterialStateProperty.all(Colors.transparent),
-      ),
-
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      onValueChanged: (v) {
-        setState(() => _selectedValue = v);
-      },
     );
   }
 
@@ -491,44 +503,50 @@ class _BetContainerState extends ConsumerState<BetContainer> {
         : 0;
     final currentRound = _autoPlayState.roundsPlayed;
 
+    final isDisabled = _manualBetActive && !isAutoPlayActive;
+
     return Flexible(
       flex: 2,
       child: CustomElevatedButton(
-        onPressed: () async {
-          if (isAutoPlayActive) {
-            // Stop autoplay
-            _stopAutoPlay();
-          } else {
-            // Start autoplay - show dialog with callback
-            await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AutoPlayWidget(
-                  onStart: (settings) {
-                    _startAutoPlay(settings);
-                  },
-                );
+        onPressed: isDisabled
+            ? null
+            : () async {
+                if (isAutoPlayActive) {
+                  // Stop autoplay
+                  _stopAutoPlay();
+                } else {
+                  // Start autoplay - show dialog with callback
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AutoPlayWidget(
+                        onStart: (settings) {
+                          _startAutoPlay(settings);
+                        },
+                      );
+                    },
+                  );
+                }
               },
-            );
-          }
-        },
         padding: const EdgeInsets.symmetric(horizontal: 12),
         borderRadius: 52,
-        backgroundColor: isAutoPlayActive
-            ? AppColors
-                  .aviatorTwentySixthColor // Red color for stop
-            : AppColors.aviatorTwentyNinthColor,
+        backgroundColor: isDisabled
+            ? AppColors.aviatorTwentiethColor
+            : (isAutoPlayActive
+                  ? AppColors.aviatorTwentySixthColor
+                  : AppColors.aviatorTwentyNinthColor),
         hasBorder: true,
         height: 28,
-        borderColor: isAutoPlayActive
-            ? AppColors.aviatorTwentySixthColor
-            : AppColors.aviatorNineteenthColor,
+        borderColor: AppColors.aviatorNineteenthColor,
         child: Text(
-          isAutoPlayActive
-              ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
-              : 'AUTOPLAY',
-          style: Theme.of(context).textTheme.aviatorBodyMediumPrimary,
-          overflow: TextOverflow.ellipsis,
+          isDisabled
+              ? 'AUTOPLAY'
+              : (isAutoPlayActive
+                    ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
+                    : 'AUTOPLAY'),
+          style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+          maxLines: 1,
+          softWrap: false,
         ),
       ),
     );
@@ -580,10 +598,10 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                   suffixStyle: TextStyle(
                     color: AppColors.aviatorSixteenthColor,
                   ),
-                  // hintText: "1.5",
-                  // hintStyle: Theme.of(
-                  //   context,
-                  // ).textTheme.aviatorBodyMediumFourth,
+                  hintText: "1.5 x",
+                  hintStyle: Theme.of(
+                    context,
+                  ).textTheme.aviatorBodyMediumPrimary,
                   filled: true,
                   fillColor: AppColors.aviatorFifteenthColor,
                   contentPadding: const EdgeInsets.symmetric(
@@ -605,6 +623,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     return CustomBetButton(
       index: widget.index,
       amountController: _amountController,
+      onBetPlaced: () => setState(() => _manualBetActive = true),
+      onBetFinished: () => setState(() => _manualBetActive = false),
       //   switchController: _switchController,
     );
   }
@@ -626,6 +646,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       },
       onAutoPlayStop: _stopAutoPlay,
       shouldContinueAutoPlay: _shouldContinueAutoPlay,
+      onBetPlaced: () => setState(() => _manualBetActive = true),
+      onBetFinished: () => setState(() => _manualBetActive = false),
     );
   }
 }
