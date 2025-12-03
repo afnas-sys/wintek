@@ -15,9 +15,8 @@ class CustomSlider extends ConsumerStatefulWidget {
 
 class _CustomSliderState extends ConsumerState<CustomSlider> {
   final List<double> _steps = [
-    for (double i = 1.0; i <= 1.9; i += 0.1) double.parse(i.toStringAsFixed(1)),
-    2.5,
-    for (int i = 3; i <= 10; i++) i.toDouble(),
+    for (double i = 1.0; i <= 10.0; i += 0.1)
+      double.parse(i.toStringAsFixed(1)),
     for (int i = 20; i <= 100; i += 10) i.toDouble(),
     for (int i = 200; i <= 500; i += 100) i.toDouble(),
     1000,
