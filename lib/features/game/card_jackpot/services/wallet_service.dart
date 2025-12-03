@@ -13,6 +13,9 @@ class WalletService {
     try {
       final res = await dio.get(
         '${CardApiConstants.getWalletBalance}${storageData.userId}',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${storageData.token}'},
+        ),
       );
       return WalletResponse.fromJson(res.data);
     } on DioException catch (e) {
