@@ -19,6 +19,9 @@ class HistoryService {
     try {
       final response = await _dio.get(
         '${CardApiConstants.getMyHistory}${secureData.userId}',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${secureData.token}'},
+        ),
       );
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(response.data['data'] ?? []);
@@ -31,8 +34,14 @@ class HistoryService {
   }
 
   Future<List<Map<String, dynamic>>> fetchGameHistory() async {
+    final secureData = await SecureStorageService().readCredentials();
     try {
-      final response = await _dio.get(CardApiConstants.recentRounds);
+      final response = await _dio.get(
+        CardApiConstants.recentRounds,
+        options: Options(
+          headers: {'Authorization': 'Bearer ${secureData.token}'},
+        ),
+      );
       if (response.statusCode == 200) {
         final data = List<Map<String, dynamic>>.from(
           response.data['data'] ?? [],
