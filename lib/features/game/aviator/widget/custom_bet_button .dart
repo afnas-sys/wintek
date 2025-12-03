@@ -24,6 +24,8 @@ class CustomBetButton extends ConsumerStatefulWidget {
   final Function(int, double)? onAutoPlayUpdate;
   final VoidCallback? onAutoPlayStop;
   final bool Function(double, double)? shouldContinueAutoPlay;
+  final VoidCallback? onBetPlaced;
+  final VoidCallback? onBetFinished;
 
   const CustomBetButton({
     super.key,
@@ -34,6 +36,8 @@ class CustomBetButton extends ConsumerStatefulWidget {
     this.onAutoPlayUpdate,
     this.onAutoPlayStop,
     this.shouldContinueAutoPlay,
+    this.onBetPlaced,
+    this.onBetFinished,
   });
 
   @override
@@ -60,11 +64,11 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
   }
 
   void _handleRoundCrash() {
-    // If autoplay is active and we crashed (lost the bet), update rounds played
+    // If autoplay is active and we crashed (lost the bet), update win amount
     if (widget.autoPlayState != null &&
         widget.autoPlayState!.settings != null) {
       widget.onAutoPlayUpdate?.call(
-        widget.autoPlayState!.roundsPlayed + 1,
+        widget.autoPlayState!.roundsPlayed,
         0.0, // No win on crash
       );
 
@@ -202,6 +206,16 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
           hasPlacedBet = true;
         });
 
+        widget.onBetPlaced?.call();
+
+        // Increment rounds played for autoplay
+        if (widget.autoPlayState != null) {
+          widget.onAutoPlayUpdate?.call(
+            widget.autoPlayState!.roundsPlayed + 1,
+            0.0,
+          );
+        }
+
         log('✅ Bet placed successfully: ${newBet.stake}');
       }
     } on DioException catch (e) {
@@ -221,12 +235,29 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
     final round = ref.watch(aviatorRoundNotifierProvider);
     final tick = ref.watch(aviatorTickProvider);
 
+    // Listen for crash to reset bet state immediately
+    ref.listen(aviatorRoundNotifierProvider, (previous, next) {
+      if (next?.state == 'CRASHED' && previous?.state != 'CRASHED') {
+        if (hasPlacedBet) {
+          setState(() {
+            hasPlacedBet = false;
+          });
+          widget.onBetFinished?.call();
+        }
+      }
+    });
+
     // Reset hasPlacedBet if a new round starts
     if (round != null && round.roundId != lastRoundId) {
       hasPlacedBet = false;
       hasAutoCashedOut = false;
       lastMultiplier = null;
       lastRoundId = round.roundId;
+
+      // Unconditionally notify that bet is finished (resetting UI in parent)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onBetFinished?.call();
+      });
 
       // Handle crash - if we had a bet placed and round crashed, update autoplay
       if (lastRoundId != null && round.state == 'CRASHED') {
@@ -314,7 +345,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                   // Update autoplay state
                   if (widget.autoPlayState != null) {
                     widget.onAutoPlayUpdate?.call(
-                      widget.autoPlayState!.roundsPlayed + 1,
+                      widget.autoPlayState!.roundsPlayed,
                       winAmount,
                     );
 
@@ -335,6 +366,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
               setState(() {
                 hasPlacedBet = false;
               });
+              widget.onBetFinished?.call();
             }
 
             // Show Flushbar
@@ -408,6 +440,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                       _queuedAmountText = null;
                       _queuedAutoCashoutValue = null;
                     });
+                    widget.onBetFinished?.call();
                     _customSnackBar(context, 'Pending bet cancelled.');
                     return;
                   }
@@ -432,6 +465,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                       _queuedAmountText = amountText;
                       _queuedAutoCashoutValue = autoCashoutValue;
                     });
+                    widget.onBetPlaced?.call();
 
                     _customSnackBar(
                       context,
@@ -493,6 +527,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                       setState(() {
                         hasPlacedBet = false;
                       });
+                      widget.onBetFinished?.call();
                     }
                     final cashoutAt = response.cashoutAt;
                     log('✅ CashoutAt: $cashoutAt X');
@@ -507,6 +542,14 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                           ref
                               .read(userProvider.notifier)
                               .updateWallet(newWallet);
+
+                          // Update autoplay state for manual cashout
+                          if (widget.autoPlayState != null) {
+                            widget.onAutoPlayUpdate?.call(
+                              widget.autoPlayState!.roundsPlayed,
+                              winAmount,
+                            );
+                          }
                         }
                       },
                       orElse: () {},
