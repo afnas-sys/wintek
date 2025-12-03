@@ -208,6 +208,11 @@ class AppColors {
   ).withOpacity(30 / 100);
   static Color crashThirtyEightColor = Color(0xFF28A809).withOpacity(30 / 100);
   static Color crashThirtyNinthColor = Color(0XFF222222).withOpacity(0.1);
+  static const Color crashFortythColor = Color(0xFF005F91);
+  static const Color crashFortyFirstColor = Color(0xFF6205BB);
+  static const Color crashFortySecondColor = Color(0xFF76036F);
+  static const Color crashFortyThirdColor = Color(0xFF25323F);
+  static const Color crashFortyFourthColor = Color(0xFF707a82);
 
   //!_____________________________________SpinToWin_______________________________________
   static const Color spinToWinPrimaryColor = Color(0Xff160A31);

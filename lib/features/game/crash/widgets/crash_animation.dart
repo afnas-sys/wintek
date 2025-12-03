@@ -38,6 +38,9 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   double _innerHeight = 0.0;
   Offset? _crashPosition;
 
+  final double _rocketLeftOffset = -20.0;
+  final double _rocketBottomOffset = -5.0;
+
   String _currentLabel = '';
   String _previousLabel = '';
   bool _isFirstRunning = false;
@@ -367,8 +370,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                     }
 
                                     return Positioned(
-                                      left: currentPoint.dx,
-                                      bottom: bottomPos,
+                                      left: currentPoint.dx + _rocketLeftOffset,
+                                      bottom: bottomPos + _rocketBottomOffset,
                                       child: Transform.rotate(
                                         angle: planeAngle,
                                         child: Lottie.asset(
@@ -508,9 +511,14 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               if (round?.state == 'CRASHED' &&
                                   _crashPosition != null)
                                 Positioned(
-                                  left: _crashPosition!.dx - 40,
+                                  left:
+                                      _crashPosition!.dx -
+                                      40 +
+                                      _rocketLeftOffset,
                                   bottom:
-                                      (_innerHeight - _crashPosition!.dy) - 40,
+                                      (_innerHeight - _crashPosition!.dy) -
+                                      40 +
+                                      _rocketBottomOffset,
                                   child: Lottie.asset(
                                     AppImages.crashExplosion,
                                     width: 150,
@@ -555,8 +563,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               if (round?.state == 'PREPARE')
                                 Positioned(
-                                  left: 0,
-                                  bottom: 0,
+                                  left: 0 + _rocketLeftOffset,
+                                  bottom: 0 + _rocketBottomOffset,
                                   child: Lottie.asset(
                                     AppImages.crashRocket,
                                     width: 70,

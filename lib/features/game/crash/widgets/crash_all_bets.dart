@@ -36,7 +36,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
           Row(
             children: [
               Text(
-                'TOTAL BETS: ${betsAsync?.count}',
+                'TOTAL BETS: ${betsAsync?.count ?? 0}',
                 style: Theme.of(context).textTheme.crashBodyTitleSmallSecondary,
               ),
             ],
