@@ -9,9 +9,14 @@ class BetService {
   BetService(this.dio);
 
   Future<Map<String, dynamic>?> placeBet(BetRequestModel betRequest) async {
+    final secureData = await SecureStorageService().readCredentials();
+
     try {
       final res = await dio.post(
         CardApiConstants.placeBet,
+        options: Options(
+          headers: {'Authorization': 'Bearer ${secureData.token}'},
+        ),
         data: betRequest.toJson(),
       );
       return res.data;
