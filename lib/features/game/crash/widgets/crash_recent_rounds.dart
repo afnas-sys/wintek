@@ -37,11 +37,11 @@ class _CrashRecentRoundsWidgetState
   Color _getColor(String text) {
     final value = double.tryParse(text.replaceAll("x", "")) ?? 0;
     if (value < 2) {
-      return AppColors.aviatorSeventhColor;
+      return AppColors.crashFortythColor;
     } else if (value < 10) {
-      return AppColors.aviatorEighthColor;
+      return AppColors.crashFortyFirstColor;
     } else {
-      return AppColors.aviatorNinthColor;
+      return AppColors.crashFortySecondColor;
     }
   }
 
@@ -59,7 +59,7 @@ class _CrashRecentRoundsWidgetState
       alignment: Alignment.center,
       child: Text(
         text,
-        style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+        style: Theme.of(context).textTheme.crashbodySmallPrimary,
       ),
     );
   }
@@ -94,10 +94,12 @@ class _CrashRecentRoundsWidgetState
                   child: ElevatedButton(
                     onPressed: () => setState(() => showBalance = !showBalance),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.aviatorTenthColor,
+                      backgroundColor: AppColors.crashFortyThirdColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
-                        side: BorderSide(color: AppColors.aviatorEleventhColor),
+                        side: BorderSide(
+                          color: AppColors.crashFortyFourthColor,
+                        ),
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 6,
