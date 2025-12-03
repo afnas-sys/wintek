@@ -227,8 +227,8 @@ class _MyBetsState extends ConsumerState<MyBets> {
                       String formatNum(num? value) =>
                           value?.toStringAsFixed(2) ?? '0.00';
 
-                      bool isHighlighted = index == 0;
-                      Color? bgColor = isHighlighted
+                      Color? bgColor =
+                          (bet.payout == 0.0 && bet.cashoutAt == 0.0)
                           ? AppColors.aviatorThirtyEightColor
                           : AppColors.aviatorTwentyFirstColor;
 
