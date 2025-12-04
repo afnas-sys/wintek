@@ -386,7 +386,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         isAutoPlayActive
             ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
             : 'Autoplay',
-        style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+        style: Theme.of(context).textTheme.crashbodySmallThird,
       ),
     );
   }
