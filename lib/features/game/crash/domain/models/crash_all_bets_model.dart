@@ -11,11 +11,13 @@ class CrashAllBetsModel {
 
   factory CrashAllBetsModel.fromJson(Map<String, dynamic> json) {
     return CrashAllBetsModel(
-      roundId: json['roundId'],
-      bets: (json['bets'] as List<dynamic>)
-          .map((e) => BetModel.fromJson(e))
-          .toList(),
-      count: json['count'],
+      roundId: json['roundId'] ?? '',
+      bets:
+          (json['bets'] as List<dynamic>?)
+              ?.map((e) => BetModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      count: json['count'] ?? 0,
     );
   }
 
@@ -59,21 +61,25 @@ class BetModel {
 
   factory BetModel.fromJson(Map<String, dynamic> json) {
     return BetModel(
-      id: json['_id'],
-      roundId: json['roundId'],
-      userId: User.fromJson(json['userId']),
-      user: User.fromJson(json['user']),
+      id: json['_id'] ?? '',
+      roundId: json['roundId'] ?? '',
+      userId: json['userId'] != null
+          ? User.fromJson(json['userId'])
+          : User(id: '', userName: ''),
+      user: json['user'] != null
+          ? User.fromJson(json['user'])
+          : User(id: '', userName: ''),
       stake: (json['stake'] ?? 0).toDouble(),
       autoCashout: (json['autoCashout'] != null)
           ? (json['autoCashout'] as num).toDouble()
-          : 0.0,
+          : null,
       cashoutAt: (json['cashoutAt'] != null)
           ? (json['cashoutAt'] as num).toDouble()
-          : 0.0,
+          : null,
       payout: (json['payout'] ?? 0).toDouble(),
-      status: json['status'],
-      betIndex: json['betIndex'],
-      createdAt: DateTime.parse(json['createdAt']),
+      status: json['status'] ?? '',
+      betIndex: json['betIndex'] ?? 0,
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       cashedOutAt: json['cashedOutAt'] != null
           ? DateTime.tryParse(json['cashedOutAt'])
           : null,
@@ -105,7 +111,7 @@ class User {
   User({required this.id, required this.userName});
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(id: json['_id'], userName: json['user_name']);
+    return User(id: json['_id'] ?? '', userName: json['user_name'] ?? '');
   }
 
   Map<String, dynamic> toJson() {

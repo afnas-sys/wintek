@@ -93,7 +93,7 @@ class CrashSocketService {
         final betResult = CrashAllBetsModel.fromJson(data);
         _betResultController.add(betResult);
       } catch (e) {
-        log('😴😴😴Error: $e');
+        log('afnas😴😴😴Error: $e');
       }
     });
   }

@@ -341,7 +341,7 @@ extension CustomTextStyle on TextTheme {
   //!________________________________Crash___________________________________
   TextStyle get crashHeadlineSmall => GoogleFonts.roboto(
     color: AppColors.crashPrimaryColor,
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: FontWeight.bold,
   );
 
