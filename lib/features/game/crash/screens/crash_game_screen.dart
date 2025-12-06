@@ -33,9 +33,7 @@ class _CrashGameScreenState extends ConsumerState<CrashGameScreen>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 20),
-    )..repeat(); // Infinite rotation
-
-    // Infinite rotation
+    );
   }
 
   @override
@@ -49,6 +47,22 @@ class _CrashGameScreenState extends ConsumerState<CrashGameScreen>
     ref.listen(crashDisconnectProvider, (previous, next) {
       _messengerKey.currentState?.clearSnackBars();
       ref.read(flushbarListProvider.notifier).dismissAll();
+    });
+
+    ref.listen(crashTickProvider, (previous, next) {
+      final multiplier = next.maybeWhen(
+        data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
+        orElse: () => 0.0,
+      );
+      if (multiplier > 0 && !_controller.isAnimating) {
+        _controller.repeat();
+      }
+    });
+
+    ref.listen(crashRoundNotifierProvider, (previous, next) {
+      if (next?.state != 'RUNNING') {
+        _controller.stop();
+      }
     });
 
     return ScaffoldMessenger(

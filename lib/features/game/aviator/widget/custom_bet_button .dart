@@ -27,6 +27,7 @@ class CustomBetButton extends ConsumerStatefulWidget {
   final bool Function(double, double)? shouldContinueAutoPlay;
   final VoidCallback? onBetPlaced;
   final VoidCallback? onBetFinished;
+  final Function(String)? onValidationError;
 
   const CustomBetButton({
     super.key,
@@ -39,6 +40,7 @@ class CustomBetButton extends ConsumerStatefulWidget {
     this.shouldContinueAutoPlay,
     this.onBetPlaced,
     this.onBetFinished,
+    this.onValidationError,
   });
 
   @override
@@ -194,7 +196,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
       // Determine stake / auto cashout source: queued override vs controllers
       late final String amountText;
-      late final double? autoCashoutValue;
+      double? autoCashoutValue;
 
       if (amountOverride != null || autoCashoutOverride != null) {
         amountText = (amountOverride ?? '').trim();
@@ -211,6 +213,16 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
       if (amountText.isEmpty) {
         log('⚠️ Bet amount is empty');
         return;
+      }
+
+      // Check for empty or invalid auto cashout if enabled
+      if (widget.switchController != null) {
+        final text = widget.switchController!.text.trim();
+        final val = double.tryParse(text) ?? 0.0;
+        if (text.isEmpty || val < 1.10) {
+          widget.switchController!.text = "1.10";
+          autoCashoutValue = 1.10;
+        }
       }
 
       final roundId = round.roundId;

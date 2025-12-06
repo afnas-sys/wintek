@@ -74,6 +74,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   AutoPlayState _autoPlayState = AutoPlayState();
   bool _manualBetActive = false;
+  String? _autoCashoutError;
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
@@ -590,19 +591,20 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   //! IconButton
   Widget _buildIconButton(IconData icon, VoidCallback onPressed, bool enabled) {
-    return CustomElevatedButton(
-      hasBorder: false,
-      backgroundColor: AppColors.aviatorFifteenthColor,
-      padding: const EdgeInsets.all(2),
-      height: 22,
-      width: 22,
-      onPressed: enabled ? onPressed : null,
-      child: Icon(
-        icon,
-        size: 18.33,
-        color: enabled
-            ? AppColors.aviatorTertiaryColor
-            : AppColors.aviatorTwentiethColor,
+    return IgnorePointer(
+      ignoring: !enabled,
+      child: CustomElevatedButton(
+        hasBorder: false,
+        backgroundColor: AppColors.aviatorFifteenthColor,
+        padding: const EdgeInsets.all(2),
+        height: 22,
+        width: 22,
+        onPressed: enabled ? onPressed : () {},
+        child: Icon(
+          icon,
+          size: 18.33,
+          color: enabled ? AppColors.aviatorTertiaryColor : Colors.transparent,
+        ),
       ),
     );
   }
@@ -737,10 +739,6 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                   suffixStyle: TextStyle(
                     color: AppColors.aviatorSixteenthColor,
                   ),
-                  hintText: "1.5 x",
-                  hintStyle: Theme.of(
-                    context,
-                  ).textTheme.aviatorBodyMediumPrimary,
                   filled: true,
                   fillColor: AppColors.aviatorFifteenthColor,
                   contentPadding: const EdgeInsets.symmetric(
@@ -748,7 +746,13 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                     horizontal: 6,
                   ),
                   border: _borderStyle(),
+                  errorText: _autoCashoutError,
                 ),
+                onChanged: (value) {
+                  if (value.isNotEmpty && _autoCashoutError != null) {
+                    setState(() => _autoCashoutError = null);
+                  }
+                },
               ),
             ),
           ),

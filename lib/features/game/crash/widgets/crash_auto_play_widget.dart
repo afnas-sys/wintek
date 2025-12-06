@@ -381,23 +381,24 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
   ) {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
-      child: CustomElevatedButton(
-        hasBorder: true,
-        borderColor: isEnabled
-            ? AppColors.crashTwentyEigthColor
-            : AppColors.crashTwentyFirstColor,
-        backgroundColor: AppColors.crashTwentyFirstColor,
-        padding: EdgeInsets.zero, // ✅ FIXED
-        onPressed: isEnabled ? onPressed : null,
-        height: 18,
-        width: 18,
-        child: Center(
-          child: Icon(
-            icon,
-            size: 18.33,
-            color: isEnabled
-                ? AppColors.crashTwentyEigthColor
-                : AppColors.crashTwentyFirstColor,
+      child: IgnorePointer(
+        ignoring: !isEnabled,
+        child: CustomElevatedButton(
+          hasBorder: true,
+          borderColor: AppColors.crashTwentyEigthColor,
+          backgroundColor: AppColors.crashTwentyFirstColor,
+          padding: EdgeInsets.zero,
+          onPressed: isEnabled ? onPressed : () {},
+          height: 18,
+          width: 18,
+          child: Center(
+            child: Icon(
+              icon,
+              size: 18.33,
+              color: isEnabled
+                  ? AppColors.crashTwentyEigthColor
+                  : AppColors.crashTwentyFirstColor,
+            ),
           ),
         ),
       ),

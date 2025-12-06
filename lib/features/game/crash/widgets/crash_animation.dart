@@ -57,7 +57,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     'WICKED': [Color(0XFFCD015E), Color(0XFF9600FF)],
     'GODLIKE': [Color(0XFFEB8256), Color(0XFFE73C5D)],
     'LEGENDARY': [Color(0XFFF4F564), Color(0XFFFA7F00)],
-    'CRASH': [Colors.white, Colors.white],
+    'CRASH': [AppColors.crashPrimaryColor, AppColors.crashPrimaryColor],
   };
 
   @override
@@ -402,8 +402,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                                 colors:
                                                     _labelColors[_currentLabel] ??
                                                     [
-                                                      Colors.white,
-                                                      Colors.white,
+                                                      AppColors
+                                                          .crashPrimaryColor,
+                                                      AppColors
+                                                          .crashPrimaryColor,
                                                     ],
                                               ).createShader(bounds);
                                             },
@@ -412,7 +414,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                               style: const TextStyle(
                                                 fontSize: 24,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color:
+                                                    AppColors.crashPrimaryColor,
                                               ),
                                             ),
                                           ),
@@ -483,8 +486,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                                 colors:
                                                     _labelColors[_currentLabel] ??
                                                     [
-                                                      Colors.white,
-                                                      Colors.white,
+                                                      AppColors
+                                                          .crashPrimaryColor,
+                                                      AppColors
+                                                          .crashPrimaryColor,
                                                     ],
                                               ).createShader(bounds);
                                             },
@@ -493,7 +498,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                               style: const TextStyle(
                                                 fontSize: 24,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                                color:
+                                                    AppColors.crashPrimaryColor,
                                               ),
                                             ),
                                           ),

@@ -356,64 +356,69 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                   SizedBox(
                     width: 22,
                     height: 22,
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: IconButton(
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                        splashRadius: 9,
-                        icon: Icon(
-                          Icons.remove_circle_outline,
-                          size: 22,
-                          color: canDecrement
-                              ? AppColors.crashTwentyEigthColor
-                              : AppColors.crashTwentyFirstColor,
+                    child: IgnorePointer(
+                      ignoring: !canDecrement,
+                      child: GestureDetector(
+                        onTap: () {
+                          final currentVal =
+                              int.tryParse(controller.text) ?? 10;
+                          controller.text =
+                              (currentVal > 10 ? currentVal - 1 : 10)
+                                  .toString();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.crashTwentyEigthColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.remove,
+                            size: 16,
+                            color: canDecrement
+                                ? AppColors.crashTwentyEigthColor
+                                : Colors.transparent,
+                          ),
                         ),
-                        onPressed: canDecrement
-                            ? () {
-                                final currentVal =
-                                    int.tryParse(controller.text) ?? 10;
-                                controller.text =
-                                    (currentVal > 10 ? currentVal - 1 : 10)
-                                        .toString();
-                              }
-                            : null,
-                        tooltip: 'Decrement',
                       ),
                     ),
                   ),
 
-                  const SizedBox(
-                    width: 14,
-                  ), // 🔥 reduce spacing (change to 0 if needed)
+                  const SizedBox(width: 14),
 
                   SizedBox(
                     width: 22,
                     height: 22,
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: IconButton(
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
-                        splashRadius: 9,
-                        icon: Icon(
-                          Icons.add_circle_outline,
-                          size: 22,
-                          color: canIncrement
-                              ? AppColors.crashTwentyEigthColor
-                              : AppColors.crashTwentyFirstColor,
+                    child: IgnorePointer(
+                      ignoring: !canIncrement,
+                      child: GestureDetector(
+                        onTap: () {
+                          int currentVal = int.tryParse(controller.text) ?? 10;
+                          controller.text = min(
+                            currentVal + 1,
+                            1000,
+                          ).toString();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.crashTwentyEigthColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Icon(
+                            Icons.add,
+                            size: 16,
+                            color: canIncrement
+                                ? AppColors.crashTwentyEigthColor
+                                : Colors.transparent,
+                          ),
                         ),
-                        onPressed: canIncrement
-                            ? () {
-                                int currentVal =
-                                    int.tryParse(controller.text) ?? 10;
-                                controller.text = min(
-                                  currentVal + 1,
-                                  1000,
-                                ).toString();
-                              }
-                            : null,
-                        tooltip: 'Increment',
                       ),
                     ),
                   ),

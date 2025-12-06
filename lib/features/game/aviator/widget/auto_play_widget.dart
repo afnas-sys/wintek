@@ -41,9 +41,9 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
   bool stopIfCashDecreases = false;
   bool stopIfCashIncreases = false;
   bool stopIfSingleWinExceeds = false;
-  final _decrementController = TextEditingController(text: '0.00');
-  final _incrementController = TextEditingController(text: '0.00');
-  final _exceedsController = TextEditingController(text: '0.00');
+  final _decrementController = TextEditingController(text: '1');
+  final _incrementController = TextEditingController(text: '1');
+  final _exceedsController = TextEditingController(text: '1');
 
   // Validation error messages
   String? _roundsError;
@@ -68,31 +68,6 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
     if (selectedRounds == null) {
       setState(() => _roundsError = 'Please, set number of rounds');
       hasErrors = true;
-    }
-
-    // Validation: Check if enabled conditions have valid amounts
-    if (stopIfCashDecreases) {
-      final amount = double.tryParse(_decrementController.text) ?? 0.0;
-      if (amount <= 0) {
-        setState(() => _decrementError = 'Enter valid amount');
-        hasErrors = true;
-      }
-    }
-
-    if (stopIfCashIncreases) {
-      final amount = double.tryParse(_incrementController.text) ?? 0.0;
-      if (amount <= 0) {
-        setState(() => _incrementError = 'Enter valid amount');
-        hasErrors = true;
-      }
-    }
-
-    if (stopIfSingleWinExceeds) {
-      final amount = double.tryParse(_exceedsController.text) ?? 0.0;
-      if (amount <= 0) {
-        setState(() => _exceedsError = 'Enter valid amount');
-        hasErrors = true;
-      }
     }
 
     if (hasErrors) return;
@@ -126,7 +101,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
 
   void _decrement(TextEditingController controller) {
     final currentValue = double.tryParse(controller.text) ?? 0.0;
-    final newValue = (currentValue - 1.0).clamp(0.0, double.infinity);
+    final newValue = (currentValue - 1.0).clamp(1.0, double.infinity);
     setState(() {
       controller.text = newValue.toStringAsFixed(0);
     });
@@ -138,9 +113,9 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
       stopIfCashDecreases = false;
       stopIfCashIncreases = false;
       stopIfSingleWinExceeds = false;
-      _decrementController.text = '0.00';
-      _incrementController.text = '0.00';
-      _exceedsController.text = '0.00';
+      _decrementController.text = '1.00';
+      _incrementController.text = '1.00';
+      _exceedsController.text = '1.00';
     });
   }
 
@@ -484,6 +459,9 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
     TextEditingController controller, {
     bool enabled = true,
   }) {
+    final currentValue = double.tryParse(controller.text) ?? 0.0;
+    final isMin = currentValue <= 1.0;
+
     return SizedBox(
       width: 120,
       height: 36,
@@ -499,12 +477,16 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
           children: [
             _buildIconButton(
               Icons.remove,
-              enabled ? () => _decrement(controller) : () {},
+              enabled && !isMin ? () => _decrement(controller) : () {},
               enabled: enabled,
+              isTransparent: isMin,
             ),
 
             Expanded(
               child: TextField(
+                onChanged: (value) {
+                  setState(() {});
+                },
                 cursorHeight: 12,
                 controller: controller,
                 enabled: enabled,
@@ -543,30 +525,40 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
   }
 
   //! IconButton
+  //! IconButton
   Widget _buildIconButton(
     IconData icon,
     VoidCallback onPressed, {
     bool enabled = true,
+    bool isTransparent = false,
   }) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
-      child: CustomElevatedButton(
-        hasBorder: false,
-        backgroundColor: enabled
-            ? AppColors.aviatorFifteenthColor
-            : AppColors.aviatorFifteenthColor,
-        padding: EdgeInsetsGeometry.only(left: 0, right: 0, top: 0, bottom: 0),
-        onPressed: onPressed,
-        height: 22,
-        width: 22,
-        borderRadius: 100,
-        child: Center(
-          child: Icon(
-            icon,
-            size: 18.33,
-            color: enabled
-                ? AppColors.aviatorTertiaryColor
-                : AppColors.aviatorThirtyColor,
+      child: IgnorePointer(
+        ignoring: !enabled,
+        child: CustomElevatedButton(
+          hasBorder: false,
+          backgroundColor: AppColors.aviatorFifteenthColor,
+          padding: EdgeInsetsGeometry.only(
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+          ),
+          onPressed: enabled ? onPressed : () {},
+          height: 22,
+          width: 22,
+          borderRadius: 100,
+          child: Center(
+            child: Icon(
+              icon,
+              size: 18.33,
+              color: isTransparent
+                  ? Colors.transparent
+                  : (enabled
+                        ? AppColors.aviatorTertiaryColor
+                        : AppColors.aviatorThirtyColor),
+            ),
           ),
         ),
       ),
