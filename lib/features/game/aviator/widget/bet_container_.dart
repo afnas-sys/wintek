@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
@@ -7,6 +10,7 @@ import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
+import 'package:wintek/features/game/aviator/service/aviator_bet_cache_service.dart';
 
 import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
 
@@ -64,7 +68,9 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   bool _isSwitched = false;
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
+
   final secureStorageService = SecureStorageService();
+  final _cacheService = AviatorBetCacheService();
 
   AutoPlayState _autoPlayState = AutoPlayState();
   bool _manualBetActive = false;
@@ -79,9 +85,9 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       TextEditingController controller = _selectedValue == 0
           ? _amountController
           : _autoAmountController;
-      int current = int.tryParse(controller.text) ?? 0;
+      int current = int.tryParse(controller.text) ?? 10;
       int add = int.tryParse(value) ?? 0;
-      controller.text = (current + add).toString();
+      controller.text = (current + add).clamp(10, 1000).toString();
     });
   }
 
@@ -98,6 +104,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               lastWinAmount: 0.0,
             );
           });
+          _saveAutoPlayState();
           // Place the first bet immediately
           _placeFirstAutoBet();
         }
@@ -119,6 +126,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
       setState(() {
         _autoPlayState = AutoPlayState();
       });
+      _cacheService.clearAutoPlayState(widget.index);
     });
   }
 
@@ -157,26 +165,81 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     TextEditingController controller = _selectedValue == 0
         ? _amountController
         : _autoAmountController;
-    int value = int.tryParse(controller.text) ?? 0;
-    controller.text = (value + 1).toString();
+    int value = int.tryParse(controller.text) ?? 10;
+    controller.text = min(value + 1, 1000).toString();
   }
 
   void _decrement() {
     TextEditingController controller = _selectedValue == 0
         ? _amountController
         : _autoAmountController;
-    int value = int.tryParse(controller.text) ?? 0;
-    if (value > 0) {
+    int value = int.tryParse(controller.text) ?? 10;
+    if (value > 10) {
       controller.text = (value - 1).toString();
     }
   }
 
   @override
   void initState() {
-    _amountController.text = 1.toString();
-    _autoAmountController.text = 1.toString();
-    // _switchController.text = 1.toString();
+    _amountController.text = 10.toString();
+    _autoAmountController.text = 10.toString();
+    _switchController.text = "1.10";
     super.initState();
+    _restoreAutoPlayState();
+  }
+
+  Future<void> _restoreAutoPlayState() async {
+    final cachedState = await _cacheService.getAutoPlayState(widget.index);
+    if (cachedState != null) {
+      if (!mounted) return;
+      setState(() {
+        _autoPlayState = AutoPlayState(
+          settings: AutoPlaySettings(
+            selectedRounds: cachedState['selectedRounds'],
+            stopIfCashDecreases: cachedState['stopIfCashDecreases'] ?? false,
+            decrementAmount: cachedState['decrementAmount'] ?? 0.0,
+            stopIfCashIncreases: cachedState['stopIfCashIncreases'] ?? false,
+            incrementAmount: cachedState['incrementAmount'] ?? 0.0,
+            stopIfSingleWinExceeds:
+                cachedState['stopIfSingleWinExceeds'] ?? false,
+            exceedsAmount: cachedState['exceedsAmount'] ?? 0.0,
+            autoCashout: cachedState['autoCashout'],
+          ),
+          roundsPlayed: cachedState['roundsPlayed'] ?? 0,
+          initialWallet: cachedState['initialWallet'] ?? 0.0,
+          lastWinAmount: cachedState['lastWinAmount'] ?? 0.0,
+        );
+        // Restore bet amount if available
+        if (cachedState['autoAmount'] != null) {
+          _autoAmountController.text = cachedState['autoAmount'];
+        }
+        // Restore manual/auto switch state if relevant, though logic suggests we are in auto mode if state exists
+        if (cachedState['selectedValue'] != null) {
+          _selectedValue = cachedState['selectedValue'];
+        }
+      });
+    }
+  }
+
+  Future<void> _saveAutoPlayState() async {
+    if (_autoPlayState.settings == null) return;
+    final settings = _autoPlayState.settings!;
+    final state = {
+      'selectedRounds': settings.selectedRounds,
+      'stopIfCashDecreases': settings.stopIfCashDecreases,
+      'decrementAmount': settings.decrementAmount,
+      'stopIfCashIncreases': settings.stopIfCashIncreases,
+      'incrementAmount': settings.incrementAmount,
+      'stopIfSingleWinExceeds': settings.stopIfSingleWinExceeds,
+      'exceedsAmount': settings.exceedsAmount,
+      'autoCashout': settings.autoCashout,
+      'roundsPlayed': _autoPlayState.roundsPlayed,
+      'initialWallet': _autoPlayState.initialWallet,
+      'lastWinAmount': _autoPlayState.lastWinAmount,
+      'autoAmount': _autoAmountController.text,
+      'selectedValue': _selectedValue,
+    };
+    await _cacheService.saveAutoPlayState(widget.index, state);
   }
 
   @override
@@ -207,16 +270,20 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               if (widget.showRemoveButton)
                 CustomElevatedButton(
                   hasBorder: true,
-                  borderColor: AppColors.aviatorFourtyColor,
+                  borderColor: _manualBetActive
+                      ? AppColors.aviatorFourtyColor.withOpacity(0.5)
+                      : AppColors.aviatorFourtyColor,
                   backgroundColor: AppColors.aviatorTwentiethColor,
                   padding: EdgeInsetsGeometry.all(2),
                   height: 22,
                   width: 22,
-                  onPressed: widget.onRemovePressed,
+                  onPressed: _manualBetActive ? null : widget.onRemovePressed,
                   child: Icon(
                     Icons.remove,
                     size: 18.33,
-                    color: AppColors.aviatorFourtyColor,
+                    color: _manualBetActive
+                        ? AppColors.aviatorFourtyColor.withOpacity(0.5)
+                        : AppColors.aviatorFourtyColor,
                   ),
                 )
               else if (widget.showAddButton)
@@ -256,27 +323,44 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                                   _buildAmountTextField(
                                     context,
                                     _amountController,
+                                    !_manualBetActive,
                                   ),
 
                                   SizedBox(height: 10),
                                   //! BUTTON FOR ₹10 & ₹20
                                   Row(
                                     children: [
-                                      _quickAmountButton(context, '₹10', '10'),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹10',
+                                        '10',
+                                        !_manualBetActive,
+                                      ),
                                       const SizedBox(width: 6),
-                                      _quickAmountButton(context, '₹20', '20'),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹20',
+                                        '20',
+                                        !_manualBetActive,
+                                      ),
                                     ],
                                   ),
                                   SizedBox(height: 6),
                                   //! BUTTON FOR ₹50 & ₹100
                                   Row(
                                     children: [
-                                      _quickAmountButton(context, '₹50', '50'),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹50',
+                                        '50',
+                                        !_manualBetActive,
+                                      ),
                                       const SizedBox(width: 6),
                                       _quickAmountButton(
                                         context,
                                         '₹100',
                                         '100',
+                                        !_manualBetActive,
                                       ),
                                     ],
                                   ),
@@ -309,15 +393,26 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                                   _buildAmountTextField(
                                     context,
                                     _autoAmountController,
+                                    !_manualBetActive,
                                   ),
 
                                   SizedBox(height: 10),
                                   //!Auto BUTTON FOR AMOUNT 10 & 20
                                   Row(
                                     children: [
-                                      _quickAmountButton(context, '₹10', '10'),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹10',
+                                        '10',
+                                        !_manualBetActive,
+                                      ),
                                       const SizedBox(width: 6),
-                                      _quickAmountButton(context, '₹20', '20'),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹20',
+                                        '20',
+                                        !_manualBetActive,
+                                      ),
                                     ],
                                   ),
                                   SizedBox(height: 6),
@@ -325,12 +420,18 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                                   //!Auto BUTTON FOR AMOUNT 50 &100
                                   Row(
                                     children: [
-                                      _quickAmountButton(context, '₹50', '50'),
+                                      _quickAmountButton(
+                                        context,
+                                        '₹50',
+                                        '50',
+                                        !_manualBetActive,
+                                      ),
                                       const SizedBox(width: 6),
                                       _quickAmountButton(
                                         context,
                                         '₹100',
                                         '100',
+                                        !_manualBetActive,
                                       ),
                                     ],
                                   ),
@@ -420,18 +521,31 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   Widget _buildAmountTextField(
     BuildContext context,
     TextEditingController controller,
+    bool enabled,
   ) {
     return SizedBox(
       width: 140,
       height: 36,
       child: TextField(
         enableInteractiveSelection: false,
+        enabled: enabled,
         controller: controller,
         cursorColor: AppColors.aviatorSixteenthColor,
         cursorHeight: 20,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.aviatorHeadlineSmall,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        onChanged: (value) {
+          int? num = int.tryParse(value);
+          if (num != null) {
+            num = num.clamp(10, 1000);
+            controller.text = num.toString();
+            controller.selection = TextSelection.collapsed(
+              offset: controller.text.length,
+            );
+          }
+        },
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.symmetric(
             vertical: 2,
@@ -444,14 +558,23 @@ class _BetContainerState extends ConsumerState<BetContainer> {
           enabledBorder: _borderStyle(),
           disabledBorder: _borderStyle(),
           focusedBorder: _borderStyle(),
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildIconButton(Icons.remove, _decrement),
-              const SizedBox(width: 4),
-              _buildIconButton(Icons.add, _increment),
-              const SizedBox(width: 4),
-            ],
+          suffixIcon: ValueListenableBuilder(
+            valueListenable: controller,
+            builder: (context, value, child) {
+              final int val = int.tryParse(value.text) ?? 10;
+              final bool canDecrement = enabled && val > 10;
+              final bool canIncrement = enabled && val < 1000;
+
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildIconButton(Icons.remove, _decrement, canDecrement),
+                  const SizedBox(width: 4),
+                  _buildIconButton(Icons.add, _increment, canIncrement),
+                  const SizedBox(width: 4),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -466,31 +589,45 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   }
 
   //! IconButton
-  Widget _buildIconButton(IconData icon, VoidCallback onPressed) {
+  Widget _buildIconButton(IconData icon, VoidCallback onPressed, bool enabled) {
     return CustomElevatedButton(
       hasBorder: false,
       backgroundColor: AppColors.aviatorFifteenthColor,
       padding: const EdgeInsets.all(2),
       height: 22,
       width: 22,
-      onPressed: onPressed,
-      child: Icon(icon, size: 18.33, color: AppColors.aviatorTertiaryColor),
+      onPressed: enabled ? onPressed : null,
+      child: Icon(
+        icon,
+        size: 18.33,
+        color: enabled
+            ? AppColors.aviatorTertiaryColor
+            : AppColors.aviatorTwentiethColor,
+      ),
     );
   }
 
   //!Quick Amount Button
-  Widget _quickAmountButton(BuildContext context, String label, String value) {
-    return CustomElevatedButton(
-      onPressed: () => _setAmount(value),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      borderColor: Color(0XFFAA99FD).withOpacity(.2),
-      backgroundColor: Color(0XFF222222).withOpacity(.04),
-      borderRadius: 30,
-      height: 28,
-      elevation: 0,
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.aviatorBodyMediumFifth,
+  Widget _quickAmountButton(
+    BuildContext context,
+    String label,
+    String value,
+    bool enabled,
+  ) {
+    return Opacity(
+      opacity: enabled ? 1.0 : 0.5,
+      child: CustomElevatedButton(
+        onPressed: enabled ? () => _setAmount(value) : null,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        borderColor: Color(0XFFAA99FD).withOpacity(.2),
+        backgroundColor: Color(0XFF222222).withOpacity(.04),
+        borderRadius: 30,
+        height: 28,
+        elevation: 0,
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.aviatorBodyMediumFifth,
+        ),
       ),
     );
   }
@@ -575,7 +712,9 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                 inactiveThumbColor: AppColors.aviatorTertiaryColor,
                 activeTrackColor: AppColors.aviatorEighteenthColor,
                 inactiveTrackColor: AppColors.aviatorFourteenthColor,
-                onChanged: (value) => setState(() => _isSwitched = value),
+                onChanged: _manualBetActive
+                    ? null
+                    : (value) => setState(() => _isSwitched = value),
               ),
             ),
           ),
@@ -586,7 +725,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               height: 28,
               child: TextField(
                 enableInteractiveSelection: false,
-                enabled: _isSwitched,
+                enabled: _isSwitched && !_manualBetActive,
                 controller: _switchController,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -634,7 +773,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     return CustomBetButton(
       index: widget.index,
       amountController: _autoAmountController,
-      switchController: _switchController,
+      switchController: _isSwitched ? _switchController : null,
       autoPlayState: _autoPlayState,
       onAutoPlayUpdate: (roundsPlayed, lastWinAmount) {
         setState(() {
@@ -643,6 +782,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
             lastWinAmount: lastWinAmount,
           );
         });
+        _saveAutoPlayState();
       },
       onAutoPlayStop: _stopAutoPlay,
       shouldContinueAutoPlay: _shouldContinueAutoPlay,

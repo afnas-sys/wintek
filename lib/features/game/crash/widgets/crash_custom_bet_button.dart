@@ -16,6 +16,7 @@ import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 import 'package:wintek/features/game/crash/providers/crash_game_provider.dart';
+import 'package:wintek/features/game/crash/service/crash_bet_cache_service.dart';
 
 class AutoPlayState {
   final AutoPlaySettings? settings;
@@ -87,6 +88,8 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   double? _queuedAutoCashoutValue;
 
   final secureStorageService = SecureStorageService();
+  final _cacheService = CrashBetCacheService();
+  bool _hasCheckedCache = false;
 
   Future<String?> getUserId() async {
     final creds = await secureStorageService.readCredentials();
@@ -131,6 +134,30 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
       },
       orElse: () {},
     );
+  }
+
+  Future<void> _restoreCachedBet(String currentRoundId) async {
+    final cachedBet = await _cacheService.getBet(widget.index);
+    if (cachedBet != null) {
+      if (cachedBet.roundId == currentRoundId) {
+        if (!mounted) return;
+
+        // Restore state
+        ref
+            .read(crashBetResponseProvider.notifier)
+            .setBetResponse(widget.index, cachedBet);
+        ref.read(crashBetStateProvider.notifier).placeBet(widget.index);
+
+        setState(() {
+          hasPlacedBet = true;
+          _betParticipatedInRound = true;
+        });
+        log('♻️ Restored cached bet for round $currentRoundId');
+      } else {
+        // Old bet, clear it
+        await _cacheService.clearBet(widget.index);
+      }
+    }
   }
 
   Future<void> _placeBet({
@@ -223,6 +250,9 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
           orElse: () {},
         );
 
+        // Save to cache
+        await _cacheService.saveBet(widget.index, newBet);
+
         setState(() {
           hasPlacedBet = true;
           _betParticipatedInRound = true;
@@ -247,74 +277,119 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   }
 
   @override
+  void didUpdateWidget(CrashCustomBetButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.autoPlayState != widget.autoPlayState) {
+      final round = ref.read(crashRoundNotifierProvider);
+      _evaluateAutoPlayAndMaybeBet(round);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final round = ref.watch(crashRoundNotifierProvider);
     final tick = ref.watch(crashTickProvider);
     ref.watch(crashGameProvider);
+    // Watch user provider to ensure we rebuild when user data (wallet) is available
+    ref.watch(userProvider);
 
     // Reset hasPlacedBet if a new round starts
     if (round != null && round.roundId != lastRoundId) {
-      final participatedInPreviousRound = _betParticipatedInRound;
+      // If lastRoundId is null, it's the first load. We don't want to clear cache yet.
+      // We only clear cache if we are transitioning from one known round to another.
+      if (lastRoundId != null) {
+        final participatedInPreviousRound = _betParticipatedInRound;
 
-      hasPlacedBet = false;
-      hasAutoCashedOut = false;
-      _betParticipatedInRound = false;
-      lastMultiplier = null;
+        hasPlacedBet = false;
+        hasAutoCashedOut = false;
+        _betParticipatedInRound = false;
+        lastMultiplier = null;
+
+        // Clear cache for the previous round
+        _cacheService.clearBet(widget.index);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          widget.onManualBetPlaced?.call(false);
+        });
+
+        // Clear the bet for the new round
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          ref
+              .read(crashBetResponseProvider.notifier)
+              .setBetResponse(widget.index, null);
+        });
+
+        // If we had a bet in the previous round and autoplay is active,
+        // increment the round counter regardless of win/loss
+        if (participatedInPreviousRound &&
+            widget.autoPlayState != null &&
+            widget.autoPlayState!.settings != null) {
+          final nextRoundCount = (widget.autoPlayState?.roundsPlayed ?? 0) + 1;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.onAutoPlayUpdate?.call(
+              nextRoundCount,
+              widget.autoPlayState?.lastWinAmount ?? 0.0,
+            );
+          });
+        }
+
+        // If user queued a bet while the previous round was RUNNING,
+        // automatically place it at the start of the next PREPARE phase.
+        if (_hasQueuedBet && round.state == 'PREPARE') {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _placeBet(
+              amountOverride: _queuedAmountText,
+              autoCashoutOverride: _queuedAutoCashoutValue,
+              isAutoPlay: false,
+            );
+            if (mounted) {
+              setState(() {
+                _hasQueuedBet = false;
+                _queuedAmountText = null;
+                _queuedAutoCashoutValue = null;
+              });
+            }
+          });
+        }
+      }
+
+      // Always update lastRoundId
       lastRoundId = round.roundId;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        widget.onManualBetPlaced?.call(false);
-      });
-
-      // Clear the bet for the new round
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ref
-            .read(crashBetResponseProvider.notifier)
-            .setBetResponse(widget.index, null);
-      });
-
-      // If we had a bet in the previous round and autoplay is active,
-      // increment the round counter regardless of win/loss
-      if (participatedInPreviousRound &&
-          widget.autoPlayState != null &&
-          widget.autoPlayState!.settings != null) {
-        final nextRoundCount = (widget.autoPlayState?.roundsPlayed ?? 0) + 1;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          widget.onAutoPlayUpdate?.call(
-            nextRoundCount,
-            widget.autoPlayState?.lastWinAmount ?? 0.0,
-          );
-        });
-      }
-
-      // If user queued a bet while the previous round was RUNNING,
-      // automatically place it at the start of the next PREPARE phase.
-      if (_hasQueuedBet && round.state == 'PREPARE') {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _placeBet(
-            amountOverride: _queuedAmountText,
-            autoCashoutOverride: _queuedAutoCashoutValue,
-            isAutoPlay: false,
-          );
-          if (mounted) {
-            setState(() {
-              _hasQueuedBet = false;
-              _queuedAmountText = null;
-              _queuedAutoCashoutValue = null;
-            });
-          }
-        });
-      }
     }
 
     _evaluateAutoPlayAndMaybeBet(round);
+
+    // Restore cache logic
+    if (!_hasCheckedCache && round != null && round.roundId != null) {
+      _hasCheckedCache = true;
+      _restoreCachedBet(round.roundId!);
+    }
 
     final bet = ref.watch(crashBetResponseProvider)[widget.index];
 
     // Handle waiting state between placing bet and running
     final isWaitingForRound = hasPlacedBet && round?.state == 'PREPARE';
     final isCashoutButton = hasPlacedBet && round?.state == 'RUNNING';
+
+    // Compute cashout amount for display
+    String? cashoutAmountText;
+    if (isCashoutButton && bet != null && bet.stake != null) {
+      final multiplier = tick.maybeWhen(
+        data: (tickData) {
+          final value = tickData.multiplier;
+          if (value is num) {
+            return double.tryParse(value.toString()) ?? 0.0;
+          }
+          if (value is String) return double.tryParse(value) ?? 0.0;
+          return 0.0;
+        },
+        orElse: () => 0.0,
+      );
+      final roundedMultiplier = (multiplier * 100).round() / 100.0;
+      final winAmount = roundedMultiplier * bet.stake!;
+      cashoutAmountText = '₹${winAmount.toStringAsFixed(2)}';
+    }
 
     // Auto Cashout logic
     if (isCashoutButton && bet != null && bet.autoCashout != null) {
@@ -353,6 +428,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
 
               if (cashoutAt != null) {
                 log("✅ Auto Cashout triggered at $cashoutAt X");
+                await _cacheService.clearBet(widget.index);
 
                 // Update wallet
                 final currentUser = ref.read(userProvider);
@@ -374,6 +450,9 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                   setState(() {
                     hasPlacedBet = false;
                   });
+                  ref
+                      .read(crashBetResponseProvider.notifier)
+                      .setBetResponse(widget.index, null);
                   widget.onManualBetPlaced?.call(false);
                 }
 
@@ -525,10 +604,14 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                       id: bet.id!,
                       cashOutAt: roundedMultiplier,
                     );
+                    await _cacheService.clearBet(widget.index);
                     if (mounted) {
                       setState(() {
                         hasPlacedBet = false;
                       });
+                      ref
+                          .read(crashBetResponseProvider.notifier)
+                          .setBetResponse(widget.index, null);
                       widget.onManualBetPlaced?.call(false);
                     }
                     final cashoutAt = response.cashoutAt;
@@ -569,19 +652,34 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Cancel',
-                    style: Theme.of(context).textTheme.crashHeadlineSmall,
+                    'CANCEL',
+                    style: Theme.of(context).textTheme.crashBodyTitleMdeium,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Wait for next round',
-                    style: Theme.of(context).textTheme.crashbodySmallThird,
+                    style: Theme.of(context).textTheme.crashbodySmallFourth,
+                  ),
+                ],
+              )
+            : isCashoutButton && cashoutAmountText != null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'CASHOUT',
+                    style: Theme.of(context).textTheme.crashBodyMediumFifth,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    cashoutAmountText,
+                    style: Theme.of(context).textTheme.crashBodyMediumFifth,
                   ),
                 ],
               )
             : Text(
                 buttonText,
-                style: Theme.of(context).textTheme.crashHeadlineSmall,
+                style: Theme.of(context).textTheme.crashBodyMediumFifth,
               ),
       ),
     );
@@ -595,7 +693,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
     required String message2,
     required String winAmount,
   }) {
-    Flushbar(
+    final flushbar = Flushbar(
       messageText: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -672,7 +770,9 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
       borderRadius: BorderRadius.circular(50),
       animationDuration: const Duration(seconds: 1),
       maxWidth: 300,
-    ).show(context);
+    );
+    ref.read(flushbarListProvider.notifier).add(flushbar);
+    flushbar.show(context);
   }
 
   // Custom SnackBar

@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -41,10 +39,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   final double _waveFrequency = 0.05;
 
   // 👈 PREPARE state countdown variables
-  int _prepareSecondsLeft = 0;
-  int _initialPrepareSeconds = 0;
-  double _prepareProgress = 1.0;
-  Timer? _prepareTimer;
+  late AnimationController _prepareController;
+  bool _hasStartedPrepareAnimation = false;
   late final AnimationController _controller;
   bool _isControllerRepeating = false;
 
@@ -104,6 +100,11 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       vsync: this,
       duration: const Duration(seconds: 3),
     );
+
+    _prepareController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    );
   }
 
   @override
@@ -113,7 +114,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _waveController.dispose();
     _flyAwayController.dispose();
     _enterController.dispose();
-    _prepareTimer?.cancel();
+    _prepareController.dispose();
     super.dispose();
   }
 
@@ -150,11 +151,11 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Lottie.asset(
-              'assets/images/aviator_loading.json',
-              width: 150,
-              height: 150,
-            ),
+            // Lottie.asset(
+            //   'assets/images/aviator_loading.json',
+            //   width: 150,
+            //   height: 150,
+            // ),
             // Plane at (0,0)
 
             // Positioned(
@@ -164,10 +165,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
             // ),
 
             // // Circular progress indicator
-            // const CircularProgressIndicator(
-            //   color: AppColors.aviatorTwentyEighthColor,
-            //   strokeWidth: 3,
-            // ),
+            const CircularProgressIndicator(
+              color: AppColors.aviatorTwentyEighthColor,
+              strokeWidth: 3,
+            ),
           ],
         ),
       );
@@ -176,12 +177,11 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     // PREPARE countdown logic
     if (round?.state == 'PREPARE') {
       final msRemaining = int.tryParse(round?.msRemaining ?? '0') ?? 0;
-      final secondsRemaining = (msRemaining / 1000).ceil();
-      if (_initialPrepareSeconds != secondsRemaining && secondsRemaining > 0) {
-        _initialPrepareSeconds = secondsRemaining;
-        _prepareSecondsLeft = secondsRemaining;
-        _prepareProgress = 1.0;
-        if (_prepareTimer == null) _startPrepareCountdown();
+
+      if (!_hasStartedPrepareAnimation && msRemaining > 0) {
+        _prepareController.duration = Duration(milliseconds: msRemaining);
+        _prepareController.reverse(from: 1.0);
+        _hasStartedPrepareAnimation = true;
       }
 
       // When we enter PREPARE after a CRASHED round / fly-away,
@@ -201,11 +201,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       _controller.stop();
       _isControllerRepeating = false;
     } else {
-      _prepareTimer?.cancel();
-      _prepareTimer = null;
-      _prepareSecondsLeft = 0;
-      _initialPrepareSeconds = 0;
-      _prepareProgress = 1.0;
+      if (_hasStartedPrepareAnimation) {
+        _prepareController.stop();
+        _hasStartedPrepareAnimation = false;
+      }
     }
 
     // Current multiplier from tick stream
@@ -220,7 +219,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     // Start takeoff when we actually receive a tick value from the server,
     // instead of only relying on the round.state == 'RUNNING'. This keeps
     // the plane animation in sync with the tick stream.
-    if (currentValue > 0 && !_isAnimating) {
+    if (currentValue > 0 && !_isAnimating && round?.state == 'RUNNING') {
       _startTakeoff();
     }
 
@@ -307,10 +306,9 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0.0, end: _prepareProgress),
-                          duration: const Duration(milliseconds: 300),
-                          builder: (context, value, child) {
+                        AnimatedBuilder(
+                          animation: _prepareController,
+                          builder: (context, child) {
                             return Container(
                               width: 200, // adjust width as needed
                               height: 8,
@@ -320,7 +318,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                               ),
                               child: FractionallySizedBox(
                                 alignment: Alignment.centerLeft,
-                                widthFactor: value, // controls fill percentage
+                                widthFactor: _prepareController
+                                    .value, // controls fill percentage
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: AppColors
@@ -464,7 +463,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
                           // Always record the plane path while the animation is active,
                           // including takeoff, waving, and fly-away segments.
-                          if (_isAnimating) {
+                          if (_isAnimating && !_isWaving) {
                             if (_pathPoints.isEmpty ||
                                 (_pathPoints.last - currentPoint).distance >
                                     1) {
@@ -567,27 +566,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     );
   }
 
-  // PREPARE countdown
-  void _startPrepareCountdown() {
-    _prepareTimer?.cancel();
-
-    _prepareTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_prepareSecondsLeft <= 1) {
-        timer.cancel();
-        _prepareTimer = null;
-        setState(() {
-          _prepareSecondsLeft = 0;
-          _prepareProgress = 0.0;
-        });
-      } else {
-        setState(() {
-          _prepareSecondsLeft--;
-          _prepareProgress = _prepareSecondsLeft / _initialPrepareSeconds;
-        });
-      }
-    });
-  }
-
   void _startTakeoff() {
     _isAnimating = true;
     _hasReachedWave = false;
@@ -653,25 +631,26 @@ class PathPainter extends CustomPainter {
 
     // Build displayPoints only if we actually have path points
     if (points.isNotEmpty) {
-      if (isWaving && currentPlanePosition != null) {
-        displayPoints = [...points];
+      if (isWaving) {
+        final waveY = sin(waveProgress * waveFrequency) * waveAmplitude;
+        final startX = points.first.dx;
+        final totalWidth = points.last.dx - startX;
 
-        final startX = points.last.dx;
-        final endX = currentPlanePosition!.dx;
-        final baseY = points.last.dy;
+        displayPoints = points.map((p) {
+          // Calculate interpolation factor t (0.0 at start, 1.0 at end)
+          final t = totalWidth > 0 ? (p.dx - startX) / totalWidth : 0.0;
+          // Apply wave offset scaled by t, so start point is fixed
+          return Offset(p.dx, p.dy - (waveY * t));
+        }).toList();
 
-        final distance = endX - startX;
-        final numWavePoints = max(20, (distance / 5).round());
-
-        for (int i = 0; i <= numWavePoints; i++) {
-          final t = i / numWavePoints;
-          final x = startX + (distance * t);
-          final wavePhase = waveProgress - ((endX - x) / 5);
-          final waveY = sin(wavePhase * waveFrequency) * waveAmplitude;
-          displayPoints.add(Offset(x, baseY - waveY));
+        if (currentPlanePosition != null) {
+          displayPoints.add(currentPlanePosition!);
         }
       } else {
-        displayPoints = points;
+        displayPoints = [...points];
+        if (currentPlanePosition != null) {
+          displayPoints.add(currentPlanePosition!);
+        }
       }
     }
 
@@ -702,9 +681,8 @@ class PathPainter extends CustomPainter {
       fillPaint.shader = fillGradient;
       canvas.drawPath(fillPath, fillPaint);
 
-      // Stroke path (curve)
       final pathPaint = Paint()
-        ..strokeWidth = 6.0
+        ..strokeWidth = 3.0
         ..style = PaintingStyle.stroke
         ..color = AppColors.aviatorGraphBarColor;
 

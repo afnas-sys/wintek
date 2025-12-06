@@ -12,12 +12,14 @@ class AviatorSocketService {
   final _tickController = StreamController<Tick>.broadcast();
   final _crashController = StreamController<Crash>.broadcast();
   final _betsController = StreamController<AllBetsModel>.broadcast();
+  final _disconnectController = StreamController<void>.broadcast();
   final secureStorageService = SecureStorageService();
 
   Stream<RoundState> get stateStream => _stateController.stream;
   Stream<Tick> get tickStream => _tickController.stream;
   Stream<Crash> get crashStream => _crashController.stream;
   Stream<AllBetsModel> get betsStream => _betsController.stream;
+  Stream<void> get disconnectStream => _disconnectController.stream;
   IO.Socket? socket;
 
   void connect() async {
@@ -37,7 +39,10 @@ class AviatorSocketService {
     socket!.connect();
 
     socket!.onConnect((_) => log('Socket connected'));
-    socket!.onDisconnect((_) => log('Socket disconnected'));
+    socket!.onDisconnect((_) {
+      log('Socket disconnected');
+      _disconnectController.add(null);
+    });
 
     //! state
     socket!.on(AviatorSocketConstants.roundState, (data) {
@@ -93,6 +98,7 @@ class AviatorSocketService {
     _tickController.close();
     _crashController.close();
     _betsController.close();
+    _disconnectController.close();
     log('Socket disconnected');
   }
 

@@ -37,21 +37,24 @@ class _SpinBetButtonState extends State<SpinBetButton> {
 
           _betAmountTextFieldWidget(),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              _betAmountButtonWidget(context, '10'),
-              const SizedBox(width: 8),
-              _betAmountButtonWidget(context, '50'),
-              const SizedBox(width: 8),
-              _betAmountButtonWidget(context, '100'),
-              const SizedBox(width: 8),
-              _betAmountButtonWidget(context, '200'),
-              const SizedBox(width: 8),
-              _betAmountButtonWidget(context, '500'),
-              const SizedBox(width: 8),
-              _betAmountButtonWidget(context, '1000'),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _betAmountButtonWidget(context, '10'),
+                const SizedBox(width: 8),
+                _betAmountButtonWidget(context, '50'),
+                const SizedBox(width: 8),
+                _betAmountButtonWidget(context, '100'),
+                const SizedBox(width: 8),
+                _betAmountButtonWidget(context, '200'),
+                const SizedBox(width: 8),
+                _betAmountButtonWidget(context, '500'),
+                const SizedBox(width: 8),
+                _betAmountButtonWidget(context, '1000'),
+              ],
+            ),
           ),
           SizedBox(height: 10),
 
