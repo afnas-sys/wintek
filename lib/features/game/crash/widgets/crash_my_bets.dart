@@ -101,7 +101,6 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                   ),
                   //! Switch for PREVIOUS HAND
                   CustomElevatedButton(
-                    width: 125,
                     height: 28,
                     padding: const EdgeInsets.only(
                       left: 7,

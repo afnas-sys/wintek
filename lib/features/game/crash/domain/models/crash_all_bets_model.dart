@@ -72,10 +72,10 @@ class BetModel {
       stake: (json['stake'] ?? 0).toDouble(),
       autoCashout: (json['autoCashout'] != null)
           ? (json['autoCashout'] as num).toDouble()
-          : null,
+          : 0,
       cashoutAt: (json['cashoutAt'] != null)
           ? (json['cashoutAt'] as num).toDouble()
-          : null,
+          : 0,
       payout: (json['payout'] ?? 0).toDouble(),
       status: json['status'] ?? '',
       betIndex: json['betIndex'] ?? 0,

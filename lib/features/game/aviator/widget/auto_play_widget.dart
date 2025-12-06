@@ -47,7 +47,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
 
   // Validation error messages
   String? _roundsError;
-  String? _conditionsError;
+
   String? _decrementError;
   String? _incrementError;
   String? _exceedsError;
@@ -56,7 +56,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
     // Clear previous errors
     setState(() {
       _roundsError = null;
-      _conditionsError = null;
+
       _decrementError = null;
       _incrementError = null;
       _exceedsError = null;
@@ -67,17 +67,6 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
     // Validation: Check if rounds are selected
     if (selectedRounds == null) {
       setState(() => _roundsError = 'Please, set number of rounds');
-      hasErrors = true;
-    }
-
-    // Validation: Check if at least one condition is enabled
-    if (!stopIfCashDecreases &&
-        !stopIfCashIncreases &&
-        !stopIfSingleWinExceeds) {
-      setState(
-        () =>
-            _conditionsError = 'Please, specify decrease or exceed stop point',
-      );
       hasErrors = true;
     }
 
@@ -267,12 +256,6 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                       stopIfCashDecreases = value;
                       // Clear error when switch is toggled
                       if (!value) _decrementError = null;
-                      // Clear general conditions error when at least one condition is enabled
-                      if (value ||
-                          stopIfCashIncreases ||
-                          stopIfSingleWinExceeds) {
-                        _conditionsError = null;
-                      }
                     });
                   },
                   errorText: _decrementError,
@@ -288,12 +271,6 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                       stopIfCashIncreases = value;
                       // Clear error when switch is toggled
                       if (!value) _incrementError = null;
-                      // Clear general conditions error when at least one condition is enabled
-                      if (value ||
-                          stopIfCashDecreases ||
-                          stopIfSingleWinExceeds) {
-                        _conditionsError = null;
-                      }
                     });
                   },
                   errorText: _incrementError,
@@ -310,28 +287,11 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                       stopIfSingleWinExceeds = value;
                       // Clear error when switch is toggled
                       if (!value) _exceedsError = null;
-                      // Clear general conditions error when at least one condition is enabled
-                      if (value || stopIfCashDecreases || stopIfCashIncreases) {
-                        _conditionsError = null;
-                      }
                     });
                   },
                   errorText: _exceedsError,
                 ),
 
-                // General conditions error
-                if (_conditionsError != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      _conditionsError!,
-                      style: const TextStyle(
-                        color: AppColors.aviatorThirtyThreeColor,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
                 SizedBox(height: 20),
 
                 Expanded(

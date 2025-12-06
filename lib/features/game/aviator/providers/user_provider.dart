@@ -14,6 +14,8 @@ class UserNotifier extends StateNotifier<AsyncValue<UserModel?>> {
       final result = await _userService.fetchUser();
       state = AsyncValue.data(result);
     } catch (e, stack) {
+      // Check if it's auth error (credentials cleared)
+      // For now, just set error
       state = AsyncValue.error(e, stack);
     }
   }

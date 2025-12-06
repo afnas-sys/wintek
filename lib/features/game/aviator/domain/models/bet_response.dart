@@ -65,7 +65,7 @@ class BetResponse {
       'status': status,
       '_id': id,
       'createdAt': createdAt,
-      'updateAt': updatedAt,
+      'updatedAt': updatedAt,
     };
   }
 }

@@ -46,7 +46,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   bool _isFirstRunning = false;
 
   // 👈 PREPARE state countdown variables
-  int _prepareSecondsLeft = 0;
+  double _prepareSecondsLeft = 0.0;
   int _initialPrepareSeconds = 0;
   Timer? _prepareTimer;
 
@@ -158,7 +158,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       final secondsRemaining = (msRemaining / 1000).ceil();
       if (_initialPrepareSeconds != secondsRemaining && secondsRemaining > 0) {
         _initialPrepareSeconds = secondsRemaining;
-        _prepareSecondsLeft = secondsRemaining;
+        _prepareSecondsLeft = secondsRemaining.toDouble();
         if (_prepareTimer == null) _startPrepareCountdown();
       }
 
@@ -549,7 +549,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                         ),
                                       ),
                                       Text(
-                                        "$_prepareSecondsLeft",
+                                        "${_prepareSecondsLeft.floor()}",
                                         style: Theme.of(
                                           context,
                                         ).textTheme.crashHeadlineSmall,
@@ -652,16 +652,16 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   void _startPrepareCountdown() {
     _prepareTimer?.cancel();
 
-    _prepareTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_prepareSecondsLeft <= 1) {
+    _prepareTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (_prepareSecondsLeft <= 0.1) {
         timer.cancel();
         _prepareTimer = null;
         setState(() {
-          _prepareSecondsLeft = 0;
+          _prepareSecondsLeft = 0.0;
         });
       } else {
         setState(() {
-          _prepareSecondsLeft--;
+          _prepareSecondsLeft -= 0.1;
         });
       }
     });

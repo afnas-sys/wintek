@@ -7,7 +7,8 @@ import 'package:wintek/features/game/crash/providers/crash_auto_cashout_provider
 
 class CustomSlider extends ConsumerStatefulWidget {
   final int index;
-  const CustomSlider({super.key, this.index = 0});
+  final bool disabled;
+  const CustomSlider({super.key, this.index = 0, this.disabled = false});
 
   @override
   ConsumerState<CustomSlider> createState() => _CustomSliderState();
@@ -50,7 +51,7 @@ class _CustomSliderState extends ConsumerState<CustomSlider> {
               children: [
                 Text(
                   'Auto Cash Out:',
-                  style: Theme.of(context).textTheme.crashBodyMediumSecondary,
+                  style: Theme.of(context).textTheme.crashBodySmallSecondary,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -60,8 +61,8 @@ class _CustomSliderState extends ConsumerState<CustomSlider> {
                       ? "x${_displayValue.toStringAsFixed(1)}"
                       : "x${_displayValue.toInt()}",
                   style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                     color: AppColors.crashPrimaryColor,
                   ),
                 ),
@@ -73,11 +74,11 @@ class _CustomSliderState extends ConsumerState<CustomSlider> {
             Row(
               children: [
                 Text(
-                  'OFF',
+                  'Off',
                   style: TextStyle(
                     color: AppColors.crashFifthColor,
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 // const SizedBox(width: 8),
@@ -94,27 +95,32 @@ class _CustomSliderState extends ConsumerState<CustomSlider> {
                       enableTooltip: false,
                       showLabels: false,
                       showTicks: false,
-                      onChanged: (value) {
-                        setState(() {
-                          _sliderPosition = value;
-                        });
-                        final autoCashoutValue = _sliderPosition == 0
-                            ? null
-                            : _displayValue;
-                        ref
-                            .read(crashAutoCashoutProvider.notifier)
-                            .setAutoCashout(widget.index, autoCashoutValue);
-                      },
+                      onChanged: widget.disabled
+                          ? null
+                          : (value) {
+                              setState(() {
+                                _sliderPosition = value;
+                              });
+                              final autoCashoutValue = _sliderPosition == 0
+                                  ? null
+                                  : _displayValue;
+                              ref
+                                  .read(crashAutoCashoutProvider.notifier)
+                                  .setAutoCashout(
+                                    widget.index,
+                                    autoCashoutValue,
+                                  );
+                            },
                     ),
                   ),
                 ),
                 // const SizedBox(width: 8),
                 Text(
-                  'MAX',
+                  'Max',
                   style: TextStyle(
                     color: AppColors.crashFifthColor,
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],

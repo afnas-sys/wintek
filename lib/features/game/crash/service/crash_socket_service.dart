@@ -13,6 +13,7 @@ class CrashSocketService {
   final _crashController = StreamController<CrashRoundCrash>.broadcast();
   final _betsController = StreamController<CrashAllBetsModel>.broadcast();
   final _betResultController = StreamController<CrashAllBetsModel>.broadcast();
+  final _disconnectController = StreamController<void>.broadcast();
   final secureStorageService = SecureStorageService();
 
   Stream<CrashRoundState> get stateStream => _stateController.stream;
@@ -20,6 +21,7 @@ class CrashSocketService {
   Stream<CrashRoundCrash> get crashStream => _crashController.stream;
   Stream<CrashAllBetsModel> get betsStream => _betsController.stream;
   Stream<CrashAllBetsModel> get betResultStream => _betResultController.stream;
+  Stream<void> get disconnectStream => _disconnectController.stream;
   IO.Socket? socket;
 
   void connect() async {
@@ -39,7 +41,10 @@ class CrashSocketService {
     socket!.connect();
 
     socket!.onConnect((_) => log('Socket connected'));
-    socket!.onDisconnect((_) => log('Socket disconnected'));
+    socket!.onDisconnect((_) {
+      log('Socket disconnected');
+      _disconnectController.add(null);
+    });
 
     //! state
     socket!.on(CrashSocketConstants.roundState, (data) {
@@ -106,6 +111,7 @@ class CrashSocketService {
     _crashController.close();
     _betsController.close();
     _betResultController.close();
+    _disconnectController.close();
     log('Socket disconnected');
   }
 

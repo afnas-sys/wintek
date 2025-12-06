@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
@@ -21,6 +22,12 @@ final aviatorStateProvider = StreamProvider.autoDispose<RoundState>((ref) {
 final aviatorTickProvider = StreamProvider.autoDispose<Tick>((ref) {
   final service = ref.watch(aviatorRoundProvider);
   return service.tickStream;
+});
+
+//! Disconnect Provider
+final aviatorDisconnectProvider = StreamProvider.autoDispose<void>((ref) {
+  final service = ref.watch(aviatorRoundProvider);
+  return service.disconnectStream;
 });
 //! Crash provider
 
@@ -107,3 +114,24 @@ final aviatorBetsNotifierProvider =
       final service = ref.watch(aviatorRoundProvider);
       return AviatorBetsNotifier(service);
     });
+
+//! Flushbar List Provider for managing active Flushbars
+class AviatorFlushbarListNotifier extends StateNotifier<List<Flushbar>> {
+  AviatorFlushbarListNotifier() : super([]);
+
+  void add(Flushbar flushbar) {
+    state = [...state, flushbar];
+  }
+
+  void dismissAll() {
+    for (var flushbar in state) {
+      flushbar.dismiss();
+    }
+    state = [];
+  }
+}
+
+final aviatorFlushbarListProvider =
+    StateNotifierProvider<AviatorFlushbarListNotifier, List<Flushbar>>(
+      (ref) => AviatorFlushbarListNotifier(),
+    );

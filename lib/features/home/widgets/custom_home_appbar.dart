@@ -67,11 +67,12 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                     userAsync.when(
                       loading: () =>
                           const Center(child: CircularProgressIndicator()),
-                      error: (error, stackTrace) =>
-                          Center(child: Text('Error: $error')),
+                      error: (error, stackTrace) => const Center(
+                        child: Text('Session expired, please login'),
+                      ),
                       data: (userModel) {
                         if (userModel == null) {
-                          return const Center(child: Text('No data available'));
+                          return const Center(child: Text('Please login'));
                         }
                         final user = userModel.data;
                         return Text(

@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -9,6 +12,7 @@ import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/crash/widgets/crash_auto_play_widget.dart';
 import 'package:wintek/features/game/crash/widgets/crash_custom_bet_button.dart';
 import 'package:wintek/features/game/crash/widgets/custom_slider.dart';
+import 'package:wintek/features/game/crash/service/crash_bet_cache_service.dart';
 
 class CrashBetContainer extends ConsumerStatefulWidget {
   final int index;
@@ -36,6 +40,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
   final secureStorageService = SecureStorageService();
+  final _cacheService = CrashBetCacheService();
   int selectedRounds = 10;
   AutoPlayState? autoPlaySettings;
   bool hasPlacedManualBet = false;
@@ -70,12 +75,16 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         lastWinAmount: winAmount,
       );
     });
+    if (autoPlaySettings != null) {
+      _saveAutoPlayState();
+    }
   }
 
   void _onAutoPlayStop() {
     setState(() {
       autoPlaySettings = null;
     });
+    _cacheService.clearAutoPlayState(widget.index);
   }
 
   void _onManualBetPlaced(bool placed) {
@@ -99,6 +108,56 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     _autoAmountController.text = 1.toString();
 
     super.initState();
+    _restoreAutoPlayState();
+  }
+
+  Future<void> _restoreAutoPlayState() async {
+    final cachedState = await _cacheService.getAutoPlayState(widget.index);
+    if (cachedState != null) {
+      if (!mounted) return;
+      setState(() {
+        autoPlaySettings = AutoPlayState(
+          settings: AutoPlaySettings(
+            selectedRounds: cachedState['selectedRounds'],
+            stopIfCashDecreases: cachedState['stopIfCashDecreases'] ?? false,
+            decrementAmount: cachedState['decrementAmount'] ?? 0.0,
+            stopIfCashIncreases: cachedState['stopIfCashIncreases'] ?? false,
+            incrementAmount: cachedState['incrementAmount'] ?? 0.0,
+            stopIfSingleWinExceeds:
+                cachedState['stopIfSingleWinExceeds'] ?? false,
+            exceedsAmount: cachedState['exceedsAmount'] ?? 0.0,
+            autoCashout: cachedState['autoCashout'],
+          ),
+          roundsPlayed: cachedState['roundsPlayed'] ?? 0,
+          initialWallet: cachedState['initialWallet'] ?? 0.0,
+          lastWinAmount: cachedState['lastWinAmount'] ?? 0.0,
+        );
+        // Restore bet amount if available
+        if (cachedState['betAmount'] != null) {
+          _amountController.text = cachedState['betAmount'];
+        }
+      });
+    }
+  }
+
+  Future<void> _saveAutoPlayState() async {
+    if (autoPlaySettings == null || autoPlaySettings!.settings == null) return;
+    final settings = autoPlaySettings!.settings!;
+    final state = {
+      'selectedRounds': settings.selectedRounds,
+      'stopIfCashDecreases': settings.stopIfCashDecreases,
+      'decrementAmount': settings.decrementAmount,
+      'stopIfCashIncreases': settings.stopIfCashIncreases,
+      'incrementAmount': settings.incrementAmount,
+      'stopIfSingleWinExceeds': settings.stopIfSingleWinExceeds,
+      'exceedsAmount': settings.exceedsAmount,
+      'autoCashout': settings.autoCashout,
+      'roundsPlayed': autoPlaySettings!.roundsPlayed,
+      'initialWallet': autoPlaySettings!.initialWallet,
+      'lastWinAmount': autoPlaySettings!.lastWinAmount,
+      'betAmount': _amountController.text,
+    };
+    await _cacheService.saveAutoPlayState(widget.index, state);
   }
 
   @override
@@ -133,6 +192,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                       _amountController,
                       _decrement,
                       _increment,
+                      !hasPlacedManualBet,
                     ),
                     const SizedBox(height: 8),
                     SingleChildScrollView(
@@ -140,13 +200,13 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          _autoPlayButton(context, '10'),
+                          _quickPlayButton(context, '10', !hasPlacedManualBet),
                           const SizedBox(width: 8),
-                          _autoPlayButton(context, '20'),
+                          _quickPlayButton(context, '20', !hasPlacedManualBet),
                           const SizedBox(width: 8),
-                          _autoPlayButton(context, '50'),
+                          _quickPlayButton(context, '50', !hasPlacedManualBet),
                           const SizedBox(width: 8),
-                          _autoPlayButton(context, '100'),
+                          _quickPlayButton(context, '100', !hasPlacedManualBet),
                         ],
                       ),
                     ),
@@ -176,7 +236,13 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(flex: 2, child: CustomSlider(index: widget.index)),
+              Expanded(
+                flex: 2,
+                child: CustomSlider(
+                  index: widget.index,
+                  disabled: hasPlacedManualBet,
+                ),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 flex: 1,
@@ -192,27 +258,32 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     );
   }
 
-  Widget _autoPlayButton(BuildContext context, String label) {
-    return CustomElevatedButton(
-      onPressed: () {
-        setState(() {
-          selectedRounds = int.parse(label);
-          _amountController.text = label;
-          // Clear rounds error when a round is selected
-        });
-      },
-      width: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      borderColor: AppColors.crashTwelfthColor,
-      backgroundColor: AppColors.crashTwentyFirstColor,
-      borderRadius: 50,
-      height: 28,
-      elevation: 0,
-      isSelected: selectedRounds == int.parse(label),
-      selectedBackgroundColor: AppColors.crashThirtySecondColor,
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.crashBodyMediumPrimary,
+  Widget _quickPlayButton(BuildContext context, String label, bool enabled) {
+    return Opacity(
+      opacity: enabled ? 1.0 : 0.5,
+      child: CustomElevatedButton(
+        onPressed: enabled
+            ? () {
+                setState(() {
+                  selectedRounds = int.parse(label);
+                  _amountController.text = label;
+                  // Clear rounds error when a round is selected
+                });
+              }
+            : null,
+        width: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        borderColor: AppColors.crashTwelfthColor,
+        backgroundColor: AppColors.crashTwentyFirstColor,
+        borderRadius: 50,
+        height: 24,
+        elevation: 0,
+        isSelected: selectedRounds == int.parse(label),
+        selectedBackgroundColor: AppColors.crashThirtySecondColor,
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.crashbodySmallThird,
+        ),
       ),
     );
   }
@@ -223,19 +294,32 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     TextEditingController controller,
     VoidCallback decrement,
     VoidCallback increment,
+    bool enabled,
   ) {
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 38,
       child: TextField(
         showCursor: true,
         cursorColor: AppColors.crashTwentyEigthColor,
-        cursorHeight: 18,
+        cursorHeight: 14,
         enableInteractiveSelection: false,
+        enabled: enabled,
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.crashHeadlineSmall,
+        style: Theme.of(context).textTheme.crashBodyMediumFifth,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        onChanged: (value) {
+          int? num = int.tryParse(value);
+          if (num != null) {
+            num = num.clamp(10, 1000);
+            controller.text = num.toString();
+            controller.selection = TextSelection.collapsed(
+              offset: controller.text.length,
+            );
+          }
+        },
         decoration: InputDecoration(
           isDense: true,
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -255,60 +339,88 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
             ),
           ),
 
-          suffixIconConstraints: const BoxConstraints(
-            minWidth: 32,
-            minHeight: 32,
-          ),
+          // suffixIconConstraints: const BoxConstraints(
+          //   minWidth: 32,
+          //   minHeight: 32,
+          // ),
+          suffixIcon: ValueListenableBuilder(
+            valueListenable: controller,
+            builder: (context, value, child) {
+              final int val = int.tryParse(value.text) ?? 10;
+              final bool canDecrement = enabled && val > 10;
+              final bool canIncrement = enabled && val < 1000;
 
-          suffixIcon: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Material(
-                type: MaterialType.transparency,
-                child: IconButton(
-                  splashRadius: 18,
-                  padding: EdgeInsets.zero,
-                  icon: const Icon(
-                    Icons.remove_circle_outline,
-                    size: 30,
-                    color: AppColors.crashTwentyEigthColor,
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: IconButton(
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        splashRadius: 9,
+                        icon: Icon(
+                          Icons.remove_circle_outline,
+                          size: 22,
+                          color: canDecrement
+                              ? AppColors.crashTwentyEigthColor
+                              : AppColors.crashTwentyFirstColor,
+                        ),
+                        onPressed: canDecrement
+                            ? () {
+                                final currentVal =
+                                    int.tryParse(controller.text) ?? 10;
+                                controller.text =
+                                    (currentVal > 10 ? currentVal - 1 : 10)
+                                        .toString();
+                              }
+                            : null,
+                        tooltip: 'Decrement',
+                      ),
+                    ),
                   ),
-                  onPressed: () {
-                    final value =
-                        int.tryParse(
-                          controller.text.isEmpty ? '1' : controller.text,
-                        ) ??
-                        1;
-                    if (value > 1) {
-                      controller.text = (value - 1).toString();
-                    } else {
-                      controller.text = '1';
-                    }
-                  },
-                  tooltip: 'Decrement',
-                ),
-              ),
 
-              // INCREMENT button
-              Material(
-                type: MaterialType.transparency,
-                child: IconButton(
-                  splashRadius: 18,
-                  padding: EdgeInsets.zero,
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    size: 30,
-                    color: AppColors.crashTwentyEigthColor,
+                  const SizedBox(
+                    width: 14,
+                  ), // 🔥 reduce spacing (change to 0 if needed)
+
+                  SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: IconButton(
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                        splashRadius: 9,
+                        icon: Icon(
+                          Icons.add_circle_outline,
+                          size: 22,
+                          color: canIncrement
+                              ? AppColors.crashTwentyEigthColor
+                              : AppColors.crashTwentyFirstColor,
+                        ),
+                        onPressed: canIncrement
+                            ? () {
+                                int currentVal =
+                                    int.tryParse(controller.text) ?? 10;
+                                controller.text = min(
+                                  currentVal + 1,
+                                  1000,
+                                ).toString();
+                              }
+                            : null,
+                        tooltip: 'Increment',
+                      ),
+                    ),
                   ),
-                  onPressed: () {
-                    int value = int.tryParse(controller.text) ?? 0;
-                    controller.text = (value + 1).toString();
-                  },
-                  tooltip: 'Increment',
-                ),
-              ),
-            ],
+                  SizedBox(width: 8),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -375,6 +487,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                             initialWallet: userModel.data.wallet,
                           );
                         });
+                        _saveAutoPlayState();
                       }
                     },
                     orElse: () {},
