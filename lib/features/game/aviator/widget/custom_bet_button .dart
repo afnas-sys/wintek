@@ -714,9 +714,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                 children: [
                   Text(
                     'CASHOUT',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.aviatorHeadlineSmall.copyWith(fontSize: 14),
+                    style: Theme.of(context).textTheme.aviatorHeadlineSmall,
                   ),
                   Text(
                     (currentMultiplier * bet.stake).toStringAsFixed(2),
