@@ -13,6 +13,7 @@ import 'package:wintek/features/game/crash/widgets/crash_auto_play_widget.dart';
 import 'package:wintek/features/game/crash/widgets/crash_custom_bet_button.dart';
 import 'package:wintek/features/game/crash/widgets/custom_slider.dart';
 import 'package:wintek/features/game/crash/service/crash_bet_cache_service.dart';
+import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
 
 class CrashBetContainer extends ConsumerStatefulWidget {
   final int index;
@@ -81,10 +82,14 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   }
 
   void _onAutoPlayStop() {
-    setState(() {
-      autoPlaySettings = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          autoPlaySettings = null;
+        });
+      }
+      _cacheService.clearAutoPlayState(widget.index);
     });
-    _cacheService.clearAutoPlayState(widget.index);
   }
 
   void _onManualBetPlaced(bool placed) {
@@ -162,6 +167,9 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(crashDisconnectProvider, (previous, next) {
+      _onAutoPlayStop();
+    });
     //!------BET CONTAINER------
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
@@ -439,11 +447,15 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         : 0;
     final currentRound = autoPlaySettings?.roundsPlayed ?? 0;
 
+    final isDisabled = hasPlacedManualBet && !isAutoPlayActive;
+
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: isAutoPlayActive
-            ? AppColors.crashTwentyFourthColor
-            : AppColors.crashThirtyFirstColor,
+        backgroundColor: isDisabled
+            ? AppColors.crashThirtyFirstColor
+            : (isAutoPlayActive
+                  ? AppColors.crashTwentyFourthColor
+                  : AppColors.crashThirtyFirstColor),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
           side: BorderSide(
@@ -454,7 +466,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
           ),
         ),
       ),
-      onPressed: hasPlacedManualBet
+      onPressed: isDisabled
           ? null
           : () async {
               if (isAutoPlayActive) {
@@ -501,9 +513,11 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
               }
             },
       child: Text(
-        isAutoPlayActive
-            ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
-            : 'Autoplay',
+        isDisabled
+            ? 'Autoplay'
+            : (isAutoPlayActive
+                  ? 'STOP ($currentRound/${maxRounds > 0 ? maxRounds : '∞'})'
+                  : 'Autoplay'),
         style: Theme.of(context).textTheme.crashbodySmallThird,
       ),
     );
@@ -511,6 +525,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
 
   @override
   void dispose() {
+    _cacheService.clearAutoPlayState(widget.index);
     _amountController.dispose();
     _autoAmountController.dispose();
     _switchController.dispose();

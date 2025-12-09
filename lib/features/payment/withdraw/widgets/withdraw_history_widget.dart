@@ -213,7 +213,12 @@ class _WithdrawHistoryWidgetState extends ConsumerState<WithdrawHistoryWidget> {
       error: (error, stack) => Center(child: Text(error.toString())),
       data: (data) {
         if (data == null || data.data.isEmpty) {
-          return const Center(child: Text('No history found'));
+          return Center(
+            child: Text(
+              'No history found',
+              style: Theme.of(context).textTheme.paymentBodySmallThird,
+            ),
+          );
         }
         final withdrawData = data.data
             .where((transaction) => transaction.transferType == 'withdrawal')

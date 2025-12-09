@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
+import 'package:wintek/core/router/routes_names.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 
@@ -95,9 +96,13 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Center(
-                        child: Text(
-                          'Deposit',
-                          style: Theme.of(context).textTheme.homeSmallPrimary,
+                        child: GestureDetector(
+                          onTap: () =>
+                              Navigator.pushNamed(context, RoutesNames.deposit),
+                          child: Text(
+                            'Deposit',
+                            style: Theme.of(context).textTheme.homeSmallPrimary,
+                          ),
                         ),
                       ),
                     ),

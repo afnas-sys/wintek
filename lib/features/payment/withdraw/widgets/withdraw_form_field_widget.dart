@@ -115,9 +115,13 @@ class _WithdrawFormFieldWidgetState
         throw Exception('Invalid amount');
       }
 
-      // Check if UPI ID exists
+      // Check if UPI ID needs to be updated
       log('Current user UPI ID: ${userModel.data.upiId}');
-      if (userModel.data.upiId.isEmpty || userModel.data.upiId == '-') {
+      log('Entered UPI ID: $upiId');
+      if (userModel.data.upiId != upiId) {
+        log(
+          'UPI ID update needed: updating from ${userModel.data.upiId} to $upiId',
+        );
         // Update UPI ID in profile
         final profileNotifier = ref.read(profileProvider);
         final updateProfile = UpdateProfile(
@@ -138,7 +142,10 @@ class _WithdrawFormFieldWidgetState
         log('Updated user UPI ID: ${updatedUserModel?.data.upiId}');
         if (updatedUserModel != null) {
           userModel = updatedUserModel;
+          log('UPI ID update successful');
         }
+      } else {
+        log('UPI ID update not needed: entered UPI ID matches current');
       }
 
       // Create withdraw request

@@ -729,10 +729,9 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                     style: Theme.of(context).textTheme.aviatorHeadlineSmall,
                   ),
                   Text(
-                    (currentMultiplier * bet.stake).toStringAsFixed(2),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.aviatorHeadlineSmall.copyWith(fontSize: 16),
+                    "₹${(currentMultiplier * bet.stake).toStringAsFixed(2)}",
+                    style: Theme.of(context).textTheme.aviatorHeadlineSmall
+                        .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               )

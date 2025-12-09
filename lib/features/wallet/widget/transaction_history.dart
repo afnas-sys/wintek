@@ -153,7 +153,14 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                 error: (error, stack) => Center(child: Text(error.toString())),
                 data: (data) {
                   if (data == null || data.data.isEmpty) {
-                    return const Center(child: Text('No history found'));
+                    return Center(
+                      child: Text(
+                        'No history found',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.walletBodyMediumPrimary,
+                      ),
+                    );
                   }
                   final allTransactions = data.data
                       .where(
@@ -181,7 +188,7 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
                           'No history found',
                           style: Theme.of(
                             context,
-                          ).textTheme.walletBodyMediumPrimary,
+                          ).textTheme.walletBodySmallThird,
                         ),
                       ),
                     );
