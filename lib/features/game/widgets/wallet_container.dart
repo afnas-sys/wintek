@@ -53,7 +53,7 @@ class _WalletContainerState extends ConsumerState<WalletContainer>
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
             Row(
@@ -65,8 +65,8 @@ class _WalletContainerState extends ConsumerState<WalletContainer>
                       child: Image.asset(
                         AppImages.wallet,
                         color: AppColors.walletEighthColor,
-                        width: 40,
-                        height: 40,
+                        width: 35,
+                        height: 35,
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -80,6 +80,7 @@ class _WalletContainerState extends ConsumerState<WalletContainer>
                           fontWeight: FontWeight.w500,
                           color: AppColors.walletEighthColor,
                         ),
+                        // SizedBox(height: 12),
                         AppText(
                           text: 'Wallet balance',
                           fontSize: 12,
@@ -91,7 +92,7 @@ class _WalletContainerState extends ConsumerState<WalletContainer>
                   ],
                 ),
                 Row(
-                  spacing: 10,
+                  spacing: 5,
                   children: [
                     // Display balance
                     Builder(
@@ -112,12 +113,7 @@ class _WalletContainerState extends ConsumerState<WalletContainer>
                       splashColor: AppColors.cardPrimaryColor,
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.transparent,
-                        ),
+                        decoration: BoxDecoration(shape: BoxShape.circle),
                         child: RotationTransition(
                           turns: _controller,
                           child: Icon(
