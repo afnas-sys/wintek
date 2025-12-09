@@ -63,7 +63,7 @@ final cardRoundNotifierProvider =
 // Socket service provider
 //
 //
-final cardSocketProvider = Provider<CardSocketService>((ref) {
+final cardSocketProvider = Provider.autoDispose<CardSocketService>((ref) {
   final notifier = ref.read(cardRoundNotifierProvider.notifier);
   final service = CardSocketService(notifier, ref);
 
