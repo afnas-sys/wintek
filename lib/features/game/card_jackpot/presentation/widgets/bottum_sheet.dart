@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/selection_container.dart';
 import 'package:wintek/features/game/card_jackpot/presentation/widgets/text.dart';
@@ -8,22 +9,29 @@ import 'package:wintek/features/game/card_jackpot/providers/round_provider.dart'
 import 'package:wintek/core/constants/app_strings.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 
-class BottumSheet extends ConsumerWidget {
+class BottumSheet extends ConsumerStatefulWidget {
   final int cardIndex;
   final bool isMainCard;
   final int cardTypeIndex;
-  BottumSheet({
+  const BottumSheet({
     super.key,
     required this.cardIndex,
     this.isMainCard = false,
     required this.cardTypeIndex,
   });
 
+  @override
+  ConsumerState<BottumSheet> createState() => _BottumSheetState();
+}
+
+class _BottumSheetState extends ConsumerState<BottumSheet> {
   final List<int> multipleValues = [1, 5, 10, 20, 50, 100];
   final List<int> balanceValues = [10, 50, 100, 1000];
+  bool _isLoading = false;
+  bool _isSuccess = false;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final selection = ref.watch(amountSelectProvider);
     final selectionNotifier = ref.read(amountSelectProvider.notifier);
     final betNotifier = ref.read(betNotifierProvider.notifier);
@@ -31,12 +39,12 @@ class BottumSheet extends ConsumerWidget {
     final roundEvent = ref.watch(cardRoundNotifierProvider);
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-    final cardName = isMainCard
-        ? AppStrings.mainCardNames[cardIndex]
-        : cardIndex;
-    final String title = isMainCard
-        ? 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName'
-        : 'SELECT ${AppStrings.mainCardTypeNames[cardTypeIndex]} $cardName';
+    final cardName = widget.isMainCard
+        ? AppStrings.mainCardNames[widget.cardIndex]
+        : widget.cardIndex;
+    final String title = widget.isMainCard
+        ? 'SELECT ${AppStrings.mainCardTypeNames[widget.cardTypeIndex]} $cardName'
+        : 'SELECT ${AppStrings.mainCardTypeNames[widget.cardTypeIndex]} $cardName';
 
     // Responsive padding for content
     double horizontalPadding = width < 400 ? 15 : 30;
@@ -242,7 +250,7 @@ class BottumSheet extends ConsumerWidget {
                       color: Colors.black,
                       child: Center(
                         child: AppText(
-                          text: 'BLACK',
+                          text: 'BACK',
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                           color: AppColors.cardSecondPrimaryColor,
@@ -253,58 +261,127 @@ class BottumSheet extends ConsumerWidget {
 
                   // Confirmation button
                   // Bet Button
-                  InkWell(
-                    onTap: () async {
-                      try {
-                        await betNotifier.placeBet(
-                          cardName: cardName.toString(),
-                          amount: selection.totalAmount,
-                          sessionId: sessionId,
-                          roundId: roundEvent?.roundId ?? '',
-                          cardTypeIndex: cardTypeIndex,
-                        );
-                        // Check if bet was successful
-                        final betState = ref.read(betNotifierProvider);
-                        if (betState.hasError) {
-                          // Show error message from provider
-                          _showSnackBar(
-                            context,
-                            betState.error.toString(),
-                            Colors.red,
-                          );
-                        } else {
-                          // Show success snackbar
-                          _showSnackBar(
-                            context,
-                            'Bet placed successfully!',
-                            AppColors.cardPrimaryColor,
-                          );
-                        }
-                      } catch (e) {
-                        // Show generic error snackbar
-                        _showSnackBar(
-                          context,
-                          'Failed to place bet. Please try again.',
-                          Colors.red,
-                        );
-                      }
-                      // Reset amount selection after bet
-                      selectionNotifier.selectWallet(10);
-                      selectionNotifier.selectQuantity(1);
-                      selectionNotifier.selectMultiplier(1);
-                      Navigator.pop(context);
-                    },
-                    child: Container(
+                  GestureDetector(
+                    onTap: _isLoading || _isSuccess
+                        ? null
+                        : () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+
+                            try {
+                              // Perform the bet request
+                              await betNotifier.placeBet(
+                                cardName: cardName.toString(),
+                                amount: selection.totalAmount,
+                                sessionId: sessionId,
+                                roundId: roundEvent?.roundId ?? '',
+                                cardTypeIndex: widget.cardTypeIndex,
+                              );
+
+                              // Check if bet was successful
+                              final betState = ref.read(betNotifierProvider);
+
+                              if (betState.hasError) {
+                                // Show error message
+                                if (mounted) {
+                                  _showSnackBar(
+                                    context,
+                                    betState.error.toString(),
+                                    Colors.red,
+                                  );
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                }
+                              } else {
+                                // Show success animation
+                                if (mounted) {
+                                  setState(() {
+                                    _isLoading = false;
+                                    _isSuccess = true;
+                                  });
+
+                                  // Haptic feedback for better feel
+                                  HapticFeedback.mediumImpact();
+
+                                  // Wait for animation to play before closing
+                                  await Future.delayed(
+                                    const Duration(milliseconds: 1000),
+                                  );
+
+                                  if (mounted) {
+                                    // Reset amount selection after bet
+                                    selectionNotifier.selectWallet(10);
+                                    selectionNotifier.selectQuantity(1);
+                                    selectionNotifier.selectMultiplier(1);
+                                    Navigator.pop(context);
+
+                                    // Optional: show a small snackbar after closing if needed
+                                    // formatted for confirmation, though the button animation is primary.
+                                    _showSnackBar(
+                                      context,
+                                      'Bet placed successfully!',
+                                      AppColors.cardPrimaryColor,
+                                    );
+                                  }
+                                }
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                                _showSnackBar(
+                                  context,
+                                  'Failed to place bet. Please try again.',
+                                  Colors.red,
+                                );
+                              }
+                            }
+                          },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
                       width: width * 0.55,
                       padding: const EdgeInsets.all(16),
-                      color: AppColors.cardPrimaryColor,
+                      color: _isSuccess
+                          ? Colors.green
+                          : AppColors.cardPrimaryColor,
+                      curve: Curves.easeInOut,
                       child: Center(
-                        child: AppText(
-                          text: 'TOTAL AMOUNT : ${selection.totalAmount}',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: AppColors.cardSecondPrimaryColor,
-                        ),
+                        child: _isLoading
+                            ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : _isSuccess
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const AppText(
+                                    text: 'BET PLACED!',
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              )
+                            : AppText(
+                                text: 'TOTAL AMOUNT : ${selection.totalAmount}',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: AppColors.cardSecondPrimaryColor,
+                              ),
                       ),
                     ),
                   ),

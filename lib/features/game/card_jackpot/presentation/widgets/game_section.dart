@@ -24,10 +24,9 @@ class _GameTabsState extends ConsumerState<GameTabs> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.watch(cardSocketProvider);
-      ref.watch(walletBalanceProvider);
-      ref.watch(gameHistoryProvider.notifier).fetchGameHistory();
-      ref.watch(myHistoryProvider.notifier).fetchMyHistory();
+      ref.read(walletBalanceProvider.notifier).fetchWalletBalance();
+      ref.read(gameHistoryProvider.notifier).fetchGameHistory();
+      ref.read(myHistoryProvider.notifier).fetchMyHistory();
       ref.read(timerProvider.notifier).start();
     });
     super.initState();
@@ -35,6 +34,8 @@ class _GameTabsState extends ConsumerState<GameTabs> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(cardSocketProvider);
+
     return Column(
       children: [
         // Tabs Container
