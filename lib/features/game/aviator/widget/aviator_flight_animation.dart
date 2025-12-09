@@ -36,6 +36,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
   double _waveProgress = 0.0;
   final double _waveAmplitude = 15.0;
+  late AnimationController _waveAmplitudeController;
+  late Animation<double> _waveAmplitudeAnimation;
   final double _waveFrequency = 0.05;
 
   // 👈 PREPARE state countdown variables
@@ -58,7 +60,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
     _takeoffController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 2900),
     );
     _takeoffAnimation = CurvedAnimation(
       parent: _takeoffController,
@@ -80,7 +82,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         final delta = now - lastWaveTick;
         lastWaveTick = now;
 
-        const speed = 0.02;
+        const speed = 0.03;
         setState(() {
           _waveProgress += delta * speed;
         });
@@ -89,7 +91,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
     _flyAwayController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2500),
+      duration: const Duration(milliseconds: 1500),
     );
     _flyAwayAnimation = CurvedAnimation(
       parent: _flyAwayController,
@@ -105,6 +107,20 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       vsync: this,
       duration: const Duration(seconds: 5),
     );
+
+    _waveAmplitudeController = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        seconds: 1,
+      ), // Ramp up over 1 second; adjust for smoother/faster transition
+    );
+    _waveAmplitudeAnimation = Tween<double>(begin: 0.0, end: _waveAmplitude)
+        .animate(
+          CurvedAnimation(
+            parent: _waveAmplitudeController,
+            curve: Curves.easeInOut,
+          ),
+        );
   }
 
   @override
@@ -115,6 +131,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _flyAwayController.dispose();
     _enterController.dispose();
     _prepareController.dispose();
+    _waveAmplitudeController.dispose();
+
     super.dispose();
   }
 
@@ -377,26 +395,19 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                           if (_flyAwayController.isAnimating) {
                             final t = _flyAwayAnimation.value;
 
-                            // Define a baseline fly-away curve, then shift it so that
-                            // the plane starts flying away from its last animated position.
-                            final baselineStart = Offset(
-                              width * 0.65,
-                              height * 0.5,
-                            );
-                            final baselineControl = Offset(
-                              width * 0.85,
-                              height * 0.8,
-                            );
-                            final baselineEnd = Offset(
-                              width * 1.2,
-                              height + 150,
-                            );
-
+                            // Start directly from the plane's current position
                             final start =
-                                _flyAwayStartPosition ?? baselineStart;
-                            final delta = start - baselineStart;
-                            final control = baselineControl + delta;
-                            final end = baselineEnd + delta;
+                                _flyAwayStartPosition ??
+                                Offset(width * 0.65, height * 0.5);
+                            // Define control and end relative to start for a consistent curve shape
+                            final control = Offset(
+                              start.dx + (width * 0.2),
+                              start.dy + (height * 0.3),
+                            );
+                            final end = Offset(
+                              start.dx + (width * 0.55),
+                              start.dy + height + 150,
+                            );
 
                             x =
                                 (1 - t) * (1 - t) * start.dx +
@@ -410,8 +421,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                           } else {
                             final t = _takeoffAnimation.value;
                             final start = Offset(24, 24);
-                            final control = Offset(width * 0.45, height * 0.1);
-                            final end = Offset(width * 0.65, height * 0.5);
+                            final control = Offset(width * 0.5, height * 0.1);
+                            final end = Offset(width * 0.7, height * 0.5);
 
                             x =
                                 (1 - t) * (1 - t) * start.dx +
@@ -427,19 +438,35 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                               _isWaving = true;
                               _takeoffController.stop();
                               _waveController.repeat();
+                              _waveAmplitudeController.forward(from: 0);
                             }
                           }
 
                           double waveOffset = 0.0;
+                          // double planeAngle = -pi / 12;
                           if (_isWaving && !_flyAwayController.isAnimating) {
+                            final currentAmplitude =
+                                _waveAmplitudeAnimation.value;
                             waveOffset =
                                 sin(_waveProgress * _waveFrequency) *
-                                _waveAmplitude;
+                                currentAmplitude;
                             final waveTangent =
                                 cos(_waveProgress * _waveFrequency) *
-                                _waveAmplitude *
+                                currentAmplitude *
                                 _waveFrequency;
-                            planeAngle = -atan(waveTangent / 5);
+                            if (_waveAmplitudeController.isAnimating) {
+                              // During transition, interpolate angle from takeoff to waving
+                              final targetAngle = -atan(waveTangent / 5);
+                              final startAngle = -pi / 12;
+                              final t =
+                                  currentAmplitude /
+                                  _waveAmplitude; // Transition progress (0 to 1)
+                              planeAngle =
+                                  startAngle + (targetAngle - startAngle) * t;
+                            } else {
+                              // Normal waving after transition
+                              planeAngle = -atan(waveTangent / 5);
+                            }
                           }
 
                           final unclampedBottomPos = y + waveOffset;
@@ -491,8 +518,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                   ),
                                 ),
                                 Positioned(
-                                  left: currentPoint.dx,
-                                  bottom: bottomPos,
+                                  left: _flyAwayController.isAnimating
+                                      ? currentPoint.dx
+                                      : currentPoint.dx - 9,
+                                  bottom: bottomPos - 3,
                                   child: Transform.rotate(
                                     angle: planeAngle,
                                     child: Image.asset(
@@ -521,7 +550,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "${currentValue.toStringAsFixed(2)}X",
+                                          "${currentValue.toStringAsFixed(2)}x",
                                           style: Theme.of(
                                             context,
                                           ).textTheme.aviatorDisplayLarge,
@@ -541,7 +570,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                             context,
                                           ).textTheme.aviatorHeadlineSmall,
                                         ),
-                                        const SizedBox(height: 8),
+                                        // const SizedBox(height: 4),
                                         Text(
                                           "${round?.crashAt?.toString() ?? ''}x",
                                           style: Theme.of(
@@ -572,6 +601,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _isWaving = false;
     _hasFlownAway = false;
     _waveProgress = 0.0;
+    _waveAmplitudeController.reset();
     _pathPoints.clear();
     _currentPlanePosition = null;
     _takeoffController.forward(from: 0);

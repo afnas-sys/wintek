@@ -11,6 +11,7 @@ import 'package:wintek/features/auth/services/secure_storage.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 import 'package:wintek/features/game/aviator/service/aviator_bet_cache_service.dart';
+import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 
 import 'package:wintek/features/game/aviator/widget/custom_bet_button%20.dart';
 
@@ -124,9 +125,11 @@ class _BetContainerState extends ConsumerState<BetContainer> {
 
   void _stopAutoPlay() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _autoPlayState = AutoPlayState();
-      });
+      if (mounted) {
+        setState(() {
+          _autoPlayState = AutoPlayState();
+        });
+      }
       _cacheService.clearAutoPlayState(widget.index);
     });
   }
@@ -178,6 +181,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     if (value > 10) {
       controller.text = (value - 1).toString();
     }
+  }
+
+  @override
+  void dispose() {
+    _cacheService.clearAutoPlayState(widget.index);
+    super.dispose();
   }
 
   @override
@@ -246,6 +255,9 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   @override
   Widget build(BuildContext context) {
     //!------BET CONTAINER------
+    ref.listen(aviatorDisconnectProvider, (previous, next) {
+      _stopAutoPlay();
+    });
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
       height: _selectedValue == 0 ? 210 : 258,

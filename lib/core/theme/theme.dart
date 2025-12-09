@@ -275,6 +275,12 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
+  TextStyle get walletBodySmallThird => GoogleFonts.roboto(
+    color: AppColors.walletEighthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
   //!________________________________Offers_____________________________________
   //!________________________________Payment___________________________________
 
@@ -334,6 +340,12 @@ extension CustomTextStyle on TextTheme {
   );
   TextStyle get paymentBodySmallSecondary => GoogleFonts.roboto(
     color: AppColors.paymentSeventeenthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+  );
+
+  TextStyle get paymentBodySmallThird => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );

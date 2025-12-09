@@ -359,9 +359,10 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
+                  flex: 1,
                   //! Switch
                   child: Transform.scale(
                     scale: 0.7,
@@ -385,6 +386,7 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                 ),
                 //! Label
                 Expanded(
+                  flex: 2,
                   child: Text(
                     label,
                     style: Theme.of(context).textTheme.aviatorbodySmallPrimary
@@ -397,14 +399,15 @@ class _AutoPlayWidgetState extends State<AutoPlayWidget> {
                 ),
                 //! TextField
                 Expanded(
+                  flex: 3,
                   child: _buildAmountTextField(
                     context,
                     controller,
                     enabled: switchValue,
                   ),
                 ),
-                SizedBox(width: 5),
 
+                SizedBox(width: 5),
                 Text(
                   'INR',
                   style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
