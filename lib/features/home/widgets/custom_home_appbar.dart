@@ -84,22 +84,22 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                       },
                     ),
                     SizedBox(width: 8),
-                    Container(
-                      height: 28,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.homeFivethColor,
-                            AppColors.homeSxithColor,
-                          ],
+                    GestureDetector(
+                      onTap: () =>
+                          Navigator.pushNamed(context, RoutesNames.deposit),
+                      child: Container(
+                        height: 28,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              AppColors.homeFivethColor,
+                              AppColors.homeSxithColor,
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: () =>
-                              Navigator.pushNamed(context, RoutesNames.deposit),
+                        child: Center(
                           child: Text(
                             'Deposit',
                             style: Theme.of(context).textTheme.homeSmallPrimary,

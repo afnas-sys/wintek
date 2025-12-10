@@ -5,7 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/core/utils/sound_manager.dart';
+import 'package:wintek/features/game/aviator/providers/aviator_music_provider.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
+import 'package:wintek/features/game/aviator/widget/aviator_settings_drawer.dart';
 
 class AviatorFlightAnimation extends ConsumerStatefulWidget {
   const AviatorFlightAnimation({super.key});
@@ -133,6 +136,12 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _enterController.dispose();
     _prepareController.dispose();
     _waveAmplitudeController.dispose();
+
+    // Stop music when widget is disposed
+    final isMusicOn = ref.read(aviatorMusicProvider);
+    if (isMusicOn) {
+      SoundManager.stopAviatorMusic();
+    }
 
     super.dispose();
   }
@@ -310,11 +319,35 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                     topRight: Radius.circular(20),
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'FUN MODE',
-                    style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 48), // Balance the hamburger icon
+                    Text(
+                      'FUN MODE',
+                      style: Theme.of(context).textTheme.aviatorBodyTitleMdeium,
+                    ),
+                    Builder(
+                      builder: (BuildContext context) {
+                        return IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () {
+                            final RenderBox renderBox =
+                                context.findRenderObject() as RenderBox;
+                            final position = renderBox.localToGlobal(
+                              Offset.zero,
+                            );
+                            final size = renderBox.size;
+                            showAviatorSettingsDrawer(
+                              context: context,
+                              position: position,
+                              size: size,
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
 
@@ -605,6 +638,13 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _waveAmplitudeController.reset();
     _pathPoints.clear();
     _currentPlanePosition = null;
+
+    // Play start sound if enabled
+    final isStartSoundOn = ref.read(aviatorStartSoundProvider);
+    if (isStartSoundOn) {
+      SoundManager.aviatorStartSound();
+    }
+
     _takeoffController.forward(from: 0);
   }
 
@@ -612,6 +652,13 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _hasFlownAway = true;
     _isWaving = false;
     _waveController.stop();
+
+    // Play flew away sound if enabled
+    final isStartSoundOn = ref.read(aviatorStartSoundProvider);
+    if (isStartSoundOn) {
+      SoundManager.aviatorFlewAwaySound();
+    }
+
     // Capture the plane's current position so the fly-away starts
     // exactly from where the plane was when the round crashed.
     _flyAwayStartPosition = _currentPlanePosition;
