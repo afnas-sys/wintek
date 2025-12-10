@@ -63,6 +63,7 @@ dependencies:
   flutter_upi_india: ^1.0.1
   shimmer: ^3.0.0
   syncfusion_flutter_sliders: ^31.2.5
+  flutter_svg: ^2.2.3
 
   
 

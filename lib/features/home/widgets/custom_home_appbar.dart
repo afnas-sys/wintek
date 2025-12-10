@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/router/routes_names.dart';
@@ -37,8 +38,8 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ClipRRect(
-            child: Image.asset(
-              AppImages.homeAppBarImage,
+            child: SvgPicture.asset(
+              AppImages.homeAppIconImage,
               height: 24,
               width: 92,
             ),

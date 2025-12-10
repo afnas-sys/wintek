@@ -261,7 +261,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                       ),
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.aviatorBodyLargePrimary,
+                                      ).textTheme.aviatorBodyMediumFourthBold,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -273,7 +273,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                       ),
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.aviatorBodyMediumFourth,
+                                      ).textTheme.aviatorbodySmallThird,
                                       //  overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -289,14 +289,14 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                   textAlign: TextAlign.center,
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorBodyLargePrimary,
+                                  ).textTheme.aviatorBodyMediumFourthBold,
                                 ),
                               ),
 
                               // 📌 X
                               Container(
                                 height: 28,
-                                width: 50,
+                                width: 40,
 
                                 decoration: BoxDecoration(
                                   color: AppColors.aviatorThirtyFiveColor,
@@ -307,7 +307,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                     bet.cashoutAt.toString(),
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.aviatorbodySmallPrimary,
+                                    ).textTheme.aviatorbodySmallPrimaryBold,
                                   ),
                                 ),
                               ),
@@ -320,7 +320,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                                   textAlign: TextAlign.center,
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorBodyLargePrimary,
+                                  ).textTheme.aviatorBodyMediumFourthBold,
                                 ),
                               ),
                               Expanded(

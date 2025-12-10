@@ -203,7 +203,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
                                 bets?.user.userName ?? '',
                                 style: Theme.of(
                                   context,
-                                ).textTheme.aviatorBodyMediumFourth,
+                                ).textTheme.aviatorbodySmallFourthBold,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -216,7 +216,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
-                                ).textTheme.aviatorBodyMediumFourth,
+                                ).textTheme.aviatorbodySmallFourthBold,
                               ),
                             ),
 
@@ -228,7 +228,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
-                                ).textTheme.aviatorBodyMediumFourth,
+                                ).textTheme.aviatorbodySmallFourthBold,
                               ),
                             ),
 
@@ -240,7 +240,7 @@ class _AllBetsState extends ConsumerState<AllBets> {
                                 textAlign: TextAlign.end,
                                 style: Theme.of(
                                   context,
-                                ).textTheme.aviatorBodyMediumFourth,
+                                ).textTheme.aviatorbodySmallFifth,
                               ),
                             ),
                           ],
