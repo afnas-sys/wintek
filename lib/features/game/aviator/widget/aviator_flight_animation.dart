@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -278,7 +279,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                     child: SizedBox(
                       width: imgWidth,
                       height: imgHeight,
-                      child: Image.asset(
+                      child: SvgPicture.asset(
                         AppImages.aviatorbg,
                         fit: BoxFit.cover,
                       ),
@@ -289,7 +290,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                     child: SizedBox(
                       width: imgWidth,
                       height: imgHeight,
-                      child: Image.asset(
+                      child: SvgPicture.asset(
                         AppImages.aviatorbg,
                         fit: BoxFit.cover,
                       ),
@@ -524,7 +525,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                                   bottom: bottomPos - 3,
                                   child: Transform.rotate(
                                     angle: planeAngle,
-                                    child: Image.asset(
+                                    child: SvgPicture.asset(
                                       AppImages.graphContainerplaneImage,
                                       width: 70,
                                     ),

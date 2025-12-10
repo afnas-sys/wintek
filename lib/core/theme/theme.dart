@@ -199,10 +199,21 @@ extension CustomTextStyle on TextTheme {
     fontWeight: FontWeight.w400,
   );
 
+  TextStyle get aviatorBodyMediumFourthBold => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
+
   TextStyle get aviatorbodySmallPrimary => GoogleFonts.roboto(
     color: AppColors.aviatorTertiaryColor,
     fontSize: 12,
     fontWeight: FontWeight.w400,
+  );
+  TextStyle get aviatorbodySmallPrimaryBold => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
   );
 
   TextStyle get aviatorbodySmallSecondary => GoogleFonts.roboto(
@@ -216,11 +227,26 @@ extension CustomTextStyle on TextTheme {
     fontSize: 10,
     fontWeight: FontWeight.w400,
   );
+  TextStyle get aviatorbodySmallThirdBold => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 10,
+    fontWeight: FontWeight.bold,
+  );
 
   TextStyle get aviatorbodySmallFourth => GoogleFonts.roboto(
     color: AppColors.aviatorSixthColor,
     fontSize: 12,
     fontWeight: FontWeight.w400,
+  );
+  TextStyle get aviatorbodySmallFourthBold => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
+  TextStyle get aviatorbodySmallFifth => GoogleFonts.roboto(
+    color: AppColors.aviatorSixthColor,
+    fontSize: 11,
+    fontWeight: FontWeight.bold,
   );
 
   //!________________________________Home_____________________________________
@@ -405,6 +431,11 @@ extension CustomTextStyle on TextTheme {
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
+  TextStyle get crashBodyMediumFourthBold => GoogleFonts.roboto(
+    color: AppColors.crashSecondaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
   TextStyle get crashBodyMediumFifth => GoogleFonts.roboto(
     color: AppColors.crashPrimaryColor,
     fontSize: 14,
@@ -416,13 +447,22 @@ extension CustomTextStyle on TextTheme {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+  TextStyle get crashbodySmallPrimaryBold => GoogleFonts.roboto(
+    color: AppColors.crashPrimaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
 
   TextStyle get crashBodySmallSecondary => GoogleFonts.roboto(
     color: AppColors.crashThirteenthColor,
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
-
+  TextStyle get crashBodySmallThird => GoogleFonts.roboto(
+    color: AppColors.crashSecondaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
   TextStyle get crashbodySmallThird => GoogleFonts.roboto(
     color: AppColors.crashPrimaryColor,
     fontSize: 10,
@@ -433,7 +473,16 @@ extension CustomTextStyle on TextTheme {
     fontSize: 8,
     fontWeight: FontWeight.w400,
   );
-
+  TextStyle get crashbodySmallFifth => GoogleFonts.roboto(
+    color: AppColors.crashSecondaryColor,
+    fontSize: 10,
+    fontWeight: FontWeight.w400,
+  );
+  TextStyle get crashbodySmallFiftBold => GoogleFonts.roboto(
+    color: AppColors.crashSecondaryColor,
+    fontSize: 11,
+    fontWeight: FontWeight.bold,
+  );
   //!________________________________SpinToWin___________________________________
 
   TextStyle get spinHeadlineSmall => GoogleFonts.roboto(

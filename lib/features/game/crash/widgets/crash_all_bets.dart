@@ -137,7 +137,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                                 bets?.user.userName ?? '',
                                 style: Theme.of(
                                   context,
-                                ).textTheme.crashBodyTitleSmallSecondary,
+                                ).textTheme.crashBodySmallThird,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -150,9 +150,10 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                                 textAlign: TextAlign.center,
                                 style: Theme.of(
                                   context,
-                                ).textTheme.crashBodyTitleSmallSecondary,
+                                ).textTheme.crashBodySmallThird,
                               ),
                             ),
+                            SizedBox(width: 10),
 
                             // 📌 Mult
                             Expanded(
@@ -161,7 +162,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                                 bets?.cashoutAt.toString() ?? '',
                                 style: Theme.of(
                                   context,
-                                ).textTheme.crashBodyTitleSmallSecondary,
+                                ).textTheme.crashBodySmallThird,
                               ),
                             ),
 
@@ -174,7 +175,7 @@ class _AllBetsState extends ConsumerState<CrashAllBets> {
                                   bets?.payout.toStringAsFixed(2) ?? '',
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.crashBodyTitleSmallSecondary,
+                                  ).textTheme.crashbodySmallFiftBold,
                                 ),
                               ),
                             ),

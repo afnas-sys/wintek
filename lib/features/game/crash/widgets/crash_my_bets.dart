@@ -249,7 +249,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                               Expanded(
                                 flex: 1,
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       DateFormat('HH:mm').format(
@@ -259,7 +259,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                       ),
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.crashBodyTitleSmallSecondary,
+                                      ).textTheme.crashBodyMediumFourthBold,
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -272,7 +272,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                       ),
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.crashBodyMediumFourth,
+                                      ).textTheme.crashbodySmallFifth,
                                       //  overflow: TextOverflow.ellipsis,
                                       maxLines: 1,
                                     ),
@@ -289,14 +289,14 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                   textAlign: TextAlign.center,
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.crashBodyTitleSmallSecondary,
+                                  ).textTheme.crashBodyMediumFourthBold,
                                 ),
                               ),
 
                               // 📌 X
                               Container(
                                 height: 28,
-                                width: 50,
+                                width: 40,
 
                                 decoration: BoxDecoration(
                                   color: Color(0XFF271777),
@@ -309,7 +309,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                     bet.cashoutAt.toString(),
                                     style: Theme.of(
                                       context,
-                                    ).textTheme.crashbodySmallPrimary,
+                                    ).textTheme.crashbodySmallPrimaryBold,
                                   ),
                                 ),
                               ),
@@ -323,7 +323,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                                   textAlign: TextAlign.center,
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.crashBodyTitleSmallSecondary,
+                                  ).textTheme.crashBodyMediumFourthBold,
                                 ),
                               ),
                               Expanded(

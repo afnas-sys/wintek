@@ -112,7 +112,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                           topBet.userId?.userName ?? '',
                           style: Theme.of(
                             context,
-                          ).textTheme.aviatorBodyLargePrimary,
+                          ).textTheme.aviatorBodyMediumFourthBold,
                         ),
                       ],
                     ),
@@ -146,7 +146,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                                   topBet.cashoutAt.toString(),
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorbodySmallPrimary,
+                                  ).textTheme.aviatorbodySmallPrimaryBold,
                                 ),
                               ),
                             ),
@@ -181,7 +181,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
                                   formatNum(topBet.payout),
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.aviatorbodySmallFourth,
+                                  ).textTheme.aviatorBodyMediumFourthBold,
                                 ),
                               ),
                             ),

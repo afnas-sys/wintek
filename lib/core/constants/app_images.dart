@@ -2,31 +2,32 @@ class AppImages {
   static const String appbarImage = 'assets/images/predictor-appbar.png';
   static const String graphContainerBgImage = 'assets/images/BgImage.png';
   static const String graphContainerplaneImage =
-      'assets/images/plane for graph.png';
+      'assets/images/aviator_plane.svg';
 
   //Home bg
   static const String homeBgImage = 'assets/images/Home_bg_image.png';
 
   //Home Tile
-  static const String homeAviatorImage = 'assets/images/aviator.png';
-  static const String homeCrashImage = 'assets/images/Crash.png';
-  static const String homeCarromImage = 'assets/images/Carrom.png';
-  static const String homeSpinToWinImage = 'assets/images/Spin_to_win.png';
-  static const String homecardJackPotImage = 'assets/images/Card_Jackpot.png';
 
   //! aviator
   static const String previousHand = 'assets/images/previousHand.png';
   static const String refresh = 'assets/images/refresh.png';
-  static const String aviatorbg = 'assets/images/aviator_bg.png';
+  static const String aviatorbg = 'assets/images/bg_aviator.svg';
   static const String spreadclr1 = 'assets/images/spreadclr1.png';
   static const String spreadclr2 = 'assets/images/spreadclr2.png';
   static const String spreadclr3 = 'assets/images/spreadclr3.png';
 
+  //! Home
+  static const String homeAppbarImage = 'assets/images/user.png';
+  static const String homeAppIconImage = 'assets/images/predictor_icon.svg';
+  static const String homeAviatorImage = 'assets/images/aviator.png';
+  static const String homeCrashImage = 'assets/images/Crash.png';
+  static const String homeSpinToWinImage = 'assets/images/Spin_to_win.png';
+  static const String homecardJackPotImage = 'assets/images/Card_Jackpot.png';
   //Home appBar
   static const String homeAppBarImage = 'assets/images/home_appbarImage.png';
 
   //home appbar image
-  static const String homeAppbarImage = 'assets/images/user.png';
   //Wallet Images
   static const String walletImage = 'assets/images/wallet_balance.png';
 

@@ -283,18 +283,22 @@ class _BetContainerState extends ConsumerState<BetContainer> {
               if (widget.showRemoveButton)
                 CustomElevatedButton(
                   hasBorder: true,
-                  borderColor: _manualBetActive
+                  borderColor:
+                      (_manualBetActive || _autoPlayState.settings != null)
                       ? AppColors.aviatorFourtyColor.withOpacity(0.5)
                       : AppColors.aviatorFourtyColor,
                   backgroundColor: AppColors.aviatorTwentiethColor,
                   padding: EdgeInsetsGeometry.all(2),
                   height: 22,
                   width: 22,
-                  onPressed: _manualBetActive ? null : widget.onRemovePressed,
+                  onPressed:
+                      (_manualBetActive || _autoPlayState.settings != null)
+                      ? null
+                      : widget.onRemovePressed,
                   child: Icon(
                     Icons.remove,
                     size: 18.33,
-                    color: _manualBetActive
+                    color: (_manualBetActive || _autoPlayState.settings != null)
                         ? AppColors.aviatorFourtyColor.withOpacity(0.5)
                         : AppColors.aviatorFourtyColor,
                   ),
