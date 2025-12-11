@@ -33,10 +33,18 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     ref.listen(aviatorDisconnectProvider, (previous, next) {
-      _messengerKey.currentState?.clearSnackBars();
-      ref.read(aviatorFlushbarListProvider.notifier).dismissAll();
+      // Only execute if there's an actual disconnect event
+      if (next.hasValue) {
+        _messengerKey.currentState?.clearSnackBars();
+        ref.read(aviatorFlushbarListProvider.notifier).dismissAll();
+      }
     });
 
     final roundState = ref.watch(aviatorStateProvider);

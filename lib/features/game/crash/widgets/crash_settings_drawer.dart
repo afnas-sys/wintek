@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/utils/sound_manager.dart';
-import 'package:wintek/features/game/aviator/providers/aviator_music_provider.dart';
+import 'package:wintek/features/game/crash/providers/crash_music_provider.dart';
 
 /// Shows a settings drawer positioned below a specific widget (like a hamburger icon)
-void showAviatorSettingsDrawer({
+void showCrashSettingsDrawer({
   required BuildContext context,
   required Offset position,
   required Size size,
@@ -33,7 +33,7 @@ void showAviatorSettingsDrawer({
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.5,
                 decoration: BoxDecoration(
-                  color: AppColors.aviatorThirteenthColor,
+                  color: AppColors.crashThirteenthColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const _SettingsDrawerContent(),
@@ -72,9 +72,7 @@ class _SettingsDrawerContent extends StatelessWidget {
             children: [
               Text(
                 'Settings',
-                style: Theme.of(context).textTheme.aviatorBodyLargeThird,
-
-                // .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.crashBodyTitleMdeium,
               ),
               IconButton(
                 padding: EdgeInsets.zero,
@@ -88,8 +86,8 @@ class _SettingsDrawerContent extends StatelessWidget {
           // Music and Start Sound Toggles
           Consumer(
             builder: (context, ref, child) {
-              final isMusicOn = ref.watch(aviatorMusicProvider);
-              final isStartSoundOn = ref.watch(aviatorStartSoundProvider);
+              final isMusicOn = ref.watch(crashMusicProvider);
+              final isStartSoundOn = ref.watch(crashStartSoundProvider);
 
               return Column(
                 children: [
@@ -104,12 +102,11 @@ class _SettingsDrawerContent extends StatelessWidget {
                           color: Colors.white,
                           size: 14,
                         ),
-                        // const SizedBox(width: 8),
                         Text(
                           'Music',
                           style: Theme.of(
                             context,
-                          ).textTheme.aviatorBodyMediumPrimary,
+                          ).textTheme.crashBodyMediumPrimary,
                         ),
                       ],
                     ),
@@ -118,9 +115,7 @@ class _SettingsDrawerContent extends StatelessWidget {
                       child: Switch(
                         value: isMusicOn,
                         onChanged: (value) async {
-                          ref
-                              .read(aviatorMusicProvider.notifier)
-                              .setMusic(value);
+                          ref.read(crashMusicProvider.notifier).setMusic(value);
                           if (value) {
                             await SoundManager.aviatorMusic();
                           } else {
@@ -142,12 +137,11 @@ class _SettingsDrawerContent extends StatelessWidget {
                           color: Colors.white,
                           size: 14,
                         ),
-                        // const SizedBox(width: 2),
                         Text(
                           'Sound',
                           style: Theme.of(
                             context,
-                          ).textTheme.aviatorBodyMediumPrimary,
+                          ).textTheme.crashBodyMediumPrimary,
                         ),
                       ],
                     ),
@@ -157,7 +151,7 @@ class _SettingsDrawerContent extends StatelessWidget {
                         value: isStartSoundOn,
                         onChanged: (value) {
                           ref
-                              .read(aviatorStartSoundProvider.notifier)
+                              .read(crashStartSoundProvider.notifier)
                               .setStartSound(value);
                         },
                       ),

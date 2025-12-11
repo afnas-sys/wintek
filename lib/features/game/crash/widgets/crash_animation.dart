@@ -6,7 +6,10 @@ import 'package:lottie/lottie.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
+import 'package:wintek/core/utils/sound_manager.dart';
+import 'package:wintek/features/game/crash/providers/crash_music_provider.dart';
 import 'package:wintek/features/game/crash/providers/crash_round_provider.dart';
+import 'package:wintek/features/game/crash/widgets/crash_settings_drawer.dart';
 
 class CrashAnimation extends ConsumerStatefulWidget {
   const CrashAnimation({super.key});
@@ -44,6 +47,8 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   String _currentLabel = '';
   String _previousLabel = '';
   bool _isFirstRunning = false;
+  bool _hasPlayedStartSound =
+      false; // Track if start sound has been played for current round
 
   // 👈 PREPARE state countdown variables
   double _prepareSecondsLeft = 0.0;
@@ -101,6 +106,14 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       begin: const Offset(-1.0, 0.0),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeOut));
+
+    // Auto-play music if switch is ON
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final isMusicOn = ref.read(crashMusicProvider);
+      if (isMusicOn) {
+        SoundManager.aviatorMusic();
+      }
+    });
   }
 
   @override
@@ -110,6 +123,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     _flyAwayController.dispose();
     _textController.dispose();
     _prepareTimer?.cancel();
+
+    // Stop background music when widget is disposed
+    SoundManager.stopAviatorMusic();
+
     super.dispose();
   }
 
@@ -141,14 +158,28 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     });
 
     ref.listen(crashTickProvider, (previous, next) {
+      final multiplier = next.maybeWhen(
+        data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
+        orElse: () => 0.0,
+      );
+
       if (!_isAnimating) {
-        final multiplier = next.maybeWhen(
-          data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
-          orElse: () => 0.0,
-        );
         if (multiplier > 0) {
           _startRunningAnimation();
         }
+      }
+
+      // Play start sound only at the very beginning (when multiplier is between 1.00 and 1.20)
+      final roundState = ref.read(crashRoundNotifierProvider)?.state;
+      if (multiplier >= 1.00 &&
+          multiplier <= 1.20 &&
+          !_hasPlayedStartSound &&
+          roundState == 'RUNNING') {
+        final isStartSoundOn = ref.read(crashStartSoundProvider);
+        if (isStartSoundOn) {
+          SoundManager.crashStartSound();
+        }
+        _hasPlayedStartSound = true;
       }
     });
 
@@ -251,6 +282,30 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                 padding: const EdgeInsets.all(0),
                 child: Column(
                   children: [
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Builder(
+                        builder: (BuildContext context) {
+                          return IconButton(
+                            icon: const Icon(Icons.menu, color: Colors.white),
+                            onPressed: () {
+                              final RenderBox renderBox =
+                                  context.findRenderObject() as RenderBox;
+                              final position = renderBox.localToGlobal(
+                                Offset.zero,
+                              );
+                              final size = renderBox.size;
+                              showCrashSettingsDrawer(
+                                context: context,
+                                position: position,
+                                size: size,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    // Container(height: 100, width: 100, color: Colors.amber),
                     Expanded(
                       child: LayoutBuilder(
                         builder: (context, innerConstraints) {
@@ -588,6 +643,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                 child: SideDotsAnimation(
                                   isCrashed: round?.state == 'CRASHED',
                                   isRunning: round?.state == 'RUNNING',
+                                  isPrepare: round?.state == 'PREPARE',
                                   multiplier: currentValue,
                                   // multiplier: gameState.currentMultiplier,
                                   // isRunning:
@@ -629,6 +685,12 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     });
     _waveController.stop();
     _pathPoints.clear();
+
+    // Play flew away sound if enabled
+    final isStartSoundOn = ref.read(crashStartSoundProvider);
+    if (isStartSoundOn) {
+      SoundManager.aviatorFlewAwaySound();
+    }
 
     // Calculate rocket position at crash time
     final t = _takeoffAnimation.value;
@@ -683,6 +745,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       _currentLabel = '';
       _previousLabel = '';
       _isFirstRunning = false;
+      _hasPlayedStartSound = false; // Reset for next round
     });
 
     _takeoffController.reset();
@@ -747,12 +810,14 @@ class SideDotsAnimation extends StatefulWidget {
   final double multiplier;
   final bool isCrashed;
   final bool isRunning;
+  final bool isPrepare;
 
   const SideDotsAnimation({
     super.key,
     required this.multiplier,
     required this.isCrashed,
     required this.isRunning,
+    required this.isPrepare,
   });
 
   @override
@@ -765,6 +830,9 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
 
   final int dotCount = 12; // total possible dots
   final double dotSize = 4; // reduced dot size
+  bool _hasStartedAnimation = false; // Track if animation has started
+  double _cachedSpacing = 0.0; // Cache spacing to prevent recalculation
+  double _cachedHeight = 0.0; // Cache height
 
   @override
   void initState() {
@@ -779,20 +847,26 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
   void didUpdateWidget(covariant SideDotsAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // Stop animation when not running or crashed
+    // Reset animation flag when not running or crashed
     if (!widget.isRunning || widget.isCrashed) {
       _controller.stop();
+      _controller.reset();
+      _hasStartedAnimation = false;
       return;
     }
 
-    // Static dots until 3x
-    if (widget.multiplier < 3) {
+    // Static dots until 1.5x
+    if (widget.multiplier < 1.5) {
       _controller.stop();
+      _controller.reset();
+      _hasStartedAnimation = false;
       return;
     }
 
-    // Start animation at >=3x
-    if (!_controller.isAnimating) {
+    // Start animation at >=1.5x
+    if (!_hasStartedAnimation && widget.multiplier >= 1.5) {
+      _hasStartedAnimation = true;
+      _controller.forward(from: 0);
       _controller.repeat();
     }
   }
@@ -804,9 +878,12 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
   }
 
   Color getDotColor() {
+    // Always show green during PREPARE state or early RUNNING state
+    if (widget.isPrepare || !widget.isRunning) return Color(0XFF53987f);
+
     final m = widget.multiplier;
 
-    if (m < 2) return Color(0XFF53987f); // static dot color
+    // Keep green until multiplier is stable and >= 5
     if (m < 5) return Color(0XFF53987f);
     if (m < 10) return Colors.yellowAccent;
     if (m < 20) return Colors.orangeAccent;
@@ -816,7 +893,7 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
 
   @override
   Widget build(BuildContext context) {
-    // Hide dots when crashed
+    // Hide dots only when crashed
     if (widget.isCrashed) {
       return const SizedBox.shrink();
     }
@@ -824,7 +901,14 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final spacing = height / dotCount;
+
+        // Only update cached values when height actually changes
+        if (_cachedHeight != height) {
+          _cachedHeight = height;
+          _cachedSpacing = height / dotCount;
+        }
+
+        final spacing = _cachedSpacing;
         final dotColor = getDotColor();
 
         return AnimatedBuilder(
@@ -835,30 +919,25 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
                 // Remove 2nd, 4th, 6th... positions (even index)
                 if (index % 2 == 1) return const SizedBox.shrink();
 
-                // Static dot position (before multiplier reaches 2)
-                if (widget.multiplier < 2) {
-                  return Positioned(
-                    right: 5,
-                    top: index * spacing,
-                    child: Container(
-                      width: dotSize,
-                      height: dotSize,
-                      decoration: BoxDecoration(
-                        color: dotColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  );
+                // Calculate position
+                double topPosition;
+                if (widget.isPrepare || !_hasStartedAnimation) {
+                  // Static position - keep dots still until animation starts
+                  topPosition = index * spacing;
+                } else {
+                  // Animated position after animation has started
+                  topPosition =
+                      ((_controller.value * _cachedHeight) +
+                          (index * spacing)) %
+                      _cachedHeight;
                 }
 
-                // Animated dot position after 2x
-                double pos =
-                    ((_controller.value * height) + (index * spacing)) % height;
-
                 return Positioned(
+                  key: ValueKey('dot_$index'),
                   right: 5,
-                  top: pos,
-                  child: Container(
+                  top: topPosition,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
                     width: dotSize,
                     height: dotSize,
                     decoration: BoxDecoration(
