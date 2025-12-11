@@ -833,6 +833,7 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
   bool _hasStartedAnimation = false; // Track if animation has started
   double _cachedSpacing = 0.0; // Cache spacing to prevent recalculation
   double _cachedHeight = 0.0; // Cache height
+  bool _waitForValidStart = false; // Flag to wait for a valid start multiplier
 
   @override
   void initState() {
@@ -852,11 +853,26 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
       _controller.stop();
       _controller.reset();
       _hasStartedAnimation = false;
+      _waitForValidStart = false;
       return;
     }
 
-    // Static dots until 1.5x
-    if (widget.multiplier < 1.5) {
+    // Detect transition from PREPARE to RUNNING
+    // If we just switched to running, we must wait for a low multiplier
+    // to ensure we aren't seeing a stale high multiplier from previous round.
+    if (oldWidget.isPrepare && widget.isRunning) {
+      _waitForValidStart = true;
+    }
+
+    // If we are waiting for a valid start, check if we have hit a low multiplier
+    if (_waitForValidStart) {
+      if (widget.multiplier <= 1.2) {
+        _waitForValidStart = false;
+      }
+    }
+
+    // Static dots until 1.5x or if waiting for valid start
+    if (widget.multiplier < 1.5 || _waitForValidStart) {
       _controller.stop();
       _controller.reset();
       _hasStartedAnimation = false;
@@ -921,7 +937,9 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
 
                 // Calculate position
                 double topPosition;
-                if (widget.isPrepare || !_hasStartedAnimation) {
+                if (widget.isPrepare ||
+                    widget.multiplier < 1.5 ||
+                    _waitForValidStart) {
                   // Static position - keep dots still until animation starts
                   topPosition = index * spacing;
                 } else {
