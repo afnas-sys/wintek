@@ -6,7 +6,7 @@ final aviatorMusicProvider = StateNotifierProvider<AviatorMusicNotifier, bool>(
 );
 
 class AviatorMusicNotifier extends StateNotifier<bool> {
-  AviatorMusicNotifier() : super(false);
+  AviatorMusicNotifier() : super(true); // Default to ON
 
   void toggle() {
     state = !state;
@@ -24,7 +24,7 @@ final aviatorStartSoundProvider =
     );
 
 class AviatorStartSoundNotifier extends StateNotifier<bool> {
-  AviatorStartSoundNotifier() : super(false);
+  AviatorStartSoundNotifier() : super(true); // Default to ON
 
   void toggle() {
     state = !state;

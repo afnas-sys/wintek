@@ -54,7 +54,7 @@ class _CrashGameScreenState extends ConsumerState<CrashGameScreen>
         data: (data) => double.tryParse(data.multiplier ?? '0') ?? 0.0,
         orElse: () => 0.0,
       );
-      if (multiplier > 0 && !_controller.isAnimating) {
+      if (multiplier >= 1.5 && !_controller.isAnimating) {
         _controller.repeat();
       }
     });
@@ -75,7 +75,7 @@ class _CrashGameScreenState extends ConsumerState<CrashGameScreen>
               animation: _controller,
               builder: (context, child) {
                 return Transform.rotate(
-                  angle: _controller.value * 2 * 3.1416,
+                  angle: _controller.value * 3.1416,
                   alignment: Alignment.topLeft,
                   child: Transform.scale(scale: 15, child: child),
                 );

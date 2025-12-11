@@ -3,14 +3,14 @@ import 'dart:developer';
 import 'package:audioplayers/audioplayers.dart';
 
 class SoundManager {
-  static final AudioPlayer _audioPlayer = AudioPlayer();
+  // static final AudioPlayer _audioPlayer = AudioPlayer();
   static final AudioPlayer _backgroundPlayer = AudioPlayer();
   static final AudioPlayer _soundEffectsPlayer =
       AudioPlayer(); // Separate player for sound effects
 
-  static Future<void> play(String source) async {
-    await _audioPlayer.play(AssetSource(source));
-  }
+  // static Future<void> play(String source) async {
+  //   await _audioPlayer.play(AssetSource(source));
+  // }
 
   static Future<void> playBackground(String source) async {
     try {
@@ -46,6 +46,7 @@ class SoundManager {
     }
   }
 
+  //! Aviator
   // Optional: predefined app sounds
   static Future<void> aviatorMusic() =>
       playBackground('sounds/aviator-music-394813.mp3');
@@ -102,6 +103,33 @@ class SoundManager {
       log('✅ Playing flew away sound');
     } catch (e) {
       log('❌ Error playing flew away sound: $e');
+    }
+  }
+
+  //! Crash
+  // Play start sound (plays once, not looping) - uses separate player
+  static Future<void> crashStartSound() async {
+    try {
+      // Set audio context to allow mixing with background music
+      await _soundEffectsPlayer.setAudioContext(
+        AudioContext(
+          iOS: AudioContextIOS(
+            category: AVAudioSessionCategory.playback,
+            options: {AVAudioSessionOptions.mixWithOthers},
+          ),
+          android: AudioContextAndroid(
+            isSpeakerphoneOn: false,
+            stayAwake: false,
+            contentType: AndroidContentType.sonification,
+            usageType: AndroidUsageType.game,
+            audioFocus: AndroidAudioFocus.gainTransient,
+          ),
+        ),
+      );
+      await _soundEffectsPlayer.play(AssetSource('sounds/crash_start.mp3'));
+      log('✅ Playing start sound');
+    } catch (e) {
+      log('❌ Error playing start sound: $e');
     }
   }
 }

@@ -33,6 +33,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
   bool _hasReachedWave = false;
   bool _hasFlownAway = false;
+  bool _hasPlayedStartSound =
+      false; // Track if start sound has been played for current round
 
   final List<Offset> _pathPoints = [];
   Offset? _currentPlanePosition;
@@ -125,6 +127,14 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
             curve: Curves.easeInOut,
           ),
         );
+
+    // Auto-play music if switch is ON
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final isMusicOn = ref.read(aviatorMusicProvider);
+      if (isMusicOn) {
+        SoundManager.aviatorMusic();
+      }
+    });
   }
 
   @override
@@ -137,11 +147,8 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _prepareController.dispose();
     _waveAmplitudeController.dispose();
 
-    // Stop music when widget is disposed
-    final isMusicOn = ref.read(aviatorMusicProvider);
-    if (isMusicOn) {
-      SoundManager.stopAviatorMusic();
-    }
+    // Stop background music when widget is disposed
+    SoundManager.stopAviatorMusic();
 
     super.dispose();
   }
@@ -241,6 +248,17 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       error: (_, _) => 0.0,
       loading: () => 0.0,
     );
+
+    // Play start sound only when multiplier is exactly 1.00 (at the very start)
+    if (currentValue == 1.00 &&
+        !_hasPlayedStartSound &&
+        round?.state == 'RUNNING') {
+      final isStartSoundOn = ref.read(aviatorStartSoundProvider);
+      if (isStartSoundOn) {
+        SoundManager.aviatorStartSound();
+      }
+      _hasPlayedStartSound = true;
+    }
 
     // Animation triggers
     //
@@ -639,12 +657,6 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _pathPoints.clear();
     _currentPlanePosition = null;
 
-    // Play start sound if enabled
-    final isStartSoundOn = ref.read(aviatorStartSoundProvider);
-    if (isStartSoundOn) {
-      SoundManager.aviatorStartSound();
-    }
-
     _takeoffController.forward(from: 0);
   }
 
@@ -672,6 +684,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     _isWaving = false;
     _hasReachedWave = false;
     _hasFlownAway = false;
+    _hasPlayedStartSound = false; // Reset for next round
     _waveProgress = 0.0;
     _pathPoints.clear();
     _currentPlanePosition = null;

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wintek/core/utils/sound_manager.dart';
 import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/domain/models/aviator_round.dart';
 import 'package:wintek/features/game/aviator/service/aviator_socket_service.dart';
@@ -9,7 +10,12 @@ import 'package:wintek/features/game/aviator/service/aviator_socket_service.dart
 final aviatorRoundProvider = Provider.autoDispose<AviatorSocketService>((ref) {
   final service = AviatorSocketService();
   service.connect();
-  ref.onDispose(() => service.disconnect());
+  ref.onDispose(() {
+    // Stop background music when exiting
+    SoundManager.stopAviatorMusic();
+    // Disconnect socket
+    service.disconnect();
+  });
   return service;
 });
 // //! Round State Provider
@@ -41,16 +47,20 @@ final aviatorDisconnectProvider = StreamProvider.autoDispose<void>((ref) {
 class AviatorRoundNotifier extends StateNotifier<RoundState?> {
   final AviatorSocketService _service;
   late final StreamSubscription _sub;
+  bool _isDisposed = false;
 
   AviatorRoundNotifier(this._service) : super(null) {
     // Listen to the socket stream and update state
     _sub = _service.stateStream.listen((round) {
-      state = round;
+      if (!_isDisposed) {
+        state = round;
+      }
     });
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     _sub.cancel();
     super.dispose();
   }
@@ -66,15 +76,19 @@ final aviatorRoundNotifierProvider =
 class AviatorCrashNotifier extends StateNotifier<Crash?> {
   final AviatorSocketService _service;
   late final StreamSubscription _sub;
+  bool _isDisposed = false;
 
   AviatorCrashNotifier(this._service) : super(null) {
     _sub = _service.crashStream.listen((crash) {
-      state = crash;
+      if (!_isDisposed) {
+        state = crash;
+      }
     });
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     _sub.cancel();
     super.dispose();
   }
