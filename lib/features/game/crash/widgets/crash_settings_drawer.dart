@@ -72,12 +72,16 @@ class _SettingsDrawerContent extends StatelessWidget {
             children: [
               Text(
                 'Settings',
-                style: Theme.of(context).textTheme.crashBodyTitleMdeium,
+                style: Theme.of(context).textTheme.crashBodyTitleSmallThird,
               ),
               IconButton(
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
-                icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                icon: const Icon(
+                  Icons.close,
+                  color: AppColors.crashPrimaryColor,
+                  size: 20,
+                ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
@@ -99,7 +103,7 @@ class _SettingsDrawerContent extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.music_note,
-                          color: Colors.white,
+                          color: AppColors.crashPrimaryColor,
                           size: 14,
                         ),
                         Text(
@@ -111,8 +115,11 @@ class _SettingsDrawerContent extends StatelessWidget {
                       ],
                     ),
                     trailing: Transform.scale(
-                      scale: 0.7,
+                      scale: 0.6,
                       child: Switch(
+                        inactiveTrackColor: AppColors.crashThirteenthColor,
+                        inactiveThumbColor: AppColors.crashTwentyNinethColor,
+                        activeTrackColor: AppColors.crashThirteenthColor,
                         value: isMusicOn,
                         onChanged: (value) async {
                           ref.read(crashMusicProvider.notifier).setMusic(value);
@@ -134,7 +141,7 @@ class _SettingsDrawerContent extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.volume_up,
-                          color: Colors.white,
+                          color: AppColors.crashPrimaryColor,
                           size: 14,
                         ),
                         Text(
@@ -146,8 +153,11 @@ class _SettingsDrawerContent extends StatelessWidget {
                       ],
                     ),
                     trailing: Transform.scale(
-                      scale: 0.7,
+                      scale: 0.6,
                       child: Switch(
+                        inactiveTrackColor: AppColors.crashThirteenthColor,
+                        inactiveThumbColor: AppColors.crashTwentyNinethColor,
+                        activeTrackColor: AppColors.crashThirteenthColor,
                         value: isStartSoundOn,
                         onChanged: (value) {
                           ref
