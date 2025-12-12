@@ -72,6 +72,10 @@ class AppColors {
   static Color aviatorThirtyNineColor = Color(0x22222222).withOpacity(10 / 100);
   static const Color aviatorFourtyColor = Color(0XFFAA99FD);
   static Color aviatorFourtyOneColor = Color(0xFF140A2D).withOpacity(50 / 100);
+  static const Color aviatorFourtyTwoColor = Color(0XFF7338AF);
+  static Color aviatorFourtyThreeColor = Color(
+    0XFFAA99FD,
+  ).withOpacity(50 / 100);
 
   //graph
   static const Color aviatorGraphYaxisColor = Color(0xFF2A94C7);
@@ -97,6 +101,7 @@ class AppColors {
   static final Color homeEighthColor = Color(0xFFFFFFFF).withOpacity(40 / 100);
 
   //!_____________________________________Wallet_______________________________________
+
   static const Color walletPrimaryColor = Color(0xFF140A2D);
   static const Color walletSecondaryColor = Color(0XFF00FF6A);
   static final Color walletThirdColor = Color(0XFF00FF6A).withOpacity(0.2);
@@ -215,6 +220,7 @@ class AppColors {
   static const Color crashFortyFourthColor = Color(0xFF707a82);
 
   //!_____________________________________SpinToWin_______________________________________
+
   static const Color spinToWinPrimaryColor = Color(0Xff160A31);
   static const Color spinToWinSecondaryColor = Color(0Xffffffff);
   static Color spinToWinTertiaryColor = Color(0Xffffffff).withOpacity(0.1);

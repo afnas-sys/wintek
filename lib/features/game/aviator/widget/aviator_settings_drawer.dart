@@ -34,6 +34,7 @@ void showAviatorSettingsDrawer({
                 width: MediaQuery.of(context).size.width * 0.5,
                 decoration: BoxDecoration(
                   color: AppColors.aviatorThirteenthColor,
+                  // color: AppColors.aviatorFourtyThreeColor,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const _SettingsDrawerContent(),
@@ -79,7 +80,11 @@ class _SettingsDrawerContent extends StatelessWidget {
               IconButton(
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
-                icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                icon: const Icon(
+                  Icons.close,
+                  color: AppColors.aviatorTertiaryColor,
+                  size: 20,
+                ),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
@@ -101,21 +106,24 @@ class _SettingsDrawerContent extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.music_note,
-                          color: Colors.white,
-                          size: 14,
+                          color: AppColors.aviatorTertiaryColor,
+                          size: 16,
                         ),
                         // const SizedBox(width: 8),
                         Text(
                           'Music',
                           style: Theme.of(
                             context,
-                          ).textTheme.aviatorBodyMediumPrimary,
+                          ).textTheme.aviatorBodyMediumPrimaryBold,
                         ),
                       ],
                     ),
                     trailing: Transform.scale(
-                      scale: 0.7,
+                      scale: 0.6,
                       child: Switch(
+                        inactiveTrackColor: AppColors.aviatorThirteenthColor,
+                        inactiveThumbColor: AppColors.aviatorFourtyTwoColor,
+                        activeTrackColor: AppColors.aviatorFourtyTwoColor,
                         value: isMusicOn,
                         onChanged: (value) async {
                           ref
@@ -139,21 +147,24 @@ class _SettingsDrawerContent extends StatelessWidget {
                       children: [
                         const Icon(
                           Icons.volume_up,
-                          color: Colors.white,
-                          size: 14,
+                          color: AppColors.aviatorTertiaryColor,
+                          size: 16,
                         ),
                         // const SizedBox(width: 2),
                         Text(
                           'Sound',
                           style: Theme.of(
                             context,
-                          ).textTheme.aviatorBodyMediumPrimary,
+                          ).textTheme.aviatorBodyMediumPrimaryBold,
                         ),
                       ],
                     ),
                     trailing: Transform.scale(
-                      scale: 0.7,
+                      scale: 0.6,
                       child: Switch(
+                        inactiveTrackColor: AppColors.aviatorThirteenthColor,
+                        inactiveThumbColor: AppColors.aviatorFourtyTwoColor,
+                        activeTrackColor: AppColors.aviatorFourtyTwoColor,
                         value: isStartSoundOn,
                         onChanged: (value) {
                           ref

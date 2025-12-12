@@ -176,6 +176,11 @@ extension CustomTextStyle on TextTheme {
     fontSize: 14,
     fontWeight: FontWeight.w400,
   );
+  TextStyle get aviatorBodyMediumPrimaryBold => GoogleFonts.roboto(
+    color: AppColors.aviatorTertiaryColor,
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  );
 
   TextStyle get aviatorBodyMediumSecondary => GoogleFonts.roboto(
     color: AppColors.aviatorThirtySevenColor,
