@@ -156,6 +156,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
         setState(() {
           hasPlacedBet = true;
         });
+        widget.onBetPlaced?.call(); // Notify parent to disable inputs
         log(
           '♻️ Restored cached bet for round $currentRoundId. hasPlacedBet set to true.',
         );
