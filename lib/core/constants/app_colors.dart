@@ -76,6 +76,8 @@ class AppColors {
   static Color aviatorFourtyThreeColor = Color(
     0XFFAA99FD,
   ).withOpacity(50 / 100);
+  static const Color aviatorFourtyFourColor = Colors.grey;
+  static const Color aviatorFourtyFiveColor = Colors.white24;
 
   //graph
   static const Color aviatorGraphYaxisColor = Color(0xFF2A94C7);
@@ -86,6 +88,7 @@ class AppColors {
   static const Color aviatorGraphBarColor = Color(0XFFE30538);
   static const Color aviatorGraphBarAreaColor1 = Color(0XFFE30538);
   static Color aviatorGraphBarAreaColor2 = Color(0XFFE30538).withAlpha(153);
+  static const Color aviatorGraphBarAreaColor3 = Colors.white;
 
   //! ___________________________Home_________________________________________
 

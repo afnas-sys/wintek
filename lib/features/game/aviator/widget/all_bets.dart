@@ -2,9 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wintek/core/constants/app_colors.dart';
-import 'package:wintek/core/constants/app_images.dart';
+// import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
-import 'package:wintek/core/widgets/custom_elevated_button.dart';
+// import 'package:wintek/core/widgets/custom_elevated_button.dart';
 import 'package:wintek/features/game/aviator/domain/models/all_bets_model.dart';
 import 'package:wintek/features/game/aviator/providers/aviator_round_provider.dart';
 
@@ -16,22 +16,22 @@ class AllBets extends ConsumerStatefulWidget {
 }
 
 class _AllBetsState extends ConsumerState<AllBets> {
-  int _currentPage = 0;
+  final int _currentPage = 0;
   static const int _itemsPerPage = 50;
   AllBetsModel? _bets;
 
-  void _showPreviousHand() {
-    final totalPages = (_betsLength / _itemsPerPage).ceil();
-    if (totalPages == 0) {
-      // No bets/pages yet, nothing to paginate
-      return;
-    }
-    setState(() {
-      _currentPage = (_currentPage + 1) % totalPages;
-    });
-  }
+  // void _showPreviousHand() {
+  //   final totalPages = (_betsLength / _itemsPerPage).ceil();
+  //   if (totalPages == 0) {
+  //     // No bets/pages yet, nothing to paginate
+  //     return;
+  //   }
+  //   setState(() {
+  //     _currentPage = (_currentPage + 1) % totalPages;
+  //   });
+  // }
 
-  int get _betsLength => _bets?.bets.length ?? 0;
+  // int get _betsLength => _bets?.bets.length ?? 0;
 
   List<dynamic> _getCurrentPageBets() {
     final betsAsync = _bets;
@@ -63,38 +63,38 @@ class _AllBetsState extends ConsumerState<AllBets> {
                 style: Theme.of(context).textTheme.aviatorBodyLargePrimary,
               ),
               //! Switch for PREVIOUS HAND
-              CustomElevatedButton(
-                width: 125,
-                height: 28,
-                padding: const EdgeInsets.only(
-                  left: 7,
-                  right: 7,
-                  top: 5,
-                  bottom: 4,
-                ),
-                borderRadius: 30,
-                backgroundColor: AppColors.aviatorTwentiethColor,
-                onPressed: _showPreviousHand,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ClipRRect(
-                      child: Image.asset(
-                        AppImages.previousHand,
-                        height: 20,
-                        width: 20,
-                        color: AppColors.aviatorSixthColor,
-                      ),
-                    ),
-                    Text(
-                      'Previous hand',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.aviatorBodyMediumFourth,
-                    ),
-                  ],
-                ),
-              ),
+              // CustomElevatedButton(
+              //   width: 125,
+              //   height: 28,
+              //   padding: const EdgeInsets.only(
+              //     left: 7,
+              //     right: 7,
+              //     top: 5,
+              //     bottom: 4,
+              //   ),
+              //   borderRadius: 30,
+              //   backgroundColor: AppColors.aviatorTwentiethColor,
+              //   onPressed: _showPreviousHand,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       ClipRRect(
+              //         child: Image.asset(
+              //           AppImages.previousHand,
+              //           height: 20,
+              //           width: 20,
+              //           color: AppColors.aviatorSixthColor,
+              //         ),
+              //       ),
+              //       Text(
+              //         'Previous hand',
+              //         style: Theme.of(
+              //           context,
+              //         ).textTheme.aviatorBodyMediumFourth,
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
 

@@ -180,7 +180,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         width: double.infinity,
         height: 294,
         decoration: const BoxDecoration(
-          color: Color(0XFF271777),
+          color: AppColors.aviatorThirtyFiveColor,
           borderRadius: BorderRadius.all(Radius.circular(20)),
         ),
         child: Stack(
@@ -249,8 +249,9 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       loading: () => 0.0,
     );
 
-    // Play start sound only when multiplier is exactly 1.00 (at the very start)
-    if (currentValue == 1.00 &&
+    // Play start sound only when multiplier is within 1.00 - 1.10 (at the very start)
+    if (currentValue >= 1.00 &&
+        currentValue <= 1.10 &&
         !_hasPlayedStartSound &&
         round?.state == 'RUNNING') {
       final isStartSoundOn = ref.read(aviatorStartSoundProvider);
@@ -284,7 +285,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
       width: double.infinity,
       height: 294,
       decoration: const BoxDecoration(
-        color: Color(0XFF271777),
+        color: AppColors.aviatorThirtyFiveColor,
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       child: Stack(
@@ -348,7 +349,10 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                     Builder(
                       builder: (BuildContext context) {
                         return IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.white),
+                          icon: const Icon(
+                            Icons.menu,
+                            color: AppColors.aviatorTertiaryColor,
+                          ),
                           onPressed: () {
                             final RenderBox renderBox =
                                 context.findRenderObject() as RenderBox;
@@ -383,7 +387,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
                               width: 200, // adjust width as needed
                               height: 8,
                               decoration: BoxDecoration(
-                                color: Colors.white24, // background track
+                                color: AppColors.aviatorFourtyFiveColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: FractionallySizedBox(
@@ -765,7 +769,10 @@ class PathPainter extends CustomPainter {
       fillPath.close();
       final fillBounds = fillPath.getBounds();
       final fillGradient = LinearGradient(
-        colors: [Colors.white, AppColors.aviatorGraphBarColor],
+        colors: [
+          AppColors.aviatorGraphBarAreaColor3,
+          AppColors.aviatorGraphBarColor,
+        ],
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
       ).createShader(fillBounds);
@@ -815,7 +822,7 @@ class PathPainter extends CustomPainter {
 
     // ✅ X-axis dots (same alignment, 9 total)
     final xAxisDotPaint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.aviatorTertiaryColor
       ..style = PaintingStyle.fill;
 
     const xDotCount = 9;
@@ -828,7 +835,7 @@ class PathPainter extends CustomPainter {
 
     // ✅ Axis lines (keep same position)
     final axisLinePaint = Paint()
-      ..color = Colors.grey
+      ..color = AppColors.aviatorFourtyFourColor
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 

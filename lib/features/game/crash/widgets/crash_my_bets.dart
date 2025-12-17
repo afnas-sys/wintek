@@ -108,24 +108,32 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                       top: 5,
                       bottom: 4,
                     ),
-                    borderColor: AppColors.crashThirtySixthColor,
+                    borderColor:
+                        (_isPreviousHand || betHistory.data.length >= 50)
+                        ? AppColors.crashThirtySixthColor
+                        : AppColors.crashThirtySixthColor.withOpacity(0.3),
                     borderRadius: 30,
-                    backgroundColor: AppColors.crashTwentyFirstColor,
-                    onPressed: () {
-                      log('CRASH Previous hand button pressed');
-                      setState(() {
-                        _isPreviousHand = !_isPreviousHand;
-                      });
-                      if (_isPreviousHand) {
-                        ref
-                            .read(crashMyBetsHistoryProvider.notifier)
-                            .fetchMyBetsHistory(page: 2);
-                      } else {
-                        ref
-                            .read(crashMyBetsHistoryProvider.notifier)
-                            .fetchMyBetsHistory(page: 1);
-                      }
-                    },
+                    backgroundColor:
+                        (_isPreviousHand || betHistory.data.length >= 50)
+                        ? AppColors.crashTwentyFirstColor
+                        : AppColors.crashTwentyFirstColor.withOpacity(0.3),
+                    onPressed: (_isPreviousHand || betHistory.data.length >= 50)
+                        ? () {
+                            log('CRASH Previous hand button pressed');
+                            setState(() {
+                              _isPreviousHand = !_isPreviousHand;
+                            });
+                            if (_isPreviousHand) {
+                              ref
+                                  .read(crashMyBetsHistoryProvider.notifier)
+                                  .fetchMyBetsHistory(page: 2);
+                            } else {
+                              ref
+                                  .read(crashMyBetsHistoryProvider.notifier)
+                                  .fetchMyBetsHistory(page: 1);
+                            }
+                          }
+                        : null,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -138,7 +146,7 @@ class _CrashBetsState extends ConsumerState<CrashMyBets> {
                           ),
                         ),
                         Text(
-                          'Previous hand',
+                          _isPreviousHand ? 'Current hand' : 'Previous hand',
                           style: Theme.of(
                             context,
                           ).textTheme.crashBodyLargeSecondary,
