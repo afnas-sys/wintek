@@ -47,6 +47,20 @@ class SoundManager {
     }
   }
 
+  static Future<void> pauseBackground() async {
+    if (_backgroundPlayer.state == PlayerState.playing) {
+      await _backgroundPlayer.pause();
+      log('⏸️ Paused background music');
+    }
+  }
+
+  static Future<void> resumeBackground() async {
+    if (_backgroundPlayer.state == PlayerState.paused) {
+      await _backgroundPlayer.resume();
+      log('▶️ Resumed background music');
+    }
+  }
+
   //! AVIATOR
   // Optional: predefined app sounds
   static Future<void> aviatorMusic() =>
