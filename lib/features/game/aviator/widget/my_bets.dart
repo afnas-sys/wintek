@@ -109,23 +109,31 @@ class _MyBetsState extends ConsumerState<MyBets> {
                       top: 5,
                       bottom: 4,
                     ),
-                    borderColor: AppColors.aviatorThirtyEightColor,
+                    borderColor:
+                        (_isPreviousHand || betHistory.data.length >= 50)
+                        ? AppColors.aviatorThirtyEightColor
+                        : AppColors.aviatorThirtyEightColor.withOpacity(0.3),
                     borderRadius: 30,
-                    backgroundColor: AppColors.aviatorTwentiethColor,
-                    onPressed: () {
-                      setState(() {
-                        _isPreviousHand = !_isPreviousHand;
-                      });
-                      if (_isPreviousHand) {
-                        ref
-                            .read(betHistoryProvider.notifier)
-                            .fetchBetHistory(page: 2);
-                      } else {
-                        ref
-                            .read(betHistoryProvider.notifier)
-                            .fetchBetHistory(page: 1);
-                      }
-                    },
+                    backgroundColor:
+                        (_isPreviousHand || betHistory.data.length >= 50)
+                        ? AppColors.aviatorTwentiethColor
+                        : AppColors.aviatorTwentiethColor.withOpacity(0.3),
+                    onPressed: (_isPreviousHand || betHistory.data.length >= 50)
+                        ? () {
+                            setState(() {
+                              _isPreviousHand = !_isPreviousHand;
+                            });
+                            if (_isPreviousHand) {
+                              ref
+                                  .read(betHistoryProvider.notifier)
+                                  .fetchBetHistory(page: 2);
+                            } else {
+                              ref
+                                  .read(betHistoryProvider.notifier)
+                                  .fetchBetHistory(page: 1);
+                            }
+                          }
+                        : null,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -138,7 +146,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
                           ),
                         ),
                         Text(
-                          'Previous hand',
+                          _isPreviousHand ? 'Current hand' : 'Previous hand',
                           style: Theme.of(
                             context,
                           ).textTheme.aviatorBodyMediumFourth,

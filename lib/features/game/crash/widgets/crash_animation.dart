@@ -445,36 +445,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               if (round?.state == 'RUNNING' ||
                                   (round == null && hasTickData))
                                 Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    clipBehavior: Clip.none,
                                     children: [
-                                      if (_currentLabel.isNotEmpty)
-                                        SlideTransition(
-                                          position: _textAnimation,
-                                          child: ShaderMask(
-                                            shaderCallback: (Rect bounds) {
-                                              return LinearGradient(
-                                                colors:
-                                                    _labelColors[_currentLabel] ??
-                                                    [
-                                                      AppColors
-                                                          .crashPrimaryColor,
-                                                      AppColors
-                                                          .crashPrimaryColor,
-                                                    ],
-                                              ).createShader(bounds);
-                                            },
-                                            child: Text(
-                                              _currentLabel,
-                                              style: const TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    AppColors.crashPrimaryColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
                                       RichText(
                                         text: TextSpan(
                                           text: currentValue.toStringAsFixed(2),
@@ -512,14 +486,40 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                           ],
                                         ),
                                       ),
-                                      // Text(
-                                      //   "${gameState.currentMultiplier.toStringAsFixed(2)}x",
-                                      //   style: const TextStyle(
-                                      //     color: AppColors.crashPrimaryColor,
-                                      //     fontSize: 48,
-                                      //     fontWeight: FontWeight.bold,
-                                      //   ),
-                                      // ),
+                                      if (_currentLabel.isNotEmpty)
+                                        Positioned(
+                                          top: -40,
+                                          left: 0,
+                                          right: 0,
+                                          child: Center(
+                                            child: SlideTransition(
+                                              position: _textAnimation,
+                                              child: ShaderMask(
+                                                shaderCallback: (Rect bounds) {
+                                                  return LinearGradient(
+                                                    colors:
+                                                        _labelColors[_currentLabel] ??
+                                                        [
+                                                          AppColors
+                                                              .crashPrimaryColor,
+                                                          AppColors
+                                                              .crashPrimaryColor,
+                                                        ],
+                                                  ).createShader(bounds);
+                                                },
+                                                child: Text(
+                                                  _currentLabel,
+                                                  style: const TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors
+                                                        .crashPrimaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -529,36 +529,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                               /// -------------------------
                               if (round?.state == 'CRASHED')
                                 Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    clipBehavior: Clip.none,
                                     children: [
-                                      if (_currentLabel.isNotEmpty)
-                                        SlideTransition(
-                                          position: _textAnimation,
-                                          child: ShaderMask(
-                                            shaderCallback: (Rect bounds) {
-                                              return LinearGradient(
-                                                colors:
-                                                    _labelColors[_currentLabel] ??
-                                                    [
-                                                      AppColors
-                                                          .crashPrimaryColor,
-                                                      AppColors
-                                                          .crashPrimaryColor,
-                                                    ],
-                                              ).createShader(bounds);
-                                            },
-                                            child: Text(
-                                              _currentLabel,
-                                              style: const TextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    AppColors.crashPrimaryColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
                                       Text(
                                         "${double.tryParse(round?.crashAt ?? '0')?.toStringAsFixed(2) ?? '0.00'}x",
                                         style: Theme.of(context)
@@ -566,6 +540,40 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                             .crashHeadlineSmall
                                             .copyWith(fontSize: 48),
                                       ),
+                                      if (_currentLabel.isNotEmpty)
+                                        Positioned(
+                                          top: -40,
+                                          left: 0,
+                                          right: 0,
+                                          child: Center(
+                                            child: SlideTransition(
+                                              position: _textAnimation,
+                                              child: ShaderMask(
+                                                shaderCallback: (Rect bounds) {
+                                                  return LinearGradient(
+                                                    colors:
+                                                        _labelColors[_currentLabel] ??
+                                                        [
+                                                          AppColors
+                                                              .crashPrimaryColor,
+                                                          AppColors
+                                                              .crashPrimaryColor,
+                                                        ],
+                                                  ).createShader(bounds);
+                                                },
+                                                child: Text(
+                                                  _currentLabel,
+                                                  style: const TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors
+                                                        .crashPrimaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ),

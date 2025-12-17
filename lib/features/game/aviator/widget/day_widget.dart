@@ -38,7 +38,7 @@ class _DayWidgetState extends ConsumerState<DayWidget> {
             return Center(
               child: Text(
                 'No data available',
-                style: Theme.of(context).textTheme.aviatorbodySmallPrimary,
+                style: Theme.of(context).textTheme.aviatorBodyMediumFourth,
               ),
             );
           }

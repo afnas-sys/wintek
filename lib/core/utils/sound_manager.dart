@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:wintek/core/constants/app_sounds.dart';
 
 class SoundManager {
   // static final AudioPlayer _audioPlayer = AudioPlayer();
@@ -46,10 +47,10 @@ class SoundManager {
     }
   }
 
-  //! Aviator
+  //! AVIATOR
   // Optional: predefined app sounds
   static Future<void> aviatorMusic() =>
-      playBackground('sounds/aviator-music-394813.mp3');
+      playBackground(AppSounds.aviatorBgMusic);
   static Future<void> stopAviatorMusic() => stopBackground();
 
   // Play start sound (plays once, not looping) - uses separate player
@@ -71,9 +72,7 @@ class SoundManager {
           ),
         ),
       );
-      await _soundEffectsPlayer.play(
-        AssetSource('sounds/aviator_start_sound.mp3'),
-      );
+      await _soundEffectsPlayer.play(AssetSource(AppSounds.aviatorStartSound));
       log('✅ Playing start sound');
     } catch (e) {
       log('❌ Error playing start sound: $e');
@@ -99,14 +98,16 @@ class SoundManager {
           ),
         ),
       );
-      await _soundEffectsPlayer.play(AssetSource('sounds/flew_away_sound.mp3'));
+      await _soundEffectsPlayer.play(
+        AssetSource(AppSounds.aviatorFlewAwaySound),
+      );
       log('✅ Playing flew away sound');
     } catch (e) {
       log('❌ Error playing flew away sound: $e');
     }
   }
 
-  //! Crash
+  //! CRASH
   // Play start sound (plays once, not looping) - uses separate player
   static Future<void> crashStartSound() async {
     try {
@@ -126,7 +127,7 @@ class SoundManager {
           ),
         ),
       );
-      await _soundEffectsPlayer.play(AssetSource('sounds/crash_start.mp3'));
+      await _soundEffectsPlayer.play(AssetSource(AppSounds.crashStartSound));
       log('✅ Playing start sound');
     } catch (e) {
       log('❌ Error playing start sound: $e');
