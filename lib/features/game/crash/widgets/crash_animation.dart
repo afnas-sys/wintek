@@ -19,7 +19,7 @@ class CrashAnimation extends ConsumerStatefulWidget {
 }
 
 class _CrashAnimationState extends ConsumerState<CrashAnimation>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _takeoffController;
   late AnimationController _waveController;
   late AnimationController _flyAwayController;
@@ -68,6 +68,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _takeoffController = AnimationController(
       vsync: this,
@@ -118,6 +119,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _takeoffController.dispose();
     _waveController.dispose();
     _flyAwayController.dispose();
@@ -128,6 +130,20 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     SoundManager.stopAviatorMusic();
 
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      SoundManager.pauseBackground();
+    } else if (state == AppLifecycleState.resumed) {
+      // Check if music should be playing (based on provider) before resuming
+      final isMusicOn = ref.read(crashMusicProvider);
+      if (isMusicOn) {
+        SoundManager.resumeBackground();
+      }
+    }
   }
 
   @override

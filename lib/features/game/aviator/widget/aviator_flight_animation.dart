@@ -19,7 +19,7 @@ class AviatorFlightAnimation extends ConsumerStatefulWidget {
 }
 
 class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _takeoffController;
   late AnimationController _waveController;
   late AnimationController _flyAwayController;
@@ -59,6 +59,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller = AnimationController(
       duration: const Duration(seconds: 120),
       vsync: this,
@@ -139,6 +140,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     _takeoffController.dispose();
     _waveController.dispose();
@@ -151,6 +153,20 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
     SoundManager.stopAviatorMusic();
 
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      SoundManager.pauseBackground();
+    } else if (state == AppLifecycleState.resumed) {
+      // Check if music should be playing (based on provider) before resuming
+      final isMusicOn = ref.read(aviatorMusicProvider);
+      if (isMusicOn) {
+        SoundManager.resumeBackground();
+      }
+    }
   }
 
   @override
