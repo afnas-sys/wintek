@@ -13,6 +13,8 @@ import 'package:wintek/features/game/aviator/widget/top.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/features/game/widgets/wallet_container.dart';
 
+import 'package:wintek/features/game/aviator/service/aviator_bet_cache_service.dart';
+
 class AviatorGameScreen extends ConsumerStatefulWidget {
   const AviatorGameScreen({super.key});
 
@@ -32,9 +34,29 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
     });
   }
 
+  bool _hasCheckedCache = false;
+
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _checkCachedBets(String currentRoundId) async {
+    if (_hasCheckedCache) return;
+    _hasCheckedCache =
+        true; // Mark as checked immediately to prevent duplicate calls
+
+    final _cacheService = AviatorBetCacheService();
+    final bet2 = await _cacheService.getBet(2);
+
+    if (bet2 != null && mounted) {
+      // Check if the bet is for the current round
+      if (bet2.roundId == currentRoundId) {
+        setState(() {
+          _containerCount = 2; // Show second container
+        });
+      }
+    }
   }
 
   @override
@@ -53,6 +75,12 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
       error: (error, st) => error.toString(),
       loading: () => '',
     );
+
+    // Check cached bets once we have a valid roundId
+    if (roundId.isNotEmpty && !_hasCheckedCache) {
+      _checkCachedBets(roundId);
+    }
+
     return ScaffoldMessenger(
       key: _messengerKey,
       child: Scaffold(
