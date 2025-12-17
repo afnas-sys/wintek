@@ -201,7 +201,13 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
         autoCashoutValue = autoCashoutOverride;
       } else {
         final controllerAmountText = widget.amountController.text.trim();
-        amountText = controllerAmountText;
+        int? val = int.tryParse(controllerAmountText);
+        if (val != null && val < 10) {
+          widget.amountController.text = "10";
+          amountText = "10";
+        } else {
+          amountText = controllerAmountText;
+        }
         if (isAutoPlay) {
           autoCashoutValue = widget.autoPlayState?.settings?.autoCashout;
         } else {
@@ -549,7 +555,12 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
 
                   if (round.state == 'RUNNING') {
                     // Queue bet for the next round instead of rejecting
-                    final amountText = widget.amountController.text.trim();
+                    String amountText = widget.amountController.text.trim();
+                    int? val = int.tryParse(amountText);
+                    if (val != null && val < 10) {
+                      widget.amountController.text = "10";
+                      amountText = "10";
+                    }
                     // Read auto-cashout from the provider, not from a switch controller
                     final autoCashoutValue = ref.read(
                       crashAutoCashoutProvider,

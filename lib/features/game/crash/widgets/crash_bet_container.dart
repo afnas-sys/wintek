@@ -37,6 +37,7 @@ class CrashBetContainer extends ConsumerStatefulWidget {
 
 class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   final _switchController = TextEditingController();
+  late FocusNode _amountFocusNode;
   final int _selectedValue = 0;
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
@@ -111,9 +112,29 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
   void initState() {
     _amountController.text = 10.toString();
     _autoAmountController.text = 1.toString();
+    _amountFocusNode = FocusNode();
+    _amountFocusNode.addListener(_onFocusChange);
 
     super.initState();
     _restoreAutoPlayState();
+  }
+
+  void _onFocusChange() {
+    if (_amountFocusNode.hasFocus) {
+      _amountController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _amountController.text.length,
+      );
+    } else {
+      if (_amountController.text.isEmpty) {
+        _amountController.text = "10";
+      } else {
+        int? value = int.tryParse(_amountController.text);
+        if (value == null || value < 10) {
+          _amountController.text = "10";
+        }
+      }
+    }
   }
 
   Future<void> _restoreAutoPlayState() async {
@@ -201,6 +222,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                       _decrement,
                       _increment,
                       !hasPlacedManualBet,
+                      _amountFocusNode,
                     ),
                     const SizedBox(height: 8),
                     SingleChildScrollView(
@@ -273,9 +295,14 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         onPressed: enabled
             ? () {
                 setState(() {
-                  selectedRounds = int.parse(label);
-                  _amountController.text = label;
-                  // Clear rounds error when a round is selected
+                  int currentAmount = int.tryParse(_amountController.text) ?? 0;
+                  int addedAmount = int.parse(label);
+                  int newAmount = currentAmount + addedAmount;
+                  if (newAmount > 1000) {
+                    newAmount = 1000;
+                  }
+                  selectedRounds = newAmount;
+                  _amountController.text = newAmount.toString();
                 });
               }
             : null,
@@ -303,11 +330,21 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
     VoidCallback decrement,
     VoidCallback increment,
     bool enabled,
+    FocusNode focusNode,
   ) {
     return SizedBox(
       width: double.infinity,
       height: 38,
       child: TextField(
+        onTap: () {
+          if (controller.text == '10') {
+            controller.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: controller.text.length,
+            );
+          }
+        },
+        focusNode: focusNode,
         showCursor: true,
         cursorColor: AppColors.crashTwentyEigthColor,
         cursorHeight: 14,
@@ -321,11 +358,12 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
         onChanged: (value) {
           int? num = int.tryParse(value);
           if (num != null) {
-            num = num.clamp(10, 1000);
-            controller.text = num.toString();
-            controller.selection = TextSelection.collapsed(
-              offset: controller.text.length,
-            );
+            if (num > 1000) {
+              controller.text = '1000';
+              controller.selection = TextSelection.collapsed(
+                offset: controller.text.length,
+              );
+            }
           }
         },
         decoration: InputDecoration(
@@ -525,6 +563,8 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
 
   @override
   void dispose() {
+    _amountFocusNode.removeListener(_onFocusChange);
+    _amountFocusNode.dispose();
     _cacheService.clearAutoPlayState(widget.index);
     _amountController.dispose();
     _autoAmountController.dispose();

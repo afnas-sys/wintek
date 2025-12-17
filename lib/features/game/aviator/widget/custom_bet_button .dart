@@ -204,7 +204,15 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
       } else {
         final controllerAmountText = widget.amountController.text.trim();
         final autoCashoutText = widget.switchController?.text.trim() ?? '';
-        amountText = controllerAmountText;
+
+        int? val = int.tryParse(controllerAmountText);
+        if (val != null && val < 10) {
+          widget.amountController.text = "10";
+          amountText = "10";
+        } else {
+          amountText = controllerAmountText;
+        }
+
         autoCashoutValue = autoCashoutText.isNotEmpty
             ? double.tryParse(autoCashoutText)
             : null;
@@ -582,7 +590,13 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
 
                   if (round.state == 'RUNNING') {
                     // Queue bet for the next round instead of rejecting
-                    final amountText = widget.amountController.text.trim();
+                    String amountText = widget.amountController.text.trim();
+                    int? val = int.tryParse(amountText);
+                    if (val != null && val < 10) {
+                      widget.amountController.text = "10";
+                      amountText = "10";
+                    }
+
                     final autoCashoutText =
                         widget.switchController?.text.trim() ?? '';
 
