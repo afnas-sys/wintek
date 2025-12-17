@@ -301,7 +301,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                   if (newAmount > 1000) {
                     newAmount = 1000;
                   }
-                  selectedRounds = newAmount;
+                  selectedRounds = addedAmount;
                   _amountController.text = newAmount.toString();
                 });
               }
