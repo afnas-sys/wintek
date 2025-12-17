@@ -38,6 +38,7 @@ class CrashAutoPlay extends ConsumerStatefulWidget {
 class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
   int? selectedRounds;
   late TextEditingController _betAmountController;
+  late FocusNode _amountFocusNode;
   String? _roundsError;
 
   @override
@@ -45,10 +46,32 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
     super.initState();
     selectedRounds = 5;
     _betAmountController = TextEditingController(text: widget.initialBetAmount);
+    _amountFocusNode = FocusNode();
+    _amountFocusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (_amountFocusNode.hasFocus) {
+      _betAmountController.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: _betAmountController.text.length,
+      );
+    } else {
+      if (_betAmountController.text.isEmpty) {
+        _betAmountController.text = "10";
+      } else {
+        double? value = double.tryParse(_betAmountController.text);
+        if (value == null || value < 10) {
+          _betAmountController.text = "10";
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
+    _amountFocusNode.removeListener(_onFocusChange);
+    _amountFocusNode.dispose();
     _betAmountController.dispose();
     super.dispose();
   }
@@ -65,9 +88,17 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
 
     final autoCashout = ref.read(crashAutoCashoutProvider)[widget.index + 10];
 
+    // Ensure minimum bet amount
+    String betAmount = _betAmountController.text;
+    final double? amount = double.tryParse(betAmount);
+    if (amount != null && amount < 10) {
+      betAmount = "10";
+      _betAmountController.text = "10";
+    }
+
     final settings = CrashAutoPlaySettings(
       selectedRounds: selectedRounds!,
-      betAmount: _betAmountController.text,
+      betAmount: betAmount,
       autoCashout: autoCashout,
     );
 
@@ -144,6 +175,7 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
                     context,
                     _betAmountController,
                     enabled: true,
+                    focusNode: _amountFocusNode,
                   ),
                   SizedBox(height: 30),
                   // Slider
@@ -303,11 +335,21 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
     BuildContext context,
     TextEditingController controller, {
     bool enabled = true,
+    required FocusNode focusNode,
   }) {
     return SizedBox(
       width: double.infinity,
       height: 54,
       child: TextField(
+        focusNode: focusNode,
+        onTap: () {
+          if (controller.text == '10') {
+            controller.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: controller.text.length,
+            );
+          }
+        },
         controller: controller,
         enabled: enabled,
         showCursor: true,
@@ -321,11 +363,12 @@ class _CrashAutoPlayState extends ConsumerState<CrashAutoPlay> {
         onChanged: (value) {
           double? num = double.tryParse(value);
           if (num != null) {
-            num = num.clamp(10.0, 1000.0);
-            controller.text = num.toStringAsFixed(0);
-            controller.selection = TextSelection.collapsed(
-              offset: controller.text.length,
-            );
+            if (num > 1000.0) {
+              controller.text = '1000';
+              controller.selection = TextSelection.collapsed(
+                offset: controller.text.length,
+              );
+            }
           }
         },
 

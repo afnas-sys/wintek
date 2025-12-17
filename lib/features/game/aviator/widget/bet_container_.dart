@@ -69,6 +69,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   bool _isSwitched = false;
   final _amountController = TextEditingController();
   final _autoAmountController = TextEditingController();
+  late FocusNode _amountFocusNode;
+  late FocusNode _autoAmountFocusNode;
 
   final secureStorageService = SecureStorageService();
   final _cacheService = AviatorBetCacheService();
@@ -186,6 +188,8 @@ class _BetContainerState extends ConsumerState<BetContainer> {
   @override
   void dispose() {
     _cacheService.clearAutoPlayState(widget.index);
+    _amountFocusNode.dispose();
+    _autoAmountFocusNode.dispose();
     super.dispose();
   }
 
@@ -194,8 +198,34 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     _amountController.text = 10.toString();
     _autoAmountController.text = 10.toString();
     _switchController.text = "1.10";
+    _amountFocusNode = FocusNode();
+    _autoAmountFocusNode = FocusNode();
+    _amountFocusNode.addListener(
+      () => _onFocusChange(_amountFocusNode, _amountController),
+    );
+    _autoAmountFocusNode.addListener(
+      () => _onFocusChange(_autoAmountFocusNode, _autoAmountController),
+    );
     super.initState();
     _restoreAutoPlayState();
+  }
+
+  void _onFocusChange(FocusNode focusNode, TextEditingController controller) {
+    if (focusNode.hasFocus) {
+      controller.selection = TextSelection(
+        baseOffset: 0,
+        extentOffset: controller.text.length,
+      );
+    } else {
+      if (controller.text.isEmpty) {
+        controller.text = "10";
+      } else {
+        int? value = int.tryParse(controller.text);
+        if (value == null || value < 10) {
+          controller.text = "10";
+        }
+      }
+    }
   }
 
   Future<void> _restoreAutoPlayState() async {
@@ -341,6 +371,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                                     context,
                                     _amountController,
                                     !_manualBetActive,
+                                    _amountFocusNode,
                                   ),
 
                                   SizedBox(height: 10),
@@ -411,6 +442,7 @@ class _BetContainerState extends ConsumerState<BetContainer> {
                                     context,
                                     _autoAmountController,
                                     !_manualBetActive,
+                                    _autoAmountFocusNode,
                                   ),
 
                                   SizedBox(height: 10),
@@ -539,11 +571,21 @@ class _BetContainerState extends ConsumerState<BetContainer> {
     BuildContext context,
     TextEditingController controller,
     bool enabled,
+    FocusNode focusNode,
   ) {
     return SizedBox(
       width: 140,
       height: 36,
       child: TextField(
+        focusNode: focusNode,
+        onTap: () {
+          if (controller.text == '10') {
+            controller.selection = TextSelection(
+              baseOffset: 0,
+              extentOffset: controller.text.length,
+            );
+          }
+        },
         enableInteractiveSelection: false,
         enabled: enabled,
         controller: controller,
@@ -556,11 +598,12 @@ class _BetContainerState extends ConsumerState<BetContainer> {
         onChanged: (value) {
           int? num = int.tryParse(value);
           if (num != null) {
-            num = num.clamp(10, 1000);
-            controller.text = num.toString();
-            controller.selection = TextSelection.collapsed(
-              offset: controller.text.length,
-            );
+            if (num > 1000) {
+              controller.text = '1000';
+              controller.selection = TextSelection.collapsed(
+                offset: controller.text.length,
+              );
+            }
           }
         },
         decoration: InputDecoration(

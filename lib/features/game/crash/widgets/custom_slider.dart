@@ -41,93 +41,86 @@ class _CustomSliderState extends ConsumerState<CustomSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Column(
+    return Column(
+      children: [
+        // Multiplier text
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Multiplier text
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Auto Cash Out:',
-                  style: Theme.of(context).textTheme.crashBodySmallSecondary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  _sliderPosition == 0
-                      ? 'OFF'
-                      : _displayValue < 3
-                      ? "x${_displayValue.toStringAsFixed(1)}"
-                      : "x${_displayValue.toInt()}",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.crashPrimaryColor,
-                  ),
-                ),
-              ],
+            Text(
+              'Auto Cash Out:',
+              style: Theme.of(context).textTheme.crashBodySmallSecondary,
             ),
-            SizedBox(height: 14),
-
-            // OFF - Slider - MAX in a single row
-            Row(
-              children: [
-                Text(
-                  'Off',
-                  style: TextStyle(
-                    color: AppColors.crashFifthColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                // const SizedBox(width: 8),
-                Expanded(
-                  child: SizedBox(
-                    height: 10,
-                    child: SfSlider(
-                      min: 0,
-                      max: (_steps.length - 1).toDouble(),
-                      value: _sliderPosition,
-                      activeColor: AppColors.crashThirtySecondColor,
-                      inactiveColor: AppColors.crashPrimaryColor,
-                      stepSize: 1,
-                      enableTooltip: false,
-                      showLabels: false,
-                      showTicks: false,
-                      onChanged: widget.disabled
-                          ? null
-                          : (value) {
-                              setState(() {
-                                _sliderPosition = value;
-                              });
-                              final autoCashoutValue = _sliderPosition == 0
-                                  ? null
-                                  : _displayValue;
-                              ref
-                                  .read(crashAutoCashoutProvider.notifier)
-                                  .setAutoCashout(
-                                    widget.index,
-                                    autoCashoutValue,
-                                  );
-                            },
-                    ),
-                  ),
-                ),
-                // const SizedBox(width: 8),
-                Text(
-                  'Max',
-                  style: TextStyle(
-                    color: AppColors.crashFifthColor,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
+            const SizedBox(width: 8),
+            Text(
+              _sliderPosition == 0
+                  ? 'OFF'
+                  : _displayValue < 3
+                  ? "x${_displayValue.toStringAsFixed(1)}"
+                  : "x${_displayValue.toInt()}",
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.crashPrimaryColor,
+              ),
             ),
           ],
-        );
-      },
+        ),
+        SizedBox(height: 14),
+
+        // OFF - Slider - MAX in a single row
+        Row(
+          children: [
+            Text(
+              'Off',
+              style: TextStyle(
+                color: AppColors.crashFifthColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            // const SizedBox(width: 8),
+            Expanded(
+              child: SizedBox(
+                height: 10,
+                child: SfSlider(
+                  min: 0,
+                  max: (_steps.length - 1).toDouble(),
+                  value: _sliderPosition,
+                  activeColor: AppColors.crashThirtySecondColor,
+                  inactiveColor: AppColors.crashPrimaryColor,
+                  stepSize: 1,
+                  enableTooltip: false,
+                  showLabels: false,
+                  showTicks: false,
+                  onChanged: widget.disabled
+                      ? null
+                      : (value) {
+                          setState(() {
+                            _sliderPosition = value;
+                          });
+                          final autoCashoutValue = _sliderPosition == 0
+                              ? null
+                              : _displayValue;
+                          ref
+                              .read(crashAutoCashoutProvider.notifier)
+                              .setAutoCashout(widget.index, autoCashoutValue);
+                        },
+                ),
+              ),
+            ),
+            // const SizedBox(width: 8),
+            Text(
+              'Max',
+              style: TextStyle(
+                color: AppColors.crashFifthColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
