@@ -426,7 +426,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                             size: 16,
                             color: canDecrement
                                 ? AppColors.crashTwentyEigthColor
-                                : Colors.transparent,
+                                : AppColors.crashTwentyFirstColor,
                           ),
                         ),
                       ),
@@ -462,7 +462,7 @@ class _CrashBetContainerState extends ConsumerState<CrashBetContainer> {
                             size: 16,
                             color: canIncrement
                                 ? AppColors.crashTwentyEigthColor
-                                : Colors.transparent,
+                                : AppColors.crashTwentyFirstColor,
                           ),
                         ),
                       ),

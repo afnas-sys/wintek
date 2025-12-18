@@ -221,6 +221,28 @@ class AppColors {
   static const Color crashFortySecondColor = Color(0xFF76036F);
   static const Color crashFortyThirdColor = Color(0xFF25323F);
   static const Color crashFortyFourthColor = Color(0xFF707a82);
+  static const Color crashFortyFifthColor = Color(0XFF0C7D9A);
+  static const Color crashFortySixthColor = Color(0XFF0AD69F);
+  static const Color crashFortySeventhColor = Color(0XFF11FED7);
+  static const Color crashFortyEighthColor = Color(0XFFF7FEFD);
+  static const Color crashFortyNinthColor = Color(0XFF0050F2);
+  static const Color crashFiftiethColor = Color(0XFF00F4E0);
+  static const Color crashFiftyFirstColor = Color(0XFFF45FFF);
+  static const Color crashFiftySecondColor = Color(0XFF4447FF);
+  static const Color crashFiftyThirdColor = Color(0XFFCD015E);
+  static const Color crashFiftyFourthColor = Color(0XFF9600FF);
+  static const Color crashFiftyFifthColor = Color(0XFFEB8256);
+  static const Color crashFiftySixthColor = Color(0XFFE73C5D);
+  static const Color crashFiftySeventhColor = Color(0XFFFA7F00);
+  static const Color crashFiftyEighthColor = Color(0XFFF4F564);
+  static const Color crashFiftyNinthColor = Color(0XFF2656e2);
+  static const Color crashSixtiethColor = Color(0XFF29dc72);
+  static const Color crashSixtyFirstColor = Color(0xFFfe9000);
+  static const Color crashSixtySecondColor = Color(0XFF53987f);
+  static const Color crashSixtyThirdColor = Colors.yellowAccent;
+  static const Color crashSixtyFourthColor = Colors.orangeAccent;
+  static const Color crashSixtyFifthColor = Colors.redAccent;
+  static const Color crashSixtySixthColor = Colors.black54;
 
   //!_____________________________________SpinToWin_______________________________________
 

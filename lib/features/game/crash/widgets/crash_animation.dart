@@ -57,12 +57,21 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   Timer? _prepareTimer;
 
   final Map<String, List<Color>> _labelColors = {
-    'NOT BAD': [Color(0XFF11FED7), Color(0XFFF7FEFD)],
-    'NICE': [Color(0XFF0050F2), Color(0XFF00F4E0)],
-    'AWESOME': [Color(0XFFF45FFF), Color(0XFF4447FF)],
-    'WICKED': [Color(0XFFCD015E), Color(0XFF9600FF)],
-    'GODLIKE': [Color(0XFFEB8256), Color(0XFFE73C5D)],
-    'LEGENDARY': [Color(0XFFF4F564), Color(0XFFFA7F00)],
+    'NOT BAD': [
+      AppColors.crashFortySeventhColor,
+      AppColors.crashFortyEighthColor,
+    ],
+    'NICE': [AppColors.crashFortyNinthColor, AppColors.crashFiftiethColor],
+    'AWESOME': [
+      AppColors.crashFiftyFirstColor,
+      AppColors.crashFiftySecondColor,
+    ],
+    'WICKED': [AppColors.crashFiftyThirdColor, AppColors.crashFiftyFourthColor],
+    'GODLIKE': [AppColors.crashFiftyFifthColor, AppColors.crashFiftySixthColor],
+    'LEGENDARY': [
+      AppColors.crashFiftySeventhColor,
+      AppColors.crashFiftyEighthColor,
+    ],
     'CRASH': [AppColors.crashPrimaryColor, AppColors.crashPrimaryColor],
   };
 
@@ -318,7 +327,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                       child: Builder(
                         builder: (BuildContext context) {
                           return IconButton(
-                            icon: const Icon(Icons.menu, color: Colors.white),
+                            icon: const Icon(
+                              Icons.menu,
+                              color: AppColors.crashPrimaryColor,
+                            ),
                             onPressed: () {
                               final RenderBox renderBox =
                                   context.findRenderObject() as RenderBox;
@@ -501,8 +513,10 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
                                                         end: Alignment
                                                             .bottomCenter,
                                                         colors: [
-                                                          Color(0XFF0C7D9A),
-                                                          Color(0XFF0AD69F),
+                                                          AppColors
+                                                              .crashFortyFifthColor,
+                                                          AppColors
+                                                              .crashFortySixthColor,
                                                         ],
                                                       ).createShader(
                                                         Rect.fromLTWH(
@@ -816,11 +830,11 @@ class CrashPathPainter extends CustomPainter {
 
     Color color;
     if (multiplier < 2) {
-      color = Colors.blue;
+      color = AppColors.crashFiftyNinthColor;
     } else if (multiplier < 10) {
-      color = Colors.green;
+      color = AppColors.crashSixtiethColor;
     } else {
-      color = Colors.orange;
+      color = AppColors.crashSixtyFirstColor;
     }
 
     final paint = Paint()
@@ -934,16 +948,18 @@ class _SideDotsAnimationState extends State<SideDotsAnimation>
 
   Color getDotColor() {
     // Always show green during PREPARE state or early RUNNING state
-    if (widget.isPrepare || !widget.isRunning) return Color(0XFF53987f);
+    if (widget.isPrepare || !widget.isRunning) {
+      return AppColors.crashSixtySecondColor;
+    }
 
     final m = widget.multiplier;
 
     // Keep green until multiplier is stable and >= 5
-    if (m < 5) return Color(0XFF53987f);
-    if (m < 10) return Colors.yellowAccent;
-    if (m < 20) return Colors.orangeAccent;
+    if (m < 5) return AppColors.crashSixtySecondColor;
+    if (m < 10) return AppColors.crashSixtyThirdColor;
+    if (m < 20) return AppColors.crashSixtyFourthColor;
 
-    return Colors.redAccent;
+    return AppColors.crashSixtyFifthColor;
   }
 
   @override

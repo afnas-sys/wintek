@@ -55,7 +55,7 @@ class _MyBetsState extends ConsumerState<MyBets> {
         child: Center(
           child: Text(
             'Error: $error',
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: AppColors.aviatorTertiaryColor),
           ),
         ),
       ),
