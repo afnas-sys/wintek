@@ -15,7 +15,7 @@ void showCrashSettingsDrawer({
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Settings',
-    barrierColor: Colors.black54,
+    barrierColor: AppColors.crashSixtySixthColor,
     transitionDuration: const Duration(milliseconds: 300),
     pageBuilder: (context, animation, secondaryAnimation) {
       // Calculate position: right below the icon
@@ -29,7 +29,7 @@ void showCrashSettingsDrawer({
             top: top,
             right: right,
             child: Material(
-              color: Colors.transparent,
+              color: AppColors.crashTwentyFirstColor,
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.5,
                 decoration: BoxDecoration(
@@ -86,7 +86,7 @@ class _SettingsDrawerContent extends StatelessWidget {
               ),
             ],
           ),
-          const Divider(color: Colors.white24, height: 16),
+          const Divider(color: AppColors.crashThirdColor, height: 16),
           // Music and Start Sound Toggles
           Consumer(
             builder: (context, ref, child) {
@@ -132,7 +132,7 @@ class _SettingsDrawerContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Divider(color: Colors.white24, height: 16),
+                  const Divider(color: AppColors.crashThirdColor, height: 16),
                   // Sound Effects Toggle (controls start sound and flew away sound)
                   ListTile(
                     dense: true,
