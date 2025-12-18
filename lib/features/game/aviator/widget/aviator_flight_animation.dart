@@ -35,6 +35,7 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
   bool _hasFlownAway = false;
   bool _hasPlayedStartSound =
       false; // Track if start sound has been played for current round
+  bool _hasStartedMusic = false;
 
   final List<Offset> _pathPoints = [];
   Offset? _currentPlanePosition;
@@ -130,12 +131,13 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
         );
 
     // Auto-play music if switch is ON
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final isMusicOn = ref.read(aviatorMusicProvider);
-      if (isMusicOn) {
-        SoundManager.aviatorMusic();
-      }
-    });
+    // Music start logic moved to build method to wait for socket connection
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final isMusicOn = ref.read(aviatorMusicProvider);
+    //   if (isMusicOn) {
+    //     SoundManager.aviatorMusic();
+    //   }
+    // });
   }
 
   @override
@@ -223,6 +225,20 @@ class _AnimatedContainerState extends ConsumerState<AviatorFlightAnimation>
           ],
         ),
       );
+    }
+
+    // Socket is connected here
+    if (!_hasStartedMusic) {
+      _hasStartedMusic = true;
+      // Use addPostFrameCallback to avoid state changes during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final isMusicOn = ref.read(aviatorMusicProvider);
+          if (isMusicOn) {
+            SoundManager.aviatorMusic();
+          }
+        }
+      });
     }
 
     // PREPARE countdown logic

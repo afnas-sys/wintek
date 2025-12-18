@@ -261,6 +261,11 @@ extension CustomTextStyle on TextTheme {
     fontSize: 12,
     fontWeight: FontWeight.w400,
   );
+  TextStyle get homeSmallPrimaryBold => GoogleFonts.roboto(
+    color: AppColors.textPrimaryColor,
+    fontSize: 12,
+    fontWeight: FontWeight.bold,
+  );
 
   //!________________________________Wallet_____________________________________
 

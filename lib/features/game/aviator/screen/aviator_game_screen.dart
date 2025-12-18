@@ -46,8 +46,8 @@ class _AviatorGameScreenState extends ConsumerState<AviatorGameScreen> {
     _hasCheckedCache =
         true; // Mark as checked immediately to prevent duplicate calls
 
-    final _cacheService = AviatorBetCacheService();
-    final bet2 = await _cacheService.getBet(2);
+    final cacheService = AviatorBetCacheService();
+    final bet2 = await cacheService.getBet(2);
 
     if (bet2 != null && mounted) {
       // Check if the bet is for the current round
