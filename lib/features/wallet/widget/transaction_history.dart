@@ -1,6 +1,7 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
@@ -150,7 +151,26 @@ class _TransactionHistoryState extends ConsumerState<TransactionHistory> {
               final trasactionState = ref.watch(userTransactionProvider);
               return trasactionState.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(child: Text(error.toString())),
+                error: (error, stack) {
+                  if (error is DioException &&
+                      (error.type == DioExceptionType.connectionTimeout ||
+                          error.type == DioExceptionType.receiveTimeout ||
+                          error.type == DioExceptionType.sendTimeout ||
+                          error.type == DioExceptionType.connectionError ||
+                          error.type == DioExceptionType.unknown)) {
+                    return const Center(
+                      child: Text(
+                        'Check Connectivity',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+                  return Center(child: Text(error.toString()));
+                },
                 data: (data) {
                   if (data == null || data.data.isEmpty) {
                     return Center(

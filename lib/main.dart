@@ -6,6 +6,7 @@ import 'package:wintek/firebase_options.dart';
 import 'package:wintek/core/theme/theme.dart';
 import 'package:wintek/core/router/app_roouter.dart';
 import 'package:wintek/core/router/routes_names.dart';
+import 'package:wintek/core/widgets/connectivity_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,9 @@ class MyApp extends StatelessWidget {
       ),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          return ConnectivityWrapper(child: child!);
+        },
         //initialRoute: RoutesNames.bottombar,
         initialRoute: RoutesNames.splash,
         // initialRoute: RoutesNames.loginWithPhone,

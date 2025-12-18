@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -66,7 +67,26 @@ class _AvailableBalanceContainerState
           SizedBox(height: 12),
           userAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            error: (error, stackTrace) {
+              if (error is DioException &&
+                  (error.type == DioExceptionType.connectionTimeout ||
+                      error.type == DioExceptionType.receiveTimeout ||
+                      error.type == DioExceptionType.sendTimeout ||
+                      error.type == DioExceptionType.connectionError ||
+                      error.type == DioExceptionType.unknown)) {
+                return const Center(
+                  child: Text(
+                    'Check Connectivity',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              }
+              return Center(child: Text('Error: $error'));
+            },
             data: (userModel) {
               if (userModel == null) {
                 return const Center(child: Text('No data available'));

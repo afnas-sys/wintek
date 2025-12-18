@@ -49,6 +49,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
   bool _isFirstRunning = false;
   bool _hasPlayedStartSound =
       false; // Track if start sound has been played for current round
+  bool _hasStartedMusic = false;
 
   // 👈 PREPARE state countdown variables
   double _prepareSecondsLeft = 0.0;
@@ -109,12 +110,13 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeOut));
 
     // Auto-play music if switch is ON
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final isMusicOn = ref.read(crashMusicProvider);
-      if (isMusicOn) {
-        SoundManager.aviatorMusic();
-      }
-    });
+    // Music start logic moved to build method to wait for socket connection
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final isMusicOn = ref.read(crashMusicProvider);
+    //   if (isMusicOn) {
+    //     SoundManager.aviatorMusic();
+    //   }
+    // });
   }
 
   @override
@@ -234,6 +236,19 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
       error: (_, _) => 0.0,
       loading: () => 0.0,
     );
+
+    // Check for socket connection (data existence)
+    if ((round != null || hasTickData) && !_hasStartedMusic) {
+      _hasStartedMusic = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final isMusicOn = ref.read(crashMusicProvider);
+          if (isMusicOn) {
+            SoundManager.aviatorMusic();
+          }
+        }
+      });
+    }
 
     // Animation triggers
     if (currentValue > 0 && !_isAnimating) {

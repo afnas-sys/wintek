@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '512256426654',
     projectId: 'wintek-game',
     storageBucket: 'wintek-game.firebasestorage.app',
-    iosBundleId: 'com.example.winket',
+    iosBundleId: 'com.wintekapp.wintek',
   );
 }

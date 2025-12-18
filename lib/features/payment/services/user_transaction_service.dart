@@ -32,6 +32,13 @@ class UserTransactionService {
       return UserTransactionResponseModel.fromJson(response.data);
     } on DioException catch (e) {
       log('User Transaction API error: ${e.response?.data ?? e.message}');
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.unknown) {
+        rethrow;
+      }
       throw e.response?.data ?? {'status': 'failure', 'message': e.message};
     }
   }

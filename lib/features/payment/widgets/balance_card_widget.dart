@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import 'package:wintek/core/constants/app_colors.dart';
 import 'package:wintek/core/constants/app_images.dart';
 import 'package:wintek/core/theme/theme.dart';
@@ -59,7 +60,24 @@ class _BalanceCardWidgetState extends ConsumerState<BalanceCardWidget> {
             SizedBox(height: 12),
             transactionState.when(
               loading: () => const CircularProgressIndicator(),
-              error: (error, stackTrace) => Text('Error: $error'),
+              error: (error, stackTrace) {
+                if (error is DioException &&
+                    (error.type == DioExceptionType.connectionTimeout ||
+                        error.type == DioExceptionType.receiveTimeout ||
+                        error.type == DioExceptionType.sendTimeout ||
+                        error.type == DioExceptionType.connectionError ||
+                        error.type == DioExceptionType.unknown)) {
+                  return const Text(
+                    'Check Connectivity',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                }
+                return Text('Error: $error');
+              },
               data: (response) {
                 final wallet = response?.data.isNotEmpty == true
                     ? response!.data[0].user?.wallet ?? 0.0
