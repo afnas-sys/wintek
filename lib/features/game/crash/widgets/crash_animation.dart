@@ -138,7 +138,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     _prepareTimer?.cancel();
 
     // Stop background music when widget is disposed
-    SoundManager.stopAviatorMusic();
+    SoundManager.stopCrashMusic();
 
     super.dispose();
   }
@@ -253,7 +253,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
         if (mounted) {
           final isMusicOn = ref.read(crashMusicProvider);
           if (isMusicOn) {
-            SoundManager.aviatorMusic();
+            SoundManager.crashMusic();
           }
         }
       });
@@ -742,7 +742,7 @@ class _CrashAnimationState extends ConsumerState<CrashAnimation>
     // Play flew away sound if enabled
     final isStartSoundOn = ref.read(crashStartSoundProvider);
     if (isStartSoundOn) {
-      SoundManager.aviatorFlewAwaySound();
+      SoundManager.crashEndSound();
     }
 
     // Calculate rocket position at crash time

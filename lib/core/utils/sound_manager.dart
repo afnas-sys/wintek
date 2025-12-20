@@ -122,6 +122,10 @@ class SoundManager {
   }
 
   //! CRASH
+
+  static Future<void> crashMusic() => playBackground(AppSounds.crashBgMusic);
+  static Future<void> stopCrashMusic() => stopBackground();
+
   // Play start sound (plays once, not looping) - uses separate player
   static Future<void> crashStartSound() async {
     try {
@@ -145,6 +149,31 @@ class SoundManager {
       log('✅ Playing start sound');
     } catch (e) {
       log('❌ Error playing start sound: $e');
+    }
+  }
+
+  static Future<void> crashEndSound() async {
+    try {
+      // Set audio context to allow mixing with background music
+      await _soundEffectsPlayer.setAudioContext(
+        AudioContext(
+          iOS: AudioContextIOS(
+            category: AVAudioSessionCategory.playback,
+            options: {AVAudioSessionOptions.mixWithOthers},
+          ),
+          android: AudioContextAndroid(
+            isSpeakerphoneOn: false,
+            stayAwake: false,
+            contentType: AndroidContentType.sonification,
+            usageType: AndroidUsageType.game,
+            audioFocus: AndroidAudioFocus.gainTransient,
+          ),
+        ),
+      );
+      await _soundEffectsPlayer.play(AssetSource(AppSounds.crashEndSound));
+      log('✅ Playing end sound');
+    } catch (e) {
+      log('❌ Error playing end sound: $e');
     }
   }
 }
