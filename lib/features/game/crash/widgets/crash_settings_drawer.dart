@@ -124,9 +124,9 @@ class _SettingsDrawerContent extends StatelessWidget {
                         onChanged: (value) async {
                           ref.read(crashMusicProvider.notifier).setMusic(value);
                           if (value) {
-                            await SoundManager.aviatorMusic();
+                            await SoundManager.crashMusic();
                           } else {
-                            await SoundManager.stopAviatorMusic();
+                            await SoundManager.stopCrashMusic();
                           }
                         },
                       ),
