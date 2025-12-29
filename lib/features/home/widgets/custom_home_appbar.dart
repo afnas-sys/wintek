@@ -159,9 +159,30 @@ class _CustomHomeAppbarState extends ConsumerState<CustomHomeAppbar> {
                   decoration: BoxDecoration(
                     color: AppColors.homeSecondaryColor,
                     borderRadius: BorderRadius.circular(100),
+                    image: userAsync.maybeWhen(
+                      data: (userModel) {
+                        if (userModel != null &&
+                            userModel.data.picture != '-') {
+                          return DecorationImage(
+                            image: NetworkImage(userModel.data.picture),
+                            fit: BoxFit.cover,
+                          );
+                        }
+                        return null;
+                      },
+                      orElse: () => null,
+                    ),
                   ),
                   alignment: Alignment.center,
-                  child: Image.asset(AppImages.homeAppbarImage),
+                  child: userAsync.maybeWhen(
+                    data: (userModel) {
+                      if (userModel == null || userModel.data.picture == '-') {
+                        return Image.asset(AppImages.homeAppbarImage);
+                      }
+                      return null;
+                    },
+                    orElse: () => Image.asset(AppImages.homeAppbarImage),
+                  ),
                 ),
               ],
             ),
