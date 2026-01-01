@@ -82,5 +82,5 @@ final currentBetIdProvider = StateProvider<String>((ref) {
   final currentBetId = ref.watch(
     cardRoundNotifierProvider.select((value) => value?.sessionId),
   );
-  return currentBetId.toString();
+  return currentBetId ?? '';
 });
