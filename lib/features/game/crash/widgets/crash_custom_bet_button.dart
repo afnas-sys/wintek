@@ -17,6 +17,7 @@ import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/auto_play_widget.dart';
 import 'package:wintek/features/game/crash/providers/crash_game_provider.dart';
 import 'package:wintek/features/game/crash/service/crash_bet_cache_service.dart';
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 
 class AutoPlayState {
   final AutoPlaySettings? settings;
@@ -85,7 +86,9 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
   // Queued bet state when user taps during RUNNING
   bool _hasQueuedBet = false;
   String? _queuedAmountText;
+
   double? _queuedAutoCashoutValue;
+  double? _pendingWinAmount;
 
   final secureStorageService = SecureStorageService();
   final _cacheService = CrashBetCacheService();
@@ -251,6 +254,7 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
             if (userModel != null && newBet.stake != null) {
               final newWallet = userModel.data.wallet - newBet.stake!;
               ref.read(userProvider.notifier).updateWallet(newWallet);
+              ref.invalidate(walletBalanceProvider);
             }
           },
           orElse: () {},
@@ -364,6 +368,28 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
       lastRoundId = round.roundId;
     }
 
+    // Listen for crash to process pending win
+    ref.listen(crashRoundNotifierProvider, (previous, next) {
+      if (next?.state == 'CRASHED' && previous?.state != 'CRASHED') {
+        if (_pendingWinAmount != null) {
+          final currentUser = ref.read(userProvider);
+          currentUser.maybeWhen(
+            data: (userModel) {
+              if (userModel != null) {
+                final newWallet = userModel.data.wallet + _pendingWinAmount!;
+                ref.read(userProvider.notifier).updateWallet(newWallet);
+                ref
+                    .read(walletBalanceProvider.notifier)
+                    .updateBalance(newWallet);
+              }
+            },
+            orElse: () {},
+          );
+          _pendingWinAmount = null;
+        }
+      }
+    });
+
     _evaluateAutoPlayAndMaybeBet(round);
 
     // Restore cache logic
@@ -442,8 +468,10 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                   data: (userModel) {
                     if (userModel != null) {
                       final winAmount = cashoutAt * bet.stake!;
-                      final newWallet = userModel.data.wallet + winAmount;
-                      ref.read(userProvider.notifier).updateWallet(newWallet);
+                      // Delay updates until crash
+                      _pendingWinAmount = winAmount;
+                      // ref.read(userProvider.notifier).updateWallet(newWallet);
+                      // ref.read(walletBalanceProvider.notifier).updateBalance(newWallet);
 
                       // Note: Round counting is now handled at round start,
                       // not here, to ensure every round is counted regardless of outcome
@@ -635,10 +663,14 @@ class _CrashCustomBetButtonState extends ConsumerState<CrashCustomBetButton> {
                       data: (userModel) {
                         if (userModel != null) {
                           final winAmount = cashoutAt * bet.stake!;
-                          final newWallet = userModel.data.wallet + winAmount;
-                          ref
-                              .read(userProvider.notifier)
-                              .updateWallet(newWallet);
+                          // Delay updates until crash
+                          _pendingWinAmount = winAmount;
+                          // ref
+                          //     .read(userProvider.notifier)
+                          //     .updateWallet(newWallet);
+                          // ref
+                          //     .read(walletBalanceProvider.notifier)
+                          //     .updateBalance(newWallet);
                         }
                       },
                       orElse: () {},

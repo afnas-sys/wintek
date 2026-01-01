@@ -16,6 +16,7 @@ import 'package:wintek/features/game/aviator/providers/cashout_provider.dart';
 import 'package:wintek/features/game/aviator/providers/user_provider.dart';
 import 'package:wintek/features/game/aviator/widget/bet_container_.dart';
 import 'package:wintek/features/game/aviator/service/aviator_bet_cache_service.dart';
+import 'package:wintek/features/game/card_jackpot/providers/wallet_provider.dart';
 
 class CustomBetButton extends ConsumerStatefulWidget {
   final int index;
@@ -57,7 +58,9 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
   // Queued bet state when user taps during RUNNING
   bool _hasQueuedBet = false;
   String? _queuedAmountText;
+
   double? _queuedAutoCashoutValue;
+  double? _pendingWinAmount;
 
   final secureStorageService = SecureStorageService();
   final _cacheService = AviatorBetCacheService();
@@ -261,6 +264,7 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
             if (userModel != null) {
               final newWallet = userModel.data.wallet - newBet.stake;
               ref.read(userProvider.notifier).updateWallet(newWallet);
+              ref.invalidate(walletBalanceProvider);
             }
           },
           orElse: () {},
@@ -349,6 +353,23 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
     // Listen for crash to reset bet state immediately
     ref.listen(aviatorRoundNotifierProvider, (previous, next) {
       if (next?.state == 'CRASHED' && previous?.state != 'CRASHED') {
+        if (_pendingWinAmount != null) {
+          final currentUser = ref.read(userProvider);
+          currentUser.maybeWhen(
+            data: (userModel) {
+              if (userModel != null) {
+                final newWallet = userModel.data.wallet + _pendingWinAmount!;
+                ref.read(userProvider.notifier).updateWallet(newWallet);
+                ref
+                    .read(walletBalanceProvider.notifier)
+                    .updateBalance(newWallet);
+              }
+            },
+            orElse: () {},
+          );
+          _pendingWinAmount = null;
+        }
+
         if (hasPlacedBet) {
           setState(() {
             hasPlacedBet = false;
@@ -472,7 +493,10 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                 if (userModel != null) {
                   final winAmount = autoCashoutAt! * bet.stake;
                   final newWallet = userModel.data.wallet + winAmount;
-                  ref.read(userProvider.notifier).updateWallet(newWallet);
+                  // Delay updates until crash
+                  _pendingWinAmount = winAmount;
+                  // ref.read(userProvider.notifier).updateWallet(newWallet);
+                  // ref.read(walletBalanceProvider.notifier).updateBalance(newWallet);
 
                   // Update autoplay state
                   if (widget.autoPlayState != null) {
@@ -689,10 +713,14 @@ class _CustomBetButtonState extends ConsumerState<CustomBetButton> {
                       data: (userModel) {
                         if (userModel != null) {
                           final winAmount = cashoutAt! * bet.stake;
-                          final newWallet = userModel.data.wallet + winAmount;
-                          ref
-                              .read(userProvider.notifier)
-                              .updateWallet(newWallet);
+                          // Delay updates until crash
+                          _pendingWinAmount = winAmount;
+                          // ref
+                          //     .read(userProvider.notifier)
+                          //     .updateWallet(newWallet);
+                          // ref
+                          //     .read(walletBalanceProvider.notifier)
+                          //     .updateBalance(newWallet);
 
                           // Update autoplay state for manual cashout
                           if (widget.autoPlayState != null) {
