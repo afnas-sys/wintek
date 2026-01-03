@@ -63,8 +63,8 @@ class CardSocketService {
     socket.on("round:end", (data) {
       final event = RoundEndEvent.fromJson(data);
       notifier.updateRoundEnd(event);
-      ref.read(gameHistoryProvider.notifier).fetchGameHistory();
-      ref.read(myHistoryProvider.notifier).fetchMyHistory();
+      ref.read(gameHistoryProvider.notifier).fetchGameHistory(isRefresh: true);
+      ref.read(myHistoryProvider.notifier).fetchMyHistory(isRefresh: true);
     });
 
     socket.onDisconnect((_) {});

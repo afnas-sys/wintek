@@ -81,7 +81,7 @@ class MyHistoryTile extends StatelessWidget {
                     ? 'Pending'
                     : bet['status'] == 'lost'
                     ? 'failed'
-                    : 'success',
+                    : 'Win',
                 fontWeight: FontWeight.w500,
                 color: bet['status'] == 'placed'
                     ? AppColors.pendingStatusColor
@@ -92,11 +92,13 @@ class MyHistoryTile extends StatelessWidget {
               SizedBox(height: 5),
               if (bet['status'] != 'placed')
                 AppText(
-                  text: "+₹${bet['points']}",
+                  text: bet['status'] == 'lost'
+                      ? "-₹${bet['points']}"
+                      : "+₹${bet['winningAmount']}",
                   fontWeight: FontWeight.w500,
-                  color: bet['status'] != 'lost'
-                      ? AppColors.successTextColor
-                      : AppColors.failedTextColor,
+                  color: bet['status'] == 'lost'
+                      ? AppColors.failedTextColor
+                      : AppColors.successTextColor,
                   fontSize: 16,
                 ),
             ],
