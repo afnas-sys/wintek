@@ -24,7 +24,18 @@ class _CardsSectionState extends ConsumerState<CardsSection> {
     super.initState();
   }
 
-  void _showWinnerDialog(dynamic round) {
+  String _formatCardName(String cardName) {
+    if (cardName.isEmpty) return '';
+    return cardName
+        .split('-')
+        .map((word) {
+          if (word.isEmpty) return '';
+          return "${word[0].toUpperCase()}${word.substring(1).toLowerCase()}";
+        })
+        .join(' ');
+  }
+
+  void _showWinnerDialog(dynamic round, {double? amount}) {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
@@ -123,6 +134,16 @@ class _CardsSectionState extends ConsumerState<CardsSection> {
                       ],
                     ),
                     SizedBox(height: 12),
+                    // Card Name
+                    if (round.winningCard != null) ...[
+                      AppText(
+                        text: _formatCardName(round.winningCard!),
+                        color: Colors.amberAccent,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      SizedBox(height: 12),
+                    ],
                     // Prize amount
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -158,7 +179,7 @@ class _CardsSectionState extends ConsumerState<CardsSection> {
                           ),
                           SizedBox(width: 4),
                           AppText(
-                            text: '500.00',
+                            text: amount?.toStringAsFixed(2) ?? '0.00',
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -193,8 +214,22 @@ class _CardsSectionState extends ConsumerState<CardsSection> {
           data: (userModel) {
             if (userModel != null && next!.winners != null) {
               final userId = userModel.data.id.toString();
-              if (next.winners!.contains(userId)) {
-                _showWinnerDialog(next);
+              double? amount;
+              bool isWinner = false;
+
+              for (var winner in next.winners!) {
+                if (winner is Map && winner['_id'].toString() == userId) {
+                  isWinner = true;
+                  amount = double.tryParse(winner['amount'].toString());
+                  break;
+                } else if (winner.toString() == userId) {
+                  isWinner = true;
+                  break;
+                }
+              }
+
+              if (isWinner) {
+                _showWinnerDialog(next, amount: amount);
               }
             }
           },
@@ -208,7 +243,10 @@ class _CardsSectionState extends ConsumerState<CardsSection> {
 
     // Determine overlay widget based on round state
     final overlayWidget = _getOverlayWidget(round, timer);
-    final showOverlay = round == null || round.state != 'RUNNING';
+    final showOverlay =
+        round == null ||
+        round.state != 'RUNNING' ||
+        (round.state == 'RUNNING' && timer.inSeconds <= 5);
 
     return SizedBox(
       child: Stack(

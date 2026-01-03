@@ -13,12 +13,23 @@ class HistoryService {
   final Dio _dio;
 
   HistoryService(this._dio);
-
-  Future<List<Map<String, dynamic>>> fetchMyHistory() async {
+  //
+  //
+  //
+  // Fetch My History
+  //
+  //
+  //
+  Future<List<Map<String, dynamic>>> fetchMyHistory({
+    int page = 1,
+    int limit = 10,
+  }) async {
     final secureData = await SecureStorageService().readCredentials();
+    final skip = (page - 1) * limit;
     try {
       final response = await _dio.get(
         '${CardApiConstants.getMyHistory}${secureData.userId}',
+        queryParameters: {'skip': skip, 'limit': limit},
         options: Options(
           headers: {'Authorization': 'Bearer ${secureData.token}'},
         ),
@@ -33,11 +44,24 @@ class HistoryService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchGameHistory() async {
+  //
+  //
+  //
+  // Fetch Game History
+  //
+  //
+  //
+  //
+  Future<List<Map<String, dynamic>>> fetchGameHistory({
+    int page = 1,
+    int limit = 20,
+  }) async {
     final secureData = await SecureStorageService().readCredentials();
+    final skip = (page - 1) * limit;
     try {
       final response = await _dio.get(
         CardApiConstants.recentRounds,
+        queryParameters: {'skip': skip, 'limit': limit},
         options: Options(
           headers: {'Authorization': 'Bearer ${secureData.token}'},
         ),
@@ -54,7 +78,7 @@ class HistoryService {
               },
             )
             .toList();
-        return filtered.take(20).toList();
+        return filtered;
       } else {
         throw Exception('Failed to fetch Game history');
       }
