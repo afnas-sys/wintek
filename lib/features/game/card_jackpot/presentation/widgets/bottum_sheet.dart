@@ -300,6 +300,7 @@ class _BottumSheetState extends ConsumerState<BottumSheet> {
                                     setState(() {
                                       _isLoading = false;
                                     });
+                                    Navigator.pop(context);
                                   }
                                 } else {
                                   // Show success animation
@@ -344,6 +345,7 @@ class _BottumSheetState extends ConsumerState<BottumSheet> {
                                     'Failed to place bet. Please try again.',
                                     Colors.red,
                                   );
+                                  Navigator.pop(context);
                                 }
                               }
                             },
